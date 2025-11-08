@@ -1,4 +1,4 @@
-# InputHive SDK Implementation Guide
+# critichut SDK Implementation Guide
 
 > **Technical specification for building the JavaScript SDK**
 
@@ -60,25 +60,25 @@ packages/sdk/
 ```typescript
 // packages/sdk/src/index.ts
 
-import { InputHiveUser, InputHiveConfig } from './types';
+import { critichutUser, critichutConfig } from './types';
 import { encodeToken, decodeToken } from './token';
 import { enhanceLinks } from './link-enhancer';
 import { authenticate } from './auth';
 
-class InputHiveSDK {
+class critichutSDK {
   private orgSlug: string | null = null;
-  private user: InputHiveUser | null = null;
-  private config: InputHiveConfig = {};
+  private user: critichutUser | null = null;
+  private config: critichutConfig = {};
   private initialized = false;
 
   /**
-   * Initialize InputHive SDK
+   * Initialize critichut SDK
    * @param orgSlug - Organization slug (e.g., "acme")
    * @param config - Configuration options
    */
-  init(orgSlug: string, config?: InputHiveConfig): void {
+  init(orgSlug: string, config?: critichutConfig): void {
     if (this.initialized) {
-      console.warn('[InputHive] Already initialized');
+      console.warn('[critichut] Already initialized');
       return;
     }
 
@@ -91,21 +91,21 @@ class InputHiveSDK {
       this.identify(config.user);
     }
 
-    console.log(`[InputHive] Initialized for org: ${orgSlug}`);
+    console.log(`[critichut] Initialized for org: ${orgSlug}`);
   }
 
   /**
    * Identify a user
    * @param user - User identity with HMAC signature
    */
-  identify(user: InputHiveUser): void {
+  identify(user: critichutUser): void {
     if (!this.orgSlug) {
-      throw new Error('[InputHive] Must call init() before identify()');
+      throw new Error('[critichut] Must call init() before identify()');
     }
 
     // Validate user data
     if (!user.id || !user.email || !user.signature) {
-      throw new Error('[InputHive] User must have id, email, and signature');
+      throw new Error('[critichut] User must have id, email, and signature');
     }
 
     this.user = user;
@@ -118,10 +118,10 @@ class InputHiveSDK {
     };
 
     try {
-      localStorage.setItem('inputhive:identity', JSON.stringify(identityData));
-      console.log('[InputHive] User identified:', user.email);
+      localStorage.setItem('critichut:identity', JSON.stringify(identityData));
+      console.log('[critichut] User identified:', user.email);
     } catch (error) {
-      console.error('[InputHive] Failed to store identity:', error);
+      console.error('[critichut] Failed to store identity:', error);
     }
 
     // Auto-enhance all links on page
@@ -133,14 +133,14 @@ class InputHiveSDK {
    */
   logout(): void {
     this.user = null;
-    localStorage.removeItem('inputhive:identity');
-    console.log('[InputHive] User logged out');
+    localStorage.removeItem('critichut:identity');
+    console.log('[critichut] User logged out');
   }
 
   /**
    * Get current user (if identified)
    */
-  getUser(): InputHiveUser | null {
+  getUser(): critichutUser | null {
     return this.user;
   }
 
@@ -163,17 +163,17 @@ class InputHiveSDK {
 }
 
 // Create global instance
-const sdk = new InputHiveSDK();
+const sdk = new critichutSDK();
 
 // Export to window
 if (typeof window !== 'undefined') {
-  window.InputHive = sdk;
+  window.critichut = sdk;
 
   // Emit ready event
-  window.dispatchEvent(new Event('inputhive:ready'));
+  window.dispatchEvent(new Event('critichut:ready'));
 
-  // Auto-authenticate if on InputHive domain
-  if (window.location.hostname.includes('inputhive.com')) {
+  // Auto-authenticate if on critichut domain
+  if (window.location.hostname.includes('critichut.com')) {
     authenticate();
   }
 }
@@ -191,23 +191,23 @@ export default sdk;
 // packages/sdk/src/link-enhancer.ts
 
 /**
- * Automatically enhance all InputHive links with auth tokens
+ * Automatically enhance all critichut links with auth tokens
  */
 export function enhanceLinks(orgSlug: string): void {
   // Find all links to this org's subdomain
-  const selector = `a[href*="${orgSlug}.inputhive.com"]`;
+  const selector = `a[href*="${orgSlug}.critichut.com"]`;
   const links = document.querySelectorAll<HTMLAnchorElement>(selector);
 
-  console.log(`[InputHive] Enhancing ${links.length} links`);
+  console.log(`[critichut] Enhancing ${links.length} links`);
 
   links.forEach(link => {
     // Skip if already enhanced
-    if (link.dataset.inputhiveEnhanced === 'true') {
+    if (link.dataset.critichutEnhanced === 'true') {
       return;
     }
 
     // Mark as enhanced
-    link.dataset.inputhiveEnhanced = 'true';
+    link.dataset.critichutEnhanced = 'true';
 
     // Add click handler
     link.addEventListener('click', handleLinkClick);
@@ -215,7 +215,7 @@ export function enhanceLinks(orgSlug: string): void {
 }
 
 /**
- * Handle click on InputHive link
+ * Handle click on critichut link
  */
 function handleLinkClick(e: MouseEvent): void {
   e.preventDefault();
@@ -224,7 +224,7 @@ function handleLinkClick(e: MouseEvent): void {
   const targetUrl = link.href;
 
   // Get stored identity
-  const identityDataStr = localStorage.getItem('inputhive:identity');
+  const identityDataStr = localStorage.getItem('critichut:identity');
 
   if (!identityDataStr) {
     // No identity, navigate normally
@@ -240,7 +240,7 @@ function handleLinkClick(e: MouseEvent): void {
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
 
     if (age > maxAge) {
-      console.warn('[InputHive] Identity expired, navigating without auth');
+      console.warn('[critichut] Identity expired, navigating without auth');
       window.location.href = targetUrl;
       return;
     }
@@ -255,7 +255,7 @@ function handleLinkClick(e: MouseEvent): void {
     // Navigate with auth token
     window.location.href = url.toString();
   } catch (error) {
-    console.error('[InputHive] Link enhancement failed:', error);
+    console.error('[critichut] Link enhancement failed:', error);
     window.location.href = targetUrl;
   }
 }
@@ -280,7 +280,7 @@ function generateAuthToken(identityData: any): string {
 
 ```typescript
 // For SPAs with dynamically added links
-window.InputHive.refreshLinks();
+window.critichut.refreshLinks();
 
 // Or use MutationObserver for automatic detection
 export function setupLinkObserver(orgSlug: string): void {
@@ -290,7 +290,7 @@ export function setupLinkObserver(orgSlug: string): void {
     mutations.forEach(mutation => {
       mutation.addedNodes.forEach(node => {
         if (node instanceof HTMLElement) {
-          const hasLinks = node.querySelectorAll(`a[href*="${orgSlug}.inputhive.com"]`).length > 0;
+          const hasLinks = node.querySelectorAll(`a[href*="${orgSlug}.critichut.com"]`).length > 0;
           if (hasLinks) {
             shouldRefresh = true;
           }
@@ -379,14 +379,14 @@ export function isTokenValid(data: TokenData, maxAge: number = 5 * 60 * 1000): b
 // packages/sdk/src/auth.ts
 
 /**
- * Auto-authenticate on InputHive subdomain
- * Called automatically when page loads on inputhive.com
+ * Auto-authenticate on critichut subdomain
+ * Called automatically when page loads on critichut.com
  */
 export async function authenticate(): Promise<boolean> {
   // Check if already authenticated
   const hasSession = await checkSession();
   if (hasSession) {
-    console.log('[InputHive] Already authenticated');
+    console.log('[critichut] Already authenticated');
     return true;
   }
 
@@ -395,7 +395,7 @@ export async function authenticate(): Promise<boolean> {
   const authToken = params.get('auth');
 
   if (!authToken) {
-    console.log('[InputHive] No auth token found');
+    console.log('[critichut] No auth token found');
     return false;
   }
 
@@ -405,7 +405,7 @@ export async function authenticate(): Promise<boolean> {
 
     // Validate timestamp (5-minute window)
     if (!isTokenValid(identityData)) {
-      console.error('[InputHive] Token expired');
+      console.error('[critichut] Token expired');
       cleanupUrl();
       return false;
     }
@@ -429,17 +429,17 @@ export async function authenticate(): Promise<boolean> {
     });
 
     if (response.ok) {
-      console.log('[InputHive] Authentication successful');
+      console.log('[critichut] Authentication successful');
       cleanupUrl();
       window.location.reload();
       return true;
     } else {
-      console.error('[InputHive] Authentication failed');
+      console.error('[critichut] Authentication failed');
       cleanupUrl();
       return false;
     }
   } catch (error) {
-    console.error('[InputHive] Authentication error:', error);
+    console.error('[critichut] Authentication error:', error);
     cleanupUrl();
     return false;
   }
@@ -487,7 +487,7 @@ export function safeLocalStorage() {
       try {
         return localStorage.getItem(key);
       } catch (error) {
-        console.warn('[InputHive] localStorage.getItem failed:', error);
+        console.warn('[critichut] localStorage.getItem failed:', error);
         return null;
       }
     },
@@ -496,7 +496,7 @@ export function safeLocalStorage() {
       try {
         localStorage.setItem(key, value);
       } catch (error) {
-        console.warn('[InputHive] localStorage.setItem failed:', error);
+        console.warn('[critichut] localStorage.setItem failed:', error);
       }
     },
 
@@ -504,7 +504,7 @@ export function safeLocalStorage() {
       try {
         localStorage.removeItem(key);
       } catch (error) {
-        console.warn('[InputHive] localStorage.removeItem failed:', error);
+        console.warn('[critichut] localStorage.removeItem failed:', error);
       }
     },
   };
@@ -564,7 +564,7 @@ export function debounce<T extends (...args: any[]) => any>(
 export function showError(message: string): void {
   // Create error banner
   const banner = document.createElement('div');
-  banner.className = 'inputhive-error';
+  banner.className = 'critichut-error';
   banner.textContent = message;
   banner.style.cssText = `
     position: fixed;
@@ -599,7 +599,7 @@ export function showError(message: string): void {
 /**
  * User identity with HMAC signature
  */
-export interface InputHiveUser {
+export interface critichutUser {
   /** Unique user ID from customer's system */
   id: string;
 
@@ -619,9 +619,9 @@ export interface InputHiveUser {
 /**
  * SDK configuration options
  */
-export interface InputHiveConfig {
+export interface critichutConfig {
   /** User to identify (optional, can call identify() later) */
-  user?: InputHiveUser;
+  user?: critichutUser;
 
   /** Enable debug logging */
   debug?: boolean;
@@ -631,18 +631,18 @@ export interface InputHiveConfig {
 }
 
 /**
- * Global InputHive SDK instance
+ * Global critichut SDK instance
  */
-export interface InputHiveSDK {
+export interface critichutSDK {
   /**
    * Initialize SDK with organization slug
    */
-  init(orgSlug: string, config?: InputHiveConfig): void;
+  init(orgSlug: string, config?: critichutConfig): void;
 
   /**
    * Identify current user
    */
-  identify(user: InputHiveUser): void;
+  identify(user: critichutUser): void;
 
   /**
    * Clear stored identity
@@ -652,7 +652,7 @@ export interface InputHiveSDK {
   /**
    * Get current identified user
    */
-  getUser(): InputHiveUser | null;
+  getUser(): critichutUser | null;
 
   /**
    * Check if user is identified
@@ -670,7 +670,7 @@ export interface InputHiveSDK {
  */
 declare global {
   interface Window {
-    InputHive: InputHiveSDK;
+    critichut: critichutSDK;
   }
 }
 ```
@@ -695,7 +695,7 @@ export default [
     output: {
       file: 'dist/sdk.js',
       format: 'umd',
-      name: 'InputHive',
+      name: 'critichut',
       sourcemap: true,
     },
     plugins: [
@@ -710,7 +710,7 @@ export default [
     output: {
       file: 'dist/sdk.min.js',
       format: 'umd',
-      name: 'InputHive',
+      name: 'critichut',
       sourcemap: true,
     },
     plugins: [
@@ -745,9 +745,9 @@ export default [
 
 ```json
 {
-  "name": "@inputhive/sdk",
+  "name": "@critichut/sdk",
   "version": "1.0.0",
-  "description": "InputHive JavaScript SDK for auto-login",
+  "description": "critichut JavaScript SDK for auto-login",
   "main": "dist/sdk.js",
   "module": "dist/sdk.esm.js",
   "types": "dist/sdk.d.ts",
@@ -760,7 +760,7 @@ export default [
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
-    "inputhive",
+    "critichut",
     "feedback",
     "authentication",
     "sdk"
@@ -835,7 +835,7 @@ export default function handler(req: Request) {
 ### Cloudflare Workers
 
 ```typescript
-// CDN worker for cdn.inputhive.com/sdk.js
+// CDN worker for cdn.critichut.com/sdk.js
 
 export default {
   async fetch(request: Request): Promise<Response> {
@@ -843,7 +843,7 @@ export default {
 
     // Serve SDK
     if (url.pathname === '/sdk.js') {
-      const sdk = await fetch('https://github.com/inputhive/sdk/releases/latest/download/sdk.min.js');
+      const sdk = await fetch('https://github.com/critichut/sdk/releases/latest/download/sdk.min.js');
 
       return new Response(await sdk.text(), {
         headers: {
@@ -866,12 +866,12 @@ export default {
 ### Basic Usage
 
 ```html
-<script src="https://cdn.inputhive.com/sdk.js"></script>
+<script src="https://cdn.critichut.com/sdk.js"></script>
 <script>
-  window.addEventListener('inputhive:ready', async () => {
-    const { user, signature } = await fetch('/api/inputhive/signature').then(r => r.json());
+  window.addEventListener('critichut:ready', async () => {
+    const { user, signature } = await fetch('/api/critichut/signature').then(r => r.json());
 
-    InputHive.init('acme', {
+    critichut.init('acme', {
       user: {
         id: user.id,
         email: user.email,
@@ -891,14 +891,14 @@ import { useEffect } from 'react';
 function App() {
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = 'https://cdn.inputhive.com/sdk.js';
+    script.src = 'https://cdn.critichut.com/sdk.js';
     script.async = true;
     document.body.appendChild(script);
 
     const handleReady = async () => {
-      const { user, signature } = await fetch('/api/inputhive/signature').then(r => r.json());
+      const { user, signature } = await fetch('/api/critichut/signature').then(r => r.json());
 
-      window.InputHive.init('acme', {
+      window.critichut.init('acme', {
         user: {
           id: user.id,
           email: user.email,
@@ -908,15 +908,15 @@ function App() {
       });
     };
 
-    window.addEventListener('inputhive:ready', handleReady);
+    window.addEventListener('critichut:ready', handleReady);
 
     return () => {
-      window.removeEventListener('inputhive:ready', handleReady);
+      window.removeEventListener('critichut:ready', handleReady);
     };
   }, []);
 
   return (
-    <a href="https://acme.inputhive.com/feedback">
+    <a href="https://acme.critichut.com/feedback">
       Submit Feedback
     </a>
   );
@@ -934,13 +934,13 @@ export default function RootLayout({ children }) {
     <html>
       <body>
         {children}
-        <Script src="https://cdn.inputhive.com/sdk.js" />
-        <Script id="inputhive-init">
+        <Script src="https://cdn.critichut.com/sdk.js" />
+        <Script id="critichut-init">
           {`
-            window.addEventListener('inputhive:ready', async () => {
-              const res = await fetch('/api/inputhive/signature');
+            window.addEventListener('critichut:ready', async () => {
+              const res = await fetch('/api/critichut/signature');
               const data = await res.json();
-              InputHive.init('acme', { user: data });
+              critichut.init('acme', { user: data });
             });
           `}
         </Script>
@@ -1013,7 +1013,7 @@ describe('Link enhancement', () => {
       <!DOCTYPE html>
       <html>
         <body>
-          <a href="https://acme.inputhive.com/feedback">Feedback</a>
+          <a href="https://acme.critichut.com/feedback">Feedback</a>
         </body>
       </html>
     `);
@@ -1046,7 +1046,7 @@ npx bundlesize
 
 ```typescript
 // Only export what's needed
-export { InputHiveSDK } from './sdk';
+export { critichutSDK } from './sdk';
 
 // Avoid exporting everything
 // export * from './utils'; ❌
@@ -1055,8 +1055,8 @@ export { InputHiveSDK } from './sdk';
 ### Code Splitting
 
 ```typescript
-// Lazy load auth module only on InputHive subdomain
-if (window.location.hostname.includes('inputhive.com')) {
+// Lazy load auth module only on critichut subdomain
+if (window.location.hostname.includes('critichut.com')) {
   import('./auth').then(({ authenticate }) => {
     authenticate();
   });

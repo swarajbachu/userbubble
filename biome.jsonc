@@ -3,5 +3,12 @@
   "extends": [
     "ultracite/core",
     "ultracite/next"
-  ]
+  ],
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off"
+      }
+    }
+  }
 }

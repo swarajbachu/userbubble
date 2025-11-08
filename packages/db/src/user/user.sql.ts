@@ -1,5 +1,8 @@
 import { pgTable } from "drizzle-orm/pg-core";
 
+/**
+ * User table (Better Auth core)
+ */
 export const user = pgTable("user", (t) => ({
   id: t.text().primaryKey(),
   name: t.text().notNull(),
@@ -10,6 +13,9 @@ export const user = pgTable("user", (t) => ({
   updatedAt: t.timestamp().notNull(),
 }));
 
+/**
+ * Session table (Better Auth core + critichut extensions)
+ */
 export const session = pgTable("session", (t) => ({
   id: t.text().primaryKey(),
   expiresAt: t.timestamp().notNull(),
@@ -34,6 +40,9 @@ export const session = pgTable("session", (t) => ({
   activeOrganizationId: t.text("active_organization_id"),
 }));
 
+/**
+ * Account table (Better Auth - OAuth/credential storage)
+ */
 export const account = pgTable("account", (t) => ({
   id: t.text().primaryKey(),
   accountId: t.text().notNull(),
@@ -53,6 +62,9 @@ export const account = pgTable("account", (t) => ({
   updatedAt: t.timestamp().notNull(),
 }));
 
+/**
+ * Verification table (Better Auth - email verification, password reset)
+ */
 export const verification = pgTable("verification", (t) => ({
   id: t.text().primaryKey(),
   identifier: t.text().notNull(),
@@ -61,3 +73,16 @@ export const verification = pgTable("verification", (t) => ({
   createdAt: t.timestamp(),
   updatedAt: t.timestamp(),
 }));
+
+// Export types
+export type User = typeof user.$inferSelect;
+export type NewUser = typeof user.$inferInsert;
+
+export type Session = typeof session.$inferSelect;
+export type NewSession = typeof session.$inferInsert;
+
+export type Account = typeof account.$inferSelect;
+export type NewAccount = typeof account.$inferInsert;
+
+export type Verification = typeof verification.$inferSelect;
+export type NewVerification = typeof verification.$inferInsert;

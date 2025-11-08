@@ -1,4 +1,4 @@
-# InputHive Authentication Flow
+# critichut Authentication Flow
 
 > **Complete guide to UserJot-style auto-login with HMAC authentication**
 
@@ -22,7 +22,7 @@
 
 ## Overview
 
-InputHive uses a **Safari-compatible auto-login system** that mimics UserJot's seamless experience while providing enhanced security through HMAC signatures.
+critichut uses a **Safari-compatible auto-login system** that mimics UserJot's seamless experience while providing enhanced security through HMAC signatures.
 
 ### Key Features
 
@@ -30,13 +30,13 @@ InputHive uses a **Safari-compatible auto-login system** that mimics UserJot's s
 - ✅ **Clean URLs** - Tokens removed after authentication
 - ✅ **Secure HMAC signatures** - Customer-verified identity
 - ✅ **One-time tokens** - Session persists via first-party cookies
-- ✅ **Cross-subdomain sessions** - Works across all `*.inputhive.com`
+- ✅ **Cross-subdomain sessions** - Works across all `*.critichut.com`
 
 ### Architecture
 
 ```
-Customer's Website           InputHive Subdomain
-(customer-app.com)          (acme.inputhive.com)
+Customer's Website           critichut Subdomain
+(customer-app.com)          (acme.critichut.com)
        │                            │
        │ 1. SDK loaded              │
        │ 2. identify() called       │
@@ -51,7 +51,7 @@ Customer's Website           InputHive Subdomain
        │                            │ 8. Clean URL
        │                            │
        │<──── Cookie set ───────────│
-       │    .inputhive.com          │
+       │    .critichut.com          │
        │                            │
        │ 9. Subsequent visits       │
        ├──── Cookie sent ──────────>│
@@ -76,15 +76,15 @@ Safari's Intelligent Tracking Prevention (ITP) blocks:
 
 ```javascript
 // ❌ DOESN'T WORK in Safari
-await fetch('https://api.inputhive.com/identify', {
+await fetch('https://api.critichut.com/identify', {
   credentials: 'include' // Cookie blocked by ITP!
 });
 
 // ✅ WORKS in Safari
 // 1. Pass identity via URL token
-window.location.href = 'https://acme.inputhive.com/feedback?auth=TOKEN';
+window.location.href = 'https://acme.critichut.com/feedback?auth=TOKEN';
 
-// 2. On InputHive subdomain (first-party context!)
+// 2. On critichut subdomain (first-party context!)
 await fetch('/api/auth/external-login', {
   credentials: 'include' // ✅ Safari allows (first-party)
 });
@@ -96,8 +96,8 @@ await fetch('/api/auth/external-login', {
 |----------|------------|--------|
 | **Cross-domain API + cookie** | ❌ Blocked | Third-party context |
 | **Iframe postMessage** | ❌ Blocked | Third-party iframe |
-| **URL token → First-party API** | ✅ Allowed | First-party context on InputHive domain |
-| **First-party cookie on `.inputhive.com`** | ✅ Allowed | Same-site cookie |
+| **URL token → First-party API** | ✅ Allowed | First-party context on critichut domain |
+| **First-party cookie on `.critichut.com`** | ✅ Allowed | Same-site cookie |
 
 ---
 
@@ -106,7 +106,7 @@ await fetch('/api/auth/external-login', {
 ### Step 1: Customer's Backend Generates HMAC Signature
 
 ```typescript
-// Customer's API: /api/inputhive/user-signature
+// Customer's API: /api/critichut/user-signature
 export async function GET(req: Request) {
   // Get user from customer's session
   const session = await getCustomerSession(req);
@@ -117,7 +117,7 @@ export async function GET(req: Request) {
 
   // Generate HMAC signature (sign the user ID)
   const signature = crypto
-    .createHmac('sha256', process.env.INPUTHIVE_SECRET_KEY!)
+    .createHmac('sha256', process.env.critichut_SECRET_KEY!)
     .update(session.user.id)
     .digest('hex');
 
@@ -136,12 +136,12 @@ export async function GET(req: Request) {
 **HMAC Signature Details:**
 - Input: User's unique ID from customer's system
 - Algorithm: HMAC-SHA256
-- Key: Customer's InputHive secret key (from dashboard)
+- Key: Customer's critichut secret key (from dashboard)
 - Output: Hex-encoded signature
 
 ---
 
-### Step 2: Customer Embeds InputHive SDK
+### Step 2: Customer Embeds critichut SDK
 
 ```html
 <!-- Customer's website (customer-app.com) -->
@@ -153,17 +153,17 @@ export async function GET(req: Request) {
 <body>
   <!-- Your app content -->
 
-  <!-- InputHive SDK -->
-  <script src="https://cdn.inputhive.com/sdk.js" async></script>
+  <!-- critichut SDK -->
+  <script src="https://cdn.critichut.com/sdk.js" async></script>
   <script>
     // Wait for SDK to load
-    window.addEventListener('inputhive:ready', async () => {
+    window.addEventListener('critichut:ready', async () => {
       // Fetch user signature from your backend
-      const response = await fetch('/api/inputhive/user-signature');
+      const response = await fetch('/api/critichut/user-signature');
       const data = await response.json();
 
-      // Initialize InputHive
-      window.InputHive.init('acme', {
+      // Initialize critichut
+      window.critichut.init('acme', {
         user: {
           id: data.user.id,
           email: data.user.email,
@@ -177,8 +177,8 @@ export async function GET(req: Request) {
 
   <!-- Regular feedback links - SDK auto-enhances them! -->
   <nav>
-    <a href="https://acme.inputhive.com/feedback">Submit Feedback</a>
-    <a href="https://acme.inputhive.com/roadmap">View Roadmap</a>
+    <a href="https://acme.critichut.com/feedback">Submit Feedback</a>
+    <a href="https://acme.critichut.com/roadmap">View Roadmap</a>
   </nav>
 </body>
 </html>
@@ -189,10 +189,10 @@ export async function GET(req: Request) {
 ### Step 3: SDK Stores Identity Locally
 
 ```typescript
-// InputHive SDK (cdn.inputhive.com/sdk.js)
+// critichut SDK (cdn.critichut.com/sdk.js)
 
-class InputHiveSDK {
-  init(orgSlug: string, config: { user: InputHiveUser }) {
+class critichutSDK {
+  init(orgSlug: string, config: { user: critichutUser }) {
     this.orgSlug = orgSlug;
     this.user = config.user;
 
@@ -203,24 +203,24 @@ class InputHiveSDK {
       timestamp: Date.now(),
     };
 
-    localStorage.setItem('inputhive:identity', JSON.stringify(identityData));
+    localStorage.setItem('critichut:identity', JSON.stringify(identityData));
 
-    console.log('[InputHive] User identified:', config.user.email);
+    console.log('[critichut] User identified:', config.user.email);
 
-    // Auto-enhance all InputHive links
+    // Auto-enhance all critichut links
     this.enhanceLinks();
   }
 
   private enhanceLinks() {
-    // Find all links to this org's InputHive subdomain
-    const links = document.querySelectorAll(`a[href*="${this.orgSlug}.inputhive.com"]`);
+    // Find all links to this org's critichut subdomain
+    const links = document.querySelectorAll(`a[href*="${this.orgSlug}.critichut.com"]`);
 
     links.forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
 
         // Get stored identity
-        const identityData = localStorage.getItem('inputhive:identity');
+        const identityData = localStorage.getItem('critichut:identity');
 
         if (identityData) {
           // Generate URL-safe token
@@ -244,10 +244,10 @@ class InputHiveSDK {
 }
 
 // Global instance
-window.InputHive = new InputHiveSDK();
+window.critichut = new critichutSDK();
 
 // Emit ready event
-window.dispatchEvent(new Event('inputhive:ready'));
+window.dispatchEvent(new Event('critichut:ready'));
 ```
 
 **What's Stored:**
@@ -271,10 +271,10 @@ window.dispatchEvent(new Event('inputhive:ready'));
 ### Step 4: User Clicks Feedback Link
 
 ```
-User clicks: <a href="https://acme.inputhive.com/feedback">Submit Feedback</a>
+User clicks: <a href="https://acme.critichut.com/feedback">Submit Feedback</a>
 
 SDK intercepts click and redirects to:
-https://acme.inputhive.com/feedback?auth=eyJvcmdTbHVnIjoiYWNtZSIsInVzZXIiOnsiaWQiOiJjdXN0b21lcl91c2VyXzEyMzQ1IiwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwibmFtZSI6IkpvaG4gRG9lIiwic2lnbmF0dXJlIjoiYTFiMmMzZDRlNWY2In0sInRpbWVzdGFtcCI6MTcwNDA2NzIwMDAwMH0
+https://acme.critichut.com/feedback?auth=eyJvcmdTbHVnIjoiYWNtZSIsInVzZXIiOnsiaWQiOiJjdXN0b21lcl91c2VyXzEyMzQ1IiwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwibmFtZSI6IkpvaG4gRG9lIiwic2lnbmF0dXJlIjoiYTFiMmMzZDRlNWY2In0sInRpbWVzdGFtcCI6MTcwNDA2NzIwMDAwMH0
 
 Token contains:
 - Organization slug
@@ -285,7 +285,7 @@ Token contains:
 
 ---
 
-### Step 5: InputHive Page Loads with Token
+### Step 5: critichut Page Loads with Token
 
 ```typescript
 // apps/nextjs/src/app/_sites/[org]/layout.tsx
@@ -321,7 +321,7 @@ export default function OrgLayout({ children }) {
       const maxAge = 5 * 60 * 1000; // 5 minutes
 
       if (Math.abs(now - identityData.timestamp) > maxAge) {
-        console.error('[InputHive] Auth token expired');
+        console.error('[critichut] Auth token expired');
         cleanupUrl();
         return;
       }
@@ -343,7 +343,7 @@ export default function OrgLayout({ children }) {
       });
 
       if (response.ok) {
-        console.log('[InputHive] Authentication successful');
+        console.log('[critichut] Authentication successful');
 
         // Clean URL (remove auth token)
         cleanupUrl();
@@ -351,11 +351,11 @@ export default function OrgLayout({ children }) {
         // Reload to show authenticated state
         window.location.reload();
       } else {
-        console.error('[InputHive] Authentication failed');
+        console.error('[critichut] Authentication failed');
         cleanupUrl();
       }
     } catch (error) {
-      console.error('[InputHive] Auth error:', error);
+      console.error('[critichut] Auth error:', error);
       cleanupUrl();
     }
   }
@@ -505,9 +505,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Cookie on .inputhive.com domain (first-party!)
-    response.cookies.set('inputhive_session', sessionToken, {
-      domain: '.inputhive.com',
+    // Cookie on .critichut.com domain (first-party!)
+    response.cookies.set('critichut_session', sessionToken, {
+      domain: '.critichut.com',
       path: '/',
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -517,7 +517,7 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('[InputHive] Auth error:', error);
+    console.error('[critichut] Auth error:', error);
     return NextResponse.json(
       { error: 'Authentication failed' },
       { status: 500 }
@@ -552,12 +552,12 @@ function decryptSecretKey(encrypted: string): string {
 
 ```
 1. Backend sets cookie:
-   inputhive_session=xyz123; Domain=.inputhive.com; Path=/; HttpOnly; Secure; SameSite=Lax
+   critichut_session=xyz123; Domain=.critichut.com; Path=/; HttpOnly; Secure; SameSite=Lax
 
 2. Frontend cleans URL:
-   https://acme.inputhive.com/feedback?auth=TOKEN
+   https://acme.critichut.com/feedback?auth=TOKEN
    →
-   https://acme.inputhive.com/feedback
+   https://acme.critichut.com/feedback
 
 3. Page reloads (now authenticated)
 
@@ -569,10 +569,10 @@ function decryptSecretKey(encrypted: string): string {
 ### Step 8: Subsequent Visits
 
 ```
-User directly visits: https://acme.inputhive.com/feedback
+User directly visits: https://acme.critichut.com/feedback
 
 Browser automatically sends:
-Cookie: inputhive_session=xyz123
+Cookie: critichut_session=xyz123
 
 Backend validates session:
 ✅ Session exists
@@ -609,7 +609,7 @@ const token = btoa(JSON.stringify(identityData))
   .replace(/=+$/, '');
 
 // Final URL
-const url = `https://acme.inputhive.com/feedback?auth=${token}`;
+const url = `https://acme.critichut.com/feedback?auth=${token}`;
 ```
 
 ### Token Validation
@@ -642,8 +642,8 @@ if (!isValid) {
 ### Cookie Configuration
 
 ```typescript
-response.cookies.set('inputhive_session', sessionToken, {
-  domain: '.inputhive.com',    // ✅ Works across all subdomains
+response.cookies.set('critichut_session', sessionToken, {
+  domain: '.critichut.com',    // ✅ Works across all subdomains
   path: '/',                   // ✅ Available site-wide
   httpOnly: true,              // ✅ Prevents XSS attacks
   secure: true,                // ✅ HTTPS only in production
@@ -656,7 +656,7 @@ response.cookies.set('inputhive_session', sessionToken, {
 
 | Attribute | Purpose | Safari ITP |
 |-----------|---------|------------|
-| **domain: `.inputhive.com`** | Share across all `*.inputhive.com` | ✅ Allowed (first-party) |
+| **domain: `.critichut.com`** | Share across all `*.critichut.com` | ✅ Allowed (first-party) |
 | **sameSite: 'lax'** | Allow cross-site navigation | ✅ Allowed (user click) |
 | **secure: true** | HTTPS only | ✅ Required |
 | **httpOnly: true** | Prevent JavaScript access | ✅ Security best practice |
@@ -664,12 +664,12 @@ response.cookies.set('inputhive_session', sessionToken, {
 ### Cross-Subdomain Behavior
 
 ```
-Cookie set on: acme.inputhive.com
+Cookie set on: acme.critichut.com
 Works on:
-  ✅ acme.inputhive.com
-  ✅ acme.inputhive.com/feedback
-  ✅ acme.inputhive.com/roadmap
-  ✅ app.inputhive.com (if authenticated session)
+  ✅ acme.critichut.com
+  ✅ acme.critichut.com/feedback
+  ✅ acme.critichut.com/roadmap
+  ✅ app.critichut.com (if authenticated session)
   ❌ customer-app.com (different domain)
 ```
 
@@ -686,7 +686,7 @@ const signature = crypto
   .update(userId)
   .digest('hex');
 
-// InputHive verifies signature
+// critichut verifies signature
 const expectedSignature = crypto
   .createHmac('sha256', SECRET_KEY)
   .update(userId)
@@ -778,7 +778,7 @@ if (!org) {
 try {
   const response = await fetch('/api/auth/external-login/sign-in', ...);
 } catch (error) {
-  console.error('[InputHive] Network error:', error);
+  console.error('[critichut] Network error:', error);
   showError('Connection failed. Please try again.');
 }
 ```
@@ -879,8 +879,8 @@ async function getSession(token: string) {
 1. ✅ **Customer embeds SDK** - Loads from CDN
 2. ✅ **SDK identifies user** - Stores in localStorage with HMAC signature
 3. ✅ **User clicks link** - SDK appends `?auth=token` to URL
-4. ✅ **InputHive verifies** - HMAC signature + timestamp validation
-5. ✅ **Session created** - First-party cookie on `.inputhive.com`
+4. ✅ **critichut verifies** - HMAC signature + timestamp validation
+5. ✅ **Session created** - First-party cookie on `.critichut.com`
 6. ✅ **URL cleaned** - Token removed from URL
 7. ✅ **User authenticated** - Subsequent visits use cookie
 

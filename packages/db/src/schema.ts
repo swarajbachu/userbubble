@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/performance/noBarrelFile: <explanation> */
 import { sql } from "drizzle-orm";
 import { pgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
@@ -22,4 +23,11 @@ export const CreatePostSchema = createInsertSchema(Post, {
   updatedAt: true,
 });
 
-export * from "./auth-schema";
+export * from "./org/organization.queries";
+// Organization schemas (Better Auth organization plugin tables)
+export * from "./org/organization.sql";
+export * from "./user/identified-user.queries";
+export * from "./user/identified-user.sql";
+export * from "./user/user.queries";
+// User schemas (Better Auth core tables + critichut extensions)
+export * from "./user/user.sql";

@@ -1,4 +1,4 @@
-# InputHive Authentication Architecture Plan
+# critichut Authentication Architecture Plan
 
 > **Complete implementation guide for multi-tenant user feedback platform with external authentication**
 
@@ -27,9 +27,9 @@
 
 ### System Design
 
-InputHive is a multi-tenant SaaS platform where:
+critichut is a multi-tenant SaaS platform where:
 
-- **Organizations** have isolated feedback boards at `{org-slug}.inputhive.com`
+- **Organizations** have isolated feedback boards at `{org-slug}.critichut.com`
 - **Identified users** from customer applications auto-authenticate via HMAC-signed tokens
 - **Real users** can claim their identified activity by signing up with the same email
 - **Admins** manage organizations and cannot use external authentication (security)
@@ -39,7 +39,7 @@ InputHive is a multi-tenant SaaS platform where:
 - **Better Auth v1.4.0-beta.9** - Authentication with custom plugins
 - **Organization Plugin** - Multi-tenancy primitives
 - **Custom External Login Plugin** - HMAC-based auto-authentication
-- **InputHive JavaScript SDK** - Safari-compatible auto-login (URL token-based)
+- **critichut JavaScript SDK** - Safari-compatible auto-login (URL token-based)
 - **Drizzle ORM** - Type-safe database queries
 - **PostgreSQL** - Primary database
 - **Next.js 16** - Web application (subdomain routing)
@@ -48,12 +48,12 @@ InputHive is a multi-tenant SaaS platform where:
 
 ### Authentication Strategy
 
-InputHive uses a **UserJot-style SDK approach** for seamless auto-login:
+critichut uses a **UserJot-style SDK approach** for seamless auto-login:
 
 1. **Customer embeds JavaScript SDK** on their site
 2. **SDK identifies user** with HMAC signature from customer's backend
 3. **User clicks feedback link** → SDK appends auth token to URL
-4. **InputHive validates token** → Creates session with first-party cookie
+4. **critichut validates token** → Creates session with first-party cookie
 5. **URL cleaned** → Token removed, user authenticated
 
 **Key advantage:** Safari-compatible (no third-party cookies needed)
@@ -67,10 +67,10 @@ InputHive uses a **UserJot-style SDK approach** for seamless auto-login:
 
 ## User Types
 
-### 1. Organization Admins/Owners (Real InputHive Accounts)
+### 1. Organization Admins/Owners (Real critichut Accounts)
 
 **Who they are:**
-- Create and manage InputHive organizations
+- Create and manage critichut organizations
 - B2B customers who pay for the service
 - Configure feedback boards, branding, integrations
 
@@ -111,8 +111,8 @@ member {
 
 **Who they are:**
 - End users of customer applications
-- Submit feedback across multiple InputHive organizations
-- Don't have InputHive passwords (just "identified" by external ID + email)
+- Submit feedback across multiple critichut organizations
+- Don't have critichut passwords (just "identified" by external ID + email)
 - Can later "claim" their activity by creating a real account
 
 **Authentication:**
@@ -151,11 +151,11 @@ identifiedUser {
 }
 ```
 
-**Key Point:** One InputHive user can be identified by multiple organizations with different external IDs.
+**Key Point:** One critichut user can be identified by multiple organizations with different external IDs.
 
 **Example:**
 ```
-InputHive User: john@example.com (user_def456)
+critichut User: john@example.com (user_def456)
 ├── Identified by Org A as "customer_a_user_999"
 ├── Identified by Org B as "customer_b_user_777"
 └── Identified by Org C as "customer_c_user_555"
@@ -231,7 +231,7 @@ feedback {
 │       .digest('base64');                                       │
 │                                                                 │
 │  3. Build signed URL:                                          │
-│     https://org1.inputhive.com/auth/external?                  │
+│     https://org1.critichut.com/auth/external?                  │
 │       external_id=customer_user_12345&                         │
 │       email=john@example.com&                                  │
 │       name=John Doe&                                           │
@@ -243,7 +243,7 @@ feedback {
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                 InputHive (org1.inputhive.com)                  │
+│                 critichut (org1.critichut.com)                  │
 │                                                                 │
 │  1. Extract query parameters                                   │
 │  2. Validate timestamp (within 5 minutes)                      │
@@ -274,7 +274,7 @@ feedback {
 2. **Timestamp Validation** - 5-minute window prevents replay attacks
 3. **Per-Organization Secrets** - Each org has unique secret key
 4. **Encrypted Storage** - Secret keys encrypted in database
-5. **No Password Required** - Users don't need InputHive credentials
+5. **No Password Required** - Users don't need critichut credentials
 
 ---
 
@@ -283,7 +283,7 @@ feedback {
 **Standard Better Auth flow for organization owners**
 
 ```
-User → https://app.inputhive.com/login
+User → https://app.critichut.com/login
      → Email/password or OAuth (Google, GitHub, Discord)
      → Better Auth validates credentials
      → Creates session
@@ -296,18 +296,18 @@ User → https://app.inputhive.com/login
 
 ### Flow 3: Account Claiming (Identified → Real Account)
 
-**Identified user creates a real InputHive account**
+**Identified user creates a real critichut account**
 
 ```
 Timeline:
 
 Day 1: User identified via external auth
 ├── john@example.com auto-authenticated from customer-app.com
-├── Submits 5 feedback items to org1.inputhive.com
+├── Submits 5 feedback items to org1.critichut.com
 └── User record created (no password)
 
-Day 30: User wants to create real InputHive account
-├── Visits app.inputhive.com/signup
+Day 30: User wants to create real critichut account
+├── Visits app.critichut.com/signup
 ├── Signs up with john@example.com + password
 └── System detects existing user with same email
 
@@ -402,7 +402,7 @@ async function handleSignup(email: string, password: string) {
 ### Why This Matters
 
 **User Journey:**
-1. User discovers InputHive through customer's feedback link
+1. User discovers critichut through customer's feedback link
 2. Seamlessly submits feedback (no friction, no signup)
 3. Engages with multiple organizations over time
 4. Decides they want direct access (not just via customer links)
@@ -464,7 +464,7 @@ async function createIdentifiedUser(data: ExternalUserData) {
 ```
 User: john@example.com
 ├── Can only access via customer's signed links
-├── No direct login to InputHive
+├── No direct login to critichut
 ├── No ability to create organizations
 └── Feedback scattered across different org boards
 ```
@@ -472,7 +472,7 @@ User: john@example.com
 **After Claiming:**
 ```
 User: john@example.com (now has password)
-├── Can login directly at app.inputhive.com
+├── Can login directly at app.critichut.com
 ├── Can create their own organizations
 ├── Can view all feedback they've submitted (across orgs)
 ├── Can still be identified by external systems
@@ -677,15 +677,15 @@ export function initAuth(options: {
     advanced: {
       crossSubDomainCookies: {
         enabled: true,
-        domain: ".inputhive.com", // Replace with your domain
+        domain: ".critichut.com", // Replace with your domain
       },
       useSecureCookies: process.env.NODE_ENV === "production",
     },
 
     // CORS configuration
     trustedOrigins: [
-      "https://inputhive.com",
-      "https://*.inputhive.com",
+      "https://critichut.com",
+      "https://*.critichut.com",
       "expo://",
       // Dynamic validation for customer domains
       async (request) => {
@@ -1005,9 +1005,9 @@ export const externalLogin = (
 
 If identified users' sessions propagate across all subdomains without restrictions, a malicious organization could:
 
-1. Create a legitimate organization on InputHive
+1. Create a legitimate organization on critichut
 2. Use HMAC to "identify" a victim user with email `victim@email.com`
-3. Victim's session cookie propagates to `app.inputhive.com`
+3. Victim's session cookie propagates to `app.critichut.com`
 4. Victim appears "logged in" and could potentially access admin features
 5. **MASSIVE SECURITY VULNERABILITY!**
 
@@ -1049,7 +1049,7 @@ Implement a two-tier session system where sessions are marked as either **identi
 - ✅ Generate API keys and secret keys
 - ✅ View analytics
 
-**Use Case:** Organization owners, admins, and team members who manage InputHive organizations.
+**Use Case:** Organization owners, admins, and team members who manage critichut organizations.
 
 ---
 
@@ -1481,17 +1481,17 @@ async function handleSignup(email: string, password: string) {
 #### For Identified Users:
 
 ```
-Scenario: User identified on org1.inputhive.com via HMAC
+Scenario: User identified on org1.critichut.com via HMAC
 └─ Session created: { sessionType: "identified", authMethod: "external" }
    └─ Cookie propagates to all subdomains ✅
 
-User visits org2.inputhive.com/feedback
+User visits org2.critichut.com/feedback
 ├─ Session cookie sent automatically
 ├─ Better Auth validates session
 ├─ Session type: "identified" ✅
 └─ Can submit feedback ✅
 
-User visits app.inputhive.com/dashboard
+User visits app.critichut.com/dashboard
 ├─ Session cookie sent automatically
 ├─ Better Auth validates session
 ├─ Session type: "identified" ❌
@@ -1502,17 +1502,17 @@ User visits app.inputhive.com/dashboard
 #### For Authenticated Users:
 
 ```
-Scenario: User logs in with password on app.inputhive.com
+Scenario: User logs in with password on app.critichut.com
 └─ Session created: { sessionType: "authenticated", authMethod: "credential" }
    └─ Cookie propagates to all subdomains ✅
 
-User visits org1.inputhive.com/feedback
+User visits org1.critichut.com/feedback
 ├─ Session cookie sent automatically
 ├─ Better Auth validates session
 ├─ Session type: "authenticated" ✅
 └─ Can submit feedback ✅
 
-User visits app.inputhive.com/dashboard
+User visits app.critichut.com/dashboard
 ├─ Session cookie sent automatically
 ├─ Better Auth validates session
 ├─ Session type: "authenticated" ✅
@@ -1547,7 +1547,7 @@ export default function UpgradeAccountPage({
 
         {reason === "admin_required" && (
           <p className="mb-6 text-gray-600">
-            This feature requires a full InputHive account. You're currently
+            This feature requires a full critichut account. You're currently
             logged in via external authentication, which only allows feedback
             submission.
           </p>
@@ -1744,19 +1744,19 @@ export function decryptSecretKey(encrypted: string): string {
 ```html
 <!-- Customer's website -->
 <script>
-  window.InputHiveConfig = {
+  window.critichutConfig = {
     organizationSlug: "acme",
-    authEndpoint: "/api/inputhive/auth", // Customer's backend
+    authEndpoint: "/api/critichut/auth", // Customer's backend
     user: null, // Will be fetched from customer's session
   };
 </script>
-<script src="https://cdn.inputhive.com/widget.js" async></script>
+<script src="https://cdn.critichut.com/widget.js" async></script>
 ```
 
 **Customer's backend generates signed URL:**
 
 ```typescript
-// Customer's API route: /api/inputhive/auth
+// Customer's API route: /api/critichut/auth
 export async function POST(req: Request) {
   const session = await getSession(req); // Customer's session
 
@@ -1774,7 +1774,7 @@ export async function POST(req: Request) {
   });
 
   const signature = crypto
-    .createHmac("sha256", process.env.INPUTHIVE_SECRET_KEY!)
+    .createHmac("sha256", process.env.critichut_SECRET_KEY!)
     .update(data)
     .digest("base64");
 
@@ -1787,7 +1787,7 @@ export async function POST(req: Request) {
   });
 
   return Response.json({
-    signedUrl: `https://acme.inputhive.com/auth/external?${params}`,
+    signedUrl: `https://acme.critichut.com/auth/external?${params}`,
   });
 }
 ```
@@ -1799,10 +1799,10 @@ export async function POST(req: Request) {
 ```typescript
 // Customer's feedback button handler
 async function handleFeedbackClick() {
-  const response = await fetch("/api/inputhive/auth", { method: "POST" });
+  const response = await fetch("/api/critichut/auth", { method: "POST" });
   const { signedUrl } = await response.json();
 
-  // Redirect to InputHive
+  // Redirect to critichut
   window.location.href = signedUrl;
 }
 ```
@@ -1912,12 +1912,12 @@ trpc.feedback.vote({
 
 ```bash
 # Database
-POSTGRES_URL=postgresql://user:pass@host:5432/inputhive
+POSTGRES_URL=postgresql://user:pass@host:5432/critichut
 
 # Better Auth
 AUTH_SECRET=your-random-secret-key-here
-AUTH_URL=https://app.inputhive.com
-PRODUCTION_URL=https://inputhive.com
+AUTH_URL=https://app.critichut.com
+PRODUCTION_URL=https://critichut.com
 
 # Encryption (for secret keys)
 ENCRYPTION_KEY=64-character-hex-string # Generate with: crypto.randomBytes(32).toString('hex')
@@ -1938,9 +1938,9 @@ NEXT_PUBLIC_POSTHOG_HOST=
 ### Vercel Setup
 
 1. **Domain Configuration:**
-   - Add domain: `inputhive.com`
-   - Add wildcard: `*.inputhive.com`
-   - DNS: CNAME `*.inputhive.com` → `cname.vercel-dns.com`
+   - Add domain: `critichut.com`
+   - Add wildcard: `*.critichut.com`
+   - DNS: CNAME `*.critichut.com` → `cname.vercel-dns.com`
 
 2. **Build Settings:**
    ```json
@@ -2046,7 +2046,7 @@ describe("External Login", () => {
 A: No, only users with real accounts (password/OAuth) can create organizations.
 
 **Q: Can the same user be identified by multiple organizations?**
-A: Yes! One InputHive user can have multiple `identifiedUser` entries with different external IDs.
+A: Yes! One critichut user can have multiple `identifiedUser` entries with different external IDs.
 
 **Q: What happens if external ID changes?**
 A: A new `identifiedUser` link is created. The old link remains (user will appear as two different users to that org).

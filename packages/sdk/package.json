@@ -1,0 +1,42 @@
+{
+  "name": "@acme/sdk",
+  "version": "0.1.0",
+  "description": "critichut JavaScript SDK for seamless user identification and authentication",
+  "private": true,
+  "type": "module",
+  "main": "./dist/sdk.js",
+  "module": "./dist/sdk.esm.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/sdk.esm.js",
+      "require": "./dist/sdk.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "critichut",
+    "feedback",
+    "authentication",
+    "hmac",
+    "sdk"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "rollup": "^4.28.1",
+    "typescript": "catalog:"
+  }
+}

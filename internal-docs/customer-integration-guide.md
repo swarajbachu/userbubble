@@ -1,6 +1,6 @@
 # Customer Integration Guide
 
-> **How customers integrate InputHive auto-login into their applications**
+> **How customers integrate critichut auto-login into their applications**
 
 **Last Updated:** 2025-11-08
 **Difficulty:** Easy (15 minutes)
@@ -25,7 +25,7 @@
 
 ```
 1. Generate HMAC signature on your backend
-2. Embed InputHive SDK on your frontend
+2. Embed critichut SDK on your frontend
 3. Add feedback links to your app
 ```
 
@@ -37,7 +37,7 @@
 
 ### Step 1: Get Your Secret Key
 
-1. Log into InputHive dashboard: `https://app.inputhive.com`
+1. Log into critichut dashboard: `https://app.critichut.com`
 2. Go to your organization settings
 3. Navigate to **API & Security** tab
 4. Copy your **Secret Key** (keep this private!)
@@ -49,7 +49,7 @@ The signature **MUST** be generated on your backend (never in client-side JavaSc
 #### Node.js / Next.js
 
 ```typescript
-// app/api/inputhive/signature/route.ts
+// app/api/critichut/signature/route.ts
 
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
@@ -70,7 +70,7 @@ export async function GET(req: Request) {
 
   // Generate HMAC signature (sign the user ID)
   const signature = crypto
-    .createHmac('sha256', process.env.INPUTHIVE_SECRET_KEY!)
+    .createHmac('sha256', process.env.critichut_SECRET_KEY!)
     .update(user.id) // Sign user's unique ID
     .digest('hex');
 
@@ -89,13 +89,13 @@ export async function GET(req: Request) {
 #### Express.js
 
 ```javascript
-// routes/inputhive.js
+// routes/critichut.js
 
 const express = require('express');
 const crypto = require('crypto');
 const router = express.Router();
 
-router.get('/inputhive/signature', (req, res) => {
+router.get('/critichut/signature', (req, res) => {
   // Get current user from session
   if (!req.session?.user) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -105,7 +105,7 @@ router.get('/inputhive/signature', (req, res) => {
 
   // Generate HMAC signature
   const signature = crypto
-    .createHmac('sha256', process.env.INPUTHIVE_SECRET_KEY)
+    .createHmac('sha256', process.env.critichut_SECRET_KEY)
     .update(user.id)
     .digest('hex');
 
@@ -135,11 +135,11 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
 @login_required
-def inputhive_signature(request):
+def critichut_signature(request):
     user = request.user
 
     # Generate HMAC signature
-    secret_key = settings.INPUTHIVE_SECRET_KEY
+    secret_key = settings.critichut_SECRET_KEY
     message = str(user.id).encode('utf-8')
     signature = hmac.new(
         secret_key.encode('utf-8'),
@@ -161,16 +161,16 @@ def inputhive_signature(request):
 #### Ruby / Rails
 
 ```ruby
-# app/controllers/inputhive_controller.rb
+# app/controllers/critichut_controller.rb
 
-class InputhiveController < ApplicationController
+class critichutController < ApplicationController
   before_action :authenticate_user!
 
   def signature
     user = current_user
 
     # Generate HMAC signature
-    secret_key = ENV['INPUTHIVE_SECRET_KEY']
+    secret_key = ENV['critichut_SECRET_KEY']
     signature = OpenSSL::HMAC.hexdigest('SHA256', secret_key, user.id.to_s)
 
     render json: {
@@ -191,7 +191,7 @@ end
 ```php
 // routes/web.php
 
-Route::get('/api/inputhive/signature', function () {
+Route::get('/api/critichut/signature', function () {
     $user = Auth::user();
 
     if (!$user) {
@@ -199,7 +199,7 @@ Route::get('/api/inputhive/signature', function () {
     }
 
     // Generate HMAC signature
-    $secretKey = env('INPUTHIVE_SECRET_KEY');
+    $secretKey = env('critichut_SECRET_KEY');
     $signature = hash_hmac('sha256', $user->id, $secretKey);
 
     return response()->json([
@@ -218,7 +218,7 @@ Route::get('/api/inputhive/signature', function () {
 
 ## Frontend Integration
 
-### Step 3: Embed InputHive SDK
+### Step 3: Embed critichut SDK
 
 Add the SDK to your HTML (works with any framework):
 
@@ -231,18 +231,18 @@ Add the SDK to your HTML (works with any framework):
 <body>
   <!-- Your app content -->
 
-  <!-- InputHive SDK (load from CDN) -->
-  <script src="https://cdn.inputhive.com/sdk.js" async></script>
+  <!-- critichut SDK (load from CDN) -->
+  <script src="https://cdn.critichut.com/sdk.js" async></script>
 
-  <!-- Initialize InputHive -->
+  <!-- Initialize critichut -->
   <script>
-    window.addEventListener('inputhive:ready', async () => {
+    window.addEventListener('critichut:ready', async () => {
       // Fetch user signature from your backend
-      const response = await fetch('/api/inputhive/signature');
+      const response = await fetch('/api/critichut/signature');
       const data = await response.json();
 
-      // Initialize InputHive with your organization slug
-      window.InputHive.init('YOUR_ORG_SLUG', {
+      // Initialize critichut with your organization slug
+      window.critichut.init('YOUR_ORG_SLUG', {
         user: {
           id: data.user.id,
           email: data.user.email,
@@ -266,28 +266,28 @@ Just add regular HTML links - the SDK automatically enhances them!
 ```html
 <!-- Navigation -->
 <nav>
-  <a href="https://YOUR_ORG_SLUG.inputhive.com/feedback">
+  <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
     Submit Feedback
   </a>
-  <a href="https://YOUR_ORG_SLUG.inputhive.com/roadmap">
+  <a href="https://YOUR_ORG_SLUG.critichut.com/roadmap">
     View Roadmap
   </a>
 </nav>
 
 <!-- Button -->
-<button onclick="window.location.href='https://YOUR_ORG_SLUG.inputhive.com/feedback'">
+<button onclick="window.location.href='https://YOUR_ORG_SLUG.critichut.com/feedback'">
   Give Feedback
 </button>
 
 <!-- Footer -->
 <footer>
-  <a href="https://YOUR_ORG_SLUG.inputhive.com/feedback">
+  <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
     Feature Requests
   </a>
 </footer>
 ```
 
-**That's it!** Users will be automatically logged into InputHive when they click the link.
+**That's it!** Users will be automatically logged into critichut when they click the link.
 
 ---
 
@@ -304,17 +304,17 @@ function App() {
   useEffect(() => {
     // Load SDK
     const script = document.createElement('script');
-    script.src = 'https://cdn.inputhive.com/sdk.js';
+    script.src = 'https://cdn.critichut.com/sdk.js';
     script.async = true;
     document.body.appendChild(script);
 
     // Initialize when ready
     const handleReady = async () => {
       try {
-        const response = await fetch('/api/inputhive/signature');
+        const response = await fetch('/api/critichut/signature');
         const data = await response.json();
 
-        window.InputHive.init('YOUR_ORG_SLUG', {
+        window.critichut.init('YOUR_ORG_SLUG', {
           user: {
             id: data.user.id,
             email: data.user.email,
@@ -324,22 +324,22 @@ function App() {
           }
         });
       } catch (error) {
-        console.error('InputHive init failed:', error);
+        console.error('critichut init failed:', error);
       }
     };
 
-    window.addEventListener('inputhive:ready', handleReady);
+    window.addEventListener('critichut:ready', handleReady);
 
     // Cleanup
     return () => {
-      window.removeEventListener('inputhive:ready', handleReady);
+      window.removeEventListener('critichut:ready', handleReady);
     };
   }, []);
 
   return (
     <div>
       <header>
-        <a href="https://YOUR_ORG_SLUG.inputhive.com/feedback">
+        <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
           Submit Feedback
         </a>
       </header>
@@ -363,21 +363,21 @@ export default function RootLayout({ children }) {
       <body>
         {children}
 
-        {/* Load InputHive SDK */}
+        {/* Load critichut SDK */}
         <Script
-          src="https://cdn.inputhive.com/sdk.js"
+          src="https://cdn.critichut.com/sdk.js"
           strategy="afterInteractive"
         />
 
-        {/* Initialize InputHive */}
-        <Script id="inputhive-init" strategy="afterInteractive">
+        {/* Initialize critichut */}
+        <Script id="critichut-init" strategy="afterInteractive">
           {`
-            window.addEventListener('inputhive:ready', async () => {
+            window.addEventListener('critichut:ready', async () => {
               try {
-                const res = await fetch('/api/inputhive/signature');
+                const res = await fetch('/api/critichut/signature');
                 const data = await res.json();
 
-                window.InputHive.init('YOUR_ORG_SLUG', {
+                window.critichut.init('YOUR_ORG_SLUG', {
                   user: {
                     id: data.user.id,
                     email: data.user.email,
@@ -387,7 +387,7 @@ export default function RootLayout({ children }) {
                   }
                 });
               } catch (error) {
-                console.error('InputHive init failed:', error);
+                console.error('critichut init failed:', error);
               }
             });
           `}
@@ -404,7 +404,7 @@ export default function RootLayout({ children }) {
 export function FeedbackLink() {
   return (
     <a
-      href="https://YOUR_ORG_SLUG.inputhive.com/feedback"
+      href="https://YOUR_ORG_SLUG.critichut.com/feedback"
       className="btn btn-primary"
     >
       Submit Feedback
@@ -421,7 +421,7 @@ export function FeedbackLink() {
 <template>
   <div>
     <header>
-      <a href="https://YOUR_ORG_SLUG.inputhive.com/feedback">
+      <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
         Submit Feedback
       </a>
     </header>
@@ -434,17 +434,17 @@ import { onMounted } from 'vue';
 onMounted(() => {
   // Load SDK
   const script = document.createElement('script');
-  script.src = 'https://cdn.inputhive.com/sdk.js';
+  script.src = 'https://cdn.critichut.com/sdk.js';
   script.async = true;
   document.body.appendChild(script);
 
   // Initialize when ready
-  window.addEventListener('inputhive:ready', async () => {
+  window.addEventListener('critichut:ready', async () => {
     try {
-      const response = await fetch('/api/inputhive/signature');
+      const response = await fetch('/api/critichut/signature');
       const data = await response.json();
 
-      window.InputHive.init('YOUR_ORG_SLUG', {
+      window.critichut.init('YOUR_ORG_SLUG', {
         user: {
           id: data.user.id,
           email: data.user.email,
@@ -454,7 +454,7 @@ onMounted(() => {
         }
       });
     } catch (error) {
-      console.error('InputHive init failed:', error);
+      console.error('critichut init failed:', error);
     }
   });
 });
@@ -472,17 +472,17 @@ onMounted(() => {
   onMount(() => {
     // Load SDK
     const script = document.createElement('script');
-    script.src = 'https://cdn.inputhive.com/sdk.js';
+    script.src = 'https://cdn.critichut.com/sdk.js';
     script.async = true;
     document.body.appendChild(script);
 
     // Initialize when ready
-    window.addEventListener('inputhive:ready', async () => {
+    window.addEventListener('critichut:ready', async () => {
       try {
-        const response = await fetch('/api/inputhive/signature');
+        const response = await fetch('/api/critichut/signature');
         const data = await response.json();
 
-        window.InputHive.init('YOUR_ORG_SLUG', {
+        window.critichut.init('YOUR_ORG_SLUG', {
           user: {
             id: data.user.id,
             email: data.user.email,
@@ -492,14 +492,14 @@ onMounted(() => {
           }
         });
       } catch (error) {
-        console.error('InputHive init failed:', error);
+        console.error('critichut init failed:', error);
       }
     });
   });
 </script>
 
 <header>
-  <a href="https://YOUR_ORG_SLUG.inputhive.com/feedback">
+  <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
     Submit Feedback
   </a>
 </header>
@@ -523,15 +523,15 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // Load SDK
     const script = document.createElement('script');
-    script.src = 'https://cdn.inputhive.com/sdk.js';
+    script.src = 'https://cdn.critichut.com/sdk.js';
     script.async = true;
     document.body.appendChild(script);
 
     // Initialize when ready
-    window.addEventListener('inputhive:ready', async () => {
+    window.addEventListener('critichut:ready', async () => {
       try {
-        this.http.get('/api/inputhive/signature').subscribe((data: any) => {
-          window.InputHive.init('YOUR_ORG_SLUG', {
+        this.http.get('/api/critichut/signature').subscribe((data: any) => {
+          window.critichut.init('YOUR_ORG_SLUG', {
             user: {
               id: data.user.id,
               email: data.user.email,
@@ -542,7 +542,7 @@ export class AppComponent implements OnInit {
           });
         });
       } catch (error) {
-        console.error('InputHive init failed:', error);
+        console.error('critichut init failed:', error);
       }
     });
   }
@@ -553,7 +553,7 @@ export class AppComponent implements OnInit {
 <!-- app.component.html -->
 
 <header>
-  <a href="https://YOUR_ORG_SLUG.inputhive.com/feedback">
+  <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
     Submit Feedback
   </a>
 </header>
@@ -567,7 +567,7 @@ export class AppComponent implements OnInit {
 
 1. **Check signature generation:**
    ```bash
-   curl -H "Cookie: your_session_cookie" http://localhost:3000/api/inputhive/signature
+   curl -H "Cookie: your_session_cookie" http://localhost:3000/api/critichut/signature
    ```
 
    Should return:
@@ -586,14 +586,14 @@ export class AppComponent implements OnInit {
 2. **Check SDK initialization:**
    - Open your app in browser
    - Open DevTools Console
-   - Look for: `[InputHive] Initialized for org: YOUR_ORG_SLUG`
-   - Look for: `[InputHive] User identified: test@example.com`
+   - Look for: `[critichut] Initialized for org: YOUR_ORG_SLUG`
+   - Look for: `[critichut] User identified: test@example.com`
 
 3. **Test auto-login:**
    - Click a feedback link
-   - Should redirect to: `https://YOUR_ORG_SLUG.inputhive.com/feedback?auth=...`
-   - URL should clean to: `https://YOUR_ORG_SLUG.inputhive.com/feedback`
-   - You should see your name/avatar in InputHive
+   - Should redirect to: `https://YOUR_ORG_SLUG.critichut.com/feedback?auth=...`
+   - URL should clean to: `https://YOUR_ORG_SLUG.critichut.com/feedback`
+   - You should see your name/avatar in critichut
    - You should be able to submit feedback
 
 ### Browser Compatibility Test
@@ -615,7 +615,7 @@ Test in all major browsers:
 **Cause:** HMAC signature doesn't match
 
 **Solutions:**
-1. Check secret key is correct (from InputHive dashboard)
+1. Check secret key is correct (from critichut dashboard)
 2. Ensure you're signing the user ID (not email or other field)
 3. Verify signature is hex-encoded (not base64)
 
@@ -648,14 +648,14 @@ const signature = crypto
 ```html
 <!-- ❌ Wrong order -->
 <script>
-  window.addEventListener('inputhive:ready', ...); // Listener added
+  window.addEventListener('critichut:ready', ...); // Listener added
 </script>
-<script src="https://cdn.inputhive.com/sdk.js"></script> <!-- SDK loads
+<script src="https://cdn.critichut.com/sdk.js"></script> <!-- SDK loads
 
 <!-- ✅ Correct order -->
-<script src="https://cdn.inputhive.com/sdk.js"></script> <!-- SDK loads first
+<script src="https://cdn.critichut.com/sdk.js"></script> <!-- SDK loads first
 <script>
-  window.addEventListener('inputhive:ready', ...); // Then listener
+  window.addEventListener('critichut:ready', ...); // Then listener
 </script>
 ```
 
@@ -668,12 +668,12 @@ const signature = crypto
 ```typescript
 // Add new links dynamically
 const link = document.createElement('a');
-link.href = 'https://acme.inputhive.com/feedback';
+link.href = 'https://acme.critichut.com/feedback';
 link.textContent = 'Feedback';
 document.body.appendChild(link);
 
 // Refresh link enhancement
-window.InputHive.refreshLinks();
+window.critichut.refreshLinks();
 ```
 
 ### Issue: Auto-login doesn't work in Safari
@@ -700,8 +700,8 @@ window.location.reload(); // Reload to show authenticated state
 
 **Cause:** Wrong organization slug
 
-**Solution:** Check your org slug in InputHive dashboard:
-1. Go to `https://app.inputhive.com`
+**Solution:** Check your org slug in critichut dashboard:
+1. Go to `https://app.critichut.com`
 2. Settings → Organization
 3. Copy exact slug (e.g., `acme`, not `Acme` or `ACME`)
 
@@ -712,7 +712,7 @@ window.location.reload(); // Reload to show authenticated state
 ### Custom Auth Endpoint (for testing)
 
 ```typescript
-window.InputHive.init('YOUR_ORG_SLUG', {
+window.critichut.init('YOUR_ORG_SLUG', {
   user: userData,
   authEndpoint: 'http://localhost:3000/api/auth/external-login',
 });
@@ -721,7 +721,7 @@ window.InputHive.init('YOUR_ORG_SLUG', {
 ### Debug Mode
 
 ```typescript
-window.InputHive.init('YOUR_ORG_SLUG', {
+window.critichut.init('YOUR_ORG_SLUG', {
   user: userData,
   debug: true, // Enable verbose logging
 });
@@ -731,7 +731,7 @@ window.InputHive.init('YOUR_ORG_SLUG', {
 
 ```typescript
 // Don't auto-enhance links
-window.InputHive.init('YOUR_ORG_SLUG', {
+window.critichut.init('YOUR_ORG_SLUG', {
   user: userData,
   autoEnhance: false,
 });
@@ -740,7 +740,7 @@ window.InputHive.init('YOUR_ORG_SLUG', {
 const link = document.querySelector('#feedback-link');
 link.addEventListener('click', (e) => {
   e.preventDefault();
-  const url = window.InputHive.generateAuthUrl(link.href);
+  const url = window.critichut.generateAuthUrl(link.href);
   window.location.href = url;
 });
 ```
@@ -768,7 +768,7 @@ link.addEventListener('click', (e) => {
 
 ```bash
 # .env (never commit this file!)
-INPUTHIVE_SECRET_KEY=your_secret_key_here
+critichut_SECRET_KEY=your_secret_key_here
 ```
 
 ```javascript
@@ -776,7 +776,7 @@ INPUTHIVE_SECRET_KEY=your_secret_key_here
 module.exports = {
   env: {
     // ❌ DON'T expose secret key to client
-    // INPUTHIVE_SECRET_KEY: process.env.INPUTHIVE_SECRET_KEY,
+    // critichut_SECRET_KEY: process.env.critichut_SECRET_KEY,
   },
 };
 ```
@@ -785,7 +785,7 @@ module.exports = {
 // ✅ DO: Use secret key only in API routes (server-side)
 export async function GET(req: Request) {
   const signature = crypto
-    .createHmac('sha256', process.env.INPUTHIVE_SECRET_KEY!)
+    .createHmac('sha256', process.env.critichut_SECRET_KEY!)
     .update(userId)
     .digest('hex');
 
@@ -799,10 +799,10 @@ export async function GET(req: Request) {
 
 ### Support Channels
 
-- **Documentation:** https://docs.inputhive.com
-- **Email:** support@inputhive.com
-- **Discord:** https://discord.gg/inputhive
-- **GitHub Issues:** https://github.com/inputhive/inputhive
+- **Documentation:** https://docs.critichut.com
+- **Email:** support@critichut.com
+- **Discord:** https://discord.gg/critichut
+- **GitHub Issues:** https://github.com/critichut/critichut
 
 ### Frequently Asked Questions
 
@@ -816,10 +816,10 @@ A: Yes! Use a WebView and the SDK works the same way.
 A: Yes! The SDK only runs in the browser, so it works with Next.js, Remix, etc.
 
 **Q: Can I customize the feedback widget appearance?**
-A: Yes! Go to your organization settings in InputHive dashboard.
+A: Yes! Go to your organization settings in critichut dashboard.
 
 **Q: Is there a cost per user?**
-A: No! InputHive pricing is based on organizations, not identified users.
+A: No! critichut pricing is based on organizations, not identified users.
 
 ---
 
@@ -829,28 +829,28 @@ A: No! InputHive pricing is based on organizations, not identified users.
 
 ```typescript
 // Initialize
-window.InputHive.init(orgSlug: string, config?: InputHiveConfig)
+window.critichut.init(orgSlug: string, config?: critichutConfig)
 
 // Identify user
-window.InputHive.identify(user: InputHiveUser)
+window.critichut.identify(user: critichutUser)
 
 // Logout
-window.InputHive.logout()
+window.critichut.logout()
 
 // Get current user
-window.InputHive.getUser(): InputHiveUser | null
+window.critichut.getUser(): critichutUser | null
 
 // Check if identified
-window.InputHive.isIdentified(): boolean
+window.critichut.isIdentified(): boolean
 
 // Refresh links (for SPAs)
-window.InputHive.refreshLinks()
+window.critichut.refreshLinks()
 ```
 
 ### User Object
 
 ```typescript
-interface InputHiveUser {
+interface critichutUser {
   id: string;        // Required: User's unique ID
   email: string;     // Required: User's email
   name?: string;     // Optional: Display name
@@ -861,4 +861,4 @@ interface InputHiveUser {
 
 ---
 
-**Need help? Contact support@inputhive.com**
+**Need help? Contact support@critichut.com**
