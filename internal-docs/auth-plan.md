@@ -39,11 +39,29 @@ InputHive is a multi-tenant SaaS platform where:
 - **Better Auth v1.4.0-beta.9** - Authentication with custom plugins
 - **Organization Plugin** - Multi-tenancy primitives
 - **Custom External Login Plugin** - HMAC-based auto-authentication
+- **InputHive JavaScript SDK** - Safari-compatible auto-login (URL token-based)
 - **Drizzle ORM** - Type-safe database queries
 - **PostgreSQL** - Primary database
 - **Next.js 16** - Web application (subdomain routing)
 - **Expo** - Mobile application
 - **tRPC** - Type-safe API layer
+
+### Authentication Strategy
+
+InputHive uses a **UserJot-style SDK approach** for seamless auto-login:
+
+1. **Customer embeds JavaScript SDK** on their site
+2. **SDK identifies user** with HMAC signature from customer's backend
+3. **User clicks feedback link** → SDK appends auth token to URL
+4. **InputHive validates token** → Creates session with first-party cookie
+5. **URL cleaned** → Token removed, user authenticated
+
+**Key advantage:** Safari-compatible (no third-party cookies needed)
+
+**See detailed docs:**
+- [authentication-flow.md](authentication-flow.md) - Complete flow documentation
+- [sdk-implementation.md](sdk-implementation.md) - SDK technical specs
+- [customer-integration-guide.md](customer-integration-guide.md) - Customer setup guide
 
 ---
 
@@ -98,10 +116,11 @@ member {
 - Can later "claim" their activity by creating a real account
 
 **Authentication:**
-- HMAC-signed tokens from customer's backend
-- Auto-created on first visit
-- Session managed by Better Auth
+- HMAC-signed tokens from customer's backend via JavaScript SDK
+- Auto-created on first visit via URL token authentication
+- Session managed by Better Auth with first-party cookies
 - Identity verified by customer's signature
+- Safari-compatible (no third-party cookies)
 
 **Capabilities:**
 - Submit feedback
