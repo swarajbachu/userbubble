@@ -1,4 +1,15 @@
-import { pgTable } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable } from "drizzle-orm/pg-core";
+
+// PostgreSQL Enums for type safety
+export const sessionTypeEnum = pgEnum("session_type", [
+  "identified",
+  "authenticated",
+]);
+export const authMethodEnum = pgEnum("auth_method", [
+  "external",
+  "credential",
+  "oauth",
+]);
 
 /**
  * User table (Better Auth core)
@@ -7,10 +18,14 @@ export const user = pgTable("user", (t) => ({
   id: t.text().primaryKey(),
   name: t.text().notNull(),
   email: t.text().notNull().unique(),
-  emailVerified: t.boolean().notNull(),
+  emailVerified: t.boolean().notNull().default(false),
   image: t.text(),
-  createdAt: t.timestamp().notNull(),
-  updatedAt: t.timestamp().notNull(),
+  createdAt: t.timestamp().notNull().defaultNow(),
+  updatedAt: t
+    .timestamp()
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 }));
 
 /**
@@ -20,8 +35,12 @@ export const session = pgTable("session", (t) => ({
   id: t.text().primaryKey(),
   expiresAt: t.timestamp().notNull(),
   token: t.text().notNull().unique(),
-  createdAt: t.timestamp().notNull(),
-  updatedAt: t.timestamp().notNull(),
+  createdAt: t.timestamp().notNull().defaultNow(),
+  updatedAt: t
+    .timestamp()
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
   ipAddress: t.text(),
   userAgent: t.text(),
   userId: t
@@ -31,10 +50,10 @@ export const session = pgTable("session", (t) => ({
 
   // critichut custom fields for two-tier session system
   // Session type: "identified" (limited) or "authenticated" (full access)
-  sessionType: t.text("session_type").notNull().default("authenticated"),
+  sessionType: sessionTypeEnum("session_type").notNull().default("authenticated"),
 
   // Auth method: "external" (HMAC), "credential" (password), "oauth" (Google/GitHub/etc)
-  authMethod: t.text("auth_method").notNull().default("credential"),
+  authMethod: authMethodEnum("auth_method").notNull().default("credential"),
 
   // Active organization (for Better Auth organization plugin)
   activeOrganizationId: t.text("active_organization_id"),
@@ -58,8 +77,12 @@ export const account = pgTable("account", (t) => ({
   refreshTokenExpiresAt: t.timestamp(),
   scope: t.text(),
   password: t.text(),
-  createdAt: t.timestamp().notNull(),
-  updatedAt: t.timestamp().notNull(),
+  createdAt: t.timestamp().notNull().defaultNow(),
+  updatedAt: t
+    .timestamp()
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 }));
 
 /**
@@ -70,8 +93,11 @@ export const verification = pgTable("verification", (t) => ({
   identifier: t.text().notNull(),
   value: t.text().notNull(),
   expiresAt: t.timestamp().notNull(),
-  createdAt: t.timestamp(),
-  updatedAt: t.timestamp(),
+  createdAt: t.timestamp().defaultNow(),
+  updatedAt: t
+    .timestamp()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 }));
 
 // Export types

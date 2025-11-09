@@ -440,10 +440,6 @@ export const externalLogin = (
     schema: {
       identifiedUser: {
         fields: {
-          id: {
-            type: "string",
-            required: true,
-          },
           userId: {
             type: "string",
             required: true,
