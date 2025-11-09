@@ -1,4 +1,4 @@
-import { Button } from "@acme/ui/button";
+import { Button } from "@critichut/ui/button";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -15,7 +15,7 @@ export async function AuthShowcase() {
             "use server";
             const res = await auth.api.signInSocial({
               body: {
-                provider: "discord",
+                provider: "google",
                 callbackURL: "/",
               },
             });
@@ -26,7 +26,7 @@ export async function AuthShowcase() {
           }}
           size="lg"
         >
-          Sign in with Discord
+          Sign in with Google
         </Button>
       </form>
     );

@@ -801,7 +801,7 @@ export async function GET(req: Request) {
 
 - **Documentation:** https://docs.critichut.com
 - **Email:** support@critichut.com
-- **Discord:** https://discord.gg/critichut
+- **Google:** https://google.gg/critichut
 - **GitHub Issues:** https://github.com/critichut/critichut
 
 ### Frequently Asked Questions

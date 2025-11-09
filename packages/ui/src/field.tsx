@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@acme/ui";
-import { Label } from "@acme/ui/label";
-import { Separator } from "@acme/ui/separator";
+import { cn } from "@critichut/ui";
+import { Label } from "@critichut/ui/label";
+import { Separator } from "@critichut/ui/separator";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 import { useMemo } from "react";

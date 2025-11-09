@@ -1,18 +1,18 @@
 "use client";
 
-import type { RouterOutputs } from "@acme/api";
-import { CreatePostSchema } from "@acme/db/schema";
-import { cn } from "@acme/ui";
-import { Button } from "@acme/ui/button";
+import type { RouterOutputs } from "@critichut/api";
+import { CreatePostSchema } from "@critichut/db/schema";
+import { cn } from "@critichut/ui";
+import { Button } from "@critichut/ui/button";
 import {
   Field,
   FieldContent,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@acme/ui/field";
-import { Input } from "@acme/ui/input";
-import { toast } from "@acme/ui/toast";
+} from "@critichut/ui/field";
+import { Input } from "@critichut/ui/input";
+import { toast } from "@critichut/ui/toast";
 import { useForm } from "@tanstack/react-form";
 import {
   useMutation,

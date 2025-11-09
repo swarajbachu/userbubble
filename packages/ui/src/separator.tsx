@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@acme/ui";
+import { cn } from "@critichut/ui";
 import { Separator as SeparatorPrimitive } from "radix-ui";
 
 export function Separator({

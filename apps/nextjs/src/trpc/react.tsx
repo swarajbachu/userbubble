@@ -1,6 +1,6 @@
 "use client";
 
-import type { AppRouter } from "@acme/api";
+import type { AppRouter } from "@critichut/api";
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {

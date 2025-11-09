@@ -1,4 +1,4 @@
-import type { AppRouter } from "@acme/api";
+import type { AppRouter } from "@critichut/api";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
@@ -46,4 +46,4 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
   queryClient,
 });
 
-export type { RouterInputs, RouterOutputs } from "@acme/api";
+export type { RouterInputs, RouterOutputs } from "@critichut/api";

@@ -1,5 +1,5 @@
 {
-  "name": "@acme/tailwind-config",
+  "name": "@critichut/tailwind-config",
   "private": true,
   "type": "module",
   "exports": {
@@ -17,7 +17,7 @@
     "tailwindcss": "catalog:"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@critichut/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:"
   }

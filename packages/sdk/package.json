@@ -1,5 +1,5 @@
 {
-  "name": "@acme/sdk",
+  "name": "@critichut/sdk",
   "version": "0.1.0",
   "description": "critichut JavaScript SDK for seamless user identification and authentication",
   "private": true,
@@ -32,7 +32,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@critichut/tsconfig": "workspace:*",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.1",

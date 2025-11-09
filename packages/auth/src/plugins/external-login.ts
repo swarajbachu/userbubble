@@ -4,7 +4,7 @@ import type {
   Organization,
   Session,
   User,
-} from "@acme/db/schema";
+} from "@critichut/db/schema";
 import type { BetterAuthPlugin } from "better-auth";
 import { APIError, generateId } from "better-auth";
 import { createAuthEndpoint } from "better-auth/api";

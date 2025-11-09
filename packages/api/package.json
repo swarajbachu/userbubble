@@ -1,5 +1,5 @@
 {
-  "name": "@acme/api",
+  "name": "@critichut/api",
   "private": true,
   "type": "module",
   "exports": {
@@ -16,15 +16,15 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@acme/auth": "workspace:*",
-    "@acme/db": "workspace:*",
-    "@acme/validators": "workspace:*",
+    "@critichut/auth": "workspace:*",
+    "@critichut/db": "workspace:*",
+    "@critichut/validators": "workspace:*",
     "@trpc/server": "catalog:",
     "superjson": "2.2.3",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@critichut/tsconfig": "workspace:*",
     "typescript": "catalog:"
   }
 }

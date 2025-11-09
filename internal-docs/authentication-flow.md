@@ -380,8 +380,8 @@ export default function OrgLayout({ children }) {
 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { db } from '@acme/db/client';
-import { organization, user, identifiedUser, session } from '@acme/db/schema';
+import { db } from '@critichut/db/client';
+import { organization, user, identifiedUser, session } from '@critichut/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 

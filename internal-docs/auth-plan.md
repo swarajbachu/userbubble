@@ -76,7 +76,7 @@ critichut uses a **UserJot-style SDK approach** for seamless auto-login:
 
 **Authentication:**
 - Email/password via Better Auth
-- OAuth (Google, GitHub, Discord)
+- OAuth (Google, GitHub, Google)
 - Cannot use external authentication (security measure)
 
 **Capabilities:**
@@ -284,7 +284,7 @@ feedback {
 
 ```
 User → https://app.critichut.com/login
-     → Email/password or OAuth (Google, GitHub, Discord)
+     → Email/password or OAuth (Google, GitHub, Google)
      → Better Auth validates credentials
      → Creates session
      → Redirects to dashboard
@@ -648,14 +648,14 @@ import { multiSession } from "better-auth/plugins/multi-session";
 import { oAuthProxy } from "better-auth/plugins/oauth-proxy";
 import { expo } from "@better-auth/expo";
 import { externalLogin } from "./plugins/external-login";
-import { db } from "@acme/db/client";
+import { db } from "@critichut/db/client";
 
 export function initAuth(options: {
   baseUrl: string;
   productionUrl: string;
   secret: string | undefined;
-  discordClientId: string;
-  discordClientSecret: string;
+  googleClientId: string;
+  googleClientSecret: string;
   googleClientId?: string;
   googleClientSecret?: string;
   githubClientId?: string;
@@ -745,9 +745,9 @@ export function initAuth(options: {
     ],
 
     socialProviders: {
-      discord: {
-        clientId: options.discordClientId,
-        clientSecret: options.discordClientSecret,
+      google: {
+        clientId: options.googleClientId,
+        clientSecret: options.googleClientSecret,
       },
       google: options.googleClientId && options.googleClientSecret ? {
         clientId: options.googleClientId,
@@ -1038,7 +1038,7 @@ Implement a two-tier session system where sessions are marked as either **identi
 
 #### Tier 2: Authenticated Session (Full Access)
 
-**Created via:** Email/password or OAuth (Google, GitHub, Discord)
+**Created via:** Email/password or OAuth (Google, GitHub, Google)
 
 **Capabilities:**
 - ✅ All identified session capabilities
@@ -1093,7 +1093,7 @@ export const session = pgTable("session", {
 
 - `external` - HMAC-based authentication
 - `credential` - Email/password
-- `oauth` - Google, GitHub, Discord, etc.
+- `oauth` - Google, GitHub, Google, etc.
 
 ---
 
@@ -1149,7 +1149,7 @@ Protect admin routes from identified sessions:
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "@acme/auth";
+import { auth } from "@critichut/auth";
 
 export async function middleware(request: NextRequest) {
   const session = await auth.api.getSession({
@@ -1205,8 +1205,8 @@ Add session type helpers to tRPC context:
 ```typescript
 // packages/api/src/trpc.ts
 
-import { auth } from "@acme/auth";
-import { db } from "@acme/db/client";
+import { auth } from "@critichut/auth";
+import { db } from "@critichut/db/client";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth.api.getSession({ headers: opts.headers });
@@ -1927,8 +1927,8 @@ GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
-DISCORD_CLIENT_ID=
-DISCORD_CLIENT_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
 # Analytics (Optional)
 NEXT_PUBLIC_POSTHOG_KEY=

@@ -1,5 +1,5 @@
 {
-  "name": "@acme/nextjs",
+  "name": "@critichut/nextjs",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,11 +11,11 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@acme/api": "workspace:*",
-    "@acme/auth": "workspace:*",
-    "@acme/db": "workspace:*",
-    "@acme/ui": "workspace:*",
-    "@acme/validators": "workspace:*",
+    "@critichut/api": "workspace:*",
+    "@critichut/auth": "workspace:*",
+    "@critichut/db": "workspace:*",
+    "@critichut/ui": "workspace:*",
+    "@critichut/validators": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
@@ -30,8 +30,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@acme/tailwind-config": "workspace:*",
-    "@acme/tsconfig": "workspace:*",
+    "@critichut/tailwind-config": "workspace:*",
+    "@critichut/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",

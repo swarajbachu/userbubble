@@ -1,5 +1,5 @@
 {
-  "name": "@acme/db",
+  "name": "@critichut/db",
   "private": true,
   "type": "module",
   "exports": {
@@ -33,7 +33,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@critichut/tsconfig": "workspace:*",
     "drizzle-kit": "^0.31.5",
     "typescript": "catalog:"
   }

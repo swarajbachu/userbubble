@@ -1,5 +1,5 @@
 {
-  "name": "@acme/auth",
+  "name": "@critichut/auth",
   "private": true,
   "type": "module",
   "exports": {
@@ -15,14 +15,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@acme/db": "workspace:*",
+    "@critichut/db": "workspace:*",
     "@better-auth/expo": "catalog:",
     "@t3-oss/env-core": "^0.13.8",
     "better-auth": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@critichut/tsconfig": "workspace:*",
     "@better-auth/cli": "catalog:",
     "typescript": "catalog:"
   }

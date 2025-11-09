@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@acme/ui";
+import { cn } from "@critichut/ui";
 import {
   CheckIcon,
   ChevronRightIcon,

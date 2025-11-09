@@ -1,5 +1,5 @@
 {
-  "name": "@acme/validators",
+  "name": "@critichut/validators",
   "private": true,
   "type": "module",
   "exports": {
@@ -19,7 +19,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@acme/tsconfig": "workspace:*",
+    "@critichut/tsconfig": "workspace:*",
     "typescript": "catalog:"
   }
 }

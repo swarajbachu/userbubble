@@ -33,11 +33,11 @@ Seamless user identification and authentication for the critichut feedback platf
 ### Via NPM
 
 ```bash
-npm install @acme/sdk
+npm install @critichut/sdk
 ```
 
 ```javascript
-import critichut from '@acme/sdk';
+import critichut from '@critichut/sdk';
 
 critichut.init('your-org-slug', {
   user: {

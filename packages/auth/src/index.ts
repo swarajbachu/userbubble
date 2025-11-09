@@ -1,6 +1,6 @@
-import { db } from "@acme/db/client";
-import * as schema from "@acme/db/schema";
 import { expo } from "@better-auth/expo";
+import { db } from "@critichut/db/client";
+import * as schema from "@critichut/db/schema";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -15,8 +15,8 @@ export function initAuth<
   productionUrl: string;
   secret: string | undefined;
 
-  discordClientId: string;
-  discordClientSecret: string;
+  googleClientId: string;
+  googleClientSecret: string;
   extraPlugins?: TExtraPlugins;
 }) {
   const config = {
@@ -50,10 +50,10 @@ export function initAuth<
       ...(options.extraPlugins ?? []),
     ],
     socialProviders: {
-      discord: {
-        clientId: options.discordClientId,
-        clientSecret: options.discordClientSecret,
-        redirectURI: `${options.productionUrl}/api/auth/callback/discord`,
+      google: {
+        clientId: options.googleClientId,
+        clientSecret: options.googleClientSecret,
+        // redirectURI: `${options.productionUrl}/api/auth/callback/google`,
       },
     },
     trustedOrigins: ["expo://"],
