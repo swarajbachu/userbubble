@@ -1,12 +1,5 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-
 import type { RouterOutputs } from "@acme/api";
 import { CreatePostSchema } from "@acme/db/schema";
 import { cn } from "@acme/ui";
@@ -20,6 +13,12 @@ import {
 } from "@acme/ui/field";
 import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
+import { useForm } from "@tanstack/react-form";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 
 import { useTRPC } from "~/trpc/react";
 
@@ -37,10 +36,10 @@ export function CreatePostForm() {
         toast.error(
           err.data?.code === "UNAUTHORIZED"
             ? "You must be logged in to post"
-            : "Failed to create post",
+            : "Failed to create post"
         );
       },
-    }),
+    })
   );
 
   const form = useForm({
@@ -64,7 +63,6 @@ export function CreatePostForm() {
     >
       <FieldGroup>
         <form.Field
-          name="title"
           children={(field) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
@@ -74,21 +72,21 @@ export function CreatePostForm() {
                   <FieldLabel htmlFor={field.name}>Bug Title</FieldLabel>
                 </FieldContent>
                 <Input
+                  aria-invalid={isInvalid}
                   id={field.name}
                   name={field.name}
-                  value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  aria-invalid={isInvalid}
                   placeholder="Title"
+                  value={field.state.value}
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );
           }}
+          name="title"
         />
         <form.Field
-          name="content"
           children={(field) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
@@ -98,18 +96,19 @@ export function CreatePostForm() {
                   <FieldLabel htmlFor={field.name}>Content</FieldLabel>
                 </FieldContent>
                 <Input
+                  aria-invalid={isInvalid}
                   id={field.name}
                   name={field.name}
-                  value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  aria-invalid={isInvalid}
                   placeholder="Content"
+                  value={field.state.value}
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );
           }}
+          name="content"
         />
       </FieldGroup>
       <Button type="submit">Create</Button>
@@ -129,7 +128,7 @@ export function PostList() {
         <PostCardSkeleton pulse={false} />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10">
-          <p className="text-2xl font-bold text-white">No posts yet</p>
+          <p className="font-bold text-2xl text-white">No posts yet</p>
         </div>
       </div>
     );
@@ -137,9 +136,9 @@ export function PostList() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      {posts.map((p) => {
-        return <PostCard key={p.id} post={p} />;
-      })}
+      {posts.map((p) => (
+        <PostCard key={p.id} post={p} />
+      ))}
     </div>
   );
 }
@@ -158,23 +157,23 @@ export function PostCard(props: {
         toast.error(
           err.data?.code === "UNAUTHORIZED"
             ? "You must be logged in to delete a post"
-            : "Failed to delete post",
+            : "Failed to delete post"
         );
       },
-    }),
+    })
   );
 
   return (
-    <div className="bg-muted flex flex-row rounded-lg p-4">
+    <div className="flex flex-row rounded-lg bg-muted p-4">
       <div className="grow">
-        <h2 className="text-primary text-2xl font-bold">{props.post.title}</h2>
+        <h2 className="font-bold text-2xl text-primary">{props.post.title}</h2>
         <p className="mt-2 text-sm">{props.post.content}</p>
       </div>
       <div>
         <Button
-          variant="ghost"
-          className="text-primary cursor-pointer text-sm font-bold uppercase hover:bg-transparent hover:text-white"
+          className="cursor-pointer font-bold text-primary text-sm uppercase hover:bg-transparent hover:text-white"
           onClick={() => deletePost.mutate(props.post.id)}
+          variant="ghost"
         >
           Delete
         </Button>
@@ -186,12 +185,12 @@ export function PostCard(props: {
 export function PostCardSkeleton(props: { pulse?: boolean }) {
   const { pulse = true } = props;
   return (
-    <div className="bg-muted flex flex-row rounded-lg p-4">
+    <div className="flex flex-row rounded-lg bg-muted p-4">
       <div className="grow">
         <h2
           className={cn(
-            "bg-primary w-1/4 rounded-sm text-2xl font-bold",
-            pulse && "animate-pulse",
+            "w-1/4 rounded-sm bg-primary font-bold text-2xl",
+            pulse && "animate-pulse"
           )}
         >
           &nbsp;
@@ -199,7 +198,7 @@ export function PostCardSkeleton(props: { pulse?: boolean }) {
         <p
           className={cn(
             "mt-2 w-1/3 rounded-sm bg-current text-sm",
-            pulse && "animate-pulse",
+            pulse && "animate-pulse"
           )}
         >
           &nbsp;

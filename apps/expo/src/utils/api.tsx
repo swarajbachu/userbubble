@@ -1,9 +1,8 @@
+import type { AppRouter } from "@acme/api";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
-
-import type { AppRouter } from "@acme/api";
 
 import { authClient } from "./auth";
 import { getBaseUrl } from "./base-url";

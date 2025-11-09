@@ -1,13 +1,18 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": [
-    "ultracite/core",
-    "ultracite/next"
-  ],
+  "extends": ["ultracite/core", "ultracite/next"],
   "linter": {
     "rules": {
       "complexity": {
-        "noExcessiveCognitiveComplexity": "off"
+        "noExcessiveCognitiveComplexity": "off",
+        "noVoid": "off"
+      },
+      "suspicious": {
+        "useAwait": "off"
+      },
+      "performance": {
+        "noBarrelFile": "off",
+        "noNamespaceImport": "off"
       }
     }
   }

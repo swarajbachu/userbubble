@@ -50,7 +50,9 @@ export const session = pgTable("session", (t) => ({
 
   // critichut custom fields for two-tier session system
   // Session type: "identified" (limited) or "authenticated" (full access)
-  sessionType: sessionTypeEnum("session_type").notNull().default("authenticated"),
+  sessionType: sessionTypeEnum("session_type")
+    .notNull()
+    .default("authenticated"),
 
   // Auth method: "external" (HMAC), "credential" (password), "oauth" (Google/GitHub/etc)
   authMethod: authMethodEnum("auth_method").notNull().default("credential"),

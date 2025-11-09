@@ -49,6 +49,7 @@
   --spacing: 0.25rem;
 
   @variant dark {
+    /* biome-ignore lint/suspicious/noDuplicateCustomProperties: <fucking stupid biome issue, it just didnt detect stuff properly, its not duplicate> */
     --background: oklch(0.1836 0.0111 311.9111);
     --foreground: oklch(0.9788 0.0057 308.3962);
     --card: oklch(0.1836 0.0111 311.9111);

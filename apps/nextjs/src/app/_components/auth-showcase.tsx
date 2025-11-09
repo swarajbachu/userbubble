@@ -1,7 +1,6 @@
+import { Button } from "@acme/ui/button";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
-import { Button } from "@acme/ui/button";
 
 import { auth, getSession } from "~/auth/server";
 
@@ -12,7 +11,6 @@ export async function AuthShowcase() {
     return (
       <form>
         <Button
-          size="lg"
           formAction={async () => {
             "use server";
             const res = await auth.api.signInSocial({
@@ -26,6 +24,7 @@ export async function AuthShowcase() {
             }
             redirect(res.url);
           }}
+          size="lg"
         >
           Sign in with Discord
         </Button>
@@ -41,7 +40,6 @@ export async function AuthShowcase() {
 
       <form>
         <Button
-          size="lg"
           formAction={async () => {
             "use server";
             await auth.api.signOut({
@@ -49,6 +47,7 @@ export async function AuthShowcase() {
             });
             redirect("/");
           }}
+          size="lg"
         >
           Sign out
         </Button>

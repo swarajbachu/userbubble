@@ -192,6 +192,6 @@ export type {
 
 // Browser global
 if (typeof window !== "undefined") {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: <this is a global object, so we need to use any>
   (window as any).critichut = sdk;
 }

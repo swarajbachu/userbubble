@@ -58,7 +58,7 @@ export function removeEnhancements(
 ): void {
   const links = document.querySelectorAll<HTMLAnchorElement>(selector);
 
-  // biome-ignore lint/complexity/noForEach: <explanation>
+  // biome-ignore lint/complexity/noForEach: <its cleaner this way here>
   links.forEach((link) => {
     if (link.hasAttribute("data-critichut-enhanced")) {
       link.removeAttribute("data-critichut-enhanced");

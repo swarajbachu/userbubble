@@ -325,7 +325,7 @@ export const externalLogin = (
                 name:
                   body.name ??
                   `${
-                    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                    // biome-ignore lint/style/noNonNullAssertion: <this wont be null, coz email will always have @>
                     sanitizeUsername(body.email.split("@")[0]!)
                   }${Math.random().toString(36).substring(2, 15)}`,
                 image: body.avatar ?? null,

@@ -16,6 +16,8 @@
     "dev": "turbo watch dev --continue",
     "dev:next": "turbo watch dev -F @acme/nextjs...",
     "typecheck": "turbo run typecheck",
+    "format": "ultracite format .",
+    "lint": "ultracite lint .",
     "ui-add": "turbo run ui-add",
     "android": "expo run:android",
     "ios": "expo run:ios"

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ToasterProps } from "sonner";
-import { Toaster as Sonner, toast } from "sonner";
+import { Toaster as Sonner } from "sonner";
 
 import { useTheme } from "./theme";
 
@@ -10,7 +10,6 @@ export const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
-      theme={themeMode === "auto" ? "system" : themeMode}
       className="toaster group"
       style={
         {
@@ -19,9 +18,10 @@ export const Toaster = ({ ...props }: ToasterProps) => {
           "--normal-border": "var(--border)",
         } as React.CSSProperties
       }
+      theme={themeMode === "auto" ? "system" : themeMode}
       {...props}
     />
   );
 };
 
-export { toast };
+export { toast } from "sonner";

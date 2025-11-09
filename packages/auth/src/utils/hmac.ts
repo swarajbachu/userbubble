@@ -10,7 +10,7 @@ export type HMACData = {
   name?: string;
   timestamp: number;
   organizationSlug: string;
-}
+};
 
 /**
  * Verify HMAC signature

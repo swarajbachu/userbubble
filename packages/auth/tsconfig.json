@@ -1,12 +1,7 @@
 {
   "extends": "@acme/tsconfig/base.json",
-  "include": [
-    "src",
-    "*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "include": ["src", "*.ts"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "strictNullChecks": true
   }

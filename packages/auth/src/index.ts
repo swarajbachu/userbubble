@@ -1,5 +1,4 @@
 import { db } from "@acme/db/client";
-// biome-ignore lint/performance/noNamespaceImport: schema object needed for Drizzle adapter
 import * as schema from "@acme/db/schema";
 import { expo } from "@better-auth/expo";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
@@ -72,8 +71,6 @@ export type Auth = ReturnType<typeof initAuth>;
 export type Session = Auth["$Infer"]["Session"];
 
 // Export HMAC utilities for SDK and backend usage
-//TODO: fix this later
-// biome-ignore lint/performance/noBarrelFile: <TODO: will have to fix later>
 export {
   createHMACSignature,
   generateSecretKey,

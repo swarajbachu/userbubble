@@ -5,7 +5,7 @@
 /**
  * User identity information with HMAC signature
  */
-export interface critichutUser {
+export type critichutUser = {
   /**
    * Unique user ID from your system
    */
@@ -36,12 +36,12 @@ export interface critichutUser {
    * Unix timestamp when signature was created
    */
   timestamp: number;
-}
+};
 
 /**
  * SDK configuration options
  */
-export interface critichutConfig {
+export type critichutConfig = {
   /**
    * User to identify on initialization
    */
@@ -70,12 +70,12 @@ export interface critichutConfig {
    * @default false
    */
   debug?: boolean;
-}
+};
 
 /**
  * Encoded authentication token
  */
-export interface AuthToken {
+export type AuthToken = {
   externalId: string;
   email: string;
   name?: string;
@@ -83,12 +83,12 @@ export interface AuthToken {
   timestamp: number;
   organizationSlug: string;
   signature: string;
-}
+};
 
 /**
  * SDK instance interface
  */
-export interface IcritichutSDK {
+export type IcritichutSDK = {
   /**
    * Initialize the SDK
    */
@@ -118,4 +118,4 @@ export interface IcritichutSDK {
    * Get organization slug
    */
   getOrgSlug(): string | null;
-}
+};

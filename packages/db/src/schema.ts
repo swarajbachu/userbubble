@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/performance/noBarrelFile: <explanation> */
 import { sql } from "drizzle-orm";
 import { pgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";

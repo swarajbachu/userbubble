@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
 import { DesktopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import * as React from "react";
 import * as z from "zod/v4";
 
 import { Button } from "./button";
@@ -20,7 +20,9 @@ export type ThemeMode = z.output<typeof ThemeModeSchema>;
 export type ResolvedTheme = Exclude<ThemeMode, "auto">;
 
 const getStoredThemeMode = (): ThemeMode => {
-  if (typeof window === "undefined") return "auto";
+  if (typeof window === "undefined") {
+    return "auto";
+  }
   try {
     const storedTheme = localStorage.getItem(themeKey);
     return ThemeModeSchema.parse(storedTheme);
@@ -39,7 +41,9 @@ const setStoredThemeMode = (theme: ThemeMode) => {
 };
 
 const getSystemTheme = () => {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") {
+    return "light";
+  }
   return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
@@ -68,11 +72,11 @@ const getNextTheme = (current: ThemeMode): ThemeMode => {
     getSystemTheme() === "dark"
       ? ["auto", "light", "dark"]
       : ["auto", "dark", "light"];
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  // biome-ignore lint/style/noNonNullAssertion: <this wont be null>
   return themes[(themes.indexOf(current) + 1) % themes.length]!;
 };
 
-export const themeDetectorScript = (function () {
+export const themeDetectorScript = (() => {
   function themeFn() {
     const isValidTheme = (theme: string): theme is ThemeMode => {
       const validThemes = ["light", "dark", "auto"] as const;
@@ -95,21 +99,23 @@ export const themeDetectorScript = (function () {
   return `(${themeFn.toString()})();`;
 })();
 
-interface ThemeContextProps {
+type ThemeContextProps = {
   themeMode: ThemeMode;
   resolvedTheme: ResolvedTheme;
   setTheme: (theme: ThemeMode) => void;
   toggleMode: () => void;
-}
+};
 const ThemeContext = React.createContext<ThemeContextProps | undefined>(
-  undefined,
+  undefined
 );
 
 export function ThemeProvider({ children }: React.PropsWithChildren) {
   const [themeMode, setThemeMode] = React.useState(getStoredThemeMode);
 
   React.useEffect(() => {
-    if (themeMode !== "auto") return;
+    if (themeMode !== "auto") {
+      return;
+    }
     return setupPreferredListener();
   }, [themeMode]);
 
@@ -135,6 +141,7 @@ export function ThemeProvider({ children }: React.PropsWithChildren) {
       }}
     >
       <script
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: <let this be for now>
         dangerouslySetInnerHTML={{ __html: themeDetectorScript }}
         suppressHydrationWarning
       />
@@ -158,11 +165,11 @@ export function ThemeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="outline"
-          size="icon"
           className="[&>svg]:absolute [&>svg]:size-5 [&>svg]:scale-0"
+          size="icon"
+          variant="outline"
         >
-          <SunIcon className="light:scale-100! auto:scale-0!" />
+          <SunIcon className="auto:scale-0! light:scale-100!" />
           <MoonIcon className="auto:scale-0! dark:scale-100!" />
           <DesktopIcon className="auto:scale-100!" />
           <span className="sr-only">Toggle theme</span>
