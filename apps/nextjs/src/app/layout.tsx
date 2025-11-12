@@ -12,21 +12,21 @@ import "~/app/styles.css";
 export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production"
-      ? "https://turbo.t3.gg"
+      ? "https://critichut.com"
       : "http://localhost:3000"
   ),
-  title: "Create T3 Turbo",
-  description: "Simple monorepo with shared backend for web & mobile apps",
+  title: "Critichut - Turn User Feedback Into Product Success",
+  description: "Collect, organize, and prioritize feedback from your users. Build what matters most with Critichut.",
   openGraph: {
-    title: "Create T3 Turbo",
-    description: "Simple monorepo with shared backend for web & mobile apps",
-    url: "https://create-t3-turbo.vercel.app",
-    siteName: "Create T3 Turbo",
+    title: "Critichut - User Feedback & Product Roadmap Platform",
+    description: "Collect, organize, and prioritize feedback from your users. Build what matters most.",
+    url: "https://critichut.com",
+    siteName: "Critichut",
   },
   twitter: {
     card: "summary_large_image",
-    site: "@jullerino",
-    creator: "@jullerino",
+    site: "@critichut",
+    creator: "@critichut",
   },
 };
 

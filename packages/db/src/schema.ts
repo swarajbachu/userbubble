@@ -30,3 +30,6 @@ export * from "./user/identified-user.sql";
 export * from "./user/user.queries";
 // User schemas (Better Auth core tables + critichut extensions)
 export * from "./user/user.sql";
+// Feedback schemas (posts, votes, comments)
+export * from "./feedback/feedback.queries";
+export * from "./feedback/feedback.sql";
