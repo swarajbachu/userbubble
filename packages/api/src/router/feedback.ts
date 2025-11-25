@@ -4,11 +4,8 @@ import {
   canModifyPost,
   createComment,
   createFeedbackPost,
-  createFeedbackValidator,
   deleteComment,
   deleteFeedbackPost,
-  feedbackCategoryValidator,
-  feedbackStatusValidator,
   getFeedbackPost,
   getFeedbackPosts,
   getPostComments,
@@ -16,8 +13,13 @@ import {
   isTeamMember,
   removeVote,
   updateFeedbackPost,
-  updateFeedbackValidator,
   voteOnPost,
+} from "@critichut/db/queries";
+import {
+  createFeedbackValidator,
+  feedbackCategoryValidator,
+  feedbackStatusValidator,
+  updateFeedbackValidator,
 } from "@critichut/db/schema";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";

@@ -22,18 +22,13 @@ export const CreatePostSchema = createInsertSchema(Post, {
   updatedAt: true,
 });
 
-export * from "./feedback/feedback.permissions";
 // Feedback schemas (posts, votes, comments)
-export * from "./feedback/feedback.queries";
 export * from "./feedback/feedback.sql";
 export * from "./feedback/feedback.validators";
-export * from "./org/organization.queries";
 // Organization schemas (Better Auth organization plugin tables)
 export * from "./org/organization.sql";
 // Organization validators
 export * from "./org/organization.validators";
-export * from "./user/identified-user.queries";
 export * from "./user/identified-user.sql";
-export * from "./user/user.queries";
 // User schemas (Better Auth core tables + critichut extensions)
 export * from "./user/user.sql";

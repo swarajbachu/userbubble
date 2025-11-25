@@ -1,4 +1,4 @@
-import { organizationQueries } from "@critichut/db/schema";
+import { organizationQueries } from "@critichut/db/queries";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
