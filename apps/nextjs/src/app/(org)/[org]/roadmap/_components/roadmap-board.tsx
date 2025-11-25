@@ -3,9 +3,9 @@
 import { trpc } from "~/trpc/react";
 import { RoadmapColumn } from "./roadmap-column";
 
-interface RoadmapBoardProps {
+type RoadmapBoardProps = {
   org: string;
-}
+};
 
 export function RoadmapBoard({ org }: RoadmapBoardProps) {
   const { data: orgData } = trpc.organization.getBySlug.useQuery({
@@ -42,27 +42,27 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
   return (
     <div className="grid gap-6 md:grid-cols-3">
       <RoadmapColumn
-        title="Planned"
-        description="Features we're planning to build"
-        posts={plannedPosts ?? []}
-        org={org}
         colorClass="border-purple-200 dark:border-purple-800"
+        description="Features we're planning to build"
+        org={org}
+        posts={plannedPosts ?? []}
+        title="Planned"
       />
 
       <RoadmapColumn
-        title="In Progress"
-        description="Currently being worked on"
-        posts={inProgressPosts ?? []}
-        org={org}
         colorClass="border-yellow-200 dark:border-yellow-800"
+        description="Currently being worked on"
+        org={org}
+        posts={inProgressPosts ?? []}
+        title="In Progress"
       />
 
       <RoadmapColumn
-        title="Completed"
-        description="Recently shipped features"
-        posts={completedPosts ?? []}
-        org={org}
         colorClass="border-green-200 dark:border-green-800"
+        description="Recently shipped features"
+        org={org}
+        posts={completedPosts ?? []}
+        title="Completed"
       />
     </div>
   );

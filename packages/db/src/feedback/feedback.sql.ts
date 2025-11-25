@@ -6,34 +6,47 @@ import {
   text,
   timestamp,
   unique,
+  varchar,
 } from "drizzle-orm/pg-core";
+import { createUniqueIds } from "../lib/ids";
 import { organization } from "../org/organization.sql";
 import { user } from "../user/user.sql";
 
 // Enums for feedback post status and categories
-export const feedbackStatusEnum = pgEnum("feedback_status", [
+// Const arrays + type extraction for single source of truth
+export const feedbackStatuses = [
   "open",
   "under_review",
   "planned",
   "in_progress",
   "completed",
   "closed",
-]);
+] as const;
+export type FeedbackStatus = (typeof feedbackStatuses)[number];
 
-export const feedbackCategoryEnum = pgEnum("feedback_category", [
+export const feedbackCategories = [
   "feature_request",
   "bug",
   "improvement",
   "question",
   "other",
-]);
+] as const;
+export type FeedbackCategory = (typeof feedbackCategories)[number];
+
+export const feedbackStatusEnum = pgEnum("feedback_status", feedbackStatuses);
+export const feedbackCategoryEnum = pgEnum(
+  "feedback_category",
+  feedbackCategories
+);
 
 /**
  * Feedback post table
  * Represents user-submitted feedback, feature requests, and bug reports
  */
 export const feedbackPost = pgTable("feedback_post", {
-  id: text("id").primaryKey(),
+  id: varchar("id", { length: 256 })
+    .primaryKey()
+    .$defaultFn(() => createUniqueIds("post")),
 
   // Organization this feedback belongs to
   organizationId: text("organization_id")
@@ -51,7 +64,9 @@ export const feedbackPost = pgTable("feedback_post", {
 
   // Status and categorization
   status: feedbackStatusEnum("status").notNull().default("open"),
-  category: feedbackCategoryEnum("category").notNull().default("feature_request"),
+  category: feedbackCategoryEnum("category")
+    .notNull()
+    .default("feature_request"),
 
   // Vote count (denormalized for performance)
   voteCount: integer("vote_count").notNull().default(0),
@@ -74,7 +89,9 @@ export const feedbackPost = pgTable("feedback_post", {
 export const feedbackVote = pgTable(
   "feedback_vote",
   {
-    id: text("id").primaryKey(),
+    id: varchar("id", { length: 256 })
+      .primaryKey()
+      .$defaultFn(() => createUniqueIds("vote")),
 
     postId: text("post_id")
       .notNull()
@@ -100,7 +117,9 @@ export const feedbackVote = pgTable(
  * User comments on feedback posts
  */
 export const feedbackComment = pgTable("feedback_comment", {
-  id: text("id").primaryKey(),
+  id: varchar("id", { length: 256 })
+    .primaryKey()
+    .$defaultFn(() => createUniqueIds("comment")),
 
   postId: text("post_id")
     .notNull()
@@ -115,6 +134,7 @@ export const feedbackComment = pgTable("feedback_comment", {
   content: text("content").notNull(),
 
   // Optional: parent comment for threading
+  // biome-ignore lint/suspicious/noExplicitAny: self-referential table requires any
   parentId: text("parent_id").references((): any => feedbackComment.id, {
     onDelete: "cascade",
   }),

@@ -16,10 +16,12 @@ export const metadata: Metadata = {
       : "http://localhost:3000"
   ),
   title: "Critichut - Turn User Feedback Into Product Success",
-  description: "Collect, organize, and prioritize feedback from your users. Build what matters most with Critichut.",
+  description:
+    "Collect, organize, and prioritize feedback from your users. Build what matters most with Critichut.",
   openGraph: {
     title: "Critichut - User Feedback & Product Roadmap Platform",
-    description: "Collect, organize, and prioritize feedback from your users. Build what matters most.",
+    description:
+      "Collect, organize, and prioritize feedback from your users. Build what matters most.",
     url: "https://critichut.com",
     siteName: "Critichut",
   },

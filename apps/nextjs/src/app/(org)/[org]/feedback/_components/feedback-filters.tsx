@@ -3,9 +3,9 @@
 import { Button } from "@critichut/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 
-interface FeedbackFiltersProps {
+type FeedbackFiltersProps = {
   org: string;
-}
+};
 
 export function FeedbackFilters({ org }: FeedbackFiltersProps) {
   const router = useRouter();
@@ -27,21 +27,21 @@ export function FeedbackFilters({ org }: FeedbackFiltersProps) {
     <div className="flex flex-wrap items-center gap-4">
       {/* Sort options */}
       <div className="flex items-center gap-2">
-        <span className="text-muted-foreground text-sm font-medium">
+        <span className="font-medium text-muted-foreground text-sm">
           Sort by:
         </span>
         <div className="flex gap-2">
           <Button
-            variant={currentSort === "recent" ? "default" : "outline"}
-            size="sm"
             onClick={() => updateFilter("sort", "recent")}
+            size="sm"
+            variant={currentSort === "recent" ? "default" : "outline"}
           >
             Recent
           </Button>
           <Button
-            variant={currentSort === "votes" ? "default" : "outline"}
-            size="sm"
             onClick={() => updateFilter("sort", "votes")}
+            size="sm"
+            variant={currentSort === "votes" ? "default" : "outline"}
           >
             Most Voted
           </Button>
@@ -50,42 +50,42 @@ export function FeedbackFilters({ org }: FeedbackFiltersProps) {
 
       {/* Status filter */}
       <div className="flex items-center gap-2">
-        <span className="text-muted-foreground text-sm font-medium">
+        <span className="font-medium text-muted-foreground text-sm">
           Status:
         </span>
         <div className="flex flex-wrap gap-2">
           <Button
-            variant={currentStatus === "all" ? "default" : "outline"}
-            size="sm"
             onClick={() => updateFilter("status", "all")}
+            size="sm"
+            variant={currentStatus === "all" ? "default" : "outline"}
           >
             All
           </Button>
           <Button
-            variant={currentStatus === "open" ? "default" : "outline"}
-            size="sm"
             onClick={() => updateFilter("status", "open")}
+            size="sm"
+            variant={currentStatus === "open" ? "default" : "outline"}
           >
             Open
           </Button>
           <Button
-            variant={currentStatus === "planned" ? "default" : "outline"}
-            size="sm"
             onClick={() => updateFilter("status", "planned")}
+            size="sm"
+            variant={currentStatus === "planned" ? "default" : "outline"}
           >
             Planned
           </Button>
           <Button
-            variant={currentStatus === "in_progress" ? "default" : "outline"}
-            size="sm"
             onClick={() => updateFilter("status", "in_progress")}
+            size="sm"
+            variant={currentStatus === "in_progress" ? "default" : "outline"}
           >
             In Progress
           </Button>
           <Button
-            variant={currentStatus === "completed" ? "default" : "outline"}
-            size="sm"
             onClick={() => updateFilter("status", "completed")}
+            size="sm"
+            variant={currentStatus === "completed" ? "default" : "outline"}
           >
             Completed
           </Button>

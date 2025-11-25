@@ -1,11 +1,13 @@
-import { and, count, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "../client";
 import { user } from "../user/user.sql";
 import {
+  type FeedbackCategory,
+  type FeedbackPost,
+  type FeedbackStatus,
   feedbackComment,
   feedbackPost,
   feedbackVote,
-  type FeedbackPost,
   type NewFeedbackComment,
   type NewFeedbackPost,
   type NewFeedbackVote,
@@ -14,12 +16,27 @@ import {
 /**
  * Get all feedback posts for an organization
  */
-export async function getFeedbackPosts(organizationId: string, filters?: {
-  status?: string;
-  category?: string;
-  sortBy?: "votes" | "recent";
-}) {
-  let query = db
+export async function getFeedbackPosts(
+  organizationId: string,
+  filters?: {
+    status?: FeedbackStatus;
+    category?: FeedbackCategory;
+    sortBy?: "votes" | "recent";
+  }
+) {
+  // Build all conditions upfront
+  const conditions = [eq(feedbackPost.organizationId, organizationId)];
+
+  if (filters?.status) {
+    conditions.push(eq(feedbackPost.status, filters.status));
+  }
+
+  if (filters?.category) {
+    conditions.push(eq(feedbackPost.category, filters.category));
+  }
+
+  // Single .where() call with combined conditions
+  const query = db
     .select({
       post: feedbackPost,
       author: user,
@@ -27,35 +44,16 @@ export async function getFeedbackPosts(organizationId: string, filters?: {
     })
     .from(feedbackPost)
     .leftJoin(user, eq(feedbackPost.authorId, user.id))
-    .where(eq(feedbackPost.organizationId, organizationId));
-
-  // Apply filters
-  if (filters?.status) {
-    query = query.where(
-      and(
-        eq(feedbackPost.organizationId, organizationId),
-        eq(feedbackPost.status, filters.status as any)
-      )
-    );
-  }
-
-  if (filters?.category) {
-    query = query.where(
-      and(
-        eq(feedbackPost.organizationId, organizationId),
-        eq(feedbackPost.category, filters.category as any)
-      )
-    );
-  }
+    .where(and(...conditions));
 
   // Apply sorting
-  if (filters?.sortBy === "votes") {
-    query = query.orderBy(desc(feedbackPost.voteCount));
-  } else {
-    query = query.orderBy(desc(feedbackPost.createdAt));
-  }
+  const sortedQuery =
+    filters?.sortBy === "votes"
+      ? query.orderBy(desc(feedbackPost.voteCount))
+      : query.orderBy(desc(feedbackPost.createdAt));
 
-  return query;
+  // CRITICAL: Execute query with await
+  return await sortedQuery;
 }
 
 /**
@@ -137,7 +135,9 @@ export async function voteOnPost(vote: NewFeedbackVote) {
 export async function removeVote(postId: string, userId: string) {
   await db
     .delete(feedbackVote)
-    .where(and(eq(feedbackVote.postId, postId), eq(feedbackVote.userId, userId)));
+    .where(
+      and(eq(feedbackVote.postId, postId), eq(feedbackVote.userId, userId))
+    );
 
   // Update vote count
   await db
@@ -159,7 +159,9 @@ export async function getUserVote(postId: string, userId: string) {
   const result = await db
     .select()
     .from(feedbackVote)
-    .where(and(eq(feedbackVote.postId, postId), eq(feedbackVote.userId, userId)))
+    .where(
+      and(eq(feedbackVote.postId, postId), eq(feedbackVote.userId, userId))
+    )
     .limit(1);
 
   return result[0];

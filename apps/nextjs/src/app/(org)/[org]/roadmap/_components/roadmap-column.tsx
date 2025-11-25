@@ -1,13 +1,13 @@
 import type { FeedbackPost, User } from "@critichut/db/schema";
 import { RoadmapCard } from "./roadmap-card";
 
-interface RoadmapColumnProps {
+type RoadmapColumnProps = {
   title: string;
   description: string;
   posts: Array<{ post: FeedbackPost; author: User | null }>;
   org: string;
   colorClass: string;
-}
+};
 
 export function RoadmapColumn({
   title,
@@ -28,16 +28,16 @@ export function RoadmapColumn({
 
       <div className={`space-y-3 rounded-lg border-2 ${colorClass} p-4`}>
         {posts.length === 0 ? (
-          <div className="text-muted-foreground py-8 text-center text-sm">
+          <div className="py-8 text-center text-muted-foreground text-sm">
             No items yet
           </div>
         ) : (
           posts.map((item) => (
             <RoadmapCard
-              key={item.post.id}
-              post={item.post}
               author={item.author}
+              key={item.post.id}
               org={org}
+              post={item.post}
             />
           ))
         )}

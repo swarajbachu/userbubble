@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { trpc } from "~/trpc/server";
 
-interface OrgLayoutProps {
+type OrgLayoutProps = {
   children: React.ReactNode;
   params: Promise<{ org: string }>;
-}
+};
 
 export default async function OrgLayout({ children, params }: OrgLayoutProps) {
   const { org } = await params;
@@ -25,14 +25,14 @@ export default async function OrgLayout({ children, params }: OrgLayoutProps) {
             <h1 className="font-semibold text-xl">{organization.name}</h1>
             <nav className="flex gap-6">
               <a
-                href={`/${org}/feedback`}
                 className="text-muted-foreground text-sm transition-colors hover:text-foreground"
+                href={`/${org}/feedback`}
               >
                 Feedback
               </a>
               <a
-                href={`/${org}/roadmap`}
                 className="text-muted-foreground text-sm transition-colors hover:text-foreground"
+                href={`/${org}/roadmap`}
               >
                 Roadmap
               </a>

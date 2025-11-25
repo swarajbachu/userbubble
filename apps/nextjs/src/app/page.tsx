@@ -13,18 +13,18 @@ export default function HomePage() {
               Product Success
             </span>
           </h1>
-          <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-xl">
-            Collect, organize, and prioritize feedback from your users.
-            Build what matters most with Critichut.
+          <p className="mx-auto mb-8 max-w-2xl text-muted-foreground text-xl">
+            Collect, organize, and prioritize feedback from your users. Build
+            what matters most with Critichut.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/api/auth/sign-in">
-              <Button size="lg" className="text-lg">
+              <Button className="text-lg" size="lg">
                 Get Started Free
               </Button>
             </Link>
             <Link href="/dashboard">
-              <Button size="lg" variant="outline" className="text-lg">
+              <Button className="text-lg" size="lg" variant="outline">
                 View Demo
               </Button>
             </Link>
@@ -38,62 +38,70 @@ export default function HomePage() {
           <div className="rounded-lg border p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <svg
+                aria-label="icon"
                 className="h-6 w-6 text-primary"
                 fill="none"
+                role="img"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path
+                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
                 />
               </svg>
             </div>
             <h3 className="mb-2 font-semibold text-xl">Collect Feedback</h3>
             <p className="text-muted-foreground">
-              Let users submit feature requests, report bugs, and share ideas
-              in one central place.
+              Let users submit feature requests, report bugs, and share ideas in
+              one central place.
             </p>
           </div>
 
           <div className="rounded-lg border p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <svg
+                aria-label="check icon"
                 className="h-6 w-6 text-primary"
                 fill="none"
+                role="img"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                 />
               </svg>
             </div>
-            <h3 className="mb-2 font-semibold text-xl">Prioritize with Votes</h3>
+            <h3 className="mb-2 font-semibold text-xl">
+              Prioritize with Votes
+            </h3>
             <p className="text-muted-foreground">
-              Let your community vote on what matters most. Build features
-              users actually want.
+              Let your community vote on what matters most. Build features users
+              actually want.
             </p>
           </div>
 
           <div className="rounded-lg border p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <svg
+                aria-label="check icon"
                 className="h-6 w-6 text-primary"
                 fill="none"
+                role="img"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
             </div>
@@ -112,12 +120,12 @@ export default function HomePage() {
           <h2 className="mb-4 font-bold text-3xl">
             Ready to build better products?
           </h2>
-          <p className="text-muted-foreground mx-auto mb-6 max-w-xl">
+          <p className="mx-auto mb-6 max-w-xl text-muted-foreground">
             Join teams using Critichut to understand what their users really
             want.
           </p>
           <Link href="/api/auth/sign-in">
-            <Button size="lg" className="text-lg">
+            <Button className="text-lg" size="lg">
               Start Free Today
             </Button>
           </Link>

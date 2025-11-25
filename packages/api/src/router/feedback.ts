@@ -1,17 +1,24 @@
-import { createId } from "@paralleldrive/cuid2";
 import {
+  canDeleteComment,
+  canDeletePost,
+  canModifyPost,
   createComment,
   createFeedbackPost,
+  createFeedbackValidator,
   deleteComment,
   deleteFeedbackPost,
+  feedbackCategoryValidator,
+  feedbackStatusValidator,
   getFeedbackPost,
   getFeedbackPosts,
   getPostComments,
   getUserVote,
+  isTeamMember,
   removeVote,
   updateFeedbackPost,
+  updateFeedbackValidator,
   voteOnPost,
-} from "@critichut/db/feedback/feedback.queries";
+} from "@critichut/db/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -23,18 +30,18 @@ export const feedbackRouter = createTRPCRouter({
     .input(
       z.object({
         organizationId: z.string(),
-        status: z.string().optional(),
-        category: z.string().optional(),
+        status: feedbackStatusValidator.optional(),
+        category: feedbackCategoryValidator.optional(),
         sortBy: z.enum(["votes", "recent"]).optional(),
       })
     )
-    .query(async ({ input }) => {
-      return getFeedbackPosts(input.organizationId, {
+    .query(async ({ input }) =>
+      getFeedbackPosts(input.organizationId, {
         status: input.status,
         category: input.category,
         sortBy: input.sortBy,
-      });
-    }),
+      })
+    ),
 
   // Get a single feedback post
   getById: publicProcedure
@@ -54,23 +61,9 @@ export const feedbackRouter = createTRPCRouter({
 
   // Create a new feedback post
   create: protectedProcedure
-    .input(
-      z.object({
-        organizationId: z.string(),
-        title: z.string().min(3).max(256),
-        description: z.string().min(10).max(5000),
-        category: z.enum([
-          "feature_request",
-          "bug",
-          "improvement",
-          "question",
-          "other",
-        ]),
-      })
-    )
+    .input(createFeedbackValidator)
     .mutation(async ({ ctx, input }) => {
       const post = await createFeedbackPost({
-        id: createId(),
         organizationId: input.organizationId,
         authorId: ctx.session.user.id,
         title: input.title,
@@ -84,47 +77,37 @@ export const feedbackRouter = createTRPCRouter({
       return post;
     }),
 
-  // Update a feedback post (admin only)
+  // Update a feedback post (author or org admin only)
   update: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        title: z.string().min(3).max(256).optional(),
-        description: z.string().min(10).max(5000).optional(),
-        status: z
-          .enum([
-            "open",
-            "under_review",
-            "planned",
-            "in_progress",
-            "completed",
-            "closed",
-          ])
-          .optional(),
-        category: z
-          .enum([
-            "feature_request",
-            "bug",
-            "improvement",
-            "question",
-            "other",
-          ])
-          .optional(),
-      })
-    )
+    .input(z.object({ id: z.string() }).merge(updateFeedbackValidator))
     .mutation(async ({ ctx, input }) => {
-      // TODO: Add permission check (only author or org admin can update)
       const { id, ...updates } = input;
-      const post = await updateFeedbackPost(id, updates);
 
-      return post;
+      // PERMISSION CHECK: Only author or org admin can update
+      const canModify = await canModifyPost(ctx.session.user.id, id);
+      if (!canModify) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to update this feedback post",
+        });
+      }
+
+      return await updateFeedbackPost(id, updates);
     }),
 
-  // Delete a feedback post
+  // Delete a feedback post (author or org admin only)
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // TODO: Add permission check (only author or org admin can delete)
+      // PERMISSION CHECK: Only author or org admin can delete
+      const canDelete = await canDeletePost(ctx.session.user.id, input.id);
+      if (!canDelete) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to delete this feedback post",
+        });
+      }
+
       await deleteFeedbackPost(input.id);
       return { success: true };
     }),
@@ -144,7 +127,6 @@ export const feedbackRouter = createTRPCRouter({
       } else {
         // Add or update vote
         await voteOnPost({
-          id: createId(),
           postId: input.postId,
           userId: ctx.session.user.id,
           value: input.value,
@@ -165,9 +147,7 @@ export const feedbackRouter = createTRPCRouter({
   // Get comments for a post
   getComments: publicProcedure
     .input(z.object({ postId: z.string() }))
-    .query(async ({ input }) => {
-      return getPostComments(input.postId);
-    }),
+    .query(async ({ input }) => getPostComments(input.postId)),
 
   // Create a comment
   createComment: protectedProcedure
@@ -179,24 +159,43 @@ export const feedbackRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // TODO: Check if user is team member for the org
-      const comment = await createComment({
-        id: createId(),
+      // Get post to find organization
+      const post = await getFeedbackPost(input.postId);
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Feedback post not found",
+        });
+      }
+
+      // TEAM MEMBER CHECK: Determine if user is part of the org
+      const isTeam = await isTeamMember(
+        ctx.session.user.id,
+        post.post.organizationId
+      );
+
+      return await createComment({
         postId: input.postId,
         authorId: ctx.session.user.id,
         content: input.content,
         parentId: input.parentId,
-        isTeamMember: false, // TODO: Implement team member check
+        isTeamMember: isTeam,
       });
-
-      return comment;
     }),
 
-  // Delete a comment
+  // Delete a comment (author or org admin only)
   deleteComment: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // TODO: Add permission check (only author or org admin can delete)
+      // PERMISSION CHECK: Only comment author or org admin can delete
+      const canDelete = await canDeleteComment(ctx.session.user.id, input.id);
+      if (!canDelete) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to delete this comment",
+        });
+      }
+
       await deleteComment(input.id);
       return { success: true };
     }),

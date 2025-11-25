@@ -2,13 +2,13 @@ import type { FeedbackPost, User } from "@critichut/db/schema";
 import { ChevronUp } from "lucide-react";
 import Link from "next/link";
 
-interface RoadmapCardProps {
+type RoadmapCardProps = {
   post: FeedbackPost;
   author: User | null;
   org: string;
-}
+};
 
-export function RoadmapCard({ post, author, org }: RoadmapCardProps) {
+export function RoadmapCard({ post, org }: RoadmapCardProps) {
   const categoryLabels = {
     feature_request: "Feature",
     bug: "Bug",
@@ -24,7 +24,7 @@ export function RoadmapCard({ post, author, org }: RoadmapCardProps) {
           {post.title}
         </h3>
 
-        <p className="text-muted-foreground mb-3 line-clamp-2 text-sm">
+        <p className="mb-3 line-clamp-2 text-muted-foreground text-sm">
           {post.description}
         </p>
 

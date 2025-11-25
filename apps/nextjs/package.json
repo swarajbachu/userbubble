@@ -23,6 +23,7 @@
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
     "better-auth": "catalog:",
+    "lucide-react": "^0.552.0",
     "next": "^16.0.0",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",

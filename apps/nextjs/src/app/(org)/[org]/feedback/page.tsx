@@ -3,10 +3,10 @@ import { FeedbackBoard } from "./_components/feedback-board";
 import { FeedbackFilters } from "./_components/feedback-filters";
 import { NewPostButton } from "./_components/new-post-button";
 
-interface FeedbackPageProps {
+type FeedbackPageProps = {
   params: Promise<{ org: string }>;
   searchParams: Promise<{ status?: string; sort?: string }>;
-}
+};
 
 export default async function FeedbackPage({
   params,
@@ -20,7 +20,7 @@ export default async function FeedbackPage({
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="font-bold text-3xl">Feedback</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="mt-2 text-muted-foreground">
             Share your ideas and vote on what matters most
           </p>
         </div>
@@ -35,15 +35,12 @@ export default async function FeedbackPage({
         fallback={
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="h-32 animate-pulse rounded-lg bg-muted"
-              />
+              <div className="h-32 animate-pulse rounded-lg bg-muted" key={i} />
             ))}
           </div>
         }
       >
-        <FeedbackBoard org={org} filters={filters} />
+        <FeedbackBoard filters={filters} org={org} />
       </Suspense>
     </div>
   );

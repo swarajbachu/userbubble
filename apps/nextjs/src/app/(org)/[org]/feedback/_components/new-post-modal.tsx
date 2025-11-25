@@ -9,11 +9,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { trpc } from "~/trpc/react";
 
-interface NewPostModalProps {
+type NewPostModalProps = {
   org: string;
   isOpen: boolean;
   onClose: () => void;
-}
+};
 
 export function NewPostModal({ org, isOpen, onClose }: NewPostModalProps) {
   const router = useRouter();
@@ -42,7 +42,9 @@ export function NewPostModal({ org, isOpen, onClose }: NewPostModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!orgData?.id) return;
+    if (!orgData?.id) {
+      return;
+    }
 
     createMutation.mutate({
       organizationId: orgData.id,
@@ -52,7 +54,9 @@ export function NewPostModal({ org, isOpen, onClose }: NewPostModalProps) {
     });
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -61,26 +65,35 @@ export function NewPostModal({ org, isOpen, onClose }: NewPostModalProps) {
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-semibold text-2xl">Share Your Feedback</h2>
           <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
             className="h-8 w-8 p-0"
+            onClick={onClose}
+            size="sm"
+            variant="ghost"
           >
             <X className="h-4 w-4" />
           </Button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Category */}
           <Field>
             <Label htmlFor="category">Category</Label>
             <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value as any)}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              id="category"
+              onChange={(e) =>
+                setCategory(
+                  e.target.value as
+                    | "feature_request"
+                    | "bug"
+                    | "improvement"
+                    | "question"
+                    | "other"
+                )
+              }
               required
+              value={category}
             >
               <option value="feature_request">Feature Request</option>
               <option value="bug">Bug Report</option>
@@ -95,13 +108,13 @@ export function NewPostModal({ org, isOpen, onClose }: NewPostModalProps) {
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
-              type="text"
-              placeholder="Brief summary of your feedback"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              minLength={3}
               maxLength={256}
+              minLength={3}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Brief summary of your feedback"
               required
+              type="text"
+              value={title}
             />
             {createMutation.error?.data?.zodError?.fieldErrors.title && (
               <FieldError>
@@ -114,15 +127,15 @@ export function NewPostModal({ org, isOpen, onClose }: NewPostModalProps) {
           <Field>
             <Label htmlFor="description">Description</Label>
             <textarea
-              id="description"
-              placeholder="Provide more details about your feedback..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              minLength={10}
-              maxLength={5000}
-              rows={6}
               className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              id="description"
+              maxLength={5000}
+              minLength={10}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Provide more details about your feedback..."
               required
+              rows={6}
+              value={description}
             />
             {createMutation.error?.data?.zodError?.fieldErrors.description && (
               <FieldError>
@@ -141,14 +154,14 @@ export function NewPostModal({ org, isOpen, onClose }: NewPostModalProps) {
           {/* Actions */}
           <div className="flex justify-end gap-3">
             <Button
+              disabled={createMutation.isPending}
+              onClick={onClose}
               type="button"
               variant="outline"
-              onClick={onClose}
-              disabled={createMutation.isPending}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
+            <Button disabled={createMutation.isPending} type="submit">
               {createMutation.isPending ? "Submitting..." : "Submit Feedback"}
             </Button>
           </div>

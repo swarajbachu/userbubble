@@ -5,10 +5,10 @@ import { ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { trpc } from "~/trpc/react";
 
-interface VoteButtonProps {
+type VoteButtonProps = {
   postId: string;
   initialVotes: number;
-}
+};
 
 export function VoteButton({ postId, initialVotes }: VoteButtonProps) {
   const [optimisticVotes, setOptimisticVotes] = useState(initialVotes);
@@ -55,11 +55,11 @@ export function VoteButton({ postId, initialVotes }: VoteButtonProps) {
 
   return (
     <Button
-      variant={hasVoted ? "default" : "outline"}
-      size="sm"
       className="flex h-auto flex-col gap-1 px-3 py-2"
-      onClick={handleVote}
       disabled={voteMutation.isPending}
+      onClick={handleVote}
+      size="sm"
+      variant={hasVoted ? "default" : "outline"}
     >
       <ChevronUp className={`h-4 w-4 ${hasVoted ? "fill-current" : ""}`} />
       <span className="font-semibold text-sm">{optimisticVotes}</span>

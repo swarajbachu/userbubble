@@ -5,9 +5,9 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { NewPostModal } from "./new-post-modal";
 
-interface NewPostButtonProps {
+type NewPostButtonProps = {
   org: string;
-}
+};
 
 export function NewPostButton({ org }: NewPostButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,9 +20,9 @@ export function NewPostButton({ org }: NewPostButtonProps) {
       </Button>
 
       <NewPostModal
-        org={org}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        org={org}
       />
     </>
   );

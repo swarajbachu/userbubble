@@ -1,12 +1,14 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "../client";
 import {
+  type InvitationStatus,
   invitation,
   member,
   type NewInvitation,
   type NewMember,
   type NewOrganization,
   organization,
+  type Role,
 } from "./organization.sql";
 
 /**
@@ -125,7 +127,7 @@ export const memberQueries = {
   hasRole: async (
     userId: string,
     organizationId: string,
-    role: string | string[]
+    role: Role | Role[]
   ) => {
     const memberRecord = await memberQueries.findByUserAndOrg(
       userId,
@@ -150,7 +152,7 @@ export const memberQueries = {
   /**
    * Update member role
    */
-  updateRole: async (id: string, role: string) => {
+  updateRole: async (id: string, role: Role) => {
     const [updated] = await db
       .update(member)
       .set({ role })
@@ -230,7 +232,7 @@ export const invitationQueries = {
   /**
    * Update invitation status
    */
-  updateStatus: async (id: string, status: string) => {
+  updateStatus: async (id: string, status: InvitationStatus) => {
     const [updated] = await db
       .update(invitation)
       .set({ status })
