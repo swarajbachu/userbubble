@@ -1,6 +1,9 @@
 "use client";
 
-import { trpc } from "~/trpc/react";
+import type { FeedbackStatus } from "@critichut/db/schema";
+import { useSuspenseQuery } from "@tanstack/react-query";
+
+import { useTRPC } from "~/trpc/react";
 import { PostCard } from "./post-card";
 
 type FeedbackBoardProps = {
@@ -12,32 +15,23 @@ type FeedbackBoardProps = {
 };
 
 export function FeedbackBoard({ org, filters }: FeedbackBoardProps) {
-  const { data: orgData } = trpc.organization.getBySlug.useQuery({
-    slug: org,
-  });
+  const trpc = useTRPC();
 
-  const { data: posts, isLoading } = trpc.feedback.getAll.useQuery(
-    {
-      organizationId: orgData?.id ?? "",
-      status: filters?.status,
-      sortBy: (filters?.sort as "votes" | "recent") ?? "recent",
-    },
-    {
-      enabled: !!orgData?.id,
-    }
+  const { data: orgData } = useSuspenseQuery(
+    trpc.organization.getBySlug.queryOptions({
+      slug: org,
+    })
   );
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <div className="h-32 animate-pulse rounded-lg bg-muted" key={i} />
-        ))}
-      </div>
-    );
-  }
+  const { data: posts } = useSuspenseQuery(
+    trpc.feedback.getAll.queryOptions({
+      organizationId: orgData.id,
+      status: filters?.status as FeedbackStatus | undefined,
+      sortBy: (filters?.sort as "votes" | "recent") ?? "recent",
+    })
+  );
 
-  if (!posts || posts.length === 0) {
+  if (posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
         <p className="mb-2 font-medium text-lg text-muted-foreground">

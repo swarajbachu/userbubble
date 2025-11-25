@@ -19,12 +19,12 @@ import {
   updateFeedbackValidator,
   voteOnPost,
 } from "@critichut/db/schema";
-import { TRPCError } from "@trpc/server";
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { protectedProcedure, publicProcedure } from "../trpc";
 
-export const feedbackRouter = createTRPCRouter({
+export const feedbackRouter = {
   // Get all feedback posts for an organization
   getAll: publicProcedure
     .input(
@@ -199,4 +199,4 @@ export const feedbackRouter = createTRPCRouter({
       await deleteComment(input.id);
       return { success: true };
     }),
-});
+} satisfies TRPCRouterRecord;

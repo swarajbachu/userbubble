@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { trpc } from "~/trpc/server";
+import { prefetch, trpc } from "~/trpc/server";
 
 type OrgLayoutProps = {
   children: React.ReactNode;
@@ -9,8 +9,14 @@ type OrgLayoutProps = {
 export default async function OrgLayout({ children, params }: OrgLayoutProps) {
   const { org } = await params;
 
-  // Fetch organization to verify it exists
-  const organization = await trpc.organization.getBySlug({ slug: org });
+  // Prefetch and get organization data
+  const organizationQuery = trpc.organization.getBySlug.queryOptions({
+    slug: org,
+  });
+
+  prefetch(organizationQuery);
+
+  const organization = organizationQuery.initialData;
 
   if (!organization) {
     notFound();

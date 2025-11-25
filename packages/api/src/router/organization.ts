@@ -1,15 +1,15 @@
-import { getOrganizationBySlug } from "@critichut/db/org/organization.queries";
-import { TRPCError } from "@trpc/server";
+import { organizationQueries } from "@critichut/db/schema";
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { publicProcedure } from "../trpc";
 
-export const organizationRouter = createTRPCRouter({
+export const organizationRouter = {
   // Get organization by slug
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
-      const org = await getOrganizationBySlug(input.slug);
+      const org = await organizationQueries.findBySlug(input.slug);
 
       if (!org) {
         throw new TRPCError({
@@ -20,4 +20,4 @@ export const organizationRouter = createTRPCRouter({
 
       return org;
     }),
-});
+} satisfies TRPCRouterRecord;

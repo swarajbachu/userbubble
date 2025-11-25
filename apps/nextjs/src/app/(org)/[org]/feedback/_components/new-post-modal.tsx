@@ -12,7 +12,7 @@ import {
 import { Input } from "@critichut/ui/input";
 import { toast } from "@critichut/ui/toast";
 import { useForm } from "@tanstack/react-form";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { TRPCClientErrorLike } from "@trpc/client";
 import { X } from "lucide-react";
 
@@ -32,6 +32,22 @@ export function NewPostModal({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
+  const createPost = useMutation(
+    trpc.feedback.create.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.feedback.pathFilter());
+        toast.success("Feedback submitted successfully!");
+      },
+      onError: (err: TRPCClientErrorLike<AppRouter>) => {
+        toast.error(
+          err.data?.code === "UNAUTHORIZED"
+            ? "You must be logged in to submit feedback"
+            : "Failed to create feedback post"
+        );
+      },
+    })
+  );
+
   const form = useForm({
     defaultValues: {
       organizationId,
@@ -48,20 +64,9 @@ export function NewPostModal({
       onSubmit: createFeedbackValidator,
     },
     onSubmit: async ({ value }) => {
-      try {
-        await trpc.feedback.create.mutate(value);
-        form.reset();
-        onClose();
-        await queryClient.invalidateQueries(trpc.feedback.pathFilter());
-        toast.success("Feedback submitted successfully!");
-      } catch (err) {
-        const error = err as TRPCClientErrorLike<AppRouter>;
-        toast.error(
-          error.data?.code === "UNAUTHORIZED"
-            ? "You must be logged in to submit feedback"
-            : "Failed to create feedback post"
-        );
-      }
+      await createPost.mutateAsync(value);
+      form.reset();
+      onClose();
     },
   });
 
@@ -189,15 +194,15 @@ export function NewPostModal({
           {/* Actions */}
           <div className="flex justify-end gap-3">
             <Button
-              disabled={form.state.isSubmitting}
+              disabled={createPost.isPending}
               onClick={onClose}
               type="button"
               variant="outline"
             >
               Cancel
             </Button>
-            <Button disabled={form.state.isSubmitting} type="submit">
-              {form.state.isSubmitting ? "Submitting..." : "Submit Feedback"}
+            <Button disabled={createPost.isPending} type="submit">
+              {createPost.isPending ? "Submitting..." : "Submit Feedback"}
             </Button>
           </div>
         </form>
