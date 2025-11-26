@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 
 import { auth } from "~/auth/server";
 
+export const runtime = "nodejs";
+
 const publicPaths = [
   "/",
   "/sign-in",
