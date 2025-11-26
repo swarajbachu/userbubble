@@ -7,8 +7,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
   Cancel01Icon,
-  CheckmarkCircle01Icon,
   Loading03Icon,
+  Tick01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -62,7 +62,7 @@ export function StepSubdomain() {
       return;
     }
 
-    if (data && !data.available) {
+    if (data && !data.status) {
       setError("This subdomain is already taken");
       return;
     }
@@ -75,7 +75,7 @@ export function StepSubdomain() {
       setError("Subdomain must be at least 3 characters");
       return;
     }
-    if (!data?.available) {
+    if (!data?.status) {
       setError("Please choose an available subdomain");
       return;
     }
@@ -87,7 +87,7 @@ export function StepSubdomain() {
     setError("");
   };
 
-  const isAvailable = data?.available === true;
+  const isAvailable = data?.status === true;
   const canProceed = isAvailable && !isLoading && !error;
 
   return (
@@ -119,7 +119,7 @@ export function StepSubdomain() {
             {!isLoading && isAvailable && (
               <HugeiconsIcon
                 className="text-green-600"
-                icon={CheckmarkCircle01Icon}
+                icon={Tick01Icon}
                 size={16}
               />
             )}

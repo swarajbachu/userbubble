@@ -69,7 +69,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       const { data, error } = await authClient.organization.create({
         name: organizationName,
         slug,
-        website: website || undefined,
+        website,
       });
 
       if (error) {

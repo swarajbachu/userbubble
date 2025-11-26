@@ -1,0 +1,112 @@
+"use client";
+
+import { Button } from "@critichut/ui/button";
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@critichut/ui/card";
+import {
+  DoubleCard,
+  DoubleCardFooter,
+  DoubleCardInner,
+} from "@critichut/ui/double-card";
+import { Input } from "@critichut/ui/input";
+import { Label } from "@critichut/ui/label";
+import { toast } from "@critichut/ui/toast";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Tick01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { authClient } from "~/auth/client";
+
+export default function CompleteProfilePage() {
+  const router = useRouter();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const fullName = `${firstName.trim()} ${lastName.trim()}`;
+
+    try {
+      const { data, error } = await authClient.updateUser({
+        name: fullName,
+      });
+
+      if (error) {
+        toast.error(error.message ?? "Failed to update profile");
+        return;
+      }
+
+      if (data) {
+        toast.success("Profile updated successfully");
+      }
+
+      router.push("/");
+    } catch {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center justify-center">
+      <DoubleCard className="w-full max-w-md">
+        <DoubleCardInner>
+          <CardHeader>
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <HugeiconsIcon icon={Tick01Icon} size={24} strokeWidth={1.5} />
+            </div>
+            <CardTitle className="text-xl">Update your profile</CardTitle>
+            <CardDescription>That's it! We're almost done.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form
+              className="grid gap-4"
+              id="complete-profile-form"
+              onSubmit={handleSubmit}
+            >
+              <div className="grid gap-2">
+                <Label htmlFor="firstName">First name</Label>
+                <Input
+                  id="firstName"
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="Enter your first name"
+                  required
+                  value={firstName}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="lastName">Last name</Label>
+                <Input
+                  id="lastName"
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Enter your last name"
+                  required
+                  value={lastName}
+                />
+              </div>
+            </form>
+          </CardContent>
+        </DoubleCardInner>
+        <DoubleCardFooter>
+          <Button
+            className="w-full"
+            disabled={isLoading}
+            form="complete-profile-form"
+            type="submit"
+          >
+            {isLoading ? "Updating..." : "Complete"}
+          </Button>
+        </DoubleCardFooter>
+      </DoubleCard>
+    </div>
+  );
+}

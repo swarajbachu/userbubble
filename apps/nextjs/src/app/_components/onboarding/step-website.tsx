@@ -3,10 +3,7 @@
 import { Button } from "@critichut/ui/button";
 import { Input } from "@critichut/ui/input";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Cancel01Icon,
-  CheckmarkCircle01Icon,
-} from "@hugeicons-pro/core-duotone-rounded";
+import { Cancel01Icon, Tick01Icon } from "@hugeicons-pro/core-duotone-rounded";
 import { useState } from "react";
 import { useWizard } from "./wizard-context";
 
@@ -67,7 +64,7 @@ export function StepWebsite() {
             {isValid && (
               <HugeiconsIcon
                 className="text-green-600"
-                icon={CheckmarkCircle01Icon}
+                icon={Tick01Icon}
                 size={16}
               />
             )}

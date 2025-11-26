@@ -7,7 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
   Cancel01Icon,
-  CheckmarkCircle01Icon,
+  Tick01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
 import { useEffect, useState } from "react";
 import { useWizard } from "./wizard-context";
@@ -70,7 +70,7 @@ export function StepName() {
             {isValid && (
               <HugeiconsIcon
                 className="text-green-600"
-                icon={CheckmarkCircle01Icon}
+                icon={Tick01Icon}
                 size={16}
               />
             )}

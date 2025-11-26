@@ -28,6 +28,9 @@ export function initAuth<
     }),
     baseURL: options.baseUrl,
     secret: options.secret,
+    emailAndPassword: {
+      enabled: true,
+    },
     plugins: [
       // oAuthProxy({
       //   productionURL: options.productionUrl,

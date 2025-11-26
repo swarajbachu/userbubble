@@ -3,13 +3,9 @@ import { NextResponse } from "next/server";
 
 import { auth } from "~/auth/server";
 
-export const runtime = "nodejs";
-
 const publicPaths = [
-  "/",
   "/sign-in",
   "/sign-up",
-  "/onboarding",
   "/api/auth",
   "/_next",
   "/favicon.ico",
@@ -25,7 +21,7 @@ function isAuthPath(pathname: string): boolean {
   return authPaths.some((path) => pathname.startsWith(path));
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (isPublicPath(pathname) && !isAuthPath(pathname)) {
@@ -52,10 +48,16 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(signInUrl);
     }
 
+    if (session.user.name === "User" && !pathname.match("/complete")) {
+      const completeUrl = new URL("/complete", request.url);
+      completeUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(completeUrl);
+    }
+
     // ========== Organization Membership Check ==========
 
-    // Skip org check for onboarding pages
-    if (pathname.startsWith("/onboarding")) {
+    // // Skip org check for onboarding pages
+    if (pathname.match("/")) {
       // If user is on onboarding but already has org, redirect away
       const { organizationQueries: onboardingOrgQueries } = await import(
         "@critichut/db/queries"
@@ -80,9 +82,7 @@ export async function middleware(request: NextRequest) {
 
     if (userOrgs.length === 0) {
       // User has no organizations → redirect to onboarding
-      return NextResponse.redirect(
-        new URL("/onboarding/create-org", request.url)
-      );
+      return NextResponse.redirect(new URL("/", request.url));
     }
 
     // ========== End Organization Check ==========

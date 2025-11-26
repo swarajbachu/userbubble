@@ -1,19 +1,22 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "~/auth/server";
-import { OnboardingWizard } from "./_components/onboarding/onboarding-wizard";
+import { OnboardingWizard } from "../_components/onboarding/onboarding-wizard";
 
 export default async function HomePage() {
-  const headers = await import("next/headers").then((mod) => mod.headers());
-
-  const session = await auth.api.getSession({ headers });
+  const session = await auth.api.getSession({ headers: await headers() });
 
   // Middleware handles unauthenticated users - this page only runs for authenticated users
   if (!session?.user) {
     return null; // Should never reach here if middleware is configured correctly
   }
 
+  console.log(session.user);
+
   // Check if user has organizations using Better Auth API
-  const userOrgs = await auth.api.listOrganizations({ headers });
+  const userOrgs = await auth.api.listOrganizations({
+    headers: await headers(),
+  });
 
   // Has organizations - Redirect to first org
   if (userOrgs && userOrgs.length > 0) {
