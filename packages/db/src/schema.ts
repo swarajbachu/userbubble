@@ -25,6 +25,8 @@ export const CreatePostSchema = createInsertSchema(Post, {
 // Feedback schemas (posts, votes, comments)
 export * from "./feedback/feedback.sql";
 export * from "./feedback/feedback.validators";
+// Slug utilities
+export * from "./lib/slug";
 // Organization schemas (Better Auth organization plugin tables)
 export * from "./org/organization.sql";
 // Organization validators

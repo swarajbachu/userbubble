@@ -4,7 +4,7 @@ import * as schema from "@critichut/db/schema";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { oAuthProxy, organization } from "better-auth/plugins";
+import { organization } from "better-auth/plugins";
 
 import { externalLogin } from "./plugins/external-login";
 
@@ -29,9 +29,9 @@ export function initAuth<
     baseURL: options.baseUrl,
     secret: options.secret,
     plugins: [
-      oAuthProxy({
-        productionURL: options.productionUrl,
-      }),
+      // oAuthProxy({
+      //   productionURL: options.productionUrl,
+      // }),
       expo(),
       // Organization plugin for multi-tenancy
       // Note: Custom fields (secretKey, settings) are defined in the manual schema at packages/db/src/org/organization.sql.ts
@@ -39,6 +39,17 @@ export function initAuth<
         allowUserToCreateOrganization: true,
         creatorRole: "owner",
         membershipLimit: 100,
+        schema: {
+          organization: {
+            additionalFields: {
+              website: {
+                type: "string",
+                input: true,
+                required: false,
+              },
+            },
+          },
+        },
       }),
       // External login plugin for HMAC authentication
       externalLogin({
@@ -56,7 +67,7 @@ export function initAuth<
         // redirectURI: `${options.productionUrl}/api/auth/callback/google`,
       },
     },
-    trustedOrigins: ["expo://"],
+    trustedOrigins: ["expo://", "http://localhost:3000"],
     onAPIError: {
       onError(error, ctx) {
         console.error("BETTER AUTH API ERROR", error, ctx);

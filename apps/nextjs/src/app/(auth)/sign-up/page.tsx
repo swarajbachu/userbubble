@@ -5,15 +5,15 @@ import { Input } from "@critichut/ui/input";
 import { Label } from "@critichut/ui/label";
 import { toast } from "@critichut/ui/toast";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { authClient } from "~/auth/client";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  // Always redirect to onboarding after sign-up
+  const callbackUrl = "/onboarding/create-org";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

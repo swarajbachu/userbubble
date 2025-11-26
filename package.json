@@ -20,7 +20,7 @@
     "typecheck": "turbo run typecheck",
     "format": "ultracite fix .",
     "lint": "ultracite lint .",
-    "ui-add": "turbo run ui-add",
+    "ui-add": "pnpm -F @critichut/ui ui-add",
     "android": "expo run:android",
     "ios": "expo run:ios"
   },

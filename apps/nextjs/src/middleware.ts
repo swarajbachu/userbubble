@@ -9,6 +9,7 @@ const publicPaths = [
   "/",
   "/sign-in",
   "/sign-up",
+  "/onboarding",
   "/api/auth",
   "/_next",
   "/favicon.ico",
@@ -50,6 +51,41 @@ export async function middleware(request: NextRequest) {
       signInUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(signInUrl);
     }
+
+    // ========== Organization Membership Check ==========
+
+    // Skip org check for onboarding pages
+    if (pathname.startsWith("/onboarding")) {
+      // If user is on onboarding but already has org, redirect away
+      const { organizationQueries: onboardingOrgQueries } = await import(
+        "@critichut/db/queries"
+      );
+      const userOrgs = await onboardingOrgQueries.listUserOrganizations(
+        session.user.id
+      );
+
+      if (userOrgs.length > 0) {
+        // User has orgs, don't let them access onboarding
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+
+      return NextResponse.next();
+    }
+
+    // For all other authenticated pages, require org membership
+    const { organizationQueries } = await import("@critichut/db/queries");
+    const userOrgs = await organizationQueries.listUserOrganizations(
+      session.user.id
+    );
+
+    if (userOrgs.length === 0) {
+      // User has no organizations → redirect to onboarding
+      return NextResponse.redirect(
+        new URL("/onboarding/create-org", request.url)
+      );
+    }
+
+    // ========== End Organization Check ==========
 
     return NextResponse.next();
   } catch {
