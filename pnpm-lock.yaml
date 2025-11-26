@@ -445,6 +445,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@hugeicons-pro/core-duotone-rounded':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@hugeicons/react':
         specifier: ^1.1.1
         version: 1.1.1(react@19.1.1)
@@ -1816,6 +1819,9 @@ packages:
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
+
+  '@hugeicons-pro/core-duotone-rounded@2.0.0':
+    resolution: {integrity: sha512-H/QrFdV5tSffc3P1GR/qPKb6Z2PWmkyfhHiR2PZo4UeHK7ohsTZ6q+D4c2VzZzqVl6u5WFiu3Jd0KMHj/iLghA==}
 
   '@hugeicons/react@1.1.1':
     resolution: {integrity: sha512-BAbFVtx0XZ/yF2poPLFn0N9Ji6ebV/MpI5+WRqooFp3smQDwpL+72m+BBs4KAM5djgWUpg12weyc5SJtTsOwsw==}
@@ -9778,6 +9784,8 @@ snapshots:
 
   '@hexagon/base64@1.1.28': {}
 
+  '@hugeicons-pro/core-duotone-rounded@2.0.0': {}
+
   '@hugeicons/react@1.1.1(react@19.1.1)':
     dependencies:
       react: 19.1.1
@@ -11529,7 +11537,7 @@ snapshots:
       debug: 4.4.3
       invariant: 2.2.4
       metro: 0.83.3(bufferutil@4.0.8)
-      metro-config: 0.83.3(bufferutil@4.0.8)
+      metro-config: 0.83.3(bufferutil@4.0.8)(utf-8-validate@6.0.4)
       metro-core: 0.83.3
       semver: 7.7.3
     transitivePeerDependencies:
@@ -15206,21 +15214,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  metro-config@0.83.3(bufferutil@4.0.8):
-    dependencies:
-      connect: 3.7.0
-      flow-enums-runtime: 0.0.6
-      jest-validate: 29.7.0
-      metro: 0.83.3(bufferutil@4.0.8)
-      metro-cache: 0.83.3
-      metro-core: 0.83.3
-      metro-runtime: 0.83.3
-      yaml: 2.8.1
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
   metro-config@0.83.3(bufferutil@4.0.8)(utf-8-validate@6.0.4):
     dependencies:
       connect: 3.7.0
@@ -15578,7 +15571,7 @@ snapshots:
       metro-babel-transformer: 0.83.3
       metro-cache: 0.83.3
       metro-cache-key: 0.83.3
-      metro-config: 0.83.3(bufferutil@4.0.8)
+      metro-config: 0.83.3(bufferutil@4.0.8)(utf-8-validate@6.0.4)
       metro-core: 0.83.3
       metro-file-map: 0.83.3
       metro-resolver: 0.83.3

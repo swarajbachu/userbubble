@@ -52,7 +52,6 @@ export function Button({
     <Comp
       className={cn(buttonVariants({ variant, size, className }))}
       data-slot="button"
-      popover="auto"
       {...props}
     />
   );
