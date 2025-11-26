@@ -12,10 +12,10 @@ import {
   DoubleCardFooter,
   DoubleCardInner,
 } from "@critichut/ui/double-card";
+import { Icon } from "@critichut/ui/icon";
 import { Input } from "@critichut/ui/input";
 import { Label } from "@critichut/ui/label";
 import { toast } from "@critichut/ui/toast";
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Mail02Icon,
   ViewIcon,
@@ -104,11 +104,7 @@ export default function SignInPage() {
                       value={email}
                     />
                     <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 text-muted-foreground/80 peer-disabled:opacity-50">
-                      <HugeiconsIcon
-                        icon={Mail02Icon}
-                        size={20}
-                        strokeWidth={2}
-                      />
+                      <Icon icon={Mail02Icon} />
                     </div>
                   </div>
                 </div>
@@ -136,17 +132,9 @@ export default function SignInPage() {
                       type="button"
                     >
                       {isVisible ? (
-                        <HugeiconsIcon
-                          icon={ViewOffIcon}
-                          size={20}
-                          strokeWidth={2}
-                        />
+                        <Icon icon={ViewOffIcon} />
                       ) : (
-                        <HugeiconsIcon
-                          icon={ViewIcon}
-                          size={20}
-                          strokeWidth={2}
-                        />
+                        <Icon icon={ViewIcon} />
                       )}
                     </button>
                   </div>

@@ -12,11 +12,15 @@ import {
   DoubleCardFooter,
   DoubleCardInner,
 } from "@critichut/ui/double-card";
+import { Icon } from "@critichut/ui/icon";
 import { Input } from "@critichut/ui/input";
 import { Label } from "@critichut/ui/label";
 import { toast } from "@critichut/ui/toast";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Tick01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import {
+  Tick01Icon,
+  UserAccountIcon,
+  UserSquareIcon,
+} from "@hugeicons-pro/core-duotone-rounded";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -62,7 +66,7 @@ export default function CompleteProfilePage() {
         <DoubleCardInner>
           <CardHeader>
             <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <HugeiconsIcon icon={Tick01Icon} size={24} strokeWidth={1.5} />
+              <Icon icon={Tick01Icon} size={24} strokeWidth={1.5} />
             </div>
             <CardTitle className="text-xl">Update your profile</CardTitle>
             <CardDescription>That's it! We're almost done.</CardDescription>
@@ -75,23 +79,35 @@ export default function CompleteProfilePage() {
             >
               <div className="grid gap-2">
                 <Label htmlFor="firstName">First name</Label>
-                <Input
-                  id="firstName"
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Enter your first name"
-                  required
-                  value={firstName}
-                />
+                <div className="relative">
+                  <Input
+                    className="peer pe-9"
+                    id="firstName"
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Enter your first name"
+                    required
+                    value={firstName}
+                  />
+                  <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 text-muted-foreground/80 peer-disabled:opacity-50">
+                    <Icon icon={UserAccountIcon} />
+                  </div>
+                </div>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="lastName">Last name</Label>
-                <Input
-                  id="lastName"
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Enter your last name"
-                  required
-                  value={lastName}
-                />
+                <div className="relative">
+                  <Input
+                    className="peer pe-9"
+                    id="lastName"
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Enter your last name"
+                    required
+                    value={lastName}
+                  />
+                  <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 text-muted-foreground/80 peer-disabled:opacity-50">
+                    <Icon icon={UserSquareIcon} />
+                  </div>
+                </div>
               </div>
             </form>
           </CardContent>
