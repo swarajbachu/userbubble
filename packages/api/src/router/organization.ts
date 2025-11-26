@@ -1,0 +1,23 @@
+import { organizationQueries } from "@critichut/db/queries";
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
+import { z } from "zod";
+
+import { publicProcedure } from "../trpc";
+
+export const organizationRouter = {
+  // Get organization by slug
+  getBySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ input }) => {
+      const org = await organizationQueries.findBySlug(input.slug);
+
+      if (!org) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Organization not found",
+        });
+      }
+
+      return org;
+    }),
+} satisfies TRPCRouterRecord;

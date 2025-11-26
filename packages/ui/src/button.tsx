@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noTsIgnore: <explanation> */
 import { cn } from "@critichut/ui";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
@@ -40,13 +41,14 @@ export function Button({
   size,
   asChild = false,
   ...props
-}: React.ComponentProps<"button"> &
+}: Omit<React.ComponentProps<"button">, "popover"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
   }) {
   const Comp = asChild ? SlotPrimitive.Slot : "button";
 
   return (
+    // @ts-ignore - Radix UI Slot ref type incompatibility
     <Comp
       className={cn(buttonVariants({ variant, size, className }))}
       data-slot="button"

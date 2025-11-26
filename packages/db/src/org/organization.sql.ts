@@ -1,21 +1,34 @@
-import { pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { createUniqueIds } from "../lib/ids";
 import { user } from "../user/user.sql";
 
 // PostgreSQL Enums for type safety
-export const roleEnum = pgEnum("role", ["owner", "admin", "member"]);
-export const invitationStatusEnum = pgEnum("invitation_status", [
+// Const arrays + type extraction for single source of truth
+export const roles = ["owner", "admin", "member"] as const;
+export type Role = (typeof roles)[number];
+
+export const invitationStatuses = [
   "pending",
   "accepted",
   "rejected",
   "cancelled",
-]);
+] as const;
+export type InvitationStatus = (typeof invitationStatuses)[number];
+
+export const roleEnum = pgEnum("role", roles);
+export const invitationStatusEnum = pgEnum(
+  "invitation_status",
+  invitationStatuses
+);
 
 /**
  * Organization table
  * Represents a multi-tenant organization in critichut
  */
 export const organization = pgTable("organization", {
-  id: text("id").primaryKey(),
+  id: varchar("id", { length: 256 })
+    .primaryKey()
+    .$defaultFn(() => createUniqueIds("org")),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   logo: text("logo"),
@@ -39,7 +52,9 @@ export const organization = pgTable("organization", {
  * Links users to organizations with roles
  */
 export const member = pgTable("member", {
-  id: text("id").primaryKey(),
+  id: varchar("id", { length: 256 })
+    .primaryKey()
+    .$defaultFn(() => createUniqueIds("member")),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -62,7 +77,9 @@ export const member = pgTable("member", {
  * Stores pending invitations to organizations
  */
 export const invitation = pgTable("invitation", {
-  id: text("id").primaryKey(),
+  id: varchar("id", { length: 256 })
+    .primaryKey()
+    .$defaultFn(() => createUniqueIds("invite")),
   email: text("email").notNull(),
 
   // The user who sent the invitation

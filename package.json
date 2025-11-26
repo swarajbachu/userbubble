@@ -11,6 +11,8 @@
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
     "auth:generate": "pnpm -F @critichut/auth generate",
+    "db:generate": "pnpm -F @critichut/db generate",
+    "db:migrate": "pnpm -F @critichut/db migrate",
     "db:push": "turbo -F @critichut/db push",
     "db:studio": "turbo -F @critichut/db studio",
     "dev": "turbo watch dev --continue",
