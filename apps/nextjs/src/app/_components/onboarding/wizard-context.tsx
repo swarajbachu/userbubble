@@ -18,6 +18,7 @@ type WizardState = {
   slug: string;
   isCreating: boolean;
   showChecklist: boolean;
+  validationError: string | null;
 };
 
 type WizardActions = {
@@ -30,6 +31,8 @@ type WizardActions = {
   createOrganization: () => Promise<void>;
   openChecklist: () => void;
   closeChecklist: () => void;
+  setValidationError: (error: string | null) => void;
+  handleStepNext: () => Promise<boolean>; // New generic handler
 };
 
 type WizardContextType = WizardState & WizardActions;
@@ -44,26 +47,41 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   const [slug, setSlug] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const nextStep = useCallback(() => {
+    if (validationError) {
+      return; // Prevent next if error
+    }
     if (currentStep < 4) {
       setCurrentStep((prev) => prev + 1);
+      setValidationError(null);
     }
-  }, [currentStep]);
+  }, [currentStep, validationError]);
 
   const prevStep = useCallback(() => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
+      setValidationError(null);
     }
   }, [currentStep]);
 
   const goToStep = useCallback((step: number) => {
     if (step >= 1 && step <= 4) {
       setCurrentStep(step);
+      setValidationError(null);
     }
   }, []);
 
+  const handleStepNext = useCallback(async () => {
+    setValidationError(null);
+    return true;
+  }, []);
+
   const createOrganization = useCallback(async () => {
+    if (validationError) {
+      return; // Prevent create if error
+    }
     setIsCreating(true);
     try {
       const { data, error } = await authClient.organization.create({
@@ -91,7 +109,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsCreating(false);
     }
-  }, [organizationName, slug, website, router]);
+  }, [organizationName, slug, website, router, validationError]);
 
   const openChecklist = useCallback(() => {
     setShowChecklist(true);
@@ -108,6 +126,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     slug,
     isCreating,
     showChecklist,
+    validationError,
     nextStep,
     prevStep,
     goToStep,
@@ -117,6 +136,8 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     createOrganization,
     openChecklist,
     closeChecklist,
+    setValidationError,
+    handleStepNext,
   };
 
   return (

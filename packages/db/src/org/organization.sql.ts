@@ -37,7 +37,7 @@ export const organization = pgTable("organization", {
 
   // critichut-specific: Secret key for HMAC authentication (encrypted)
   // HMAC secret key for external authentication
-  secretKey: text("secret_key").notNull(),
+  secretKey: text("secret_key"),
 
   // Metadata for organization-specific settings
   metadata: text("metadata"),

@@ -1,99 +1,102 @@
 "use client";
 
 import { createSlug } from "@critichut/db/schema";
-import { Button } from "@critichut/ui/button";
+import { Icon } from "@critichut/ui/icon";
 import { Input } from "@critichut/ui/input";
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowLeft01Icon,
-  Cancel01Icon,
-  Tick01Icon,
+  AlertCircleIcon,
+  CheckmarkCircle01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
 import { useEffect, useState } from "react";
+import { z } from "zod";
 import { useWizard } from "./wizard-context";
 
-export function StepName() {
-  const { organizationName, setOrganizationName, setSlug, nextStep, prevStep } =
-    useWizard();
-  const [error, setError] = useState("");
+const nameSchema = z.string().min(3).max(100);
 
-  // Auto-generate slug when name changes
+export function StepName() {
+  const { organizationName, setOrganizationName, setSlug } = useWizard();
+  const [error, setError] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+
   useEffect(() => {
     if (organizationName) {
       setSlug(createSlug(organizationName));
     }
   }, [organizationName, setSlug]);
 
-  const handleNext = () => {
-    if (!organizationName || organizationName.length < 3) {
-      setError("Organization name must be at least 3 characters");
-      return;
+  const validateName = (name: string) => {
+    const result = nameSchema.safeParse(name);
+    if (!result.success) {
+      if (name.length < 3) {
+        return { success: false, error: "Name must be at least 3 characters" };
+      }
+      if (name.length > 100) {
+        return {
+          success: false,
+          error: "Name must be less than 100 characters",
+        };
+      }
+      return { success: false, error: "Invalid name" };
     }
-    if (organizationName.length > 100) {
-      setError("Organization name must be less than 100 characters");
-      return;
-    }
-    setError("");
-    nextStep();
+    return { success: true };
   };
 
   const handleChange = (value: string) => {
     setOrganizationName(value);
-    if (error) {
-      setError("");
+    setError("");
+    setIsTyping(true);
+  };
+
+  const handleBlur = () => {
+    setIsTyping(false);
+    if (organizationName) {
+      const validation = validateName(organizationName);
+      if (!validation.success) {
+        setError(validation.error ?? "Invalid name");
+      }
     }
   };
 
   const isValid =
     organizationName.length >= 3 && organizationName.length <= 100;
-  const hasError = organizationName && !isValid;
 
   return (
-    <div className="w-full max-w-md space-y-6">
-      <div>
-        <h1 className="mb-2 font-bold text-2xl">Pick a name</h1>
-        <p className="text-muted-foreground">
-          What would you like to call your organization?
+    <div className="w-full max-w-md space-y-8">
+      <div className="space-y-2">
+        <h1 className="font-bold text-3xl tracking-tight">Pick a name.</h1>
+        <p className="text-lg text-muted-foreground">
+          What should we call this workspace? Usually, this is your product
+          name.
         </p>
       </div>
 
-      <div>
+      <div className="relative">
         <div className="relative">
           <Input
-            className="peer pe-9"
+            className={`h-12 pr-12 text-lg ${error ? "border-destructive focus-visible:ring-destructive" : ""}`}
+            onBlur={handleBlur}
             onChange={(e) => handleChange(e.target.value)}
-            placeholder="Acme Inc"
-            type="text"
+            placeholder="My Workspace"
             value={organizationName}
           />
-          <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 text-muted-foreground/80 peer-disabled:opacity-50">
-            {isValid && (
-              <HugeiconsIcon
+          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted-foreground/80">
+            {!error && isValid && !isTyping && (
+              <Icon
                 className="text-green-600"
-                icon={Tick01Icon}
-                size={16}
+                icon={CheckmarkCircle01Icon}
+                size={20}
               />
             )}
-            {hasError && (
-              <HugeiconsIcon
+            {error && (
+              <Icon
                 className="text-destructive"
-                icon={Cancel01Icon}
-                size={16}
+                icon={AlertCircleIcon}
+                size={20}
               />
             )}
           </div>
         </div>
-        {error && <p className="mt-1 text-destructive text-sm">{error}</p>}
-      </div>
-
-      <div className="flex items-center justify-between">
-        <Button onClick={prevStep} variant="ghost">
-          <HugeiconsIcon className="mr-2" icon={ArrowLeft01Icon} size={16} />
-          Back
-        </Button>
-        <Button disabled={!isValid} onClick={handleNext}>
-          Next →
-        </Button>
+        {error && <p className="mt-2 text-destructive text-sm">{error}</p>}
       </div>
     </div>
   );

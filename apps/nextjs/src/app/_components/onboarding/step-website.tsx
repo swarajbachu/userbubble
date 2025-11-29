@@ -1,87 +1,96 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
 import { Input } from "@critichut/ui/input";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Cancel01Icon, Tick01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { AlertCircleIcon } from "@hugeicons-pro/core-duotone-rounded";
 import { useState } from "react";
+import { z } from "zod";
 import { useWizard } from "./wizard-context";
 
+const urlSchema = z.string().url().or(z.string().min(1));
+
 export function StepWebsite() {
-  const { website, setWebsite, nextStep } = useWizard();
+  const { website, setWebsite } = useWizard();
   const [error, setError] = useState("");
 
-  const validateUrl = (url: string): boolean => {
+  const validateUrl = (url: string) => {
     if (!url) {
-      return true; // Optional field
+      return { success: true };
     }
-    try {
-      new URL(url.startsWith("http") ? url : `https://${url}`);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const handleNext = () => {
-    if (website && !validateUrl(website)) {
-      setError("Please enter a valid URL");
-      return;
-    }
-    setError("");
-    nextStep();
+    const urlToValidate = url.startsWith("http") ? url : `https://${url}`;
+    const result = urlSchema.safeParse(urlToValidate);
+    return result;
   };
 
   const handleChange = (value: string) => {
     setWebsite(value);
-    if (error) {
-      setError("");
+    setError("");
+  };
+
+  const handleBlur = () => {
+    if (website) {
+      const validation = validateUrl(website);
+      if (!validation.success) {
+        setError("Please enter a valid URL");
+      }
     }
   };
 
-  const isValid = website && validateUrl(website);
-  const hasError = website && !validateUrl(website);
+  const getDomain = (url: string) => {
+    try {
+      if (!url) {
+        return "";
+      }
+      const urlObj = new URL(url.startsWith("http") ? url : `https://${url}`);
+      return urlObj.hostname;
+    } catch {
+      return "";
+    }
+  };
+
+  const domain = getDomain(website);
 
   return (
-    <div className="w-full max-w-md space-y-6">
-      <div>
-        <h1 className="mb-2 font-bold text-2xl">First things first.</h1>
-        <p className="text-muted-foreground">
+    <div className="w-full max-w-md space-y-8">
+      <div className="space-y-2">
+        <h1 className="font-bold text-3xl tracking-tight">
+          First things first.
+        </h1>
+        <p className="text-lg text-muted-foreground">
           Which website do you want to collect feedback for?
         </p>
       </div>
 
-      <div>
+      <div className="relative">
         <div className="relative">
           <Input
-            className="peer pe-9"
+            className={`h-12 pr-12 text-lg ${error ? "border-destructive focus-visible:ring-destructive" : ""}`}
+            onBlur={handleBlur}
             onChange={(e) => handleChange(e.target.value)}
             placeholder="mywebsite.com"
-            type="text"
             value={website}
           />
-          <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 text-muted-foreground/80 peer-disabled:opacity-50">
-            {isValid && (
-              <HugeiconsIcon
-                className="text-green-600"
-                icon={Tick01Icon}
-                size={16}
+          <div className="absolute inset-y-0 right-3 flex items-center">
+            {domain && !error && (
+              // biome-ignore lint/performance/noImgElement: <explanation>
+              <img
+                alt="Favicon"
+                className="h-6 w-6 rounded-sm"
+                height={24}
+                src={`https://www.google.com/s2/favicons?domain=${domain}&sz=128`}
+                width={24}
               />
             )}
-            {hasError && (
+            {error && (
               <HugeiconsIcon
                 className="text-destructive"
-                icon={Cancel01Icon}
-                size={16}
+                icon={AlertCircleIcon}
+                size={20}
               />
             )}
           </div>
         </div>
-        {error && <p className="mt-1 text-destructive text-sm">{error}</p>}
-      </div>
-
-      <div className="flex items-center justify-end">
-        <Button onClick={handleNext}>{website ? "Next →" : "Skip →"}</Button>
+        {error && <p className="mt-2 text-destructive text-sm">{error}</p>}
       </div>
     </div>
   );

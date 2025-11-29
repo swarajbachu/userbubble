@@ -5,25 +5,32 @@ type ColoredTileProps = {
   color: "salmon" | "purple" | "green" | "blue";
   label: string;
   icon?: ReactNode;
+  className?: string;
 };
 
 const colorClasses = {
-  salmon: "bg-gradient-to-br from-orange-400 to-pink-400",
-  purple: "bg-gradient-to-br from-purple-400 to-indigo-400",
-  green: "bg-gradient-to-br from-green-400 to-emerald-400",
-  blue: "bg-gradient-to-br from-blue-400 to-cyan-400",
+  salmon: "bg-[#FF6B6B] text-white",
+  purple: "bg-[#6B5B95] text-white",
+  green: "bg-[#4ECDC4] text-white",
+  blue: "bg-[#45B7D1] text-white",
 };
 
-export function ColoredTile({ color, label, icon }: ColoredTileProps) {
+export function ColoredTile({
+  color,
+  label,
+  icon,
+  className,
+}: ColoredTileProps) {
   return (
     <div
       className={cn(
-        "flex h-full min-h-[150px] flex-col items-center justify-center rounded-lg p-6 text-white shadow-lg transition-transform hover:scale-105",
-        colorClasses[color]
+        "flex w-full flex-col items-center justify-center rounded-xl p-8 shadow-sm transition-transform hover:scale-[1.02]",
+        colorClasses[color],
+        className
       )}
     >
       {icon && <div className="mb-3 text-4xl">{icon}</div>}
-      <h3 className="font-semibold text-xl">{label}</h3>
+      <h3 className="font-bold text-3xl tracking-tight">{label}</h3>
     </div>
   );
 }
