@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@critichut/ui";
 import { Button } from "@critichut/ui/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronUp } from "lucide-react";
@@ -10,9 +11,14 @@ import { useTRPC } from "~/trpc/react";
 type VoteButtonProps = {
   postId: string;
   initialVotes: number;
+  className?: string;
 };
 
-export function VoteButton({ postId, initialVotes }: VoteButtonProps) {
+export function VoteButton({
+  postId,
+  initialVotes,
+  className,
+}: VoteButtonProps) {
   const [optimisticVotes, setOptimisticVotes] = useState(initialVotes);
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -42,7 +48,9 @@ export function VoteButton({ postId, initialVotes }: VoteButtonProps) {
     })
   );
 
-  const handleVote = () => {
+  const handleVote = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (userVote) {
       // Remove vote
       voteMutation.mutate({ postId, value: 0 });
@@ -56,14 +64,14 @@ export function VoteButton({ postId, initialVotes }: VoteButtonProps) {
 
   return (
     <Button
-      className="flex h-auto flex-col gap-1 px-3 py-2"
+      className={cn("flex h-auto items-center gap-1.5 px-3 py-1", className)}
       disabled={voteMutation.isPending}
       onClick={handleVote}
       size="sm"
-      variant={hasVoted ? "default" : "outline"}
+      variant={hasVoted ? "default" : "secondary"}
     >
-      <ChevronUp className={`h-4 w-4 ${hasVoted ? "fill-current" : ""}`} />
-      <span className="font-semibold text-sm">{optimisticVotes}</span>
+      <ChevronUp className={cn("h-4 w-4", hasVoted ? "fill-current" : "")} />
+      <span className="font-medium text-xs">{optimisticVotes}</span>
     </Button>
   );
 }
