@@ -6,17 +6,13 @@ import { cn } from "@critichut/ui";
 import { Button } from "@critichut/ui/button";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@critichut/ui/dialog";
-import {
-  DoubleCard,
-  DoubleCardFooter,
-  DoubleCardInner,
-} from "@critichut/ui/double-card";
 import {
   Field,
   FieldContent,
@@ -105,148 +101,140 @@ export function CreateRequestDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-[600px]">
-        <DoubleCard>
-          <DoubleCardInner className="space-y-4 p-5">
-            <DialogHeader>
-              <DialogTitle>Create Request</DialogTitle>
-              <DialogDescription>
-                Share your ideas, report bugs, or suggest improvements. Your
-                feedback helps us build better products.
-              </DialogDescription>
-            </DialogHeader>
-            <form
-              className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                form.handleSubmit();
+        <DialogBody className="space-y-4">
+          <DialogHeader>
+            <DialogTitle>Create Request</DialogTitle>
+            <DialogDescription>
+              Share your ideas, report bugs, or suggest improvements. Your
+              feedback helps us build better products.
+            </DialogDescription>
+          </DialogHeader>
+          {/* Title */}
+          <form
+            className="contents"
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.handleSubmit();
+            }}
+          >
+            <form.Field name="title">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldContent>
+                      <FieldLabel htmlFor={field.name}>Title</FieldLabel>
+                    </FieldContent>
+                    <Input
+                      className="bg-transparent dark:bg-input/30"
+                      id={field.name}
+                      maxLength={256}
+                      minLength={3}
+                      name={field.name}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Brief summary of your request"
+                      required
+                      type="text"
+                      value={field.state.value}
+                    />
+                    <div className="mt-1 text-muted-foreground text-xs">
+                      {field.state.value.length}/256 characters
+                    </div>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
               }}
-            >
-              {/* Title */}
-              <form.Field name="title">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>Title</FieldLabel>
-                      </FieldContent>
-                      <Input
-                        className="bg-transparent dark:bg-input/30"
-                        id={field.name}
-                        maxLength={256}
-                        minLength={3}
-                        name={field.name}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        placeholder="Brief summary of your request"
-                        required
-                        type="text"
-                        value={field.state.value}
-                      />
-                      <div className="mt-1 text-muted-foreground text-xs">
-                        {field.state.value.length}/256 characters
-                      </div>
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  );
-                }}
-              </form.Field>
+            </form.Field>
 
-              {/* Category */}
-              <form.Field name="category">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>Category</FieldLabel>
-                      </FieldContent>
-                      <Select
-                        onValueChange={(value) =>
-                          field.handleChange(value as typeof field.state.value)
-                        }
-                        value={field.state.value}
-                      >
-                        <SelectTrigger id={field.name}>
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="feature_request">
-                            Feature Request
-                          </SelectItem>
-                          <SelectItem value="bug">Bug Report</SelectItem>
-                          <SelectItem value="improvement">
-                            Improvement
-                          </SelectItem>
-                          <SelectItem value="question">Question</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  );
-                }}
-              </form.Field>
+            {/* Category */}
+            <form.Field name="category">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldContent>
+                      <FieldLabel htmlFor={field.name}>Category</FieldLabel>
+                    </FieldContent>
+                    <Select
+                      onValueChange={(value) =>
+                        field.handleChange(value as typeof field.state.value)
+                      }
+                      value={field.state.value}
+                    >
+                      <SelectTrigger id={field.name}>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="feature_request">
+                          Feature Request
+                        </SelectItem>
+                        <SelectItem value="bug">Bug Report</SelectItem>
+                        <SelectItem value="improvement">Improvement</SelectItem>
+                        <SelectItem value="question">Question</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+            </form.Field>
 
-              {/* Description */}
-              <form.Field name="description">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldContent>
-                        <FieldLabel htmlFor={field.name}>
-                          Description
-                        </FieldLabel>
-                      </FieldContent>
-                      <Textarea
-                        id={field.name}
-                        maxLength={5000}
-                        minLength={10}
-                        name={field.name}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        placeholder="Provide more details about your request..."
-                        required
-                        rows={6}
-                        value={field.state.value}
-                      />
-                      <div className="mt-1 text-muted-foreground text-xs">
-                        {field.state.value.length}/5000 characters
-                      </div>
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  );
-                }}
-              </form.Field>
-            </form>
-          </DoubleCardInner>
-          <DoubleCardFooter>
-            <DialogFooter>
-              <Button
-                disabled={createPost.isPending}
-                onClick={() => onOpenChange(false)}
-                type="button"
-                variant="outline"
-              >
-                Cancel
-              </Button>
-              <Button disabled={createPost.isPending} type="submit">
-                {createPost.isPending ? "Submitting..." : "Submit Request"}
-              </Button>
-            </DialogFooter>
-          </DoubleCardFooter>
-        </DoubleCard>
+            {/* Description */}
+            <form.Field name="description">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldContent>
+                      <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+                    </FieldContent>
+                    <Textarea
+                      id={field.name}
+                      maxLength={5000}
+                      minLength={10}
+                      name={field.name}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Provide more details about your request..."
+                      required
+                      rows={6}
+                      value={field.state.value}
+                    />
+                    <div className="mt-1 text-muted-foreground text-xs">
+                      {field.state.value.length}/5000 characters
+                    </div>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+            </form.Field>
+          </form>
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            disabled={createPost.isPending}
+            onClick={() => onOpenChange(false)}
+            type="button"
+            variant="outline"
+          >
+            Cancel
+          </Button>
+          <Button disabled={createPost.isPending} type="submit">
+            {createPost.isPending ? "Submitting..." : "Submit Request"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

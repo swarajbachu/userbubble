@@ -3,6 +3,7 @@
 import { Checkbox } from "@critichut/ui/checkbox";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -43,31 +44,36 @@ export function OnboardingChecklistModal() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Setup Column */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">Setup</h3>
-            <div className="space-y-3">
-              <ChecklistItem id="setup-domain" label="Setup Domain" />
-              <ChecklistItem id="install-widget" label="Install the widget" />
-              <ChecklistItem id="auto-login" label="Enable auto-login" />
-              <ChecklistItem id="guest-submissions" label="Guest submissions" />
+        <DialogBody>
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Setup Column */}
+            <div className="space-y-4">
+              <h3 className="font-semibold">Setup</h3>
+              <div className="space-y-3">
+                <ChecklistItem id="setup-domain" label="Setup Domain" />
+                <ChecklistItem id="install-widget" label="Install the widget" />
+                <ChecklistItem id="auto-login" label="Enable auto-login" />
+                <ChecklistItem
+                  id="guest-submissions"
+                  label="Guest submissions"
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Customize Column */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">Customize</h3>
-            <div className="space-y-3">
-              <ChecklistItem id="invite-team" label="Invite your team" />
-              <ChecklistItem
-                id="customize-branding"
-                label="Customize branding"
-              />
-              <ChecklistItem id="share-board" label="Share your board" />
+            {/* Customize Column */}
+            <div className="space-y-4">
+              <h3 className="font-semibold">Customize</h3>
+              <div className="space-y-3">
+                <ChecklistItem id="invite-team" label="Invite your team" />
+                <ChecklistItem
+                  id="customize-branding"
+                  label="Customize branding"
+                />
+                <ChecklistItem id="share-board" label="Share your board" />
+              </div>
             </div>
           </div>
-        </div>
+        </DialogBody>
       </DialogContent>
     </Dialog>
   );
