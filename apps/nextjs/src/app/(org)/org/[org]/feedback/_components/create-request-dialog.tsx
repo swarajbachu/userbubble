@@ -13,12 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@critichut/ui/dialog";
-import {
-  Field,
-  FieldContent,
-  FieldError,
-  FieldLabel,
-} from "@critichut/ui/field";
 import { Input } from "@critichut/ui/input";
 import {
   Select,
@@ -101,52 +95,87 @@ export function CreateRequestDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-[600px]">
-        <DialogBody className="space-y-4">
-          <DialogHeader>
-            <DialogTitle>Create Request</DialogTitle>
-            <DialogDescription>
-              Share your ideas, report bugs, or suggest improvements. Your
-              feedback helps us build better products.
-            </DialogDescription>
-          </DialogHeader>
-          {/* Title */}
-          <form
-            className="contents"
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              form.handleSubmit();
-            }}
-          >
+        <form
+          className="contents"
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
+          <DialogBody className="space-y-4">
+            <DialogHeader className="sr-only">
+              <DialogTitle className="sr-only">Create Request</DialogTitle>
+              <DialogDescription className="sr-only">
+                Share your ideas, report bugs, or suggest improvements. Your
+                feedback helps us build better products.
+              </DialogDescription>
+            </DialogHeader>
+            {/* Title */}
+
             <form.Field name="title">
               {(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldContent>
-                      <FieldLabel htmlFor={field.name}>Title</FieldLabel>
-                    </FieldContent>
+                  <div className="flex flex-col gap-2">
                     <Input
-                      className="bg-transparent dark:bg-input/30"
+                      className={cn(
+                        "h-auto border-none bg-transparent p-0 font-semibold text-lg shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0",
+                        isInvalid &&
+                          "text-destructive placeholder:text-destructive"
+                      )}
                       id={field.name}
                       maxLength={256}
                       minLength={3}
                       name={field.name}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="Brief summary of your request"
+                      placeholder="Request Title"
                       required
                       type="text"
                       value={field.state.value}
                     />
-                    <div className="mt-1 text-muted-foreground text-xs">
-                      {field.state.value.length}/256 characters
-                    </div>
                     {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <span className="text-destructive text-xs">
+                        {field.state.meta.errors.join(", ")}
+                      </span>
                     )}
-                  </Field>
+                  </div>
+                );
+              }}
+            </form.Field>
+
+            {/* Description */}
+            <form.Field name="description">
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+                return (
+                  <div className="flex flex-col gap-2">
+                    <Textarea
+                      className={cn(
+                        "min-h-[100px] resize-none border-none bg-transparent p-0 shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0",
+                        isInvalid &&
+                          "text-destructive placeholder:text-destructive"
+                      )}
+                      id={field.name}
+                      maxLength={5000}
+                      minLength={10}
+                      name={field.name}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Add details..."
+                      required
+                      rows={6}
+                      value={field.state.value}
+                    />
+                    {isInvalid && (
+                      <span className="text-destructive text-xs">
+                        {field.state.meta.errors.join(", ")}
+                      </span>
+                    )}
+                  </div>
                 );
               }}
             </form.Field>
@@ -157,18 +186,15 @@ export function CreateRequestDialog({
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldContent>
-                      <FieldLabel htmlFor={field.name}>Category</FieldLabel>
-                    </FieldContent>
+                  <div className="flex items-center gap-2 pt-2">
                     <Select
                       onValueChange={(value) =>
                         field.handleChange(value as typeof field.state.value)
                       }
                       value={field.state.value}
                     >
-                      <SelectTrigger id={field.name}>
-                        <SelectValue placeholder="Select a category" />
+                      <SelectTrigger className="h-8 w-auto gap-2 border-none bg-secondary/50 px-3 font-medium text-xs shadow-none hover:bg-secondary focus:ring-0">
+                        <SelectValue placeholder="Category" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="feature_request">
@@ -181,60 +207,29 @@ export function CreateRequestDialog({
                       </SelectContent>
                     </Select>
                     {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <span className="text-destructive text-xs">
+                        {field.state.meta.errors.join(", ")}
+                      </span>
                     )}
-                  </Field>
+                  </div>
                 );
               }}
             </form.Field>
-
-            {/* Description */}
-            <form.Field name="description">
-              {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldContent>
-                      <FieldLabel htmlFor={field.name}>Description</FieldLabel>
-                    </FieldContent>
-                    <Textarea
-                      id={field.name}
-                      maxLength={5000}
-                      minLength={10}
-                      name={field.name}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="Provide more details about your request..."
-                      required
-                      rows={6}
-                      value={field.state.value}
-                    />
-                    <div className="mt-1 text-muted-foreground text-xs">
-                      {field.state.value.length}/5000 characters
-                    </div>
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                );
-              }}
-            </form.Field>
-          </form>
-        </DialogBody>
-        <DialogFooter>
-          <Button
-            disabled={createPost.isPending}
-            onClick={() => onOpenChange(false)}
-            type="button"
-            variant="outline"
-          >
-            Cancel
-          </Button>
-          <Button disabled={createPost.isPending} type="submit">
-            {createPost.isPending ? "Submitting..." : "Submit Request"}
-          </Button>
-        </DialogFooter>
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              disabled={createPost.isPending}
+              onClick={() => onOpenChange(false)}
+              type="button"
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button disabled={createPost.isPending} type="submit">
+              {createPost.isPending ? "Submitting..." : "Submit Request"}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
