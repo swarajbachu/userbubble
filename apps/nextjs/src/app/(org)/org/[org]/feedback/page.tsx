@@ -7,12 +7,8 @@ type FeedbackPageProps = {
   searchParams: Promise<{ status?: string; sort?: string }>;
 };
 
-export default async function FeedbackPage({
-  params,
-  searchParams,
-}: FeedbackPageProps) {
+export default async function FeedbackPage({ params }: FeedbackPageProps) {
   const { org } = await params;
-  const filters = await searchParams;
 
   return (
     <div className="w-full">
@@ -30,7 +26,7 @@ export default async function FeedbackPage({
           </div>
         }
       >
-        <FeedbackBoard filters={filters} org={org} />
+        <FeedbackBoard org={org} />
       </Suspense>
     </div>
   );

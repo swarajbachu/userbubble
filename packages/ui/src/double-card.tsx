@@ -8,7 +8,10 @@ const DoubleCard = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
-    className={cn("rounded-2xl border bg-muted/10 p-1 shadow-sm", className)}
+    className={cn(
+      "rounded-2xl border bg-secondary p-1 shadow-sm dark:bg-muted/10",
+      className
+    )}
     ref={ref}
     {...props}
   />

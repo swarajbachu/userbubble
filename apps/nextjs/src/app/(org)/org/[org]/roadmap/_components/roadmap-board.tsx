@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/useHookAtTopLevel: <explanation> */
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -18,24 +17,7 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
   const { data: plannedPosts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
       organizationId: activeOrganization?.id ?? "",
-      status: "planned",
       sortBy: "votes",
-    })
-  );
-
-  const { data: inProgressPosts } = useSuspenseQuery(
-    trpc.feedback.getAll.queryOptions({
-      organizationId: activeOrganization?.id ?? "",
-      status: "in_progress",
-      sortBy: "votes",
-    })
-  );
-
-  const { data: completedPosts } = useSuspenseQuery(
-    trpc.feedback.getAll.queryOptions({
-      organizationId: activeOrganization?.id ?? "",
-      status: "completed",
-      sortBy: "recent",
     })
   );
 
@@ -57,7 +39,7 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
         colorClass="border-yellow-200 dark:border-yellow-800"
         description="Currently being worked on"
         org={org}
-        posts={inProgressPosts ?? []}
+        posts={[]}
         title="In Progress"
       />
 
@@ -65,7 +47,7 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
         colorClass="border-green-200 dark:border-green-800"
         description="Recently shipped features"
         org={org}
-        posts={completedPosts ?? []}
+        posts={[]}
         title="Completed"
       />
     </div>

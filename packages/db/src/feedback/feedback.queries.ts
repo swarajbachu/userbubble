@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "../client";
 import { user } from "../user/user.sql";
 import {
@@ -19,7 +19,7 @@ import {
 export async function getFeedbackPosts(
   organizationId: string,
   filters?: {
-    status?: FeedbackStatus;
+    status?: FeedbackStatus[];
     category?: FeedbackCategory;
     sortBy?: "votes" | "recent";
   }
@@ -28,7 +28,7 @@ export async function getFeedbackPosts(
   const conditions = [eq(feedbackPost.organizationId, organizationId)];
 
   if (filters?.status) {
-    conditions.push(eq(feedbackPost.status, filters.status));
+    conditions.push(inArray(feedbackPost.status, filters.status));
   }
 
   if (filters?.category) {

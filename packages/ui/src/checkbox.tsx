@@ -2,7 +2,7 @@
 
 import { cn } from "@critichut/ui";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Tick02Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { Tick02Icon } from "@hugeicons-pro/core-solid-rounded";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import type * as React from "react";
 
