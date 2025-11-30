@@ -1,8 +1,7 @@
-import { SidebarProvider } from "@critichut/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@critichut/ui/sidebar";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { auth } from "~/auth/server";
-import { MobileNav } from "./_components/mobile-nav";
 import { OrgSidebar } from "./_components/org-sidebar";
 
 type OrgLayoutProps = {
@@ -34,22 +33,11 @@ export default async function OrgLayout({ children, params }: OrgLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen">
-        {/* Desktop Sidebar */}
-        <aside className="hidden border-r md:block">
-          <OrgSidebar org={org} organizationName={organization.name} />
-        </aside>
-
-        {/* Mobile Navigation */}
-        <div className="md:hidden">
-          <MobileNav org={org} organizationName={organization.name} />
-        </div>
-
-        {/* Main Content */}
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto px-4 py-8 md:px-8">{children}</div>
-        </main>
-      </div>
+      <OrgSidebar org={org} organizationName={organization.name} />
+      {/* Main Content */}
+      <SidebarInset>
+        <main>{children}</main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

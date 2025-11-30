@@ -14,13 +14,10 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
   const trpc = useTRPC();
 
   const { data: activeOrganization } = authClient.useActiveOrganization();
-  if (!activeOrganization) {
-    return null;
-  }
 
   const { data: plannedPosts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: activeOrganization.id,
+      organizationId: activeOrganization?.id ?? "",
       status: "planned",
       sortBy: "votes",
     })
@@ -28,7 +25,7 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
 
   const { data: inProgressPosts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: activeOrganization.id,
+      organizationId: activeOrganization?.id ?? "",
       status: "in_progress",
       sortBy: "votes",
     })
@@ -36,11 +33,15 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
 
   const { data: completedPosts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: activeOrganization.id,
+      organizationId: activeOrganization?.id ?? "",
       status: "completed",
       sortBy: "recent",
     })
   );
+
+  if (!activeOrganization) {
+    return null;
+  }
 
   return (
     <div className="grid gap-6 md:grid-cols-3">

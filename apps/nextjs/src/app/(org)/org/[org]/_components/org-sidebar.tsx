@@ -83,7 +83,7 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
   const isOnFeedbackPage = pathname.includes("/feedback");
 
   return (
-    <Sidebar>
+    <Sidebar variant="inset">
       <SidebarHeader>
         <div className="flex items-center justify-between px-4 py-2">
           <h2 className="truncate font-semibold text-lg">{organizationName}</h2>

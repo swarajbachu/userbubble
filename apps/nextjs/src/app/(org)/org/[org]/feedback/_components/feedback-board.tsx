@@ -19,18 +19,17 @@ export function FeedbackBoard({ org, filters }: FeedbackBoardProps) {
 
   const { data: activeOrganization } = authClient.useActiveOrganization();
 
-  if (!activeOrganization) {
-    return null;
-  }
-
-  // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
   const { data: posts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: activeOrganization.id,
+      organizationId: activeOrganization?.id ?? "",
       status: filters?.status as FeedbackStatus | undefined,
       sortBy: (filters?.sort as "votes" | "recent") ?? "recent",
     })
   );
+
+  if (!activeOrganization) {
+    return null;
+  }
 
   if (posts.length === 0) {
     return (
