@@ -15,14 +15,9 @@ export default async function FeedbackPage({
   const filters = await searchParams;
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="w-full">
       <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="font-bold text-3xl">Requests & Feedback</h1>
-          <p className="mt-2 text-muted-foreground">
-            Share your ideas and vote on what matters most
-          </p>
-        </div>
+        <h1 className="font-bold text-2xl">Requests</h1>
         <CreateRequestButton />
       </div>
 

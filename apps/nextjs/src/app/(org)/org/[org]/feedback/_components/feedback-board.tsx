@@ -1,6 +1,8 @@
 "use client";
 
 import type { FeedbackStatus } from "@critichut/db/schema";
+import { Icon } from "@critichut/ui/icon";
+import { Message01Icon } from "@hugeicons-pro/core-duotone-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
@@ -33,12 +35,16 @@ export function FeedbackBoard({ org, filters }: FeedbackBoardProps) {
 
   if (posts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
-        <p className="mb-2 font-medium text-lg text-muted-foreground">
-          No feedback yet
-        </p>
-        <p className="text-muted-foreground text-sm">
-          Be the first to share your ideas!
+      <div className="fade-in-50 flex min-h-[400px] animate-in flex-col items-center justify-center rounded-xl border border-dashed p-8 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <Icon className="text-primary" icon={Message01Icon} size={24} />
+        </div>
+        <h3 className="mt-4 font-semibold text-lg">
+          Ready to collect feedback!
+        </h3>
+        <p className="mt-2 max-w-sm text-muted-foreground text-sm">
+          Your feedback board is live. Share it with users to start collecting
+          ideas.
         </p>
       </div>
     );

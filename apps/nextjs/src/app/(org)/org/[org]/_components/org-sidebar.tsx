@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@critichut/ui";
 import { Icon } from "@critichut/ui/icon";
 import {
   Sidebar,
@@ -15,7 +16,6 @@ import {
   SidebarTrigger,
 } from "@critichut/ui/sidebar";
 import {
-  FilterIcon,
   MarketingIcon,
   Message01Icon,
   Route01Icon,
@@ -23,7 +23,8 @@ import {
   UserMultiple02Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useQueryState } from "nuqs";
 
 type OrgSidebarProps = {
   org: string;
@@ -65,22 +66,22 @@ const SETTINGS_NAV_ITEMS = [
 ] as const;
 
 const STATUS_FILTERS = [
-  { label: "All", value: "all" },
-  { label: "Open", value: "open" },
-  { label: "Under Review", value: "under_review" },
-  { label: "Planned", value: "planned" },
-  { label: "In Progress", value: "in_progress" },
-  { label: "Completed", value: "completed" },
-  { label: "Closed", value: "closed" },
+  { label: "All", value: "all", color: "bg-primary" },
+  { label: "Open", value: "open", color: "bg-blue-500" },
+  { label: "Under Review", value: "under_review", color: "bg-yellow-500" },
+  { label: "Planned", value: "planned", color: "bg-purple-500" },
+  { label: "In Progress", value: "in_progress", color: "bg-orange-500" },
+  { label: "Completed", value: "completed", color: "bg-green-500" },
+  { label: "Closed", value: "closed", color: "bg-slate-500" },
 ] as const;
 
 export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const currentStatus = searchParams.get("status") ?? "all";
+  const [status, setStatus] = useQueryState("status");
 
   const isActive = (href: string) => pathname.includes(href);
   const isOnFeedbackPage = pathname.includes("/feedback");
+  const currentStatus = status ?? "all";
 
   return (
     <Sidebar variant="inset">
@@ -94,13 +95,13 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
       <SidebarContent>
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {MAIN_NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton asChild isActive={isActive(item.href)}>
-                    <Link href={`/${org}${item.href}`}>
+                    <Link href={`/org/${org}${item.href}`}>
                       <Icon icon={item.icon} size={20} />
                       <span>{item.title}</span>
                       {item.badge && (
@@ -119,28 +120,22 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
         {/* Status Filters (only on feedback page) */}
         {isOnFeedbackPage && (
           <SidebarGroup>
-            <SidebarGroupLabel>
-              <Icon icon={FilterIcon} size={16} />
-              <span>Filter by Status</span>
-            </SidebarGroupLabel>
+            <SidebarGroupLabel>Requests</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {STATUS_FILTERS.map((status) => (
-                  <SidebarMenuItem key={status.value}>
+                {STATUS_FILTERS.map((filter) => (
+                  <SidebarMenuItem key={filter.value}>
                     <SidebarMenuButton
-                      asChild
-                      isActive={currentStatus === status.value}
+                      isActive={currentStatus === filter.value}
+                      onClick={() =>
+                        setStatus(filter.value === "all" ? null : filter.value)
+                      }
                       size="sm"
                     >
-                      <Link
-                        href={`/${org}/feedback${
-                          status.value === "all"
-                            ? ""
-                            : `?status=${status.value}`
-                        }`}
-                      >
-                        <span className="text-sm">{status.label}</span>
-                      </Link>
+                      <div
+                        className={cn("h-2 w-2 rounded-full", filter.color)}
+                      />
+                      <span className="text-sm">{filter.label}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -153,13 +148,12 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
       <SidebarFooter>
         {/* Settings Section */}
         <SidebarGroup>
-          <SidebarGroupLabel>Organization</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {SETTINGS_NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton asChild isActive={isActive(item.href)}>
-                    <Link href={`/${org}${item.href}`}>
+                    <Link href={`/org/${org}${item.href}`}>
                       <Icon icon={item.icon} size={20} />
                       <span>{item.title}</span>
                     </Link>
