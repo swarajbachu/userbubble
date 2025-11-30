@@ -36,7 +36,7 @@ export default async function OrgLayout({ children, params }: OrgLayoutProps) {
       <OrgSidebar org={org} organizationName={organization.name} />
       {/* Main Content */}
       <SidebarInset>
-        <main className="container py-6">{children}</main>
+        <main>{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

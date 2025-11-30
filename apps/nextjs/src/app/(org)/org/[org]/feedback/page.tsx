@@ -12,7 +12,7 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
 
   return (
     <div className="w-full">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="flex items-center justify-between p-6">
         <h1 className="font-bold text-2xl">Requests</h1>
         <CreateRequestButton />
       </div>
@@ -20,8 +20,8 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
       <Suspense
         fallback={
           <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div className="h-32 animate-pulse rounded-lg bg-muted" key={i} />
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+              <div className="h-10 animate-pulse rounded-lg bg-muted" key={i} />
             ))}
           </div>
         }

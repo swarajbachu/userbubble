@@ -58,17 +58,15 @@ export function FeedbackBoard({ org }: FeedbackBoardProps) {
   }
 
   return (
-    <div className="rounded-lg border bg-card">
-      <div className="flex flex-col">
-        {posts.map((item) => (
-          <PostCard
-            author={item.author}
-            key={item.post.id}
-            org={org}
-            post={item.post}
-          />
-        ))}
-      </div>
+    <div className="flex flex-col p-2">
+      {posts.map((item) => (
+        <PostCard
+          author={item.author}
+          key={item.post.id}
+          org={org}
+          post={item.post}
+        />
+      ))}
     </div>
   );
 }

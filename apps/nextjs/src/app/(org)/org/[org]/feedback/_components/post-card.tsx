@@ -41,7 +41,7 @@ export function PostCard({ post, org }: PostCardProps) {
   const config = statusConfig[post.status];
 
   return (
-    <div className="group flex items-center gap-4 border-b p-3 last:border-0">
+    <div className="group flex items-center gap-4 border-x border-b p-3 first:rounded-t-2xl first:border-t last:rounded-b-2xl">
       <div className="flex-none">
         <VoteButton
           className="h-6 w-auto gap-1 px-2 py-0 text-[10px]"
