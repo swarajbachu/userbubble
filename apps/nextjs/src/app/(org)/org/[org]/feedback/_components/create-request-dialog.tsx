@@ -4,6 +4,14 @@ import type { AppRouter } from "@critichut/api";
 import { createFeedbackValidator } from "@critichut/db/schema";
 import { Button } from "@critichut/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@critichut/ui/dialog";
+import {
   Field,
   FieldContent,
   FieldError,
@@ -14,21 +22,20 @@ import { toast } from "@critichut/ui/toast";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { TRPCClientErrorLike } from "@trpc/client";
-import { X } from "lucide-react";
 
 import { useTRPC } from "~/trpc/react";
 
-type NewPostModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
+type CreateRequestDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   organizationId: string;
 };
 
-export function NewPostModal({
-  isOpen,
-  onClose,
+export function CreateRequestDialog({
+  open,
+  onOpenChange,
   organizationId,
-}: NewPostModalProps) {
+}: CreateRequestDialogProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
@@ -36,13 +43,14 @@ export function NewPostModal({
     trpc.feedback.create.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(trpc.feedback.pathFilter());
-        toast.success("Feedback submitted successfully!");
+        toast.success("Request submitted successfully!");
+        onOpenChange(false);
       },
       onError: (err: TRPCClientErrorLike<AppRouter>) => {
         toast.error(
           err.data?.code === "UNAUTHORIZED"
-            ? "You must be logged in to submit feedback"
-            : "Failed to create feedback post"
+            ? "You must be logged in to submit a request"
+            : "Failed to create request"
         );
       },
     })
@@ -66,31 +74,20 @@ export function NewPostModal({
     onSubmit: async ({ value }) => {
       await createPost.mutateAsync(value);
       form.reset();
-      onClose();
     },
   });
 
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="relative w-full max-w-2xl rounded-lg bg-background p-6 shadow-lg">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-semibold text-2xl">Share Your Feedback</h2>
-          <Button
-            className="h-8 w-8 p-0"
-            onClick={onClose}
-            size="sm"
-            variant="ghost"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>Create Request</DialogTitle>
+          <DialogDescription>
+            Share your ideas, report bugs, or suggest improvements. Your
+            feedback helps us build better products.
+          </DialogDescription>
+        </DialogHeader>
 
-        {/* Form */}
         <form
           className="space-y-4"
           onSubmit={(e) => {
@@ -110,7 +107,7 @@ export function NewPostModal({
                     <FieldLabel htmlFor={field.name}>Category</FieldLabel>
                   </FieldContent>
                   <select
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     id={field.name}
                     name={field.name}
                     onBlur={field.handleBlur}
@@ -151,11 +148,14 @@ export function NewPostModal({
                     name={field.name}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder="Brief summary of your feedback"
+                    placeholder="Brief summary of your request"
                     required
                     type="text"
                     value={field.state.value}
                   />
+                  <div className="mt-1 text-muted-foreground text-xs">
+                    {field.state.value.length}/256 characters
+                  </div>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
@@ -173,40 +173,42 @@ export function NewPostModal({
                     <FieldLabel htmlFor={field.name}>Description</FieldLabel>
                   </FieldContent>
                   <textarea
-                    className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     id={field.name}
                     maxLength={5000}
                     minLength={10}
                     name={field.name}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder="Provide more details about your feedback..."
+                    placeholder="Provide more details about your request..."
                     required
                     rows={6}
                     value={field.state.value}
                   />
+                  <div className="mt-1 text-muted-foreground text-xs">
+                    {field.state.value.length}/5000 characters
+                  </div>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
             }}
           </form.Field>
 
-          {/* Actions */}
-          <div className="flex justify-end gap-3">
+          <DialogFooter>
             <Button
               disabled={createPost.isPending}
-              onClick={onClose}
+              onClick={() => onOpenChange(false)}
               type="button"
               variant="outline"
             >
               Cancel
             </Button>
             <Button disabled={createPost.isPending} type="submit">
-              {createPost.isPending ? "Submitting..." : "Submit Feedback"}
+              {createPost.isPending ? "Submitting..." : "Submit Request"}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

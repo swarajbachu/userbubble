@@ -1,7 +1,6 @@
 import { Suspense } from "react";
+import { CreateRequestButton } from "./_components/create-request-button";
 import { FeedbackBoard } from "./_components/feedback-board";
-import { FeedbackFilters } from "./_components/feedback-filters";
-import { NewPostButton } from "./_components/new-post-button";
 
 type FeedbackPageProps = {
   params: Promise<{ org: string }>;
@@ -19,16 +18,12 @@ export default async function FeedbackPage({
     <div className="mx-auto max-w-4xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-3xl">Feedback</h1>
+          <h1 className="font-bold text-3xl">Requests & Feedback</h1>
           <p className="mt-2 text-muted-foreground">
             Share your ideas and vote on what matters most
           </p>
         </div>
-        <NewPostButton org={org} />
-      </div>
-
-      <div className="mb-6">
-        <FeedbackFilters org={org} />
+        <CreateRequestButton />
       </div>
 
       <Suspense

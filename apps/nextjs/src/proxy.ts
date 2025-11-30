@@ -56,8 +56,8 @@ export async function proxy(request: NextRequest) {
 
     // ========== Organization Membership Check ==========
 
-    // // Skip org check for onboarding pages
-    if (pathname.match("/")) {
+    // Skip org check for onboarding pages
+    if (pathname === "/") {
       // If user is on onboarding but already has org, redirect away
       const { organizationQueries: onboardingOrgQueries } = await import(
         "@critichut/db/queries"

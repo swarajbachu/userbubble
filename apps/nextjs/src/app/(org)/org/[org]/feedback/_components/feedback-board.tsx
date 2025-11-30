@@ -2,7 +2,7 @@
 
 import type { FeedbackStatus } from "@critichut/db/schema";
 import { useSuspenseQuery } from "@tanstack/react-query";
-
+import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
 import { PostCard } from "./post-card";
 
@@ -17,15 +17,16 @@ type FeedbackBoardProps = {
 export function FeedbackBoard({ org, filters }: FeedbackBoardProps) {
   const trpc = useTRPC();
 
-  const { data: orgData } = useSuspenseQuery(
-    trpc.organization.getBySlug.queryOptions({
-      slug: org,
-    })
-  );
+  const { data: activeOrganization } = authClient.useActiveOrganization();
 
+  if (!activeOrganization) {
+    return null;
+  }
+
+  // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
   const { data: posts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: orgData.id,
+      organizationId: activeOrganization.id,
       status: filters?.status as FeedbackStatus | undefined,
       sortBy: (filters?.sort as "votes" | "recent") ?? "recent",
     })

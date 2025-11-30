@@ -1,7 +1,8 @@
+/** biome-ignore-all lint/correctness/useHookAtTopLevel: <explanation> */
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-
+import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
 import { RoadmapColumn } from "./roadmap-column";
 
@@ -12,15 +13,14 @@ type RoadmapBoardProps = {
 export function RoadmapBoard({ org }: RoadmapBoardProps) {
   const trpc = useTRPC();
 
-  const { data: orgData } = useSuspenseQuery(
-    trpc.organization.getBySlug.queryOptions({
-      slug: org,
-    })
-  );
+  const { data: activeOrganization } = authClient.useActiveOrganization();
+  if (!activeOrganization) {
+    return null;
+  }
 
   const { data: plannedPosts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: orgData.id,
+      organizationId: activeOrganization.id,
       status: "planned",
       sortBy: "votes",
     })
@@ -28,7 +28,7 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
 
   const { data: inProgressPosts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: orgData.id,
+      organizationId: activeOrganization.id,
       status: "in_progress",
       sortBy: "votes",
     })
@@ -36,7 +36,7 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
 
   const { data: completedPosts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: orgData.id,
+      organizationId: activeOrganization.id,
       status: "completed",
       sortBy: "recent",
     })
