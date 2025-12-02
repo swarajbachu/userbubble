@@ -66,9 +66,11 @@ export async function proxy(request: NextRequest) {
         session.user.id
       );
 
-      if (userOrgs.length > 0) {
+      if (userOrgs.length > 0 && userOrgs[0]) {
         // User has orgs, don't let them access onboarding
-        return NextResponse.redirect(new URL("/dashboard", request.url));
+        return NextResponse.redirect(
+          new URL(`/org/${userOrgs[0].organization.slug}/feedback`, request.url)
+        );
       }
 
       return NextResponse.next();

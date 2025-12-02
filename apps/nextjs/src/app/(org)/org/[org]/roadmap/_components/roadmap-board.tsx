@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  CheckmarkBadge01Icon,
+  Clock01Icon,
+  HourglassIcon,
+} from "@hugeicons-pro/core-duotone-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
@@ -14,7 +19,7 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
 
   const { data: activeOrganization } = authClient.useActiveOrganization();
 
-  const { data: plannedPosts } = useSuspenseQuery(
+  const { data: allPosts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
       organizationId: activeOrganization?.id ?? "",
       sortBy: "votes",
@@ -25,29 +30,39 @@ export function RoadmapBoard({ org }: RoadmapBoardProps) {
     return null;
   }
 
+  const plannedPosts =
+    allPosts?.filter((post) => post.post.status === "planned") ?? [];
+  const inProgressPosts =
+    allPosts?.filter((post) => post.post.status === "in_progress") ?? [];
+  const completedPosts =
+    allPosts?.filter((post) => post.post.status === "completed") ?? [];
+
   return (
     <div className="grid gap-6 md:grid-cols-3">
       <RoadmapColumn
-        colorClass="border-purple-200 dark:border-purple-800"
+        color="text-purple-500"
         description="Features we're planning to build"
+        icon={Clock01Icon}
         org={org}
-        posts={plannedPosts ?? []}
+        posts={plannedPosts}
         title="Planned"
       />
 
       <RoadmapColumn
-        colorClass="border-yellow-200 dark:border-yellow-800"
+        color="text-orange-500"
         description="Currently being worked on"
+        icon={HourglassIcon}
         org={org}
-        posts={[]}
+        posts={inProgressPosts}
         title="In Progress"
       />
 
       <RoadmapColumn
-        colorClass="border-green-200 dark:border-green-800"
+        color="text-green-500"
         description="Recently shipped features"
+        icon={CheckmarkBadge01Icon}
         org={org}
-        posts={[]}
+        posts={completedPosts}
         title="Completed"
       />
     </div>

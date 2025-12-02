@@ -1,6 +1,6 @@
 import type { FeedbackPost, User } from "@critichut/db/schema";
-import { ChevronUp } from "lucide-react";
 import Link from "next/link";
+import { VoteButton } from "../../feedback/_components/vote-button";
 
 type RoadmapCardProps = {
   post: FeedbackPost;
@@ -18,24 +18,34 @@ export function RoadmapCard({ post, org }: RoadmapCardProps) {
   };
 
   return (
-    <Link href={`/${org}/feedback/${post.id}`}>
-      <div className="rounded-lg border bg-card p-4 transition-shadow hover:shadow-md">
-        <h3 className="mb-2 font-medium transition-colors hover:text-primary">
+    <Link className="group block" href={`/${org}/feedback/${post.id}`}>
+      <div className="flex flex-col gap-3 rounded-xl border bg-card p-3 shadow-xs transition-all hover:border-primary/50 hover:shadow-md dark:bg-muted/40">
+        <h3 className="font-medium text-sm leading-normal transition-colors group-hover:text-primary">
           {post.title}
         </h3>
 
-        <p className="mb-3 line-clamp-2 text-muted-foreground text-sm">
-          {post.description}
-        </p>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1.5 rounded-full bg-secondary px-2 py-0.5 font-medium text-secondary-foreground">
+              {categoryLabels[post.category]}
+            </span>
+            <span>
+              {new Date(post.createdAt).toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          </div>
 
-        <div className="flex items-center justify-between">
-          <span className="rounded-full bg-muted px-2 py-1 text-xs">
-            {categoryLabels[post.category]}
-          </span>
-
-          <div className="flex items-center gap-1 text-muted-foreground text-sm">
-            <ChevronUp className="h-4 w-4" />
-            <span>{post.voteCount}</span>
+          {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: <explanation> */}
+          {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+          {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
+          <div onClick={(e) => e.preventDefault()}>
+            <VoteButton
+              className="h-6 w-auto gap-1 px-2 py-0 text-[10px]"
+              initialVotes={post.voteCount}
+              postId={post.id}
+            />
           </div>
         </div>
       </div>

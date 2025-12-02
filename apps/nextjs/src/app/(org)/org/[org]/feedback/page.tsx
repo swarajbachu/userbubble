@@ -19,7 +19,7 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
 
       <Suspense
         fallback={
-          <div className="space-y-4">
+          <div className="space-y-1 p-2">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
               <div className="h-10 animate-pulse rounded-lg bg-muted" key={i} />
             ))}
