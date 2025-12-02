@@ -4,7 +4,13 @@
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "preserve",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@critichut/ui/*": ["../../packages/ui/src/*"],
+      "@critichut/ui": ["../../packages/ui/src/index.ts"],
+      "@critichut/api/*": ["../../packages/api/src/*"],
+      "@critichut/auth/*": ["../../packages/auth/src/*"],
+      "@critichut/db/*": ["../../packages/db/src/*"],
+      "@critichut/validators/*": ["../../packages/validators/src/*"]
     },
     "plugins": [
       {

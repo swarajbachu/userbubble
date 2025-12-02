@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noTsIgnore: <explanation> */
+/** biome-ignore-all lint/suspicious/noTsIgnore: shadcn UI component uses TypeScript ignores for Radix UI type compatibility */
 import { cn } from "@critichut/ui";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";

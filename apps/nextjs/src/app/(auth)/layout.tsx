@@ -14,7 +14,7 @@ export default function AuthLayout(props: { children: React.ReactNode }) {
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
+          <div className="w-full max-w-md">
             <Suspense
               fallback={
                 <div className="flex items-center justify-center">

@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createUniqueIds } from "../lib/ids";
 import { user } from "../user/user.sql";
@@ -32,10 +33,11 @@ export const organization = pgTable("organization", {
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   logo: text("logo"),
+  website: text("website"),
 
   // critichut-specific: Secret key for HMAC authentication (encrypted)
   // HMAC secret key for external authentication
-  secretKey: text("secret_key").notNull(),
+  secretKey: text("secret_key"),
 
   // Metadata for organization-specific settings
   metadata: text("metadata"),
@@ -104,6 +106,34 @@ export const invitation = pgTable("invitation", {
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
+
+// Relations
+export const organizationRelations = relations(organization, ({ many }) => ({
+  members: many(member),
+  invitations: many(invitation),
+}));
+
+export const memberRelations = relations(member, ({ one }) => ({
+  user: one(user, {
+    fields: [member.userId],
+    references: [user.id],
+  }),
+  organization: one(organization, {
+    fields: [member.organizationId],
+    references: [organization.id],
+  }),
+}));
+
+export const invitationRelations = relations(invitation, ({ one }) => ({
+  organization: one(organization, {
+    fields: [invitation.organizationId],
+    references: [organization.id],
+  }),
+  inviter: one(user, {
+    fields: [invitation.inviterId],
+    references: [user.id],
+  }),
+}));
 
 // Export types
 export type Organization = typeof organization.$inferSelect;

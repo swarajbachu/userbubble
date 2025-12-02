@@ -1,0 +1,1 @@
+ALTER TABLE "organization" ALTER COLUMN "secret_key" DROP NOT NULL;

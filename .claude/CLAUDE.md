@@ -120,4 +120,237 @@ Biome's linter will catch most issues automatically. Focus your attention on:
 
 ---
 
+## Project-Specific Patterns
+
+### Import Paths
+
+**Always use package-level exports, not deep imports:**
+
+```typescript
+// ✅ Correct - use package exports
+import { generateSecretKey, verifyHMAC } from "@critichut/auth";
+import { organizationQueries, memberQueries } from "@critichut/db/queries";
+import { createOrganizationValidator } from "@critichut/db/schema";
+import { createSlug, isValidSlug, isReservedSlug } from "@critichut/db/lib/slug";
+
+// ❌ Wrong - don't use deep imports
+import { generateSecretKey } from "@critichut/auth/utils/hmac";
+import { createOrganizationValidator } from "@critichut/db/validators";
+import { organizationQueries } from "@critichut/db/queries/organization";
+```
+
+**Frontend imports:**
+```typescript
+// Auth client (Better Auth React)
+import { authClient } from "~/auth/client";
+
+// Server-side auth
+import { auth } from "~/auth/server";
+
+// tRPC - use for custom endpoints not covered by Better Auth
+import { useTRPC } from "~/trpc/react";
+```
+
+### Better Auth Usage
+
+**Better Auth provides built-in organization management - use it directly instead of creating custom endpoints:**
+
+**Frontend - Use authClient directly:**
+```typescript
+import { authClient } from "~/auth/client";
+
+// Create organization (NO custom tRPC endpoint needed)
+const { data, error } = await authClient.organization.create({
+  name: "Acme Inc",
+  slug: "acme-inc",
+});
+
+// List organizations
+const { data: orgs } = await authClient.organization.list();
+
+// Update organization
+await authClient.organization.update({
+  organizationId: "org_123",
+  data: { name: "New Name" },
+});
+
+// Delete organization
+await authClient.organization.delete({
+  organizationId: "org_123",
+});
+
+// Invite member
+await authClient.organization.inviteMember({
+  email: "user@example.com",
+  role: "member",
+});
+
+// Check if slug is available (NO custom tRPC endpoint needed)
+const { data, error } = await authClient.organization.checkSlug({
+  slug: "my-org",
+});
+// data.available is true if slug is available
+```
+
+**Backend - Use Better Auth server API:**
+```typescript
+import { auth } from "~/auth/server";
+
+// Get session
+const session = await auth.api.getSession({ headers });
+
+// All organization methods available server-side too
+const org = await auth.api.organization.create({ ... });
+
+// Check slug availability server-side
+const data = await auth.api.checkOrganizationSlug({
+  body: { slug: "my-org" },
+});
+```
+
+**When to use direct DB queries:**
+```typescript
+import { organizationQueries } from "@critichut/db/queries";
+
+// ✅ Middleware - direct queries for performance
+const userOrgs = await organizationQueries.listUserOrganizations(userId);
+
+// ✅ Server Components - direct queries for data fetching
+const org = await organizationQueries.findBySlug(slug);
+
+// ❌ Client Components - use authClient instead
+// Don't create tRPC endpoints that duplicate Better Auth functionality
+```
+
+**Adding custom fields to Better Auth organization:**
+
+Better Auth supports adding custom fields via the organization plugin configuration:
+
+```typescript
+// packages/auth/src/index.ts
+import { organization } from "better-auth/plugins";
+
+organization({
+  allowUserToCreateOrganization: true,
+  creatorRole: "owner",
+  schema: {
+    organization: {
+      additionalFields: {
+        website: {
+          type: "string",
+          input: true,  // Allow user input
+          required: false,
+        },
+        customField: {
+          type: "string",
+          input: true,
+          required: false,
+        },
+      },
+    },
+  },
+})
+```
+
+Once configured, use custom fields directly in authClient calls:
+
+```typescript
+const { data, error } = await authClient.organization.create({
+  name: "Acme Inc",
+  slug: "acme-inc",
+  website: "https://acme.com",  // Custom field
+});
+```
+
+**When to use tRPC (ONLY for custom functionality):**
+
+```typescript
+import { useTRPC } from "~/trpc/react";
+import { useMutation } from "@tanstack/react-query";
+
+// ❌ DON'T create tRPC endpoints for things Better Auth provides:
+// - Organization creation/update/delete
+// - Slug checking
+// - Member management
+// - Listing organizations
+
+// ✅ DO use tRPC for custom functionality Better Auth doesn't support:
+// - Complex business logic
+// - Multi-step operations
+// - Custom queries that don't fit Better Auth patterns
+```
+
+### Icons
+
+**Use Huge Icons for all icon needs:**
+
+```typescript
+// ✅ Use Huge Icons
+import { HugeiconsIcon } from '@hugeicons/react'
+import { SearchIcon } from '@hugeicons-pro/core-duotone-rounded'
+ 
+function App() {
+  return <HugeiconsIcon icon={SearchIcon} size={24} color="currentColor" strokeWidth={1.5} />
+}
+
+The @hugeicons/react package provides a universal HugeiconsIcon component that can render any icon from our libraries.
+Think of it as a smart wrapper: you pass it an icon object, and it handles sizing, color, stroke width, and even switching between two icons for different states.
+
+Props
+Prop	Type	Default	Description
+icon	IconSvgObject	Required	The main icon component imported from an icon package
+altIcon	IconSvgObject	-	Alternative icon component for states, interactions, or animations
+showAlt	boolean	false	When true, displays the altIcon instead of the main icon
+size	number	24	Icon size in pixels
+color	string	currentColor	Icon color (CSS color value)
+strokeWidth	number	1.5	Width of the icon strokes (works with stroke-style icons)
+className	string	-	Additional CSS classes
+State-based icons with altIcon and showAlt
+Use altIcon and showAlt to swap between two icons based on component state:
+
+import { useState } from 'react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { SunIcon, Moon02Icon } from '@hugeicons-pro/core-duotone-rounded'
+ 
+function ThemeToggle() {
+    const [isDark, setIsDark] = useState(false)
+ 
+    return (
+        <button onClick={() => setIsDark(!isDark)}>
+            <HugeiconsIcon icon={SunIcon} altIcon={Moon02Icon} showAlt={isDark} />
+        </button>
+    )
+}
+
+Styling icons
+You can style icons in a few ways:
+
+size: controls the rendered icon size in pixels.
+color: accepts any valid CSS color (e.g. #111827, rgb(0,0,0), currentColor).
+strokeWidth: adjusts the thickness of stroke-based icons.
+className: attach utility classes from Tailwind, CSS Modules, etc.
+<HugeiconsIcon
+  icon={Notification03Icon}
+  size={32}
+  color="#6366f1"
+  strokeWidth={1.75}
+  className="inline-block align-middle"
+/>
+
+When using currentColor, the icon inherits the text color from its parent, which works well inside buttons, links, and headings.
+
+
+// ❌ Don't use lucide-react or other icon libraries
+import { Building, User, Settings } from "lucide-react";
+```
+
+### Avoid Unnecessary Abstractions
+
+- **Don't create tRPC endpoints** that just wrap Better Auth functions
+- **Don't create custom validators** if Better Auth already validates
+- **Use slug utilities** for client-side generation, but let Better Auth handle persistence
+- **Keep it simple** - if Better Auth provides it, use it directly
+
+---
+
 Most formatting and common issues are automatically fixed by Biome. Run `npx ultracite fix` before committing to ensure compliance.

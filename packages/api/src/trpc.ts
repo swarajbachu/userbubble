@@ -29,7 +29,11 @@ import { ZodError, z } from "zod/v4";
 export const createTRPCContext = async (opts: {
   headers: Headers;
   auth: Auth;
-}) => {
+}): Promise<{
+  authApi: Auth["api"];
+  session: Awaited<ReturnType<Auth["api"]["getSession"]>>;
+  db: typeof db;
+}> => {
   const authApi = opts.auth.api;
   const session = await authApi.getSession({
     headers: opts.headers,

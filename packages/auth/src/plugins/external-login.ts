@@ -249,6 +249,12 @@ export const externalLogin = (
             });
           }
 
+          if (!org.secretKey) {
+            throw new APIError("NOT_FOUND", {
+              message: "Organization secret key not found",
+            });
+          }
+
           // 3. Verify HMAC signature
           const secretKey = decryptSecretKey(org.secretKey);
           const isValid = verifyHMAC(

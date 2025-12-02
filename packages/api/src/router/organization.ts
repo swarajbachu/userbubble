@@ -6,6 +6,7 @@ import { publicProcedure } from "../trpc";
 
 export const organizationRouter = {
   // Get organization by slug
+  // Used by server components to fetch org data for display
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {

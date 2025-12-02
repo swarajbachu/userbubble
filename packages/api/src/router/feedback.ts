@@ -32,7 +32,7 @@ export const feedbackRouter = {
     .input(
       z.object({
         organizationId: z.string(),
-        status: feedbackStatusValidator.optional(),
+        status: z.array(feedbackStatusValidator).optional(),
         category: feedbackCategoryValidator.optional(),
         sortBy: z.enum(["votes", "recent"]).optional(),
       })

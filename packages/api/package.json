@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@critichut/tsconfig": "workspace:*",
+    "better-auth": "catalog:",
     "@types/pg": "^8.11.10",
     "typescript": "catalog:"
   }

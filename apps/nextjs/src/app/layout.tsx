@@ -3,6 +3,7 @@ import { ThemeProvider, ThemeToggle } from "@critichut/ui/theme";
 import { Toaster } from "@critichut/ui/toast";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { env } from "~/env";
 import { TRPCReactProvider } from "~/trpc/react";
@@ -59,7 +60,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         )}
       >
         <ThemeProvider>
-          <TRPCReactProvider>{props.children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <NuqsAdapter>{props.children}</NuqsAdapter>
+          </TRPCReactProvider>
           <div className="absolute right-4 bottom-4">
             <ThemeToggle />
           </div>
