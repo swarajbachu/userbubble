@@ -1,7 +1,13 @@
+import { organizationQueries } from "@critichut/db/queries";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { cache } from "react";
+import { getSession } from "~/auth/server";
 
-import { auth } from "~/auth/server";
+// Cache org queries within single request
+const getCachedUserOrganizations = cache(async (userId: string) =>
+  organizationQueries.listUserOrganizations(userId)
+);
 
 const publicPaths = [
   "/sign-in",
@@ -29,9 +35,8 @@ export async function proxy(request: NextRequest) {
   }
 
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+    // Use cached getSession instead of direct auth.api.getSession
+    const session = await getSession();
 
     const isAuthenticated = !!session?.user;
 
@@ -56,16 +61,11 @@ export async function proxy(request: NextRequest) {
 
     // ========== Organization Membership Check ==========
 
+    // Get user orgs once with cached query (used for both root and other paths)
+    const userOrgs = await getCachedUserOrganizations(session.user.id);
+
     // Skip org check for onboarding pages
     if (pathname === "/") {
-      // If user is on onboarding but already has org, redirect away
-      const { organizationQueries: onboardingOrgQueries } = await import(
-        "@critichut/db/queries"
-      );
-      const userOrgs = await onboardingOrgQueries.listUserOrganizations(
-        session.user.id
-      );
-
       if (userOrgs.length > 0 && userOrgs[0]) {
         // User has orgs, don't let them access onboarding
         return NextResponse.redirect(
@@ -77,11 +77,6 @@ export async function proxy(request: NextRequest) {
     }
 
     // For all other authenticated pages, require org membership
-    const { organizationQueries } = await import("@critichut/db/queries");
-    const userOrgs = await organizationQueries.listUserOrganizations(
-      session.user.id
-    );
-
     if (userOrgs.length === 0) {
       // User has no organizations → redirect to onboarding
       return NextResponse.redirect(new URL("/", request.url));

@@ -22,6 +22,7 @@ export async function getFeedbackPosts(
     status?: FeedbackStatus[];
     category?: FeedbackCategory;
     sortBy?: "votes" | "recent";
+    userId?: string; // Optional: Check if user has voted
   }
 ) {
   // Build all conditions upfront
@@ -35,15 +36,25 @@ export async function getFeedbackPosts(
     conditions.push(eq(feedbackPost.category, filters.category));
   }
 
-  // Single .where() call with combined conditions
+  // Build query with optional user vote LEFT JOIN
   const query = db
     .select({
       post: feedbackPost,
       author: user,
       voteCount: feedbackPost.voteCount,
+      userVote: feedbackVote, // null if user hasn't voted, vote object if they have
     })
     .from(feedbackPost)
     .leftJoin(user, eq(feedbackPost.authorId, user.id))
+    .leftJoin(
+      feedbackVote,
+      filters?.userId
+        ? and(
+            eq(feedbackVote.postId, feedbackPost.id),
+            eq(feedbackVote.userId, filters.userId)
+          )
+        : undefined // Skip join if no userId (public access)
+    )
     .where(and(...conditions));
 
   // Apply sorting

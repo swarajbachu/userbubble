@@ -34,6 +34,8 @@ export function FeedbackBoard({ org }: FeedbackBoardProps) {
     })
   );
 
+  console.log(posts, "posts");
+
   if (!activeOrganization) {
     return null;
   }
@@ -65,6 +67,7 @@ export function FeedbackBoard({ org }: FeedbackBoardProps) {
           key={item.post.id}
           org={org}
           post={item.post}
+          userVote={item.userVote} // NEW: pass userVote from response
         />
       ))}
     </div>

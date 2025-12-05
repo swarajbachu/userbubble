@@ -1,49 +1,52 @@
 "use client";
 
+import type { FeedbackVote } from "@critichut/db/schema";
 import { cn } from "@critichut/ui";
 import { Button } from "@critichut/ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowUp01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useOptimistic, useTransition } from "react";
 
 import { useTRPC } from "~/trpc/react";
 
 type VoteButtonProps = {
   postId: string;
   initialVotes: number;
+  userVote: FeedbackVote | null; // NEW: passed from parent, no longer queries
   className?: string;
 };
 
 export function VoteButton({
   postId,
   initialVotes,
+  userVote,
   className,
 }: VoteButtonProps) {
-  const [optimisticVotes, setOptimisticVotes] = useState(initialVotes);
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const [isPending, startTransition] = useTransition();
 
-  const { data: userVote } = useQuery(
-    trpc.feedback.getUserVote.queryOptions({ postId })
+  // React 19 useOptimistic - automatic rollback on error
+  // IMPORTANT: The base state (first arg) must be reactive to prop changes
+  const [optimisticVotes, addOptimisticVote] = useOptimistic(
+    initialVotes,
+    (currentVotes: number, increment: number) => currentVotes + increment
+  );
+
+  const [optimisticHasVoted, setOptimisticHasVoted] = useOptimistic(
+    !!userVote,
+    (_current: boolean, newValue: boolean) => newValue
   );
 
   const voteMutation = useMutation(
     trpc.feedback.vote.mutationOptions({
-      onMutate: async (variables: { postId: string; value: number }) => {
-        // Optimistically update the vote count
-        if (variables.value === 1 && !userVote) {
-          setOptimisticVotes((prev) => prev + 1);
-        } else if (variables.value === 0 && userVote) {
-          setOptimisticVotes((prev) => prev - 1);
-        }
-      },
       onSuccess: async () => {
-        // Invalidate queries to refetch
-        await queryClient.invalidateQueries(trpc.feedback.pathFilter());
-      },
-      onError: () => {
-        // Revert optimistic update on error
-        setOptimisticVotes(initialVotes);
+        // Only invalidate getAll queries (includes user votes now)
+        await queryClient.invalidateQueries({
+          queryKey: [["feedback", "getAll"]],
+          exact: false,
+        });
       },
     })
   );
@@ -51,26 +54,43 @@ export function VoteButton({
   const handleVote = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (userVote) {
-      // Remove vote
-      voteMutation.mutate({ postId, value: 0 });
-    } else {
-      // Add vote
-      voteMutation.mutate({ postId, value: 1 });
-    }
-  };
 
-  const hasVoted = !!userVote;
+    const isVoted = !!userVote;
+
+    // Wrap in startTransition for instant UI update
+    startTransition(() => {
+      // Step 1: Update UI IMMEDIATELY (optimistic)
+      if (isVoted) {
+        addOptimisticVote(-1); // Decrement vote count
+        setOptimisticHasVoted(false); // Unvote
+      } else {
+        addOptimisticVote(1); // Increment vote count
+        setOptimisticHasVoted(true); // Vote
+      }
+
+      // Step 2: THEN fire the mutation
+      // If it fails, useOptimistic auto-reverts to initialVotes and !!userVote
+      voteMutation.mutate({
+        postId,
+        value: isVoted ? 0 : 1,
+      });
+    });
+  };
 
   return (
     <Button
       className={cn("flex h-auto items-center gap-1.5 px-3 py-1", className)}
-      disabled={voteMutation.isPending}
+      disabled={isPending || voteMutation.isPending}
       onClick={handleVote}
       size="sm"
-      variant={hasVoted ? "default" : "secondary"}
+      variant={optimisticHasVoted ? "default" : "secondary"}
     >
-      <ChevronUp className={cn("h-4 w-4", hasVoted ? "fill-current" : "")} />
+      <HugeiconsIcon
+        className={cn(optimisticHasVoted && "fill-current")}
+        icon={ArrowUp01Icon}
+        size={16}
+        strokeWidth={2}
+      />
       <span className="font-medium text-xs">{optimisticVotes}</span>
     </Button>
   );

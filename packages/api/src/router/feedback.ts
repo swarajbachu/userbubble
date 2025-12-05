@@ -9,7 +9,6 @@ import {
   getFeedbackPost,
   getFeedbackPosts,
   getPostComments,
-  getUserVote,
   isTeamMember,
   removeVote,
   updateFeedbackPost,
@@ -37,11 +36,12 @@ export const feedbackRouter = {
         sortBy: z.enum(["votes", "recent"]).optional(),
       })
     )
-    .query(async ({ input }) =>
+    .query(async ({ input, ctx }) =>
       getFeedbackPosts(input.organizationId, {
         status: input.status,
         category: input.category,
         sortBy: input.sortBy,
+        userId: ctx.session?.user?.id, // Pass userId for vote lookup
       })
     ),
 
@@ -136,14 +136,6 @@ export const feedbackRouter = {
       }
 
       return { success: true };
-    }),
-
-  // Get user's vote on a post
-  getUserVote: protectedProcedure
-    .input(z.object({ postId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const vote = await getUserVote(input.postId, ctx.session.user.id);
-      return vote;
     }),
 
   // Get comments for a post

@@ -28,6 +28,12 @@ export function initAuth<
     }),
     baseURL: options.baseUrl,
     secret: options.secret,
+    session: {
+      cookieCache: {
+        enabled: true,
+        maxAge: 5 * 60, // 5 minutes (300 seconds)
+      },
+    },
     emailAndPassword: {
       enabled: true,
     },

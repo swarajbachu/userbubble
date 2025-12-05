@@ -1,6 +1,6 @@
 "use client";
 
-import type { FeedbackPost, User } from "@critichut/db/schema";
+import type { FeedbackPost, FeedbackVote, User } from "@critichut/db/schema";
 import { cn } from "@critichut/ui";
 import { Icon } from "@critichut/ui/icon";
 import {
@@ -18,9 +18,10 @@ type PostCardProps = {
   post: FeedbackPost;
   author: User | null;
   org: string;
+  userVote: FeedbackVote | null; // NEW: pass user vote from parent
 };
 
-export function PostCard({ post, org }: PostCardProps) {
+export function PostCard({ post, org, userVote }: PostCardProps) {
   const statusConfig = {
     open: { color: "text-blue-500", icon: CircleIcon },
     under_review: { color: "text-yellow-500", icon: EyeIcon },
@@ -47,6 +48,7 @@ export function PostCard({ post, org }: PostCardProps) {
           className="h-6 w-auto gap-1 px-2 py-0 text-[10px]"
           initialVotes={post.voteCount}
           postId={post.id}
+          userVote={userVote} // NEW: pass user vote to button
         />
       </div>
 

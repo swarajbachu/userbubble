@@ -1,4 +1,4 @@
-import type { FeedbackPost, User } from "@critichut/db/schema";
+import type { FeedbackPost, FeedbackVote, User } from "@critichut/db/schema";
 import { cn } from "@critichut/ui";
 import { Icon } from "@critichut/ui/icon";
 import type { ComponentProps } from "react";
@@ -7,7 +7,11 @@ import { RoadmapCard } from "./roadmap-card";
 type RoadmapColumnProps = {
   title: string;
   description: string;
-  posts: Array<{ post: FeedbackPost; author: User | null }>;
+  posts: Array<{
+    post: FeedbackPost;
+    author: User | null;
+    userVote: FeedbackVote | null;
+  }>; // NEW: include userVote
   org: string;
   icon: ComponentProps<typeof Icon>["icon"];
   color: string;
@@ -48,6 +52,7 @@ export function RoadmapColumn({
               key={item.post.id}
               org={org}
               post={item.post}
+              userVote={item.userVote} // NEW: pass userVote
             />
           ))
         )}
