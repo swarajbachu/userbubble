@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getOrganization } from "~/lib/get-organization";
 import { CreateRequestButton } from "./_components/create-request-button";
 import { FeedbackBoard } from "./_components/feedback-board";
 
@@ -9,6 +10,9 @@ type FeedbackPageProps = {
 
 export default async function FeedbackPage({ params }: FeedbackPageProps) {
   const { org } = await params;
+
+  // Use cached helper - returns cached result from layout
+  const organization = await getOrganization(org);
 
   return (
     <div className="w-full">
@@ -26,7 +30,7 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
           </div>
         }
       >
-        <FeedbackBoard org={org} />
+        <FeedbackBoard org={org} organizationId={organization.id} />
       </Suspense>
     </div>
   );

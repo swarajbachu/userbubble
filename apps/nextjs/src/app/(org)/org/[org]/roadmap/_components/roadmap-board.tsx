@@ -6,29 +6,23 @@ import {
   HourglassIcon,
 } from "@hugeicons-pro/core-duotone-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
 import { RoadmapColumn } from "./roadmap-column";
 
 type RoadmapBoardProps = {
   org: string;
+  organizationId: string;
 };
 
-export function RoadmapBoard({ org }: RoadmapBoardProps) {
+export function RoadmapBoard({ org, organizationId }: RoadmapBoardProps) {
   const trpc = useTRPC();
-
-  const { data: activeOrganization } = authClient.useActiveOrganization();
 
   const { data: allPosts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: activeOrganization?.id ?? "",
+      organizationId,
       sortBy: "votes",
     })
   );
-
-  if (!activeOrganization) {
-    return null;
-  }
 
   const plannedPosts =
     allPosts?.filter((post) => post.post.status === "planned") ?? [];

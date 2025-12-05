@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getOrganization } from "~/lib/get-organization";
 import { RoadmapBoard } from "./_components/roadmap-board";
 
 type RoadmapPageProps = {
@@ -7,6 +8,9 @@ type RoadmapPageProps = {
 
 export default async function RoadmapPage({ params }: RoadmapPageProps) {
   const { org } = await params;
+
+  // Use cached helper - returns cached result from layout
+  const organization = await getOrganization(org);
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -36,7 +40,7 @@ export default async function RoadmapPage({ params }: RoadmapPageProps) {
           </div>
         }
       >
-        <RoadmapBoard org={org} />
+        <RoadmapBoard org={org} organizationId={organization.id} />
       </Suspense>
     </div>
   );
