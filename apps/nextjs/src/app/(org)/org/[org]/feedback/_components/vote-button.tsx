@@ -1,6 +1,5 @@
 "use client";
 
-import type { FeedbackVote } from "@critichut/db/schema";
 import { cn } from "@critichut/ui";
 import { Button } from "@critichut/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -13,14 +12,14 @@ import { useTRPC } from "~/trpc/react";
 type VoteButtonProps = {
   postId: string;
   initialVotes: number;
-  userVote: FeedbackVote | null; // NEW: passed from parent, no longer queries
+  hasUserVoted: boolean;
   className?: string;
 };
 
 export function VoteButton({
   postId,
   initialVotes,
-  userVote,
+  hasUserVoted,
   className,
 }: VoteButtonProps) {
   const trpc = useTRPC();
@@ -28,14 +27,13 @@ export function VoteButton({
   const [isPending, startTransition] = useTransition();
 
   // React 19 useOptimistic - automatic rollback on error
-  // IMPORTANT: The base state (first arg) must be reactive to prop changes
   const [optimisticVotes, addOptimisticVote] = useOptimistic(
     initialVotes,
     (currentVotes: number, increment: number) => currentVotes + increment
   );
 
   const [optimisticHasVoted, setOptimisticHasVoted] = useOptimistic(
-    !!userVote,
+    hasUserVoted,
     (_current: boolean, newValue: boolean) => newValue
   );
 
@@ -55,12 +53,10 @@ export function VoteButton({
     e.preventDefault();
     e.stopPropagation();
 
-    const isVoted = !!userVote;
-
     // Wrap in startTransition for instant UI update
     startTransition(() => {
       // Step 1: Update UI IMMEDIATELY (optimistic)
-      if (isVoted) {
+      if (hasUserVoted) {
         addOptimisticVote(-1); // Decrement vote count
         setOptimisticHasVoted(false); // Unvote
       } else {
@@ -69,10 +65,10 @@ export function VoteButton({
       }
 
       // Step 2: THEN fire the mutation
-      // If it fails, useOptimistic auto-reverts to initialVotes and !!userVote
+      // If it fails, useOptimistic auto-reverts to initialVotes and hasUserVoted
       voteMutation.mutate({
         postId,
-        value: isVoted ? 0 : 1,
+        value: hasUserVoted ? 0 : 1,
       });
     });
   };

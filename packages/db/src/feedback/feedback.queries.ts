@@ -36,13 +36,15 @@ export async function getFeedbackPosts(
     conditions.push(eq(feedbackPost.category, filters.category));
   }
 
-  // Build query with optional user vote LEFT JOIN
+  // Build query with selective columns and user vote check
   const query = db
     .select({
       post: feedbackPost,
-      author: user,
-      voteCount: feedbackPost.voteCount,
-      userVote: feedbackVote, // null if user hasn't voted, vote object if they have
+      author: {
+        name: user.name,
+        image: user.image,
+      },
+      hasUserVoted: sql<boolean>`${feedbackVote.id} IS NOT NULL`,
     })
     .from(feedbackPost)
     .leftJoin(user, eq(feedbackPost.authorId, user.id))
@@ -53,7 +55,7 @@ export async function getFeedbackPosts(
             eq(feedbackVote.postId, feedbackPost.id),
             eq(feedbackVote.userId, filters.userId)
           )
-        : undefined // Skip join if no userId (public access)
+        : sql`false` // Explicit false condition for no userId
     )
     .where(and(...conditions));
 

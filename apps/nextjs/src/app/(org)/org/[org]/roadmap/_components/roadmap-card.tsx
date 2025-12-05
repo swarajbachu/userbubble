@@ -1,15 +1,15 @@
-import type { FeedbackPost, FeedbackVote, User } from "@critichut/db/schema";
+import type { FeedbackPost } from "@critichut/db/schema";
 import Link from "next/link";
 import { VoteButton } from "../../feedback/_components/vote-button";
 
 type RoadmapCardProps = {
   post: FeedbackPost;
-  author: User | null;
+  author: { name: string | null; image: string | null };
   org: string;
-  userVote: FeedbackVote | null; // NEW
+  hasUserVoted: boolean;
 };
 
-export function RoadmapCard({ post, org, userVote }: RoadmapCardProps) {
+export function RoadmapCard({ post, org, hasUserVoted }: RoadmapCardProps) {
   const categoryLabels = {
     feature_request: "Feature",
     bug: "Bug",
@@ -44,9 +44,9 @@ export function RoadmapCard({ post, org, userVote }: RoadmapCardProps) {
           <div onClick={(e) => e.preventDefault()}>
             <VoteButton
               className="h-6 w-auto gap-1 px-2 py-0 text-[10px]"
+              hasUserVoted={hasUserVoted}
               initialVotes={post.voteCount}
               postId={post.id}
-              userVote={userVote} // NEW: pass user vote
             />
           </div>
         </div>

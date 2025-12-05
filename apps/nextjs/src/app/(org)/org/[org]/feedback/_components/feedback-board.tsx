@@ -63,11 +63,12 @@ export function FeedbackBoard({ org }: FeedbackBoardProps) {
     <div className="flex flex-col p-2">
       {posts.map((item) => (
         <PostCard
-          author={item.author}
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          author={item.author!}
+          hasUserVoted={item.hasUserVoted}
           key={item.post.id}
           org={org}
           post={item.post}
-          userVote={item.userVote} // NEW: pass userVote from response
         />
       ))}
     </div>
