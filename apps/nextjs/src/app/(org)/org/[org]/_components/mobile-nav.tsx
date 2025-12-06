@@ -4,7 +4,7 @@ import { Button } from "@critichut/ui/button";
 import { Icon } from "@critichut/ui/icon";
 import { Sheet, SheetContent, SheetTrigger } from "@critichut/ui/sheet";
 import { SidebarProvider } from "@critichut/ui/sidebar";
-import { Menu01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { Menu01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { OrgSidebar } from "./org-sidebar";
 
 type MobileNavProps = {

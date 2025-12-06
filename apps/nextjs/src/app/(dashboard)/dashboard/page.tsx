@@ -4,7 +4,7 @@ import {
   ArrowRight01Icon,
   Building04Icon,
   UserCircleIcon,
-} from "@hugeicons-pro/core-duotone-rounded";
+} from "@hugeicons-pro/core-bulk-rounded";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "~/auth/server";

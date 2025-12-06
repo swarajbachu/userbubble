@@ -2,7 +2,7 @@
 
 import { Button } from "@critichut/ui/button";
 import { Icon } from "@critichut/ui/icon";
-import { Add01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { Add01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { useState } from "react";
 import { authClient } from "~/auth/client";
 import { CreateRequestDialog } from "./create-request-dialog";

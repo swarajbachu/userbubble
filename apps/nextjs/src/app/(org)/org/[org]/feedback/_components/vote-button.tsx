@@ -3,7 +3,7 @@
 import { cn } from "@critichut/ui";
 import { Button } from "@critichut/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowUp01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { ArrowUp01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { memo } from "react";
 
 type VoteButtonProps = {

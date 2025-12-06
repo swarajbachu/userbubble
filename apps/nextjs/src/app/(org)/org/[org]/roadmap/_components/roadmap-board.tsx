@@ -4,7 +4,7 @@ import {
   CheckmarkBadge01Icon,
   Clock01Icon,
   HourglassIcon,
-} from "@hugeicons-pro/core-duotone-rounded";
+} from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "~/trpc/react";
 import { RoadmapColumn } from "./roadmap-column";

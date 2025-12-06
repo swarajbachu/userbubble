@@ -11,7 +11,7 @@ import {
   Clock01Icon,
   EyeIcon,
   HourglassIcon,
-} from "@hugeicons-pro/core-duotone-rounded";
+} from "@hugeicons-pro/core-bulk-rounded";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { memo, useState, useTransition } from "react";
