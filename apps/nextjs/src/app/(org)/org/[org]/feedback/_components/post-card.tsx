@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/nursery/noShadow: memo function pattern */
 "use client";
 
 import type { FeedbackPost } from "@critichut/db/schema";
@@ -11,7 +12,10 @@ import {
   EyeIcon,
   HourglassIcon,
 } from "@hugeicons-pro/core-duotone-rounded";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { memo, useState, useTransition } from "react";
+import { useTRPC } from "~/trpc/react";
 import { VoteButton } from "./vote-button";
 
 type PostCardProps = {
@@ -21,7 +25,58 @@ type PostCardProps = {
   hasUserVoted: boolean;
 };
 
-export function PostCard({ post, org, hasUserVoted }: PostCardProps) {
+export const PostCard = memo(function PostCard({
+  post,
+  org,
+  hasUserVoted,
+}: PostCardProps) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const [, startTransition] = useTransition();
+
+  // Use useState - persists across re-renders
+  const [voteCount, setVoteCount] = useState(post.voteCount);
+  const [userHasVoted, setUserHasVoted] = useState(hasUserVoted);
+
+  const voteMutation = useMutation(
+    trpc.feedback.vote.mutationOptions({
+      onSuccess: async () => {
+        // Only invalidate getAll queries (includes user votes now)
+        await queryClient.invalidateQueries({
+          queryKey: trpc.feedback.getAll.queryKey({
+            organizationId: org,
+            category: post.category,
+          }),
+          exact: false,
+        });
+      },
+      onError: () => {
+        // Rollback on error - revert to original values
+        setVoteCount(post.voteCount);
+        setUserHasVoted(hasUserVoted);
+      },
+    })
+  );
+
+  const handleVote = () => {
+    startTransition(() => {
+      // Update state immediately - instant UI
+      if (userHasVoted) {
+        setVoteCount(voteCount - 1);
+        setUserHasVoted(false);
+      } else {
+        setVoteCount(voteCount + 1);
+        setUserHasVoted(true);
+      }
+
+      // Fire mutation
+      voteMutation.mutate({
+        postId: post.id,
+        value: userHasVoted ? 0 : 1,
+      });
+    });
+  };
+
   const statusConfig = {
     open: { color: "text-blue-500", icon: CircleIcon },
     under_review: { color: "text-yellow-500", icon: EyeIcon },
@@ -46,9 +101,9 @@ export function PostCard({ post, org, hasUserVoted }: PostCardProps) {
       <div className="flex-none">
         <VoteButton
           className="h-6 w-auto gap-1 px-2 py-0 text-[10px]"
-          hasUserVoted={hasUserVoted}
-          initialVotes={post.voteCount}
-          postId={post.id}
+          hasVoted={userHasVoted}
+          onVote={handleVote}
+          voteCount={voteCount}
         />
       </div>
 
@@ -92,4 +147,4 @@ export function PostCard({ post, org, hasUserVoted }: PostCardProps) {
       </div>
     </div>
   );
-}
+});
