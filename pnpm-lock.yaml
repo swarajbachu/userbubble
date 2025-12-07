@@ -306,6 +306,9 @@ importers:
       react-dom:
         specifier: catalog:react19
         version: 19.2.0(react@19.2.0)
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       superjson:
         specifier: 2.2.3
         version: 2.2.3

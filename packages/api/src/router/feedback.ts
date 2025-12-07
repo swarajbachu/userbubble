@@ -168,13 +168,35 @@ export const feedbackRouter = {
         post.post.organizationId
       );
 
-      return await createComment({
+      const newComment = await createComment({
         postId: input.postId,
         authorId: ctx.session.user.id,
         content: input.content,
         parentId: input.parentId,
         isTeamMember: isTeam,
       });
+
+      if (!newComment) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create comment",
+        });
+      }
+
+      // Return comment with author info (matching getComments structure)
+      // Map session user to database User type
+      return {
+        comment: newComment,
+        author: {
+          id: ctx.session.user.id,
+          name: ctx.session.user.name,
+          email: ctx.session.user.email,
+          emailVerified: ctx.session.user.emailVerified,
+          image: ctx.session.user.image ?? null,
+          createdAt: ctx.session.user.createdAt,
+          updatedAt: ctx.session.user.updatedAt,
+        },
+      };
     }),
 
   // Delete a comment (author or org admin only)
