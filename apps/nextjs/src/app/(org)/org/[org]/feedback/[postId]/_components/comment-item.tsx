@@ -4,7 +4,6 @@ import type { FeedbackComment, User } from "@critichut/db/schema";
 import { Button } from "@critichut/ui/button";
 import {
   Dialog,
-  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -58,7 +57,7 @@ export function CommentItem({
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="size-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10" />
+            <div className="size-8 rounded-full bg-linear-to-br from-primary/20 to-primary/10" />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-medium text-sm">
@@ -102,12 +101,10 @@ export function CommentItem({
           <DialogHeader>
             <DialogTitle>Delete Comment</DialogTitle>
           </DialogHeader>
-          <DialogBody>
-            <DialogDescription>
-              Are you sure you want to delete this comment? This action cannot
-              be undone.
-            </DialogDescription>
-          </DialogBody>
+          <DialogDescription className="p-4 text-foreground text-xl">
+            Are you sure you want to delete this comment? This action cannot be
+            undone.
+          </DialogDescription>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>

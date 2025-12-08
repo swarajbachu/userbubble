@@ -49,7 +49,7 @@ export function CommentsSection({
         )}
 
         {/* Comments list */}
-        <div className="space-y-6 divide-y">
+        <div className="space-y-2 divide-y rounded-2xl border">
           {comments.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
               <Icon
@@ -63,7 +63,7 @@ export function CommentsSection({
             </div>
           ) : (
             comments.map((item) => (
-              <div className="pt-6 first:pt-0" key={item.comment.id}>
+              <div className="px-4 py-2" key={item.comment.id}>
                 <CommentItem
                   author={item.author}
                   canDelete={userId === item.comment.authorId}
