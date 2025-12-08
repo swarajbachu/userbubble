@@ -84,16 +84,13 @@ export default async function FeedbackPostPage({
             postId={postId}
           />
 
-          {/* Comments */}
-          <div className="border-t pt-8">
-            <CommentsSection
-              initialComments={comments}
-              isAuthenticated={!!userId}
-              organizationId={organization.id}
-              postId={postId}
-              userId={userId}
-            />
-          </div>
+          <CommentsSection
+            initialComments={comments}
+            isAuthenticated={!!userId}
+            organizationId={organization.id}
+            postId={postId}
+            userId={userId}
+          />
         </div>
 
         {/* Sidebar - Right Column */}
