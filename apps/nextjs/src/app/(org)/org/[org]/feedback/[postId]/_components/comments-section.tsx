@@ -24,24 +24,26 @@ export function CommentsSection({
   const [comments, setComments] = useState(initialComments);
 
   return (
-    <div className="mt-12">
-      <h2 className="mb-6 font-semibold text-xl">
+    <div className="mt-0">
+      <h2 className="mb-6 font-semibold text-lg">
         Comments ({comments.length})
       </h2>
 
       {/* Comment form (for authenticated users) */}
       {isAuthenticated && (
-        <CommentForm
-          onCommentAdded={(newComment) => {
-            // Optimistically add to list
-            setComments([newComment, ...comments]);
-          }}
-          postId={postId}
-        />
+        <div className="mb-8">
+          <CommentForm
+            onCommentAdded={(newComment) => {
+              // Optimistically add to list
+              setComments([newComment, ...comments]);
+            }}
+            postId={postId}
+          />
+        </div>
       )}
 
       {/* Comments list */}
-      <div className="mt-6 space-y-4">
+      <div className="space-y-6 divide-y">
         {comments.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
             <Icon
@@ -55,18 +57,19 @@ export function CommentsSection({
           </div>
         ) : (
           comments.map((item) => (
-            <CommentItem
-              author={item.author}
-              canDelete={userId === item.comment.authorId}
-              comment={item.comment}
-              key={item.comment.id}
-              onDeleted={() => {
-                // Remove from list
-                setComments(
-                  comments.filter((c) => c.comment.id !== item.comment.id)
-                );
-              }}
-            />
+            <div className="pt-6 first:pt-0" key={item.comment.id}>
+              <CommentItem
+                author={item.author}
+                canDelete={userId === item.comment.authorId}
+                comment={item.comment}
+                onDeleted={() => {
+                  // Remove from list
+                  setComments(
+                    comments.filter((c) => c.comment.id !== item.comment.id)
+                  );
+                }}
+              />
+            </div>
           ))
         )}
       </div>

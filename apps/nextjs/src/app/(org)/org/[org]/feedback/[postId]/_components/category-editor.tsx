@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@critichut/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";
 import { categoryLabels } from "../../config";
@@ -23,6 +24,7 @@ export function CategoryEditor({
   currentCategory,
 }: CategoryEditorProps) {
   const trpc = useTRPC();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const updateCategory = useMutation(
@@ -32,6 +34,7 @@ export function CategoryEditor({
           queryKey: trpc.feedback.getById.queryKey({ id: postId }),
         });
         toast.success("Category updated");
+        router.refresh();
       },
       onError: () => {
         toast.error("Failed to update category");
@@ -50,7 +53,7 @@ export function CategoryEditor({
       }
       value={currentCategory}
     >
-      <SelectTrigger className="w-auto gap-2 border-none bg-secondary/50">
+      <SelectTrigger className="w-auto gap-2 border-none bg-transparent p-0 hover:bg-muted/50 focus:ring-0">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

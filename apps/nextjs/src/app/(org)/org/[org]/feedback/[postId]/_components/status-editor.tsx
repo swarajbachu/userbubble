@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@critichut/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";
 import { statusConfig } from "../../config";
@@ -21,6 +22,7 @@ type StatusEditorProps = {
 
 export function StatusEditor({ postId, currentStatus }: StatusEditorProps) {
   const trpc = useTRPC();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const updateStatus = useMutation(
@@ -30,14 +32,13 @@ export function StatusEditor({ postId, currentStatus }: StatusEditorProps) {
           queryKey: trpc.feedback.getById.queryKey({ id: postId }),
         });
         toast.success("Status updated");
+        router.refresh();
       },
       onError: () => {
         toast.error("Failed to update status");
       },
     })
   );
-
-  const config = statusConfig[currentStatus];
 
   return (
     <Select
@@ -50,8 +51,7 @@ export function StatusEditor({ postId, currentStatus }: StatusEditorProps) {
       }
       value={currentStatus}
     >
-      <SelectTrigger className="w-auto gap-2 border-none bg-secondary/50">
-        <Icon className={config.color} icon={config.icon} size={16} />
+      <SelectTrigger className="w-auto gap-2 border-none bg-transparent p-0 hover:bg-muted/50 focus:ring-0">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

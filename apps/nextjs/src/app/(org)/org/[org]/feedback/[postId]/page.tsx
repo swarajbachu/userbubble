@@ -5,14 +5,17 @@ import {
   getUserVote,
   memberQueries,
 } from "@critichut/db/queries";
+import { Icon } from "@critichut/ui/icon";
 import { notFound } from "next/navigation";
 import { getSession } from "~/auth/server";
 import { getOrganization } from "~/lib/get-organization";
+import { categoryLabels, statusConfig } from "../config";
 import { BackButton } from "./_components/back-button";
+import { CategoryEditor } from "./_components/category-editor";
 import { CommentsSection } from "./_components/comments-section";
-import { PostContent } from "./_components/post-content";
-import { PostHeader } from "./_components/post-header";
-import { VoteSection } from "./_components/vote-section";
+import { PostActions } from "./_components/post-actions";
+import { PostMainContent } from "./_components/post-main-content";
+import { StatusEditor } from "./_components/status-editor";
 
 type FeedbackPostPageProps = {
   params: Promise<{ org: string; postId: string }>;
@@ -53,36 +56,100 @@ export default async function FeedbackPostPage({
   // Check if user voted
   const hasUserVoted = userId ? !!(await getUserVote(postId, userId)) : false;
 
+  const config = statusConfig[post.post.status];
+
   return (
-    <div className="mx-auto max-w-4xl p-4 sm:p-6">
-      <BackButton org={org} />
-
-      <PostHeader
-        author={post.author}
-        canModify={canModify}
-        isAdmin={isAdmin}
-        org={org}
-        post={post.post}
-      />
-
-      <div className="mt-6">
-        <VoteSection
-          hasUserVoted={hasUserVoted}
-          initialVoteCount={post.post.voteCount}
-          isAuthenticated={!!userId}
-          postId={postId}
-        />
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <BackButton org={org} />
       </div>
 
-      <PostContent description={post.post.description} />
+      <div className="mt-8 grid grid-cols-1 gap-12 lg:grid-cols-12">
+        {/* Main Content - Left Column */}
+        <div className="space-y-8 lg:col-span-8">
+          <PostMainContent
+            authorName={post.author?.name ?? "Anonymous"}
+            canModify={canModify}
+            createdAt={post.post.createdAt}
+            hasUserVoted={hasUserVoted}
+            initialDescription={post.post.description}
+            initialTitle={post.post.title}
+            initialVoteCount={post.post.voteCount}
+            isAuthenticated={!!userId}
+            postId={postId}
+          />
 
-      <CommentsSection
-        initialComments={comments}
-        isAuthenticated={!!userId}
-        organizationId={organization.id}
-        postId={postId}
-        userId={userId}
-      />
+          {/* Comments */}
+          <div className="border-t pt-8">
+            <CommentsSection
+              initialComments={comments}
+              isAuthenticated={!!userId}
+              organizationId={organization.id}
+              postId={postId}
+              userId={userId}
+            />
+          </div>
+        </div>
+
+        {/* Sidebar - Right Column */}
+        <div className="space-y-6 lg:col-span-4">
+          <div className="sticky top-8 space-y-6">
+            <div className="rounded-lg border bg-card/50 p-4 text-card-foreground shadow-sm">
+              <div className="mb-4 flex items-center justify-between border-b pb-4">
+                <span className="font-semibold text-sm">Details</span>
+                {canModify && <PostActions org={org} postId={postId} />}
+              </div>
+
+              <div className="space-y-6">
+                {/* Status */}
+                <div className="space-y-2">
+                  <span className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
+                    Status
+                  </span>
+                  <div>
+                    {isAdmin ? (
+                      <StatusEditor
+                        currentStatus={post.post.status}
+                        postId={postId}
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2 font-medium text-sm">
+                        <Icon
+                          className={config.color}
+                          icon={config.icon}
+                          size={16}
+                        />
+                        <span className="capitalize">
+                          {post.post.status.replace("_", " ")}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Category */}
+                <div className="space-y-2">
+                  <span className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
+                    Category
+                  </span>
+                  <div>
+                    {isAdmin ? (
+                      <CategoryEditor
+                        currentCategory={post.post.category}
+                        postId={postId}
+                      />
+                    ) : (
+                      <div className="font-medium text-sm">
+                        {categoryLabels[post.post.category]}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

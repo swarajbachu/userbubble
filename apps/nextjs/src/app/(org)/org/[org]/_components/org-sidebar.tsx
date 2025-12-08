@@ -28,7 +28,7 @@ import {
   Route01Icon,
   Settings01Icon,
   UserMultiple02Icon,
-} from "@hugeicons-pro/core-bulk-rounded";
+} from "@hugeicons-pro/core-duotone-rounded";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";

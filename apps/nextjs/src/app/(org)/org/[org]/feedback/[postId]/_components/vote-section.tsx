@@ -68,14 +68,11 @@ export function VoteSection({
   return (
     <div className="flex items-center gap-4">
       <VoteButton
-        className="h-10 px-4 text-sm"
+        className="h-14 w-12 flex-col gap-1 px-0 text-sm"
         hasVoted={userHasVoted}
         onVote={handleVote}
         voteCount={voteCount}
       />
-      <span className="text-muted-foreground text-sm">
-        {voteCount === 1 ? "1 vote" : `${voteCount} votes`}
-      </span>
     </div>
   );
 }

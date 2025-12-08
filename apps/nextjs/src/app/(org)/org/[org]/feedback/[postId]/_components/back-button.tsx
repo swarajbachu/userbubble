@@ -10,13 +10,17 @@ export function BackButton({ org }: { org: string }) {
 
   return (
     <Button
-      className="mb-6"
+      className="group -ml-2 h-auto gap-1 px-2 py-1 text-muted-foreground hover:bg-transparent hover:text-foreground"
       onClick={() => router.push(`/org/${org}/feedback`)}
       size="sm"
       variant="ghost"
     >
-      <Icon icon={ArrowLeft01Icon} size={16} />
-      Back to Requests
+      <Icon
+        className="group-hover:-translate-x-0.5 transition-transform"
+        icon={ArrowLeft01Icon}
+        size={16}
+      />
+      <span className="font-medium text-sm">Back to Requests</span>
     </Button>
   );
 }
