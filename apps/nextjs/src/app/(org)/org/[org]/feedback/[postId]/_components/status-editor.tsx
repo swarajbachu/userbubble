@@ -51,7 +51,7 @@ export function StatusEditor({ postId, currentStatus }: StatusEditorProps) {
       }
       value={currentStatus}
     >
-      <SelectTrigger className="w-auto gap-2 border-none bg-transparent p-0 hover:bg-muted/50 focus:ring-0">
+      <SelectTrigger className="w-auto">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

@@ -53,7 +53,7 @@ export function CategoryEditor({
       }
       value={currentCategory}
     >
-      <SelectTrigger className="w-auto gap-2 border-none bg-transparent p-0 hover:bg-muted/50 focus:ring-0">
+      <SelectTrigger className="w-full">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

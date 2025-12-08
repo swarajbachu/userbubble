@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getSession } from "~/auth/server";
 import { getOrganization } from "~/lib/get-organization";
 import { RoadmapBoard } from "./_components/roadmap-board";
 
@@ -11,6 +12,9 @@ export default async function RoadmapPage({ params }: RoadmapPageProps) {
 
   // Use cached helper - returns cached result from layout
   const organization = await getOrganization(org);
+
+  // Get auth session for authenticated state
+  const session = await getSession();
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -40,7 +44,11 @@ export default async function RoadmapPage({ params }: RoadmapPageProps) {
           </div>
         }
       >
-        <RoadmapBoard org={org} organizationId={organization.id} />
+        <RoadmapBoard
+          isAuthenticated={!!session?.user}
+          org={org}
+          organizationId={organization.id}
+        />
       </Suspense>
     </div>
   );

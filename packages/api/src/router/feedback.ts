@@ -138,6 +138,37 @@ export const feedbackRouter = {
       return { success: true };
     }),
 
+  // Update post status (for roadmap drag-and-drop)
+  updateStatus: protectedProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+        status: feedbackStatusValidator.refine(
+          (status) => ["planned", "in_progress", "completed"].includes(status),
+          { message: "Status must be planned, in_progress, or completed" }
+        ),
+        organizationId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // PERMISSION CHECK: Only org team members can update status
+      const isMember = await isTeamMember(
+        ctx.session.user.id,
+        input.organizationId
+      );
+
+      if (!isMember) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You must be a team member to update post status",
+        });
+      }
+
+      return await updateFeedbackPost(input.postId, {
+        status: input.status,
+      });
+    }),
+
   // Get comments for a post
   getComments: publicProcedure
     .input(z.object({ postId: z.string() }))

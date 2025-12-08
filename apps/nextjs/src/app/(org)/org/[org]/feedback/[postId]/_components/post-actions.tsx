@@ -3,7 +3,6 @@
 import { Button } from "@critichut/ui/button";
 import {
   Dialog,
-  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -66,21 +65,15 @@ export function PostActions({ postId, org }: PostActionsProps) {
           <DialogHeader>
             <DialogTitle>Delete Post</DialogTitle>
           </DialogHeader>
-          <DialogBody>
-            <DialogDescription>
-              Are you sure you want to delete this post? This action cannot be
-              undone.
-            </DialogDescription>
-          </DialogBody>
+          <DialogDescription className="p-4 text-foreground text-xl">
+            Are you sure you want to delete this post? This action cannot be
+            undone.
+          </DialogDescription>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button
-              disabled={isDeleting}
-              onClick={handleDelete}
-              variant="destructive"
-            >
+            <Button disabled={isDeleting} onClick={handleDelete}>
               {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
