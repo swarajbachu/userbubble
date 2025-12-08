@@ -5,6 +5,11 @@ import {
   getUserVote,
   memberQueries,
 } from "@critichut/db/queries";
+import {
+  DoubleCard,
+  DoubleCardHeader,
+  DoubleCardInner,
+} from "@critichut/ui/double-card";
 import { Icon } from "@critichut/ui/icon";
 import { notFound } from "next/navigation";
 import { getSession } from "~/auth/server";
@@ -94,13 +99,13 @@ export default async function FeedbackPostPage({
         {/* Sidebar - Right Column */}
         <div className="space-y-6 lg:col-span-4">
           <div className="sticky top-8 space-y-6">
-            <div className="rounded-lg border bg-card/50 p-4 text-card-foreground shadow-sm">
-              <div className="mb-4 flex items-center justify-between border-b pb-4">
+            <DoubleCard>
+              <DoubleCardHeader className="flex items-center justify-between">
                 <span className="font-semibold text-sm">Details</span>
                 {canModify && <PostActions org={org} postId={postId} />}
-              </div>
+              </DoubleCardHeader>
 
-              <div className="space-y-6">
+              <DoubleCardInner className="space-y-2 p-4">
                 {/* Status */}
                 <div className="space-y-2">
                   <span className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
@@ -145,8 +150,8 @@ export default async function FeedbackPostPage({
                     )}
                   </div>
                 </div>
-              </div>
-            </div>
+              </DoubleCardInner>
+            </DoubleCard>
           </div>
         </div>
       </div>

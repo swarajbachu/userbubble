@@ -32,28 +32,28 @@ export const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-    compoundVariants: [
-      {
-        variant: "outline",
-        size: "default",
-        className: "h-10 px-5",
-      },
-      {
-        variant: "outline",
-        size: "sm",
-        className: "h-8 px-4",
-      },
-      {
-        variant: "outline",
-        size: "lg",
-        className: "h-11 px-6",
-      },
-      {
-        variant: "outline",
-        size: "icon",
-        className: "size-10",
-      },
-    ],
+    // compoundVariants: [
+    //   {
+    //     variant: "outline",
+    //     size: "default",
+    //     className: "h-10 px-5",
+    //   },
+    //   {
+    //     variant: "outline",
+    //     size: "sm",
+    //     className: "h-8 px-4",
+    //   },
+    //   {
+    //     variant: "outline",
+    //     size: "lg",
+    //     className: "h-11 px-6",
+    //   },
+    //   {
+    //     variant: "outline",
+    //     size: "icon",
+    //     className: "size-10",
+    //   },
+    // ],
   }
 );
 
