@@ -22,6 +22,8 @@ export const CreatePostSchema = createInsertSchema(Post, {
   updatedAt: true,
 });
 
+// Changelog schemas (entries, feedback links)
+export * from "./changelog/changelog.sql";
 // Feedback schemas (posts, votes, comments)
 export * from "./feedback/feedback.sql";
 export * from "./feedback/feedback.validators";
@@ -31,6 +33,8 @@ export * from "./lib/slug";
 export * from "./org/organization.sql";
 // Organization validators
 export * from "./org/organization.validators";
+// Organization settings (public access, branding)
+export * from "./org/organization-settings";
 export * from "./user/identified-user.sql";
 // User schemas (Better Auth core tables + critichut extensions)
 export * from "./user/user.sql";

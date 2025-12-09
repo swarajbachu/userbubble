@@ -18,6 +18,18 @@ const config = {
 
   /** We already do linting and typechecking as separate tasks in CI */
   typescript: { ignoreBuildErrors: true },
+
+  /** Support path-based routing for local development */
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/external/:org/:path*",
+          destination: "/external/:org/:path*",
+        },
+      ],
+    };
+  },
 };
 
 export default config;

@@ -85,3 +85,114 @@ export async function isTeamMember(
 ): Promise<boolean> {
   return memberQueries.isMember(userId, organizationId);
 }
+
+/**
+ * Check if user (authenticated or anonymous) can create a post
+ * For external portal: checks org settings for anonymous permissions
+ * For authenticated users: always allowed
+ */
+export async function canCreatePost(
+  organizationId: string,
+  userId?: string | null
+): Promise<boolean> {
+  // If user is authenticated, they can create posts
+  if (userId) {
+    return true;
+  }
+
+  // Anonymous user - check org settings
+  const org = await db.query.organization.findFirst({
+    where: eq(db.query.organization.id, organizationId),
+    columns: { metadata: true },
+  });
+
+  if (!org) {
+    return false;
+  }
+
+  // Parse settings from metadata
+  const { parseOrganizationSettings } = await import(
+    "../org/organization-settings"
+  );
+  const settings = parseOrganizationSettings(org.metadata);
+
+  return settings.publicAccess.allowAnonymousSubmissions;
+}
+
+/**
+ * Check if user (authenticated or anonymous) can vote on a post
+ */
+export async function canVoteOnPost(
+  postId: string,
+  userId?: string | null
+): Promise<boolean> {
+  const post = await db.query.feedbackPost.findFirst({
+    where: eq(feedbackPost.id, postId),
+    columns: { organizationId: true },
+  });
+
+  if (!post) {
+    return false;
+  }
+
+  // If user is authenticated, they can vote
+  if (userId) {
+    return true;
+  }
+
+  // Anonymous user - check org settings
+  const org = await db.query.organization.findFirst({
+    where: eq(db.query.organization.id, post.organizationId),
+    columns: { metadata: true },
+  });
+
+  if (!org) {
+    return false;
+  }
+
+  const { parseOrganizationSettings } = await import(
+    "../org/organization-settings"
+  );
+  const settings = parseOrganizationSettings(org.metadata);
+
+  return settings.publicAccess.allowAnonymousVoting;
+}
+
+/**
+ * Check if user (authenticated or anonymous) can comment on a post
+ */
+export async function canCommentOnPost(
+  postId: string,
+  userId?: string | null
+): Promise<boolean> {
+  const post = await db.query.feedbackPost.findFirst({
+    where: eq(feedbackPost.id, postId),
+    columns: { organizationId: true },
+  });
+
+  if (!post) {
+    return false;
+  }
+
+  // If user is authenticated, they can comment
+  if (userId) {
+    return true;
+  }
+
+  // Anonymous user - check org settings
+  const org = await db.query.organization.findFirst({
+    where: eq(db.query.organization.id, post.organizationId),
+    columns: { metadata: true },
+  });
+
+  if (!org) {
+    return false;
+  }
+
+  const { parseOrganizationSettings } = await import(
+    "../org/organization-settings"
+  );
+  const settings = parseOrganizationSettings(org.metadata);
+
+  return settings.publicAccess.allowAnonymousComments;
+}
