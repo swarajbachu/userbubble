@@ -2,7 +2,7 @@
 
 import { cn } from "@critichut/ui";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { MultiplicationSignIcon } from "@hugeicons-pro/core-duotone-rounded";
+import { MultiplicationSignIcon } from "@hugeicons-pro/core-bulk-rounded";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import type * as React from "react";
 

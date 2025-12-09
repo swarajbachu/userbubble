@@ -1,10 +1,10 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "~/auth/server";
+import { auth, getSession } from "~/auth/server";
 import { OnboardingWizard } from "../_components/onboarding/onboarding-wizard";
 
 export default async function HomePage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
 
   // Middleware handles unauthenticated users - this page only runs for authenticated users
   if (!session?.user) {

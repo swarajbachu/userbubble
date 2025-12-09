@@ -7,7 +7,7 @@ import {
   Cancel01Icon,
   Loading03Icon,
   Tick01Icon,
-} from "@hugeicons-pro/core-duotone-rounded";
+} from "@hugeicons-pro/core-bulk-rounded";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { authClient } from "~/auth/client";

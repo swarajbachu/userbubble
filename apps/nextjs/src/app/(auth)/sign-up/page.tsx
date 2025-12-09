@@ -20,7 +20,7 @@ import {
   Mail02Icon,
   ViewIcon,
   ViewOffIcon,
-} from "@hugeicons-pro/core-duotone-rounded";
+} from "@hugeicons-pro/core-bulk-rounded";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

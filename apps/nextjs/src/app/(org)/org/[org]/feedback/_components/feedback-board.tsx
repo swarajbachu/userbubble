@@ -3,21 +3,19 @@
 import type { FeedbackStatus } from "@critichut/db/schema";
 import { DoubleCard, DoubleCardInner } from "@critichut/ui/double-card";
 import { Icon } from "@critichut/ui/icon";
-import { Message01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { Message01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
-import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
 import { PostCard } from "./post-card";
 
 type FeedbackBoardProps = {
   org: string;
+  organizationId: string;
 };
 
-export function FeedbackBoard({ org }: FeedbackBoardProps) {
+export function FeedbackBoard({ org, organizationId }: FeedbackBoardProps) {
   const trpc = useTRPC();
-
-  const { data: activeOrganization } = authClient.useActiveOrganization();
 
   const [status] = useQueryState(
     "status",
@@ -28,15 +26,11 @@ export function FeedbackBoard({ org }: FeedbackBoardProps) {
 
   const { data: posts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
-      organizationId: activeOrganization?.id ?? "",
+      organizationId,
       status: status.length > 0 ? (status as FeedbackStatus[]) : undefined,
       sortBy: (sort as "votes" | "recent") ?? "recent",
     })
   );
-
-  if (!activeOrganization) {
-    return null;
-  }
 
   if (posts.length === 0) {
     return (
@@ -61,7 +55,9 @@ export function FeedbackBoard({ org }: FeedbackBoardProps) {
     <div className="flex flex-col p-2">
       {posts.map((item) => (
         <PostCard
-          author={item.author}
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          author={item.author!}
+          hasUserVoted={item.hasUserVoted}
           key={item.post.id}
           org={org}
           post={item.post}

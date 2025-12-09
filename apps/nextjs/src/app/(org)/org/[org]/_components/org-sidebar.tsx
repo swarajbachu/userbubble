@@ -165,7 +165,11 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
             <SidebarMenu>
               {MAIN_NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                  <SidebarMenuButton
+                    asChild
+                    className="h-12"
+                    isActive={isActive(item.href)}
+                  >
                     <Link href={`/org/${org}${item.href}`}>
                       <Icon icon={item.icon} size={20} />
                       <span>{item.title}</span>

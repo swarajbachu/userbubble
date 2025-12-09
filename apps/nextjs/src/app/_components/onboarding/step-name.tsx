@@ -6,7 +6,7 @@ import { Input } from "@critichut/ui/input";
 import {
   AlertCircleIcon,
   CheckmarkCircle01Icon,
-} from "@hugeicons-pro/core-duotone-rounded";
+} from "@hugeicons-pro/core-bulk-rounded";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useWizard } from "./wizard-context";

@@ -22,6 +22,7 @@ export async function getFeedbackPosts(
     status?: FeedbackStatus[];
     category?: FeedbackCategory;
     sortBy?: "votes" | "recent";
+    userId?: string; // Optional: Check if user has voted
   }
 ) {
   // Build all conditions upfront
@@ -35,15 +36,27 @@ export async function getFeedbackPosts(
     conditions.push(eq(feedbackPost.category, filters.category));
   }
 
-  // Single .where() call with combined conditions
+  // Build query with selective columns and user vote check
   const query = db
     .select({
       post: feedbackPost,
-      author: user,
-      voteCount: feedbackPost.voteCount,
+      author: {
+        name: user.name,
+        image: user.image,
+      },
+      hasUserVoted: sql<boolean>`${feedbackVote.id} IS NOT NULL`,
     })
     .from(feedbackPost)
     .leftJoin(user, eq(feedbackPost.authorId, user.id))
+    .leftJoin(
+      feedbackVote,
+      filters?.userId
+        ? and(
+            eq(feedbackVote.postId, feedbackPost.id),
+            eq(feedbackVote.userId, filters.userId)
+          )
+        : sql`false` // Explicit false condition for no userId
+    )
     .where(and(...conditions));
 
   // Apply sorting

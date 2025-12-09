@@ -20,7 +20,7 @@ import {
   Tick01Icon,
   UserAccountIcon,
   UserSquareIcon,
-} from "@hugeicons-pro/core-duotone-rounded";
+} from "@hugeicons-pro/core-bulk-rounded";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 

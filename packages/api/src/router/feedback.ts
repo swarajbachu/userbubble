@@ -9,7 +9,6 @@ import {
   getFeedbackPost,
   getFeedbackPosts,
   getPostComments,
-  getUserVote,
   isTeamMember,
   removeVote,
   updateFeedbackPost,
@@ -37,11 +36,12 @@ export const feedbackRouter = {
         sortBy: z.enum(["votes", "recent"]).optional(),
       })
     )
-    .query(async ({ input }) =>
+    .query(async ({ input, ctx }) =>
       getFeedbackPosts(input.organizationId, {
         status: input.status,
         category: input.category,
         sortBy: input.sortBy,
+        userId: ctx.session?.user?.id, // Pass userId for vote lookup
       })
     ),
 
@@ -138,12 +138,35 @@ export const feedbackRouter = {
       return { success: true };
     }),
 
-  // Get user's vote on a post
-  getUserVote: protectedProcedure
-    .input(z.object({ postId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const vote = await getUserVote(input.postId, ctx.session.user.id);
-      return vote;
+  // Update post status (for roadmap drag-and-drop)
+  updateStatus: protectedProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+        status: feedbackStatusValidator.refine(
+          (status) => ["planned", "in_progress", "completed"].includes(status),
+          { message: "Status must be planned, in_progress, or completed" }
+        ),
+        organizationId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // PERMISSION CHECK: Only org team members can update status
+      const isMember = await isTeamMember(
+        ctx.session.user.id,
+        input.organizationId
+      );
+
+      if (!isMember) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You must be a team member to update post status",
+        });
+      }
+
+      return await updateFeedbackPost(input.postId, {
+        status: input.status,
+      });
     }),
 
   // Get comments for a post
@@ -176,13 +199,35 @@ export const feedbackRouter = {
         post.post.organizationId
       );
 
-      return await createComment({
+      const newComment = await createComment({
         postId: input.postId,
         authorId: ctx.session.user.id,
         content: input.content,
         parentId: input.parentId,
         isTeamMember: isTeam,
       });
+
+      if (!newComment) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create comment",
+        });
+      }
+
+      // Return comment with author info (matching getComments structure)
+      // Map session user to database User type
+      return {
+        comment: newComment,
+        author: {
+          id: ctx.session.user.id,
+          name: ctx.session.user.name,
+          email: ctx.session.user.email,
+          emailVerified: ctx.session.user.emailVerified,
+          image: ctx.session.user.image ?? null,
+          createdAt: ctx.session.user.createdAt,
+          updatedAt: ctx.session.user.updatedAt,
+        },
+      };
     }),
 
   // Delete a comment (author or org admin only)
