@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../client";
 import { memberQueries } from "../org/organization.queries";
+import { organization } from "../org/organization.sql";
 import { feedbackComment, feedbackPost } from "./feedback.sql";
 
 /**
@@ -102,7 +103,7 @@ export async function canCreatePost(
 
   // Anonymous user - check org settings
   const org = await db.query.organization.findFirst({
-    where: eq(db.query.organization.id, organizationId),
+    where: eq(organization.id, organizationId),
     columns: { metadata: true },
   });
 
@@ -142,7 +143,7 @@ export async function canVoteOnPost(
 
   // Anonymous user - check org settings
   const org = await db.query.organization.findFirst({
-    where: eq(db.query.organization.id, post.organizationId),
+    where: eq(organization.id, post.organizationId),
     columns: { metadata: true },
   });
 
@@ -181,7 +182,7 @@ export async function canCommentOnPost(
 
   // Anonymous user - check org settings
   const org = await db.query.organization.findFirst({
-    where: eq(db.query.organization.id, post.organizationId),
+    where: eq(organization.id, post.organizationId),
     columns: { metadata: true },
   });
 

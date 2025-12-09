@@ -13,8 +13,8 @@ import {
 import { Icon } from "@critichut/ui/icon";
 import { notFound } from "next/navigation";
 import { getSession } from "~/auth/server";
+import { categoryLabels, statusConfig } from "~/components/feedback/config";
 import { getOrganization } from "~/lib/get-organization";
-import { categoryLabels, statusConfig } from "../config";
 import { BackButton } from "./_components/back-button";
 import { CategoryEditor } from "./_components/category-editor";
 import { CommentsSection } from "./_components/comments-section";

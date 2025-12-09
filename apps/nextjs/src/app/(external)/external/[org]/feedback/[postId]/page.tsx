@@ -8,11 +8,8 @@ import { Icon } from "@critichut/ui/icon";
 import { notFound } from "next/navigation";
 import { CommentsSection } from "~/app/(org)/org/[org]/feedback/[postId]/_components/comments-section";
 import { PostMainContent } from "~/app/(org)/org/[org]/feedback/[postId]/_components/post-main-content";
-import {
-  categoryLabels,
-  statusConfig,
-} from "~/app/(org)/org/[org]/feedback/config";
 import { getSession } from "~/auth/server";
+import { categoryLabels, statusConfig } from "~/components/feedback/config";
 import { getOrganization } from "~/lib/get-organization";
 
 type ExternalFeedbackPostPageProps = {
