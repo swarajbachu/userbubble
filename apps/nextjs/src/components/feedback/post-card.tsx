@@ -7,9 +7,9 @@ import { Icon } from "@critichut/ui/icon";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { memo, useState, useTransition } from "react";
-import { VoteButton } from "~/components/feedback/vote-button";
 import { useTRPC } from "~/trpc/react";
 import { categoryLabels, statusConfig } from "../config";
+import { VoteButton } from "./vote-button";
 
 type PostCardProps = {
   post: FeedbackPost;

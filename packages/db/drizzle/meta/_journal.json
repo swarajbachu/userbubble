@@ -22,6 +22,13 @@
       "when": 1764450511791,
       "tag": "0002_cute_galactus",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1765299203295,
+      "tag": "0003_productive_forge",
+      "breakpoints": true
     }
   ]
 }
