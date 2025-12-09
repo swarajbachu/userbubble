@@ -27,6 +27,10 @@ export function getSubdomain(hostname: string): string | null {
   // Get the subdomain (first part)
   const subdomain = parts[0];
 
+  if (!subdomain) {
+    return null;
+  }
+
   // Reserved subdomains that should not be treated as org subdomains
   const reservedSubdomains = [
     "app",

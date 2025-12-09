@@ -16,7 +16,9 @@ export default async function ExternalOrgLayout({
   params,
 }: ExternalOrgLayoutProps) {
   const { org } = await params;
+  console.log("org", org);
   const organization = await organizationQueries.findBySlug(org);
+  console.log("organization", organization);
 
   if (!organization) {
     notFound();

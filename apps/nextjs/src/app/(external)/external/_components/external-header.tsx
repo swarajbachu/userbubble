@@ -5,7 +5,7 @@ import { Button } from "@critichut/ui/button";
 import { Icon } from "@critichut/ui/icon";
 import { Login02Icon } from "@hugeicons-pro/core-duotone-rounded";
 import Image from "next/image";
-import { useSession } from "~/auth/client";
+import { authClient } from "~/auth/client";
 
 type ExternalHeaderProps = {
   organization: Organization;
@@ -16,7 +16,7 @@ export function ExternalHeader({
   organization,
   settings,
 }: ExternalHeaderProps) {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
