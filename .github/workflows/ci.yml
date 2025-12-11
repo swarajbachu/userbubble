@@ -20,7 +20,7 @@ env:
   HUGEICONS_TOKEN: ${{ secrets.HUGEICONS_TOKEN }}
 
 jobs:
-  lint:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -35,24 +35,8 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-  format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup
-        uses: ./tooling/github/setup
-
       - name: Format
         run: pnpm format
-
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup
-        uses: ./tooling/github/setup
 
       - name: Typecheck
         run: pnpm typecheck
