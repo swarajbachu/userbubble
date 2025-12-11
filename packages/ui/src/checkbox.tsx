@@ -23,7 +23,7 @@ function Checkbox({
         className="grid place-content-center text-current transition-none"
         data-slot="checkbox-indicator"
       >
-        <HugeiconsIcon className="size-3.5" icon={Tick02Icon} />
+        <HugeiconsIcon className="size-3.5 text-white" icon={Tick02Icon} />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

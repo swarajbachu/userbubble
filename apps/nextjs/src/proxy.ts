@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { cache } from "react";
 import { getSession } from "~/auth/server";
+import { getSubdomain } from "~/lib/subdomain";
 
 // Cache org queries within single request
 const getCachedUserOrganizations = cache(async (userId: string) =>
@@ -13,6 +14,7 @@ const publicPaths = [
   "/sign-in",
   "/sign-up",
   "/api/auth",
+  "/external",
   "/_next",
   "/favicon.ico",
 ];
@@ -29,6 +31,30 @@ function isAuthPath(pathname: string): boolean {
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const hostname = request.headers.get("host") || "";
+
+  // If already on /external/ path, skip subdomain processing (avoid infinite loop)
+  if (pathname.startsWith("/external/")) {
+    return NextResponse.next();
+  }
+
+  // Handle subdomain routing for external/public portal
+  const subdomain = getSubdomain(hostname);
+
+  if (subdomain) {
+    // Verify organization exists
+    const org = await organizationQueries.findBySlug(subdomain);
+    if (!org) {
+      // Org doesn't exist - redirect to 404
+      return NextResponse.redirect(new URL("/not-found", request.url));
+    }
+
+    // Rewrite subdomain URL to /external/[org] path
+    const newPath = `/external/${subdomain}${pathname === "/" ? "" : pathname}`;
+    const url = new URL(request.url);
+    url.pathname = newPath;
+    return NextResponse.rewrite(url);
+  }
 
   if (isPublicPath(pathname) && !isAuthPath(pathname)) {
     return NextResponse.next();

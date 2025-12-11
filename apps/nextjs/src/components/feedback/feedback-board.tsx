@@ -1,13 +1,13 @@
 "use client";
 
-import type { FeedbackStatus } from "@critichut/db/schema";
+import type { FeedbackCategory, FeedbackStatus } from "@critichut/db/schema";
 import { DoubleCard, DoubleCardInner } from "@critichut/ui/double-card";
 import { Icon } from "@critichut/ui/icon";
 import { Message01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
-import { PostCard } from "~/components/feedback/post-card";
 import { useTRPC } from "~/trpc/react";
+import { PostCard } from "./post-card";
 
 type FeedbackBoardProps = {
   org: string;
@@ -22,12 +22,15 @@ export function FeedbackBoard({ org, organizationId }: FeedbackBoardProps) {
     parseAsArrayOf(parseAsString).withDefault([])
   );
 
+  const [category] = useQueryState("category", parseAsString);
+
   const [sort] = useQueryState("sort", parseAsString.withDefault("recent"));
 
   const { data: posts } = useSuspenseQuery(
     trpc.feedback.getAll.queryOptions({
       organizationId,
       status: status.length > 0 ? (status as FeedbackStatus[]) : undefined,
+      category: (category as FeedbackCategory | null) ?? undefined,
       sortBy: (sort as "votes" | "recent") ?? "recent",
     })
   );
@@ -55,7 +58,7 @@ export function FeedbackBoard({ org, organizationId }: FeedbackBoardProps) {
     <div className="flex flex-col p-2">
       {posts.map((item) => (
         <PostCard
-          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          // biome-ignore lint/style/noNonNullAssertion: author is always present for feedback posts
           author={item.author!}
           hasUserVoted={item.hasUserVoted}
           key={item.post.id}

@@ -62,6 +62,9 @@ export const feedbackPost = pgTable("feedback_post", {
   title: text("title").notNull(),
   description: text("description").notNull(),
 
+  // Optional email for anonymous users to claim posts later
+  authorEmail: text("author_email"),
+
   // Status and categorization
   status: feedbackStatusEnum("status").notNull().default("open"),
   category: feedbackCategoryEnum("category")
@@ -97,9 +100,11 @@ export const feedbackVote = pgTable(
       .notNull()
       .references(() => feedbackPost.id, { onDelete: "cascade" }),
 
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+    // User ID for authenticated users, null for anonymous
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+
+    // Session ID for anonymous users (to prevent duplicate votes)
+    sessionId: text("session_id"),
 
     // Vote value: 1 for upvote, -1 for downvote (future: could support downvotes)
     value: integer("value").notNull().default(1),
@@ -107,8 +112,10 @@ export const feedbackVote = pgTable(
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => ({
-    // Ensure one vote per user per post
+    // Ensure one vote per user per post (for authenticated users)
     uniqueUserPost: unique().on(table.postId, table.userId),
+    // Ensure one vote per session per post (for anonymous users)
+    uniqueSessionPost: unique().on(table.postId, table.sessionId),
   })
 );
 
@@ -125,10 +132,13 @@ export const feedbackComment = pgTable("feedback_comment", {
     .notNull()
     .references(() => feedbackPost.id, { onDelete: "cascade" }),
 
-  // Author (can be identified user or team member)
-  authorId: text("author_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  // Author (can be identified user, team member, or anonymous)
+  authorId: text("author_id").references(() => user.id, {
+    onDelete: "cascade",
+  }),
+
+  // Optional name for anonymous commenters
+  authorName: text("author_name"),
 
   // Comment content
   content: text("content").notNull(),

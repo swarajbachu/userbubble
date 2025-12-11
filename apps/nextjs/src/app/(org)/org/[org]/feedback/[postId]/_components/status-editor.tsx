@@ -12,8 +12,8 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { statusConfig } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
-import { statusConfig } from "../../config";
 
 type StatusEditorProps = {
   postId: string;

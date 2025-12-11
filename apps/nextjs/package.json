@@ -30,6 +30,7 @@
     "@trpc/tanstack-react-query": "catalog:",
     "better-auth": "catalog:",
     "lucide-react": "^0.552.0",
+    "motion": "^12.23.26",
     "next": "^16.0.7",
     "nuqs": "^2.8.1",
     "react": "catalog:react19",

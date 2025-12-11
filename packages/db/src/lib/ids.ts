@@ -9,6 +9,8 @@ export const UniqueIdsSchema = z.enum([
   "post",
   "vote",
   "comment",
+  "log",
+  "log_link",
 ]);
 
 export type UniqueIdsType = z.infer<typeof UniqueIdsSchema>;

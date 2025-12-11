@@ -1,4 +1,5 @@
 import {
+  canCreatePost,
   canDeleteComment,
   canDeletePost,
   canModifyPost,
@@ -61,13 +62,27 @@ export const feedbackRouter = {
       return post;
     }),
 
-  // Create a new feedback post
-  create: protectedProcedure
+  // Create a new feedback post (supports both authenticated and anonymous)
+  create: publicProcedure
     .input(createFeedbackValidator)
     .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session?.user?.id;
+
+      // Permission check - verify user can create posts in this organization
+      const canCreate = await canCreatePost(input.organizationId, userId);
+      if (!canCreate) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: userId
+            ? "You don't have permission to create feedback in this organization"
+            : "Anonymous submissions are not allowed for this organization. Please sign in.",
+        });
+      }
+
+      // Create post - anonymous users will show as "Anonymous"
       const post = await createFeedbackPost({
         organizationId: input.organizationId,
-        authorId: ctx.session.user.id,
+        authorId: userId ?? null,
         title: input.title,
         description: input.description,
         category: input.category,
