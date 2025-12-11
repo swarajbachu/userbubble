@@ -4,6 +4,7 @@ import { Button } from "@critichut/ui/button";
 import { toast } from "@critichut/ui/toast";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Add01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import type { ComponentProps } from "react";
 import { useState } from "react";
 import { authClient } from "~/auth/client";
 import { CreateFeedbackDialog } from "./create-feedback-dialog";
@@ -11,11 +12,17 @@ import { CreateFeedbackDialog } from "./create-feedback-dialog";
 type CreateFeedbackButtonProps = {
   organizationId: string;
   allowAnonymous: boolean;
+  children?: React.ReactNode;
+  className?: string;
+  variant?: ComponentProps<typeof Button>["variant"];
 };
 
 export function CreateFeedbackButton({
   organizationId,
   allowAnonymous,
+  children,
+  className,
+  variant = "default",
 }: CreateFeedbackButtonProps) {
   const [open, setOpen] = useState(false);
   const { data: session } = authClient.useSession();
@@ -31,9 +38,14 @@ export function CreateFeedbackButton({
 
   return (
     <>
-      <Button onClick={handleClick} size="lg">
+      <Button
+        className={className}
+        onClick={handleClick}
+        size="lg"
+        variant={variant}
+      >
         <HugeiconsIcon icon={Add01Icon} size={20} strokeWidth={2} />
-        Submit Feedback
+        {children ?? "Submit Feedback"}
       </Button>
 
       <CreateFeedbackDialog
