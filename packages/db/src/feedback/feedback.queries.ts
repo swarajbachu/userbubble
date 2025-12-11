@@ -41,7 +41,7 @@ export async function getFeedbackPosts(
     .select({
       post: feedbackPost,
       author: {
-        name: user.name,
+        name: sql<string>`COALESCE(${user.name}, 'Anonymous')`,
         image: user.image,
       },
       hasUserVoted: sql<boolean>`${feedbackVote.id} IS NOT NULL`,
