@@ -19,25 +19,25 @@ export function FeedbackSidebar({
   allowAnonymous,
 }: FeedbackSidebarProps) {
   const searchParams = useSearchParams();
-  const currentStatus = searchParams.get("status");
+  const currentCategory = searchParams.get("category");
 
   const boards = [
     {
       name: "All Feedback",
       count: null,
-      status: null,
+      category: null,
       color: "bg-gray-500",
     },
     {
       name: "Features",
       count: null,
-      status: "feature_request",
+      category: "feature_request",
       color: "bg-green-500",
     },
     {
       name: "Bugs",
       count: null,
-      status: "bug",
+      category: "bug",
       color: "bg-red-500",
     },
   ];
@@ -79,8 +79,8 @@ export function FeedbackSidebar({
           <div className="flex flex-col gap-1">
             {boards.map((board) => {
               const isActive =
-                currentStatus === board.status ||
-                (!currentStatus && board.status === null);
+                currentCategory === board.category ||
+                (!currentCategory && board.category === null);
               return (
                 <Link
                   className={cn(
@@ -89,8 +89,8 @@ export function FeedbackSidebar({
                       ? "bg-secondary font-medium text-foreground"
                       : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                   )}
-                  href={`/${org}/feedback${
-                    board.status ? `?status=${board.status}` : ""
+                  href={`/external/${org}/feedback${
+                    board.category ? `?category=${board.category}` : ""
                   }`}
                   key={board.name}
                 >

@@ -9,7 +9,7 @@ import { FeedbackSidebar } from "./_components/feedback-sidebar";
 
 type ExternalFeedbackPageProps = {
   params: Promise<{ org: string }>;
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ category?: string }>;
 };
 
 export default async function ExternalFeedbackPage({
@@ -17,7 +17,7 @@ export default async function ExternalFeedbackPage({
   searchParams,
 }: ExternalFeedbackPageProps) {
   const { org } = await params;
-  const { status } = await searchParams;
+  const { category } = await searchParams;
 
   // Use cached helper - returns cached result from layout
   const organization = await getOrganization(org);
@@ -25,8 +25,8 @@ export default async function ExternalFeedbackPage({
   // Parse organization settings for anonymous submission settings
   const settings = parseOrganizationSettings(organization.metadata);
 
-  const getBoardTitle = (s?: string) => {
-    switch (s) {
+  const getBoardTitle = (c?: string) => {
+    switch (c) {
       case "feature_request":
         return "Features";
       case "bug":
@@ -36,8 +36,8 @@ export default async function ExternalFeedbackPage({
     }
   };
 
-  const getBoardColor = (s?: string) => {
-    switch (s) {
+  const getBoardColor = (c?: string) => {
+    switch (c) {
       case "feature_request":
         return "bg-green-500";
       case "bug":
@@ -47,8 +47,8 @@ export default async function ExternalFeedbackPage({
     }
   };
 
-  const title = getBoardTitle(status);
-  const color = getBoardColor(status);
+  const title = getBoardTitle(category);
+  const color = getBoardColor(category);
 
   return (
     <div className="flex flex-col gap-8 md:flex-row">

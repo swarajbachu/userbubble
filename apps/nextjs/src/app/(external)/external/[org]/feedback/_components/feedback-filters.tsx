@@ -2,15 +2,59 @@
 
 import { cn } from "@critichut/ui";
 import { Button } from "@critichut/ui/button";
+import { Checkbox } from "@critichut/ui/checkbox";
+import { Icon } from "@critichut/ui/icon";
 import { Input } from "@critichut/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@critichut/ui/popover";
 import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Cancel01Icon,
+  CheckmarkBadge01Icon,
+  CircleIcon,
+  Clock01Icon,
+  EyeIcon,
+  HourglassIcon,
+} from "@hugeicons-pro/core-bulk-rounded";
 import {
   ArrowDown01Icon,
   FilterHorizontalIcon,
   Search01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+
+const STATUS_FILTERS = [
+  { label: "Open", value: "open", color: "text-blue-500", icon: CircleIcon },
+  {
+    label: "Under Review",
+    value: "under_review",
+    color: "text-yellow-500",
+    icon: EyeIcon,
+  },
+  {
+    label: "Planned",
+    value: "planned",
+    color: "text-purple-500",
+    icon: Clock01Icon,
+  },
+  {
+    label: "In Progress",
+    value: "in_progress",
+    color: "text-orange-500",
+    icon: HourglassIcon,
+  },
+  {
+    label: "Completed",
+    value: "completed",
+    color: "text-green-500",
+    icon: CheckmarkBadge01Icon,
+  },
+  {
+    label: "Closed",
+    value: "closed",
+    color: "text-slate-500",
+    icon: Cancel01Icon,
+  },
+] as const;
 
 export function FeedbackFilters() {
   const [search, setSearch] = useQueryState("q", parseAsString.withDefault(""));
@@ -19,6 +63,22 @@ export function FeedbackFilters() {
     parseAsString.withDefault("recent")
   );
 
+  const [statusFilter, setStatusFilter] = useQueryState(
+    "status",
+    parseAsArrayOf(parseAsString).withDefault([])
+  );
+
+  const isStatusActive = (value: string) => statusFilter.includes(value);
+
+  const toggleStatus = (value: string) => {
+    if (statusFilter.includes(value)) {
+      const newStatus = statusFilter.filter((s) => s !== value);
+      setStatusFilter(newStatus.length > 0 ? newStatus : null);
+    } else {
+      setStatusFilter([...statusFilter, value]);
+    }
+  };
+
   return (
     <div className="flex items-center gap-2">
       <Popover>
@@ -26,6 +86,11 @@ export function FeedbackFilters() {
           <Button className="h-9 gap-2" size="sm" variant="outline">
             <HugeiconsIcon icon={FilterHorizontalIcon} size={16} />
             Filter
+            {statusFilter.length > 0 && (
+              <span className="rounded-full bg-primary px-1.5 py-0.5 font-medium text-primary-foreground text-xs">
+                {statusFilter.length}
+              </span>
+            )}
             <HugeiconsIcon
               className="ml-auto opacity-50"
               icon={ArrowDown01Icon}
@@ -33,12 +98,47 @@ export function FeedbackFilters() {
             />
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-48 p-0">
-          <div className="p-2">
+        <PopoverContent align="start" className="w-56 p-2">
+          <div className="space-y-1">
             <div className="px-2 py-1.5 font-medium text-muted-foreground text-sm">
               Status
             </div>
-            {/* Add checkboxes here later */}
+            {STATUS_FILTERS.map((filter) => (
+              <button
+                className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
+                key={filter.value}
+                onClick={() => toggleStatus(filter.value)}
+                type="button"
+              >
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={isStatusActive(filter.value)}
+                    className="data-[state=checked]:bg-transparent data-[state=checked]:text-primary"
+                  />
+                  <span>{filter.label}</span>
+                </div>
+                <Icon
+                  className={cn(
+                    "size-4 transition-opacity",
+                    isStatusActive(filter.value) ? "opacity-100" : "opacity-50",
+                    filter.color
+                  )}
+                  icon={filter.icon}
+                />
+              </button>
+            ))}
+            {statusFilter.length > 0 && (
+              <>
+                <div className="my-1 border-t" />
+                <button
+                  className="w-full rounded-md px-2 py-1.5 text-left text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-foreground"
+                  onClick={() => setStatusFilter(null)}
+                  type="button"
+                >
+                  Clear filters
+                </button>
+              </>
+            )}
           </div>
         </PopoverContent>
       </Popover>
