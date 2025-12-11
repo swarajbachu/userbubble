@@ -17,6 +17,7 @@ env:
   FORCE_COLOR: 3
   TURBO_TEAM: ${{ vars.TURBO_TEAM }}
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  HUGEICONS_TOKEN: ${{ secrets.HUGEICONS_TOKEN }}
 
 jobs:
   lint:
