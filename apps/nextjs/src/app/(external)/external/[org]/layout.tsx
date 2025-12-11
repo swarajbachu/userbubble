@@ -2,7 +2,6 @@ import { parseOrganizationSettings } from "@critichut/db/org/organization-settin
 import { getOrganization } from "~/lib/get-organization";
 import { BrandingProvider } from "../_components/branding-provider";
 import { ExternalHeader } from "../_components/external-header";
-import { ExternalNav } from "../_components/external-nav";
 
 type ExternalLayoutProps = {
   children: React.ReactNode;
@@ -23,13 +22,15 @@ export default async function ExternalLayout({
 
   return (
     <BrandingProvider branding={settings.branding}>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-background text-foreground">
         <ExternalHeader
           logoUrl={settings.branding.logoUrl}
           organizationName={organization.name}
+          orgSlug={org}
         />
-        <ExternalNav orgSlug={org} />
-        <main className="container mx-auto flex-1 px-4 py-8">{children}</main>
+        <main className="container mx-auto max-w-7xl flex-1 px-4 py-8">
+          {children}
+        </main>
       </div>
     </BrandingProvider>
   );
