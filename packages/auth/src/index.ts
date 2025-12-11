@@ -81,6 +81,7 @@ export function initAuth<
       "http://localhost:3000",
       options.baseUrl,
       "https://*.critichut.vercel.app",
+      "https://critichut.vercel.app",
     ],
     onAPIError: {
       onError(error, ctx) {
