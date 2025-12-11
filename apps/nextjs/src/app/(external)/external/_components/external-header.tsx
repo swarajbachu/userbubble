@@ -30,15 +30,17 @@ export function ExternalHeader({
 
   const tabs = useMemo(
     () => [
-      { name: "Feedback", href: `/${orgSlug}/feedback` },
-      { name: "Roadmap", href: `/${orgSlug}/roadmap` },
-      { name: "Updates", href: `/${orgSlug}/changelog` },
+      { name: "Feedback", href: `/external/${orgSlug}/feedback` },
+      { name: "Roadmap", href: `/external/${orgSlug}/roadmap` },
+      { name: "Updates", href: `/external/${orgSlug}/changelog` },
     ],
     [orgSlug]
   );
 
   useEffect(() => {
     const active = tabs.find((tab) => pathname.startsWith(tab.href));
+    console.log(active, "active");
+    console.log(pathname, "pathname");
     setActiveTab(active ? active.href : "");
   }, [pathname, tabs]);
 
@@ -105,7 +107,7 @@ export function ExternalHeader({
                 x: activeDimensions.left,
                 opacity: activeDimensions.opacity,
               }}
-              className="absolute h-8 rounded-full bg-secondary"
+              className="absolute inset-y-0 my-auto h-7 rounded-xl bg-secondary"
               initial={false}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
             />
