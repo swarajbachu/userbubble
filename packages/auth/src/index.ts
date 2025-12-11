@@ -76,7 +76,12 @@ export function initAuth<
         // redirectURI: `${options.productionUrl}/api/auth/callback/google`,
       },
     },
-    trustedOrigins: ["expo://", "http://localhost:3000"],
+    trustedOrigins: [
+      "expo://",
+      "http://localhost:3000",
+      options.baseUrl,
+      "https://*.critichut.vercel.com",
+    ],
     onAPIError: {
       onError(error, ctx) {
         console.error("BETTER AUTH API ERROR", error, ctx);
