@@ -16,40 +16,76 @@ export function getSubdomain(hostname: string): string | null {
     return null;
   }
 
-  // Production: extract subdomain from domain
-  const parts = host.split(".");
+  // Vercel deployments - these are base domains, not subdomains
+  // Matches: app.vercel.app, app-git-branch.vercel.app, app-hash.vercel.app
+  if (host.endsWith(".vercel.app")) {
+    const beforeVercel = host.replace(".vercel.app", "");
+    // If there's a dot before .vercel.app, it's a subdomain
+    if (beforeVercel.includes(".")) {
+      const subdomain = beforeVercel.split(".")[0];
 
-  // Need at least 3 parts for a subdomain: [subdomain, domain, tld]
-  if (parts.length < 3) {
+      if (!subdomain) {
+        return null;
+      }
+
+      // Reserved subdomains that should not be treated as org subdomains
+      const reservedSubdomains = [
+        "app",
+        "www",
+        "api",
+        "cdn",
+        "admin",
+        "dashboard",
+        "static",
+        "staging",
+        "dev",
+        "test",
+      ];
+
+      if (reservedSubdomains.includes(subdomain)) {
+        return null;
+      }
+
+      return subdomain;
+    }
     return null;
   }
 
-  // Get the subdomain (first part)
-  const subdomain = parts[0];
-
-  if (!subdomain) {
+  // Custom domain - check if this IS the base domain
+  const baseDomain = process.env.NEXT_PUBLIC_BASE_DOMAIN;
+  if (baseDomain && host === baseDomain) {
     return null;
   }
 
-  // Reserved subdomains that should not be treated as org subdomains
-  const reservedSubdomains = [
-    "app",
-    "www",
-    "api",
-    "cdn",
-    "admin",
-    "dashboard",
-    "static",
-    "staging",
-    "dev",
-    "test",
-  ];
+  // Check if this is a subdomain of the base domain
+  if (baseDomain && host.endsWith(`.${baseDomain}`)) {
+    const subdomain = host.replace(`.${baseDomain}`, "");
+    // Make sure it's a single-level subdomain (org.example.com, not foo.org.example.com)
+    if (subdomain && !subdomain.includes(".")) {
+      // Reserved subdomains that should not be treated as org subdomains
+      const reservedSubdomains = [
+        "app",
+        "www",
+        "api",
+        "cdn",
+        "admin",
+        "dashboard",
+        "static",
+        "staging",
+        "dev",
+        "test",
+      ];
 
-  if (reservedSubdomains.includes(subdomain)) {
-    return null;
+      if (reservedSubdomains.includes(subdomain)) {
+        return null;
+      }
+
+      return subdomain;
+    }
   }
 
-  return subdomain;
+  // Fallback: no subdomain detected
+  return null;
 }
 
 /**

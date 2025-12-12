@@ -33,8 +33,8 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get("host") || "";
 
-  // If already on /external/ path, skip subdomain processing (avoid infinite loop)
-  if (pathname.startsWith("/external/")) {
+  // If already on /external/ or /not-found path, skip subdomain processing (avoid infinite loop)
+  if (pathname.startsWith("/external/") || pathname.startsWith("/not-found")) {
     return NextResponse.next();
   }
 
