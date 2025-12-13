@@ -32,6 +32,31 @@ const brandingSchema = z.object({
   faviconUrl: z.string().optional(),
 });
 
+const feedbackSettingsSchema = z.object({
+  // Enable roadmap feature
+  enableRoadmap: z.boolean().default(true),
+  // Enable weekly digest emails
+  enableDigestEmails: z.boolean().default(false),
+  // Feedback boards (future feature)
+  boards: z.array(z.string()).default([]),
+  // Feedback tags (future feature)
+  tags: z.array(z.string()).default([]),
+});
+
+const changelogSettingsSchema = z.object({
+  // Enable changelog feature
+  enabled: z.boolean().default(false),
+  // Changelog tags (future feature)
+  tags: z.array(z.string()).default([]),
+});
+
+const domainSettingsSchema = z.object({
+  // Custom domain for external portal
+  customDomain: z.string().optional(),
+  // Whether custom domain has been verified
+  domainVerified: z.boolean().default(false),
+});
+
 export const organizationSettingsSchema = z.object({
   publicAccess: publicAccessSchema.optional().default({
     allowAnonymousSubmissions: false,
@@ -40,6 +65,19 @@ export const organizationSettingsSchema = z.object({
     requireApproval: false,
   }),
   branding: brandingSchema.optional().default({}),
+  feedback: feedbackSettingsSchema.optional().default({
+    enableRoadmap: true,
+    enableDigestEmails: false,
+    boards: [],
+    tags: [],
+  }),
+  changelog: changelogSettingsSchema.optional().default({
+    enabled: false,
+    tags: [],
+  }),
+  domain: domainSettingsSchema.optional().default({
+    domainVerified: false,
+  }),
 });
 
 export type OrganizationSettings = z.infer<typeof organizationSettingsSchema>;

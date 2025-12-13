@@ -4,6 +4,7 @@
 
 export * from "./feedback/feedback.permissions";
 export * from "./feedback/feedback.queries";
+export * from "./org/organization.permissions";
 export * from "./org/organization.queries";
 export * from "./user/identified-user.queries";
 export * from "./user/user.queries";

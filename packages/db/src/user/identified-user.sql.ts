@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, unique } from "drizzle-orm/pg-core";
 import { organization } from "../org/organization.sql";
 import { user } from "./user.sql";
@@ -51,3 +52,15 @@ export const identifiedUser = pgTable(
 // Export types
 export type IdentifiedUser = typeof identifiedUser.$inferSelect;
 export type NewIdentifiedUser = typeof identifiedUser.$inferInsert;
+
+// Relations
+export const identifiedUserRelations = relations(identifiedUser, ({ one }) => ({
+  user: one(user, {
+    fields: [identifiedUser.userId],
+    references: [user.id],
+  }),
+  organization: one(organization, {
+    fields: [identifiedUser.organizationId],
+    references: [organization.id],
+  }),
+}));

@@ -187,7 +187,18 @@ export const feedbackRouter = {
   // Get comments for a post
   getComments: publicProcedure
     .input(z.object({ postId: z.string() }))
-    .query(async ({ input }) => getPostComments(input.postId)),
+    .query(async ({ input }) => {
+      // Get post to find organization ID
+      const post = await getFeedbackPost(input.postId);
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Feedback post not found",
+        });
+      }
+
+      return getPostComments(input.postId, post.post.organizationId);
+    }),
 
   // Create a comment
   createComment: protectedProcedure
@@ -208,18 +219,11 @@ export const feedbackRouter = {
         });
       }
 
-      // TEAM MEMBER CHECK: Determine if user is part of the org
-      const isTeam = await isTeamMember(
-        ctx.session.user.id,
-        post.post.organizationId
-      );
-
       const newComment = await createComment({
         postId: input.postId,
         authorId: ctx.session.user.id,
         content: input.content,
         parentId: input.parentId,
-        isTeamMember: isTeam,
       });
 
       if (!newComment) {

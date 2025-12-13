@@ -1,5 +1,6 @@
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "../client";
+import { member } from "../org/organization.sql";
 import { user } from "../user/user.sql";
 import {
   type FeedbackCategory,
@@ -181,16 +182,26 @@ export async function getUserVote(postId: string, userId: string) {
 }
 
 /**
- * Get comments for a post
+ * Get comments for a post with team member status
+ * Checks if comment author is a member of the organization (via LEFT JOIN)
  */
-export async function getPostComments(postId: string) {
+export async function getPostComments(postId: string, organizationId: string) {
   return db
     .select({
       comment: feedbackComment,
       author: user,
+      // Check if comment author is a member of the organization
+      isTeamMember: sql<boolean>`${member.id} IS NOT NULL`,
     })
     .from(feedbackComment)
     .leftJoin(user, eq(feedbackComment.authorId, user.id))
+    .leftJoin(
+      member,
+      and(
+        eq(member.userId, feedbackComment.authorId),
+        eq(member.organizationId, organizationId)
+      )
+    )
     .where(eq(feedbackComment.postId, postId))
     .orderBy(desc(feedbackComment.createdAt));
 }

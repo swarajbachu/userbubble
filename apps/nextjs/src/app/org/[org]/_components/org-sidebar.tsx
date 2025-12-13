@@ -188,10 +188,32 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Organization Management */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Organization</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {SETTINGS_NAV_ITEMS.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton isActive={isActive(item.href)}>
+                    <Link
+                      className="flex items-center gap-2"
+                      href={`/org/${org}${item.href}`}
+                    >
+                      <Icon icon={item.icon} size={20} />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {/* Status Filters (only on feedback page) */}
         {isOnFeedbackPage && (
           <SidebarGroup>
-            <SidebarGroupLabel>Requests</SidebarGroupLabel>
+            <SidebarGroupLabel>Filters</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {STATUS_FILTERS.map((filter) => (
@@ -226,25 +248,7 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
         )}
       </SidebarContent>
 
-      <SidebarFooter>
-        {/* Settings Section */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {SETTINGS_NAV_ITEMS.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton isActive={isActive(item.href)}>
-                    <Link href={`/org/${org}${item.href}`}>
-                      <Icon icon={item.icon} size={20} />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarFooter>
+      <SidebarFooter />
     </Sidebar>
   );
 }
