@@ -24,8 +24,6 @@ type PostMainContentProps = {
   hasUserVoted: boolean;
   isAuthenticated: boolean;
   canModify: boolean;
-  authorName: string;
-  createdAt: Date;
 };
 
 export function PostMainContent({
@@ -36,8 +34,6 @@ export function PostMainContent({
   hasUserVoted,
   isAuthenticated,
   canModify,
-  authorName,
-  createdAt,
 }: PostMainContentProps) {
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
@@ -112,20 +108,6 @@ export function PostMainContent({
                       />
                     )}
                   </form.Field>
-
-                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                    <span className="font-medium text-foreground/80">
-                      {authorName}
-                    </span>
-                    <span>•</span>
-                    <span>
-                      {createdAt.toLocaleDateString(undefined, {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -195,19 +177,6 @@ export function PostMainContent({
                   Edit
                 </Button>
               )}
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <span className="font-medium text-foreground/80">
-                {authorName}
-              </span>
-              <span>•</span>
-              <span>
-                {createdAt.toLocaleDateString(undefined, {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
             </div>
           </div>
         </div>

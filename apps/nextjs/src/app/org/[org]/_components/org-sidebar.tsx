@@ -28,7 +28,7 @@ import {
   Route01Icon,
   Settings01Icon,
   UserMultiple02Icon,
-} from "@hugeicons-pro/core-duotone-rounded";
+} from "@hugeicons-pro/core-solid-rounded";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
@@ -149,7 +149,7 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
   };
 
   return (
-    <Sidebar variant="inset">
+    <Sidebar variant="floating">
       <SidebarHeader>
         <div className="flex items-center justify-between px-4 py-2">
           <h2 className="truncate font-semibold text-lg">{organizationName}</h2>
@@ -166,11 +166,13 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
               {MAIN_NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
-                    asChild
                     className="h-12"
                     isActive={isActive(item.href)}
                   >
-                    <Link href={`/org/${org}${item.href}`}>
+                    <Link
+                      className="flex flex-row items-center justify-between gap-4"
+                      href={`/org/${org}${item.href}`}
+                    >
                       <Icon icon={item.icon} size={20} />
                       <span>{item.title}</span>
                       {item.badge && (
@@ -231,7 +233,7 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
             <SidebarMenu>
               {SETTINGS_NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild isActive={isActive(item.href)}>
+                  <SidebarMenuButton isActive={isActive(item.href)}>
                     <Link href={`/org/${org}${item.href}`}>
                       <Icon icon={item.icon} size={20} />
                       <span>{item.title}</span>

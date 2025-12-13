@@ -5,6 +5,7 @@ import {
   getUserVote,
   memberQueries,
 } from "@critichut/db/queries";
+import { Avatar, AvatarFallback, AvatarImage } from "@critichut/ui/avatar";
 import {
   DoubleCard,
   DoubleCardHeader,
@@ -73,9 +74,7 @@ export default async function FeedbackPostPage({
         {/* Main Content - Left Column */}
         <div className="space-y-8 lg:col-span-8">
           <PostMainContent
-            authorName={post.author?.name ?? "Anonymous"}
             canModify={canModify}
-            createdAt={post.post.createdAt}
             hasUserVoted={hasUserVoted}
             initialDescription={post.post.description}
             initialTitle={post.post.title}
@@ -97,12 +96,40 @@ export default async function FeedbackPostPage({
         <div className="space-y-6 lg:col-span-4">
           <div className="sticky top-8 space-y-6">
             <DoubleCard>
+              <DoubleCardHeader>
+                <span className="font-semibold text-sm">Author</span>
+              </DoubleCardHeader>
+              <DoubleCardInner className="p-4">
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={post.author?.image ?? undefined} />
+                    <AvatarFallback>
+                      {post.author?.name?.[0]?.toUpperCase() ?? "A"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="font-medium text-sm">
+                      {post.author?.name ?? "Anonymous"}
+                    </span>
+                    <span className="text-muted-foreground text-xs">
+                      {post.post.createdAt.toLocaleDateString(undefined, {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </DoubleCardInner>
+            </DoubleCard>
+
+            <DoubleCard>
               <DoubleCardHeader className="flex items-center justify-between">
                 <span className="font-semibold text-sm">Details</span>
                 {canModify && <PostActions org={org} postId={postId} />}
               </DoubleCardHeader>
 
-              <DoubleCardInner className="space-y-2 p-4">
+              <DoubleCardInner className="space-y-4 p-4">
                 {/* Status */}
                 <div className="space-y-2">
                   <span className="font-medium text-muted-foreground text-xs uppercase tracking-wider">

@@ -1,9 +1,13 @@
 "use client";
 
-import { DesktopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Desk01Icon,
+  MoonIcon,
+  SunIcon,
+} from "@hugeicons-pro/core-bulk-rounded";
 import * as React from "react";
 import * as z from "zod/v4";
-
 import { Button } from "./button";
 import {
   DropdownMenu,
@@ -163,15 +167,21 @@ export function ThemeToggle() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger>
         <Button
           className="[&>svg]:absolute [&>svg]:size-5 [&>svg]:scale-0"
           size="icon"
           variant="outline"
         >
-          <SunIcon className="auto:scale-0! light:scale-100!" />
-          <MoonIcon className="auto:scale-0! dark:scale-100!" />
-          <DesktopIcon className="auto:scale-100!" />
+          <HugeiconsIcon
+            className="auto:scale-0! light:scale-100!"
+            icon={SunIcon}
+          />
+          <HugeiconsIcon
+            className="auto:scale-0! dark:scale-100!"
+            icon={MoonIcon}
+          />
+          <HugeiconsIcon className="auto:scale-100!" icon={Desk01Icon} />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
