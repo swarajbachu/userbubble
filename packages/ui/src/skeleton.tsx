@@ -1,9 +1,9 @@
-import { cn } from ".";
+import { cn } from "@critichut/ui";
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-accent", className)}
+      className={cn("animate-pulse rounded-md bg-muted", className)}
       data-slot="skeleton"
       {...props}
     />
