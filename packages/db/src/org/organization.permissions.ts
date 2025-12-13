@@ -14,7 +14,9 @@ export const organizationPermissions = {
     organizationId: string
   ): Promise<boolean> => {
     const member = await memberQueries.findByUserAndOrg(userId, organizationId);
-    if (!member) return false;
+    if (!member) {
+      return false;
+    }
     return ["owner", "admin"].includes(member.role);
   },
 
@@ -27,7 +29,9 @@ export const organizationPermissions = {
     organizationId: string
   ): Promise<boolean> => {
     const member = await memberQueries.findByUserAndOrg(userId, organizationId);
-    if (!member) return false;
+    if (!member) {
+      return false;
+    }
     return ["owner", "admin"].includes(member.role);
   },
 
@@ -40,7 +44,9 @@ export const organizationPermissions = {
     organizationId: string
   ): Promise<boolean> => {
     const member = await memberQueries.findByUserAndOrg(userId, organizationId);
-    if (!member) return false;
+    if (!member) {
+      return false;
+    }
     return member.role === "owner";
   },
 

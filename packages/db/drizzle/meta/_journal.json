@@ -29,6 +29,13 @@
       "when": 1765299203295,
       "tag": "0003_productive_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1765648737390,
+      "tag": "0004_open_gladiator",
+      "breakpoints": true
     }
   ]
 }

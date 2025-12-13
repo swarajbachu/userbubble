@@ -11,6 +11,7 @@ import {
   getFeedbackPosts,
   getPostComments,
   isTeamMember,
+  memberQueries,
   removeVote,
   updateFeedbackPost,
   voteOnPost,
@@ -233,6 +234,12 @@ export const feedbackRouter = {
         });
       }
 
+      // Check if user is a team member
+      const isAuthorTeamMember = await memberQueries.isMember(
+        ctx.session.user.id,
+        post.post.organizationId
+      );
+
       // Return comment with author info (matching getComments structure)
       // Map session user to database User type
       return {
@@ -246,6 +253,7 @@ export const feedbackRouter = {
           createdAt: ctx.session.user.createdAt,
           updatedAt: ctx.session.user.updatedAt,
         },
+        isTeamMember: isAuthorTeamMember,
       };
     }),
 

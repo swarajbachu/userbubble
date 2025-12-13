@@ -201,11 +201,7 @@ export const invitationQueries = {
       where: eq(invitation.id, id),
       with: {
         organization: true,
-        inviter: {
-          with: {
-            user: true,
-          },
-        },
+        inviter: true,
       },
     }),
 
@@ -254,14 +250,10 @@ export const invitationQueries = {
       where: eq(invitation.organizationId, organizationId),
       with: {
         inviter: {
-          with: {
-            user: {
-              columns: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
+          columns: {
+            id: true,
+            name: true,
+            email: true,
           },
         },
       },
@@ -277,13 +269,9 @@ export const invitationQueries = {
       with: {
         organization: true,
         inviter: {
-          with: {
-            user: {
-              columns: {
-                id: true,
-                name: true,
-              },
-            },
+          columns: {
+            id: true,
+            name: true,
           },
         },
       },
