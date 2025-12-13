@@ -81,34 +81,29 @@ export function PostMainContent({
         <DoubleCard>
           <DoubleCardHeader>
             <div className="flex items-start gap-4">
-              <div className="pt-1">
-                <VoteSection
-                  hasUserVoted={hasUserVoted}
-                  initialVoteCount={initialVoteCount}
-                  isAuthenticated={isAuthenticated}
-                  postId={postId}
-                />
-              </div>
-
-              <div className="min-w-0 flex-1 space-y-4">
-                <div className="space-y-2">
-                  <form.Field name="title">
-                    {(field) => (
-                      <input
-                        autoFocus
-                        className="w-full bg-transparent p-0 font-semibold text-foreground text-lg tracking-tight placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:text-xl"
-                        maxLength={256}
-                        minLength={3}
-                        name={field.name}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        placeholder="Post title"
-                        required
-                        value={field.state.value}
-                      />
-                    )}
-                  </form.Field>
-                </div>
+              <VoteSection
+                hasUserVoted={hasUserVoted}
+                initialVoteCount={initialVoteCount}
+                isAuthenticated={isAuthenticated}
+                postId={postId}
+              />
+              <div className="min-w-0 flex-1">
+                <form.Field name="title">
+                  {(field) => (
+                    <input
+                      autoFocus
+                      className="w-full bg-transparent p-0 font-semibold text-base text-foreground tracking-tight placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:text-lg"
+                      maxLength={256}
+                      minLength={3}
+                      name={field.name}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Post title"
+                      required
+                      value={field.state.value}
+                    />
+                  )}
+                </form.Field>
               </div>
             </div>
           </DoubleCardHeader>
@@ -152,18 +147,16 @@ export function PostMainContent({
   return (
     <DoubleCard>
       <DoubleCardHeader>
-        <div className="flex items-start gap-4">
-          <div className="pt-1">
-            <VoteSection
-              hasUserVoted={hasUserVoted}
-              initialVoteCount={initialVoteCount}
-              isAuthenticated={isAuthenticated}
-              postId={postId}
-            />
-          </div>
+        <div className="flex items-center gap-4">
+          <VoteSection
+            hasUserVoted={hasUserVoted}
+            initialVoteCount={initialVoteCount}
+            isAuthenticated={isAuthenticated}
+            postId={postId}
+          />
           <div className="group min-w-0 flex-1 space-y-2">
-            <div className="flex items-start justify-between gap-4">
-              <h1 className="wrap-break-word font-semibold text-2xl text-foreground tracking-tight sm:text-3xl">
+            <div className="flex items-center justify-between gap-4">
+              <h1 className="wrap-break-word font-semibold text-foreground text-lg tracking-tight sm:text-xl">
                 {initialTitle}
               </h1>
               {canModify && (

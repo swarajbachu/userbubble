@@ -96,7 +96,7 @@ export default async function FeedbackPostPage({
         <div className="space-y-6 lg:col-span-4">
           <div className="sticky top-8 space-y-6">
             <DoubleCard>
-              <DoubleCardHeader>
+              <DoubleCardHeader className="py-1">
                 <span className="font-semibold text-sm">Author</span>
               </DoubleCardHeader>
               <DoubleCardInner className="p-4">
@@ -132,10 +132,10 @@ export default async function FeedbackPostPage({
               <DoubleCardInner className="space-y-4 p-4">
                 {/* Status */}
                 <div className="space-y-2">
-                  <span className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
+                  <span className="mb-2 block font-medium text-muted-foreground text-xs uppercase tracking-wider">
                     Status
                   </span>
-                  <div>
+                  <div className="mt-2">
                     {isAdmin ? (
                       <StatusEditor
                         currentStatus={post.post.status}
@@ -158,10 +158,10 @@ export default async function FeedbackPostPage({
 
                 {/* Category */}
                 <div className="space-y-2">
-                  <span className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
+                  <span className="mb-2 block font-medium text-muted-foreground text-xs uppercase tracking-wider">
                     Category
                   </span>
-                  <div>
+                  <div className="mt-2">
                     {isAdmin ? (
                       <CategoryEditor
                         currentCategory={post.post.category}

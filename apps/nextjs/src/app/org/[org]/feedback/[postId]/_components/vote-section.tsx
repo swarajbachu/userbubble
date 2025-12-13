@@ -66,13 +66,11 @@ export function VoteSection({
   };
 
   return (
-    <div className="flex items-center gap-4">
-      <VoteButton
-        className="h-14 w-12 flex-col gap-1 px-0 text-sm"
-        hasVoted={userHasVoted}
-        onVote={handleVote}
-        voteCount={voteCount}
-      />
-    </div>
+    <VoteButton
+      className="h-8 w-12 flex-row gap-1 px-0 text-sm"
+      hasVoted={userHasVoted}
+      onVote={handleVote}
+      voteCount={voteCount}
+    />
   );
 }

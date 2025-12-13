@@ -51,8 +51,19 @@ export function StatusEditor({ postId, currentStatus }: StatusEditorProps) {
       }
       value={currentStatus}
     >
-      <SelectTrigger className="w-auto">
-        <SelectValue />
+      <SelectTrigger className="w-54">
+        <SelectValue>
+          <div className="flex items-center gap-2">
+            <Icon
+              className={statusConfig[currentStatus].color}
+              icon={statusConfig[currentStatus].icon}
+              size={16}
+            />
+            <span className="capitalize">
+              {currentStatus.replace("_", " ")}
+            </span>
+          </div>
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {Object.entries(statusConfig).map(([status, cfg]) => (

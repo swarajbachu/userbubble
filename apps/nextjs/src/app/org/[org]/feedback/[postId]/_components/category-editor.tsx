@@ -1,6 +1,7 @@
 "use client";
 
 import type { FeedbackCategory } from "@critichut/db/schema";
+import { Icon } from "@critichut/ui/icon";
 import {
   Select,
   SelectContent,
@@ -11,7 +12,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { categoryLabels } from "~/components/feedback/config";
+import { categoryConfig, categoryLabels } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
 
 type CategoryEditorProps = {
@@ -53,8 +54,15 @@ export function CategoryEditor({
       }
       value={currentCategory}
     >
-      <SelectTrigger className="w-full">
-        <SelectValue />
+      <SelectTrigger className="w-54">
+        <SelectValue>
+          <div className="flex items-center gap-2">
+            <Icon icon={categoryConfig[currentCategory].icon} size={16} />
+            <span className="capitalize">
+              {currentCategory.replace("_", " ")}
+            </span>
+          </div>
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {Object.entries(categoryLabels).map(([category, label]) => (

@@ -9,7 +9,7 @@ const DoubleCard = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     className={cn(
-      "rounded-2xl border bg-secondary p-1 shadow-sm dark:bg-muted/10",
+      "rounded-2xl bg-secondary p-1 shadow-sm dark:bg-muted/10",
       className
     )}
     ref={ref}
@@ -42,7 +42,7 @@ const DoubleCardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div className={cn("p-4", className)} ref={ref} {...props} />
+  <div className={cn("px-4 py-2", className)} ref={ref} {...props} />
 ));
 DoubleCardHeader.displayName = "DoubleCardHeader";
 
