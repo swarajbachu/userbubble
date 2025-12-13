@@ -31,7 +31,7 @@ export const VoteButton = memo(function VoteButton({
       className={cn("flex h-auto items-center gap-1.5 px-3 py-1", className)}
       onClick={handleClick}
       size="sm"
-      variant={hasVoted ? "default" : "secondary"}
+      variant={hasVoted ? "default" : "outline"}
     >
       <HugeiconsIcon
         className={cn(hasVoted && "fill-current")}

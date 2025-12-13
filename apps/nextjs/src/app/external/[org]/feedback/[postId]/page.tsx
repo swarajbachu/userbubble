@@ -6,8 +6,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@critichut/ui/card";
 import { Icon } from "@critichut/ui/icon";
 import { notFound } from "next/navigation";
-import { CommentsSection } from "~/app/(org)/org/[org]/feedback/[postId]/_components/comments-section";
-import { PostMainContent } from "~/app/(org)/org/[org]/feedback/[postId]/_components/post-main-content";
+import { CommentsSection } from "~/app/org/[org]/feedback/[postId]/_components/comments-section";
+import { PostMainContent } from "~/app/org/[org]/feedback/[postId]/_components/post-main-content";
 import { getSession } from "~/auth/server";
 import { categoryLabels, statusConfig } from "~/components/feedback/config";
 import { getOrganization } from "~/lib/get-organization";

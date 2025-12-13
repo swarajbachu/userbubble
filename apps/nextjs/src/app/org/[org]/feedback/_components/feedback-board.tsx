@@ -52,7 +52,7 @@ export function FeedbackBoard({ org, organizationId }: FeedbackBoardProps) {
   }
 
   return (
-    <div className="flex flex-col p-2">
+    <div className="flex flex-col">
       {posts.map((item) => (
         <PostCard
           // biome-ignore lint/style/noNonNullAssertion: <explanation>

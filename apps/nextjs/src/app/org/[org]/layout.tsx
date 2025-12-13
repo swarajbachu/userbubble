@@ -27,7 +27,7 @@ export default async function OrgLayout({ children, params }: OrgLayoutProps) {
       <OrgSidebar org={org} organizationName={organization.name} />
       {/* Main Content */}
       <SidebarInset>
-        <main>{children}</main>
+        <main className="container mx-auto">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

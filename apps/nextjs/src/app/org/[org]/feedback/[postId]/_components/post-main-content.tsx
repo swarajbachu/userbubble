@@ -100,7 +100,7 @@ export function PostMainContent({
                     {(field) => (
                       <input
                         autoFocus
-                        className="w-full bg-transparent p-0 font-semibold text-2xl text-foreground tracking-tight placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:text-3xl"
+                        className="w-full bg-transparent p-0 font-semibold text-foreground text-lg tracking-tight placeholder:text-muted-foreground focus:outline-none focus:ring-0 sm:text-xl"
                         maxLength={256}
                         minLength={3}
                         name={field.name}
