@@ -64,30 +64,24 @@ export function OrgSwitcher({ currentOrg, organizations }: OrgSwitcherProps) {
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-[--radix-popover-trigger-width] p-0"
+        className="w-[--radix-popover-trigger-width] p-1"
       >
-        <Command>
-          <CommandInput placeholder="Search organizations..." />
-          <CommandList>
-            <CommandEmpty>No organizations found.</CommandEmpty>
-            <CommandGroup>
-              {organizations?.map((org) => (
-                <CommandItem
-                  data-checked={org.slug === currentOrg}
-                  key={org.id}
-                  onSelect={() => handleSelect(org.slug)}
-                  value={org.slug}
-                >
-                  <Icon icon={Building02Icon} size={16} />
-                  <span>{org.name}</span>
-                  {org.slug === currentOrg && (
-                    <Icon className="ml-auto" icon={Tick02Icon} size={16} />
-                  )}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+        <div className="space-y-0.5">
+          {organizations?.map((org) => (
+            <button
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
+              key={org.id}
+              onClick={() => handleSelect(org.slug)}
+              type="button"
+            >
+              <Icon icon={Building02Icon} size={16} />
+              <span className="flex-1 truncate text-left">{org.name}</span>
+              {org.slug === currentOrg && (
+                <Icon className="shrink-0" icon={Tick02Icon} size={16} />
+              )}
+            </button>
+          ))}
+        </div>
       </PopoverContent>
     </Popover>
   );
