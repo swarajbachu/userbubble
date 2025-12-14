@@ -9,10 +9,9 @@ import { OrgSidebar } from "./org-sidebar";
 
 type MobileNavProps = {
   org: string;
-  organizationName: string;
 };
 
-export function MobileNav({ org, organizationName }: MobileNavProps) {
+export function MobileNav({ org }: MobileNavProps) {
   return (
     <Sheet>
       <SheetTrigger>
@@ -22,7 +21,7 @@ export function MobileNav({ org, organizationName }: MobileNavProps) {
       </SheetTrigger>
       <SheetContent className="w-[280px] p-0" side="left">
         <SidebarProvider>
-          <OrgSidebar org={org} organizationName={organizationName} />
+          <OrgSidebar org={org} />
         </SidebarProvider>
       </SheetContent>
     </Sheet>
