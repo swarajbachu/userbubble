@@ -1,8 +1,7 @@
-import { memberQueries } from "@critichut/db/queries";
+import { memberQueries, organizationQueries } from "@critichut/db/queries";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { getSession } from "~/auth/server";
-import { getOrganization } from "~/lib/get-organization";
 import { SettingsTabs } from "./_components/settings-tabs";
 
 type SettingsPageProps = {
@@ -11,8 +10,13 @@ type SettingsPageProps = {
 
 export default async function SettingsPage({ params }: SettingsPageProps) {
   const { org } = await params;
-  const organization = await getOrganization(org);
+  // Use direct DB query to get full organization with all fields
+  const organization = await organizationQueries.findBySlug(org);
   const session = await getSession();
+
+  if (!organization) {
+    notFound();
+  }
 
   if (!session) {
     redirect("/sign-in");

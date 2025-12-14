@@ -70,7 +70,7 @@ export function PostActions({ postId, org }: PostActionsProps) {
             undone.
           </DialogDescription>
           <DialogFooter>
-            <DialogClose asChild>
+            <DialogClose>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button disabled={isDeleting} onClick={handleDelete}>

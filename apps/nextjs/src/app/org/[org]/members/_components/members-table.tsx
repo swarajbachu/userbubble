@@ -32,7 +32,7 @@ type Member = {
 type Invitation = {
   id: string;
   email: string;
-  role: "admin" | "member";
+  role: "owner" | "admin" | "member";
   status: string;
   createdAt: Date;
 };

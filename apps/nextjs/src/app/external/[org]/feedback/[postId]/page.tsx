@@ -3,6 +3,7 @@ import {
   getPostComments,
   getUserVote,
 } from "@critichut/db/queries";
+import { Avatar, AvatarFallback, AvatarImage } from "@critichut/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@critichut/ui/card";
 import { Icon } from "@critichut/ui/icon";
 import { notFound } from "next/navigation";
@@ -36,7 +37,7 @@ export default async function ExternalFeedbackPostPage({
   }
 
   // Fetch comments
-  const comments = await getPostComments(postId);
+  const comments = await getPostComments(postId, organization.id);
 
   // Get session - external users might be anonymous
   const session = await getSession();
@@ -53,9 +54,7 @@ export default async function ExternalFeedbackPostPage({
         {/* Main Content - Left Column */}
         <div className="space-y-8 lg:col-span-8">
           <PostMainContent
-            authorName={post.author?.name ?? "Anonymous"}
             canModify={false}
-            createdAt={post.post.createdAt}
             hasUserVoted={hasUserVoted}
             initialDescription={post.post.description}
             initialTitle={post.post.title}
@@ -75,7 +74,35 @@ export default async function ExternalFeedbackPostPage({
 
         {/* Sidebar - Right Column */}
         <div className="space-y-6 lg:col-span-4">
-          <div className="sticky top-8">
+          <div className="sticky top-8 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Author</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={post.author?.image ?? undefined} />
+                    <AvatarFallback>
+                      {post.author?.name?.[0]?.toUpperCase() ?? "A"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="font-medium text-sm">
+                      {post.author?.name ?? "Anonymous"}
+                    </span>
+                    <span className="text-muted-foreground text-xs">
+                      {post.post.createdAt.toLocaleDateString(undefined, {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm">Details</CardTitle>

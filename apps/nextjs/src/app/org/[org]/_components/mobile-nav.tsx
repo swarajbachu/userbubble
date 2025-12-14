@@ -15,7 +15,7 @@ type MobileNavProps = {
 export function MobileNav({ org, organizationName }: MobileNavProps) {
   return (
     <Sheet>
-      <SheetTrigger asChild>
+      <SheetTrigger>
         <Button className="fixed top-4 left-4 z-40" size="icon" variant="ghost">
           <Icon icon={Menu01Icon} size={24} />
         </Button>

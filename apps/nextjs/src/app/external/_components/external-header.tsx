@@ -115,7 +115,7 @@ export function ExternalHeader({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button asChild size="sm" variant="secondary">
+          <Button size="sm" variant="secondary">
             <Link href="/dashboard">Dashboard</Link>
           </Button>
         </div>

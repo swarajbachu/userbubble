@@ -82,7 +82,7 @@ export function FeedbackFilters() {
   return (
     <div className="flex items-center gap-2">
       <Popover>
-        <PopoverTrigger asChild>
+        <PopoverTrigger>
           <Button className="h-9 gap-2" size="sm" variant="outline">
             <HugeiconsIcon icon={FilterHorizontalIcon} size={16} />
             Filter
@@ -144,7 +144,7 @@ export function FeedbackFilters() {
       </Popover>
 
       <Popover>
-        <PopoverTrigger asChild>
+        <PopoverTrigger>
           <Button className="h-9 gap-2" size="sm" variant="outline">
             <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
             {sort === "recent" ? "Newest" : "Top Voted"}
