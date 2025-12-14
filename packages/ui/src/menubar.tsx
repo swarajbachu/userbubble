@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
+import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar";
 import { cn } from "@critichut/ui";
 import { Tick02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -20,7 +21,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { Menubar as MenubarPrimitive } from "./menubar";
 
 function Menubar({ className, ...props }: MenubarPrimitive.Props) {
   return (

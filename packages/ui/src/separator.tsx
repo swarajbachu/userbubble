@@ -1,7 +1,7 @@
 "use client";
 
+import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
 import { cn } from "@critichut/ui";
-import { Separator as SeparatorPrimitive } from "./separator";
 
 function Separator({
   className,
