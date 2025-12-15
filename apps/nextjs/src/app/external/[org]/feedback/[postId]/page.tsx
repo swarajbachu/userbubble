@@ -41,13 +41,13 @@ export async function generateMetadata({
       description,
       url: `/external/${org}/feedback/${postId}`,
       type: "article",
-      images: organization.logoUrl ? [{ url: organization.logoUrl }] : [],
+      images: organization.logo ? [{ url: organization.logo }] : [],
     },
     twitter: {
       card: "summary",
       title: post.post.title,
       description,
-      images: organization.logoUrl ? [organization.logoUrl] : [],
+      images: organization.logo ? [organization.logo] : [],
     },
   };
 }

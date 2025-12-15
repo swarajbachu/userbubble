@@ -39,13 +39,13 @@ export async function generateMetadata({
       description,
       url: `/org/${org}/changelog`,
       type: "website",
-      images: organization.logoUrl ? [{ url: organization.logoUrl }] : [],
+      images: organization.logo ? [{ url: organization.logo }] : [],
     },
     twitter: {
       card: "summary_large_image",
       title: `${organization.name} Changelog`,
       description,
-      images: organization.logoUrl ? [organization.logoUrl] : [],
+      images: organization.logo ? [organization.logo] : [],
     },
     alternates: {
       types: {

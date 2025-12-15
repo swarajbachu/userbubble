@@ -45,13 +45,13 @@ export async function generateMetadata({
       description,
       url: `/external/${org}/feedback`,
       type: "website",
-      images: organization.logoUrl ? [{ url: organization.logoUrl }] : [],
+      images: organization.logo ? [{ url: organization.logo }] : [],
     },
     twitter: {
       card: "summary_large_image",
       title: `${organization.name} ${title}`,
       description,
-      images: organization.logoUrl ? [organization.logoUrl] : [],
+      images: organization.logo ? [organization.logo] : [],
     },
   };
 }
