@@ -141,7 +141,7 @@ export function ChangelogCard({
           </div>
         </DoubleCardHeader>
 
-        <DoubleCardInner className="space-y-4">
+        <DoubleCardInner className="space-y-2 p-2">
           {/* Cover image */}
           {entry.coverImageUrl && (
             <div className="overflow-hidden rounded-lg">
@@ -158,12 +158,12 @@ export function ChangelogCard({
             </div>
           )}
 
-          {/* Description */}
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            <p className="whitespace-pre-wrap text-foreground/90 leading-relaxed">
-              {entry.description}
-            </p>
-          </div>
+          {/* Description - renders rich text HTML from Tiptap editor */}
+          <div
+            className="tiptap-content"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: Tiptap editor sanitizes content
+            dangerouslySetInnerHTML={{ __html: entry.description }}
+          />
 
           {/* Tags */}
           {entry.tags && entry.tags.length > 0 && (

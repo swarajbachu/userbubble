@@ -8,6 +8,7 @@
   },
   "license": "MIT",
   "scripts": {
+    "dev": "tsc --watch",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "ui-add": "pnpm dlx shadcn@latest add"
@@ -19,6 +20,9 @@
     "@hugeicons-pro/core-solid-rounded": "^2.0.0",
     "@hugeicons/core-free-icons": "^2.0.0",
     "@hugeicons/react": "^1.1.1",
+    "@tiptap/pm": "^2.27.1",
+    "@tiptap/react": "^2.27.1",
+    "@tiptap/starter-kit": "^2.27.1",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",

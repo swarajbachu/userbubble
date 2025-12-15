@@ -71,7 +71,7 @@ export function ChangelogEditorPreview({
           </div>
         </DoubleCardHeader>
 
-        <DoubleCardInner className="space-y-4">
+        <DoubleCardInner className="space-y-2 p-4">
           {coverImageUrl && (
             <div className="overflow-hidden rounded-lg">
               <Image
@@ -88,11 +88,11 @@ export function ChangelogEditorPreview({
           )}
 
           {description ? (
-            <div className="prose prose-sm dark:prose-invert max-w-none">
-              <p className="whitespace-pre-wrap text-foreground/90 leading-relaxed">
-                {description}
-              </p>
-            </div>
+            <div
+              className="tiptap-content"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: Tiptap editor sanitizes content
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
           ) : (
             <p className="text-muted-foreground text-sm italic">
               No description yet...

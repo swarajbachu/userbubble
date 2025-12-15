@@ -7,7 +7,7 @@ import {
   FieldLabel,
 } from "@critichut/ui/field";
 import { Input } from "@critichut/ui/input";
-import { Textarea } from "@critichut/ui/textarea";
+import { TiptapEditor } from "@critichut/ui/tiptap-editor";
 import { ChangelogTagSelector } from "./changelog-tag-selector";
 import { FeedbackSelector } from "./feedback-selector";
 import type { useChangelogForm } from "./use-changelog-form";
@@ -79,16 +79,14 @@ export function ChangelogEditorForm({
         {(field) => (
           <Field>
             <FieldLabel>Description</FieldLabel>
-            <Textarea
-              className="min-h-[300px] resize-y font-mono text-sm leading-relaxed"
-              maxLength={10_000}
-              minLength={1}
+            <TiptapEditor
               onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
-              placeholder="Write about the changes... (Markdown supported)"
-              required
+              onChange={field.handleChange}
               value={field.state.value}
             />
+            <FieldDescription>
+              Use rich text formatting to describe your changes
+            </FieldDescription>
           </Field>
         )}
       </form.Field>

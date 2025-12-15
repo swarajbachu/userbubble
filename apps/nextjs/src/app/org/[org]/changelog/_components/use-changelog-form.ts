@@ -2,6 +2,7 @@
 
 import type { getChangelogEntry } from "@critichut/db/queries";
 import { useForm } from "@tanstack/react-form";
+import { useEffect } from "react";
 
 type ChangelogEntry = Awaited<ReturnType<typeof getChangelogEntry>>;
 
@@ -17,10 +18,15 @@ export type ChangelogFormValues = {
 type UseChangelogFormProps = {
   entry?: ChangelogEntry;
   onSubmit: (values: ChangelogFormValues) => Promise<void>;
+  onValuesChange?: (values: ChangelogFormValues) => void;
 };
 
-export function useChangelogForm({ entry, onSubmit }: UseChangelogFormProps) {
-  return useForm({
+export function useChangelogForm({
+  entry,
+  onSubmit,
+  onValuesChange,
+}: UseChangelogFormProps) {
+  const form = useForm({
     defaultValues: {
       title: entry?.title ?? "",
       description: entry?.description ?? "",
@@ -34,4 +40,19 @@ export function useChangelogForm({ entry, onSubmit }: UseChangelogFormProps) {
       await onSubmit(value);
     },
   });
+
+  // Subscribe to form state changes for real-time preview
+  useEffect(() => {
+    if (!onValuesChange) {
+      return;
+    }
+
+    const unsubscribe = form.store.subscribe(() => {
+      onValuesChange(form.state.values);
+    });
+
+    return unsubscribe;
+  }, [form, onValuesChange]);
+
+  return form;
 }

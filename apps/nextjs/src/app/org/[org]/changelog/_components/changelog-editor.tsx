@@ -15,7 +15,10 @@ import { useTRPC } from "~/trpc/react";
 import { ChangelogEditorForm } from "./changelog-editor-form";
 import { ChangelogEditorPreview } from "./changelog-editor-preview";
 import { DeleteChangelogDialog } from "./delete-changelog-dialog";
-import { useChangelogForm } from "./use-changelog-form";
+import {
+  type ChangelogFormValues,
+  useChangelogForm,
+} from "./use-changelog-form";
 import { useChangelogMutations } from "./use-changelog-mutations";
 
 type ChangelogEntry = Awaited<ReturnType<typeof getChangelogEntry>>;
@@ -36,6 +39,16 @@ export function ChangelogEditor({
   const router = useRouter();
   const trpc = useTRPC();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  // State for real-time preview updates
+  const [previewValues, setPreviewValues] = useState<ChangelogFormValues>({
+    title: entry?.title ?? "",
+    description: entry?.description ?? "",
+    version: entry?.version ?? "",
+    coverImageUrl: entry?.coverImageUrl ?? "",
+    tags: (entry?.tags as string[]) ?? [],
+    feedbackPostIds: entry?.linkedFeedback?.map((f) => f.id) ?? [],
+  });
 
   // Fetch all completed feedback posts to map IDs to details
   // This is efficient because it uses the same query key as the selector
@@ -85,13 +98,11 @@ export function ChangelogEditor({
         });
       }
     },
+    onValuesChange: setPreviewValues, // Update preview in real-time
   });
 
-  // Watch form state for real-time preview
-  const currentValues = form.state.values;
-
-  // Map selected IDs to feedback objects
-  const selectedFeedback = currentValues.feedbackPostIds
+  // Map selected IDs to feedback objects using reactive preview values
+  const selectedFeedback = previewValues.feedbackPostIds
     .map((id: string) => {
       const post = feedbackPosts.find((p) => p.post.id === id);
       return post ? { id: post.post.id, title: post.post.title } : null;
@@ -106,7 +117,7 @@ export function ChangelogEditor({
     if (mode === "edit" && entry) {
       publishMutation.mutate({ id: entry.id });
     } else {
-      const values = currentValues;
+      const values = previewValues;
       await createMutation.mutateAsync({
         organizationId,
         title: values.title,
@@ -209,13 +220,13 @@ export function ChangelogEditor({
           {/* Right Panel - Preview */}
           <div className="lg:sticky lg:top-24 lg:self-start lg:border-border/60 lg:border-l lg:border-dashed lg:pl-8">
             <ChangelogEditorPreview
-              coverImageUrl={currentValues.coverImageUrl}
-              description={currentValues.description}
+              coverImageUrl={previewValues.coverImageUrl}
+              description={previewValues.description}
               linkedFeedback={selectedFeedback}
               org={org}
-              tags={currentValues.tags}
-              title={currentValues.title}
-              version={currentValues.version}
+              tags={previewValues.tags}
+              title={previewValues.title}
+              version={previewValues.version}
             />
           </div>
         </div>
