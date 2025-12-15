@@ -16,7 +16,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         type: "input",
         name: "name",
         message:
-          "What is the name of the package? (You can skip the `@critichut/` prefix)",
+          "What is the name of the package? (You can skip the `@userbubble/` prefix)",
       },
       {
         type: "input",
@@ -30,9 +30,9 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         if (
           "name" in answers &&
           typeof answers.name === "string" &&
-          answers.name.startsWith("@critichut/")
+          answers.name.startsWith("@userbubble/")
         ) {
-          answers.name = answers.name.replace("@critichut/", "");
+          answers.name = answers.name.replace("@userbubble/", "");
         }
         return "Config sanitized";
       },

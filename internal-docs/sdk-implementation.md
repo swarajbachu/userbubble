@@ -1,4 +1,4 @@
-# critichut SDK Implementation Guide
+# userbubble SDK Implementation Guide
 
 > **Technical specification for building the JavaScript SDK**
 
@@ -60,25 +60,25 @@ packages/sdk/
 ```typescript
 // packages/sdk/src/index.ts
 
-import { critichutUser, critichutConfig } from './types';
+import { userbubbleUser, userbubbleConfig } from './types';
 import { encodeToken, decodeToken } from './token';
 import { enhanceLinks } from './link-enhancer';
 import { authenticate } from './auth';
 
-class critichutSDK {
+class userbubbleSDK {
   private orgSlug: string | null = null;
-  private user: critichutUser | null = null;
-  private config: critichutConfig = {};
+  private user: userbubbleUser | null = null;
+  private config: userbubbleConfig = {};
   private initialized = false;
 
   /**
-   * Initialize critichut SDK
+   * Initialize userbubble SDK
    * @param orgSlug - Organization slug (e.g., "acme")
    * @param config - Configuration options
    */
-  init(orgSlug: string, config?: critichutConfig): void {
+  init(orgSlug: string, config?: userbubbleConfig): void {
     if (this.initialized) {
-      console.warn('[critichut] Already initialized');
+      console.warn('[userbubble] Already initialized');
       return;
     }
 
@@ -91,21 +91,21 @@ class critichutSDK {
       this.identify(config.user);
     }
 
-    console.log(`[critichut] Initialized for org: ${orgSlug}`);
+    console.log(`[userbubble] Initialized for org: ${orgSlug}`);
   }
 
   /**
    * Identify a user
    * @param user - User identity with HMAC signature
    */
-  identify(user: critichutUser): void {
+  identify(user: userbubbleUser): void {
     if (!this.orgSlug) {
-      throw new Error('[critichut] Must call init() before identify()');
+      throw new Error('[userbubble] Must call init() before identify()');
     }
 
     // Validate user data
     if (!user.id || !user.email || !user.signature) {
-      throw new Error('[critichut] User must have id, email, and signature');
+      throw new Error('[userbubble] User must have id, email, and signature');
     }
 
     this.user = user;
@@ -118,10 +118,10 @@ class critichutSDK {
     };
 
     try {
-      localStorage.setItem('critichut:identity', JSON.stringify(identityData));
-      console.log('[critichut] User identified:', user.email);
+      localStorage.setItem('userbubble:identity', JSON.stringify(identityData));
+      console.log('[userbubble] User identified:', user.email);
     } catch (error) {
-      console.error('[critichut] Failed to store identity:', error);
+      console.error('[userbubble] Failed to store identity:', error);
     }
 
     // Auto-enhance all links on page
@@ -133,14 +133,14 @@ class critichutSDK {
    */
   logout(): void {
     this.user = null;
-    localStorage.removeItem('critichut:identity');
-    console.log('[critichut] User logged out');
+    localStorage.removeItem('userbubble:identity');
+    console.log('[userbubble] User logged out');
   }
 
   /**
    * Get current user (if identified)
    */
-  getUser(): critichutUser | null {
+  getUser(): userbubbleUser | null {
     return this.user;
   }
 
@@ -163,17 +163,17 @@ class critichutSDK {
 }
 
 // Create global instance
-const sdk = new critichutSDK();
+const sdk = new userbubbleSDK();
 
 // Export to window
 if (typeof window !== 'undefined') {
-  window.critichut = sdk;
+  window.userbubble = sdk;
 
   // Emit ready event
-  window.dispatchEvent(new Event('critichut:ready'));
+  window.dispatchEvent(new Event('userbubble:ready'));
 
-  // Auto-authenticate if on critichut domain
-  if (window.location.hostname.includes('critichut.com')) {
+  // Auto-authenticate if on userbubble domain
+  if (window.location.hostname.includes('userbubble.com')) {
     authenticate();
   }
 }
@@ -191,23 +191,23 @@ export default sdk;
 // packages/sdk/src/link-enhancer.ts
 
 /**
- * Automatically enhance all critichut links with auth tokens
+ * Automatically enhance all userbubble links with auth tokens
  */
 export function enhanceLinks(orgSlug: string): void {
   // Find all links to this org's subdomain
-  const selector = `a[href*="${orgSlug}.critichut.com"]`;
+  const selector = `a[href*="${orgSlug}.userbubble.com"]`;
   const links = document.querySelectorAll<HTMLAnchorElement>(selector);
 
-  console.log(`[critichut] Enhancing ${links.length} links`);
+  console.log(`[userbubble] Enhancing ${links.length} links`);
 
   links.forEach(link => {
     // Skip if already enhanced
-    if (link.dataset.critichutEnhanced === 'true') {
+    if (link.dataset.userbubbleEnhanced === 'true') {
       return;
     }
 
     // Mark as enhanced
-    link.dataset.critichutEnhanced = 'true';
+    link.dataset.userbubbleEnhanced = 'true';
 
     // Add click handler
     link.addEventListener('click', handleLinkClick);
@@ -215,7 +215,7 @@ export function enhanceLinks(orgSlug: string): void {
 }
 
 /**
- * Handle click on critichut link
+ * Handle click on userbubble link
  */
 function handleLinkClick(e: MouseEvent): void {
   e.preventDefault();
@@ -224,7 +224,7 @@ function handleLinkClick(e: MouseEvent): void {
   const targetUrl = link.href;
 
   // Get stored identity
-  const identityDataStr = localStorage.getItem('critichut:identity');
+  const identityDataStr = localStorage.getItem('userbubble:identity');
 
   if (!identityDataStr) {
     // No identity, navigate normally
@@ -240,7 +240,7 @@ function handleLinkClick(e: MouseEvent): void {
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
 
     if (age > maxAge) {
-      console.warn('[critichut] Identity expired, navigating without auth');
+      console.warn('[userbubble] Identity expired, navigating without auth');
       window.location.href = targetUrl;
       return;
     }
@@ -255,7 +255,7 @@ function handleLinkClick(e: MouseEvent): void {
     // Navigate with auth token
     window.location.href = url.toString();
   } catch (error) {
-    console.error('[critichut] Link enhancement failed:', error);
+    console.error('[userbubble] Link enhancement failed:', error);
     window.location.href = targetUrl;
   }
 }
@@ -280,7 +280,7 @@ function generateAuthToken(identityData: any): string {
 
 ```typescript
 // For SPAs with dynamically added links
-window.critichut.refreshLinks();
+window.userbubble.refreshLinks();
 
 // Or use MutationObserver for automatic detection
 export function setupLinkObserver(orgSlug: string): void {
@@ -290,7 +290,7 @@ export function setupLinkObserver(orgSlug: string): void {
     mutations.forEach(mutation => {
       mutation.addedNodes.forEach(node => {
         if (node instanceof HTMLElement) {
-          const hasLinks = node.querySelectorAll(`a[href*="${orgSlug}.critichut.com"]`).length > 0;
+          const hasLinks = node.querySelectorAll(`a[href*="${orgSlug}.userbubble.com"]`).length > 0;
           if (hasLinks) {
             shouldRefresh = true;
           }
@@ -379,14 +379,14 @@ export function isTokenValid(data: TokenData, maxAge: number = 5 * 60 * 1000): b
 // packages/sdk/src/auth.ts
 
 /**
- * Auto-authenticate on critichut subdomain
- * Called automatically when page loads on critichut.com
+ * Auto-authenticate on userbubble subdomain
+ * Called automatically when page loads on userbubble.com
  */
 export async function authenticate(): Promise<boolean> {
   // Check if already authenticated
   const hasSession = await checkSession();
   if (hasSession) {
-    console.log('[critichut] Already authenticated');
+    console.log('[userbubble] Already authenticated');
     return true;
   }
 
@@ -395,7 +395,7 @@ export async function authenticate(): Promise<boolean> {
   const authToken = params.get('auth');
 
   if (!authToken) {
-    console.log('[critichut] No auth token found');
+    console.log('[userbubble] No auth token found');
     return false;
   }
 
@@ -405,7 +405,7 @@ export async function authenticate(): Promise<boolean> {
 
     // Validate timestamp (5-minute window)
     if (!isTokenValid(identityData)) {
-      console.error('[critichut] Token expired');
+      console.error('[userbubble] Token expired');
       cleanupUrl();
       return false;
     }
@@ -429,17 +429,17 @@ export async function authenticate(): Promise<boolean> {
     });
 
     if (response.ok) {
-      console.log('[critichut] Authentication successful');
+      console.log('[userbubble] Authentication successful');
       cleanupUrl();
       window.location.reload();
       return true;
     } else {
-      console.error('[critichut] Authentication failed');
+      console.error('[userbubble] Authentication failed');
       cleanupUrl();
       return false;
     }
   } catch (error) {
-    console.error('[critichut] Authentication error:', error);
+    console.error('[userbubble] Authentication error:', error);
     cleanupUrl();
     return false;
   }
@@ -487,7 +487,7 @@ export function safeLocalStorage() {
       try {
         return localStorage.getItem(key);
       } catch (error) {
-        console.warn('[critichut] localStorage.getItem failed:', error);
+        console.warn('[userbubble] localStorage.getItem failed:', error);
         return null;
       }
     },
@@ -496,7 +496,7 @@ export function safeLocalStorage() {
       try {
         localStorage.setItem(key, value);
       } catch (error) {
-        console.warn('[critichut] localStorage.setItem failed:', error);
+        console.warn('[userbubble] localStorage.setItem failed:', error);
       }
     },
 
@@ -504,7 +504,7 @@ export function safeLocalStorage() {
       try {
         localStorage.removeItem(key);
       } catch (error) {
-        console.warn('[critichut] localStorage.removeItem failed:', error);
+        console.warn('[userbubble] localStorage.removeItem failed:', error);
       }
     },
   };
@@ -564,7 +564,7 @@ export function debounce<T extends (...args: any[]) => any>(
 export function showError(message: string): void {
   // Create error banner
   const banner = document.createElement('div');
-  banner.className = 'critichut-error';
+  banner.className = 'userbubble-error';
   banner.textContent = message;
   banner.style.cssText = `
     position: fixed;
@@ -599,7 +599,7 @@ export function showError(message: string): void {
 /**
  * User identity with HMAC signature
  */
-export interface critichutUser {
+export interface userbubbleUser {
   /** Unique user ID from customer's system */
   id: string;
 
@@ -619,9 +619,9 @@ export interface critichutUser {
 /**
  * SDK configuration options
  */
-export interface critichutConfig {
+export interface userbubbleConfig {
   /** User to identify (optional, can call identify() later) */
-  user?: critichutUser;
+  user?: userbubbleUser;
 
   /** Enable debug logging */
   debug?: boolean;
@@ -631,18 +631,18 @@ export interface critichutConfig {
 }
 
 /**
- * Global critichut SDK instance
+ * Global userbubble SDK instance
  */
-export interface critichutSDK {
+export interface userbubbleSDK {
   /**
    * Initialize SDK with organization slug
    */
-  init(orgSlug: string, config?: critichutConfig): void;
+  init(orgSlug: string, config?: userbubbleConfig): void;
 
   /**
    * Identify current user
    */
-  identify(user: critichutUser): void;
+  identify(user: userbubbleUser): void;
 
   /**
    * Clear stored identity
@@ -652,7 +652,7 @@ export interface critichutSDK {
   /**
    * Get current identified user
    */
-  getUser(): critichutUser | null;
+  getUser(): userbubbleUser | null;
 
   /**
    * Check if user is identified
@@ -670,7 +670,7 @@ export interface critichutSDK {
  */
 declare global {
   interface Window {
-    critichut: critichutSDK;
+    userbubble: userbubbleSDK;
   }
 }
 ```
@@ -695,7 +695,7 @@ export default [
     output: {
       file: 'dist/sdk.js',
       format: 'umd',
-      name: 'critichut',
+      name: 'userbubble',
       sourcemap: true,
     },
     plugins: [
@@ -710,7 +710,7 @@ export default [
     output: {
       file: 'dist/sdk.min.js',
       format: 'umd',
-      name: 'critichut',
+      name: 'userbubble',
       sourcemap: true,
     },
     plugins: [
@@ -745,9 +745,9 @@ export default [
 
 ```json
 {
-  "name": "@critichut/sdk",
+  "name": "@userbubble/sdk",
   "version": "1.0.0",
-  "description": "critichut JavaScript SDK for auto-login",
+  "description": "userbubble JavaScript SDK for auto-login",
   "main": "dist/sdk.js",
   "module": "dist/sdk.esm.js",
   "types": "dist/sdk.d.ts",
@@ -760,7 +760,7 @@ export default [
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
-    "critichut",
+    "userbubble",
     "feedback",
     "authentication",
     "sdk"
@@ -835,7 +835,7 @@ export default function handler(req: Request) {
 ### Cloudflare Workers
 
 ```typescript
-// CDN worker for cdn.critichut.com/sdk.js
+// CDN worker for cdn.userbubble.com/sdk.js
 
 export default {
   async fetch(request: Request): Promise<Response> {
@@ -843,7 +843,7 @@ export default {
 
     // Serve SDK
     if (url.pathname === '/sdk.js') {
-      const sdk = await fetch('https://github.com/critichut/sdk/releases/latest/download/sdk.min.js');
+      const sdk = await fetch('https://github.com/userbubble/sdk/releases/latest/download/sdk.min.js');
 
       return new Response(await sdk.text(), {
         headers: {
@@ -866,12 +866,12 @@ export default {
 ### Basic Usage
 
 ```html
-<script src="https://cdn.critichut.com/sdk.js"></script>
+<script src="https://cdn.userbubble.com/sdk.js"></script>
 <script>
-  window.addEventListener('critichut:ready', async () => {
-    const { user, signature } = await fetch('/api/critichut/signature').then(r => r.json());
+  window.addEventListener('userbubble:ready', async () => {
+    const { user, signature } = await fetch('/api/userbubble/signature').then(r => r.json());
 
-    critichut.init('acme', {
+    userbubble.init('acme', {
       user: {
         id: user.id,
         email: user.email,
@@ -891,14 +891,14 @@ import { useEffect } from 'react';
 function App() {
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = 'https://cdn.critichut.com/sdk.js';
+    script.src = 'https://cdn.userbubble.com/sdk.js';
     script.async = true;
     document.body.appendChild(script);
 
     const handleReady = async () => {
-      const { user, signature } = await fetch('/api/critichut/signature').then(r => r.json());
+      const { user, signature } = await fetch('/api/userbubble/signature').then(r => r.json());
 
-      window.critichut.init('acme', {
+      window.userbubble.init('acme', {
         user: {
           id: user.id,
           email: user.email,
@@ -908,15 +908,15 @@ function App() {
       });
     };
 
-    window.addEventListener('critichut:ready', handleReady);
+    window.addEventListener('userbubble:ready', handleReady);
 
     return () => {
-      window.removeEventListener('critichut:ready', handleReady);
+      window.removeEventListener('userbubble:ready', handleReady);
     };
   }, []);
 
   return (
-    <a href="https://acme.critichut.com/feedback">
+    <a href="https://acme.userbubble.com/feedback">
       Submit Feedback
     </a>
   );
@@ -934,13 +934,13 @@ export default function RootLayout({ children }) {
     <html>
       <body>
         {children}
-        <Script src="https://cdn.critichut.com/sdk.js" />
-        <Script id="critichut-init">
+        <Script src="https://cdn.userbubble.com/sdk.js" />
+        <Script id="userbubble-init">
           {`
-            window.addEventListener('critichut:ready', async () => {
-              const res = await fetch('/api/critichut/signature');
+            window.addEventListener('userbubble:ready', async () => {
+              const res = await fetch('/api/userbubble/signature');
               const data = await res.json();
-              critichut.init('acme', { user: data });
+              userbubble.init('acme', { user: data });
             });
           `}
         </Script>
@@ -1013,7 +1013,7 @@ describe('Link enhancement', () => {
       <!DOCTYPE html>
       <html>
         <body>
-          <a href="https://acme.critichut.com/feedback">Feedback</a>
+          <a href="https://acme.userbubble.com/feedback">Feedback</a>
         </body>
       </html>
     `);
@@ -1046,7 +1046,7 @@ npx bundlesize
 
 ```typescript
 // Only export what's needed
-export { critichutSDK } from './sdk';
+export { userbubbleSDK } from './sdk';
 
 // Avoid exporting everything
 // export * from './utils'; ❌
@@ -1055,8 +1055,8 @@ export { critichutSDK } from './sdk';
 ### Code Splitting
 
 ```typescript
-// Lazy load auth module only on critichut subdomain
-if (window.location.hostname.includes('critichut.com')) {
+// Lazy load auth module only on userbubble subdomain
+if (window.location.hostname.includes('userbubble.com')) {
   import('./auth').then(({ authenticate }) => {
     authenticate();
   });

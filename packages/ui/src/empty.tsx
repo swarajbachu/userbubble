@@ -1,4 +1,4 @@
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import { cva, type VariantProps } from "class-variance-authority";
 
 function Empty({ className, ...props }: React.ComponentProps<"div">) {

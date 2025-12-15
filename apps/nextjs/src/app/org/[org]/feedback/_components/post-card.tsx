@@ -1,10 +1,10 @@
 /** biome-ignore-all lint/nursery/noShadow: memo function pattern */
 "use client";
 
-import type { FeedbackPost } from "@critichut/db/schema";
-import { cn } from "@critichut/ui";
-import { Icon } from "@critichut/ui/icon";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { FeedbackPost } from "@userbubble/db/schema";
+import { cn } from "@userbubble/ui";
+import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
 import { memo, useState, useTransition } from "react";
 import { categoryLabels, statusConfig } from "~/components/feedback/config";

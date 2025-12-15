@@ -1,4 +1,4 @@
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import type { ReactNode } from "react";
 
 type ColoredTileProps = {

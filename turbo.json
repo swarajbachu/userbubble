@@ -39,6 +39,8 @@
   },
   "globalEnv": [
     "POSTGRES_URL",
+    "DATABASE_URL",
+    "HUGEICONS_TOKEN",
     "AUTH_GOOGLE_ID",
     "AUTH_GOOGLE_SECRET",
     "AUTH_REDIRECT_PROXY_URL",

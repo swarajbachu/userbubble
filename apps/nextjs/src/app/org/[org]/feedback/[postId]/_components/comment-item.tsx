@@ -1,7 +1,9 @@
 "use client";
 
-import type { FeedbackComment, User } from "@critichut/db/schema";
-import { Button } from "@critichut/ui/button";
+import { Delete01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { useMutation } from "@tanstack/react-query";
+import type { FeedbackComment, User } from "@userbubble/db/schema";
+import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -10,10 +12,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@critichut/ui/dialog";
-import { Icon } from "@critichut/ui/icon";
-import { Delete01Icon } from "@hugeicons-pro/core-bulk-rounded";
-import { useMutation } from "@tanstack/react-query";
+} from "@userbubble/ui/dialog";
+import { Icon } from "@userbubble/ui/icon";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";

@@ -43,7 +43,7 @@ export default [
     output: {
       file: "dist/sdk.min.js",
       format: "umd",
-      name: "critichut",
+      name: "userbubble",
       sourcemap: true,
     },
     plugins: [

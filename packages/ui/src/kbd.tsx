@@ -1,4 +1,4 @@
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 
 function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   return (

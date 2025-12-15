@@ -1,4 +1,4 @@
-import { SidebarInset, SidebarProvider } from "@critichut/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@userbubble/ui/sidebar";
 import { headers } from "next/headers";
 import { auth } from "~/auth/server";
 import { getOrganization } from "~/lib/get-organization";

@@ -1,8 +1,8 @@
 "use client";
 
-import type { FeedbackPost } from "@critichut/db/schema";
-import { cn } from "@critichut/ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { FeedbackPost } from "@userbubble/db/schema";
+import { cn } from "@userbubble/ui";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";

@@ -1,5 +1,5 @@
 {
-  "name": "@critichut/ui",
+  "name": "@userbubble/ui",
   "private": true,
   "type": "module",
   "exports": {
@@ -38,7 +38,7 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
-    "@critichut/tsconfig": "workspace:*",
+    "@userbubble/tsconfig": "workspace:*",
     "@types/react": "catalog:react19",
     "react": "catalog:react19",
     "typescript": "catalog:",

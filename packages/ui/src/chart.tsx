@@ -2,7 +2,7 @@
 /** biome-ignore-all lint/nursery/noShadow: <explanation> */
 "use client";
 
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 

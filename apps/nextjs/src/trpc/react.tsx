@@ -1,6 +1,5 @@
 "use client";
 
-import type { AppRouter } from "@critichut/api";
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -9,6 +8,7 @@ import {
   loggerLink,
 } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
+import type { AppRouter } from "@userbubble/api";
 import { useState } from "react";
 import SuperJSON from "superjson";
 

@@ -1,7 +1,7 @@
 /**
- * critichut JavaScript SDK
+ * Userbubble JavaScript SDK
  *
- * Seamless user identification and authentication for critichut feedback platform
+ * Seamless user identification and authentication for Userbubble feedback platform
  */
 
 import { logout as authLogout, autoAuthenticate } from "./auth";
@@ -10,38 +10,38 @@ import {
   removeEnhancements,
   watchForNewLinks,
 } from "./link-enhancer";
-import type { critichutConfig, critichutUser, IcritichutSDK } from "./types";
+import type { IUserbubbleSDK, UserbubbleConfig, UserbubbleUser } from "./types";
 
-class critichutSDK implements IcritichutSDK {
+class UserbubbleSDK implements IUserbubbleSDK {
   private orgSlug: string | null = null;
-  private user: critichutUser | null = null;
-  private config: critichutConfig = {};
+  private user: UserbubbleUser | null = null;
+  private config: UserbubbleConfig = {};
   private initialized = false;
   private linkObserver: MutationObserver | null = null;
 
   /**
-   * Initialize critichut SDK
+   * Initialize Userbubble SDK
    * @param orgSlug - Organization slug (e.g., "acme")
    * @param config - Configuration options
    */
-  init(orgSlug: string, config?: critichutConfig): void {
+  init(orgSlug: string, config?: UserbubbleConfig): void {
     if (this.initialized) {
-      console.warn("[critichut] Already initialized");
+      console.warn("[userbubble] Already initialized");
       return;
     }
 
     this.orgSlug = orgSlug;
     this.config = {
-      baseUrl: config?.baseUrl ?? "https://app.critichut.com",
+      baseUrl: config?.baseUrl ?? "https://app.userbubble.com",
       autoLogin: config?.autoLogin ?? true,
-      linkSelector: config?.linkSelector ?? "a[href*='critichut.com']",
+      linkSelector: config?.linkSelector ?? "a[href*='userbubble.com']",
       debug: config?.debug ?? false,
       ...config,
     };
     this.initialized = true;
 
     if (this.config.debug) {
-      console.log(`[critichut] Initialized for org: ${orgSlug}`, this.config);
+      console.log(`[userbubble] Initialized for org: ${orgSlug}`, this.config);
     }
 
     // Auto-authenticate if token in URL
@@ -59,15 +59,15 @@ class critichutSDK implements IcritichutSDK {
    * Identify a user
    * @param user - User identity with HMAC signature
    */
-  identify(user: critichutUser): void {
+  identify(user: UserbubbleUser): void {
     if (!this.initialized) {
-      throw new Error("[critichut] SDK not initialized. Call init() first.");
+      throw new Error("[userbubble] SDK not initialized. Call init() first.");
     }
 
     this.user = user;
 
     if (this.config.debug) {
-      console.log("[critichut] User identified:", {
+      console.log("[userbubble] User identified:", {
         id: user.id,
         email: user.email,
         name: user.name,
@@ -107,14 +107,14 @@ class critichutSDK implements IcritichutSDK {
     }
 
     if (this.config.debug) {
-      console.log("[critichut] User logged out");
+      console.log("[userbubble] User logged out");
     }
   }
 
   /**
    * Get current identified user
    */
-  getUser(): critichutUser | null {
+  getUser(): UserbubbleUser | null {
     return this.user;
   }
 
@@ -146,12 +146,12 @@ class critichutSDK implements IcritichutSDK {
     );
 
     if (success && this.config.debug) {
-      console.log("[critichut] Auto-authentication successful");
+      console.log("[userbubble] Auto-authentication successful");
     }
   }
 
   /**
-   * Enhance all critichut links
+   * Enhance all Userbubble links
    */
   private enhanceAllLinks(): void {
     if (!(this.orgSlug && this.config.linkSelector)) {
@@ -178,20 +178,20 @@ class critichutSDK implements IcritichutSDK {
 }
 
 // Create singleton instance
-const sdk = new critichutSDK();
+const sdk = new UserbubbleSDK();
 
 // Export singleton and types
 export default sdk;
-export { critichutSDK };
+export { UserbubbleSDK };
 export type {
   AuthToken,
-  critichutConfig,
-  critichutUser,
-  IcritichutSDK,
+  IUserbubbleSDK,
+  UserbubbleConfig,
+  UserbubbleUser,
 } from "./types";
 
 // Browser global
 if (typeof window !== "undefined") {
   // biome-ignore lint/suspicious/noExplicitAny: <this is a global object, so we need to use any>
-  (window as any).critichut = sdk;
+  (window as any).userbubble = sdk;
 }

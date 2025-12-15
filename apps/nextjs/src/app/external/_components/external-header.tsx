@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@critichut/ui";
-import { Button } from "@critichut/ui/button";
+import { cn } from "@userbubble/ui";
+import { Button } from "@userbubble/ui/button";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";

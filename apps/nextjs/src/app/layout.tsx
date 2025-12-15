@@ -1,6 +1,6 @@
-import { cn } from "@critichut/ui";
-import { ThemeProvider, ThemeToggle } from "@critichut/ui/theme";
-import { Toaster } from "@critichut/ui/toast";
+import { cn } from "@userbubble/ui";
+import { ThemeProvider, ThemeToggle } from "@userbubble/ui/theme";
+import { Toaster } from "@userbubble/ui/toast";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
@@ -14,23 +14,23 @@ import "~/app/styles.css";
 export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production"
-      ? "https://critichut.com"
+      ? "https://userbubble.com"
       : "http://localhost:3000"
   ),
-  title: "Critichut - Turn User Feedback Into Product Success",
+  title: "Userbubble - Turn User Feedback Into Product Success",
   description:
-    "Collect, organize, and prioritize feedback from your users. Build what matters most with Critichut.",
+    "Collect, organize, and prioritize feedback from your users. Build what matters most with Userbubble.",
   openGraph: {
-    title: "Critichut - User Feedback & Product Roadmap Platform",
+    title: "Userbubble - User Feedback & Product Roadmap Platform",
     description:
       "Collect, organize, and prioritize feedback from your users. Build what matters most.",
-    url: "https://critichut.com",
-    siteName: "Critichut",
+    url: "https://userbubble.com",
+    siteName: "Userbubble",
   },
   twitter: {
     card: "summary_large_image",
-    site: "@critichut",
-    creator: "@critichut",
+    site: "@userbubble",
+    creator: "@userbubble",
   },
 };
 

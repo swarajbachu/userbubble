@@ -3,7 +3,7 @@
 /** biome-ignore-all lint/a11y/noNoninteractiveElementInteractions: <explanation> */
 "use client";
 
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { Button } from "./button";

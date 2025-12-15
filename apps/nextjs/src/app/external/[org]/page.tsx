@@ -1,15 +1,15 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@critichut/ui/card";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Message01Icon,
   RoadIcon,
   TaskDaily01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@userbubble/ui/card";
 import Link from "next/link";
 import { getOrganization } from "~/lib/get-organization";
 

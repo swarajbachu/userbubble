@@ -1,15 +1,15 @@
 "use client";
 
-import type { FeedbackStatus } from "@critichut/db/schema";
-import { Icon } from "@critichut/ui/icon";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { FeedbackStatus } from "@userbubble/db/schema";
+import { Icon } from "@userbubble/ui/icon";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@critichut/ui/select";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+} from "@userbubble/ui/select";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { statusConfig } from "~/components/feedback/config";

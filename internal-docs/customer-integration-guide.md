@@ -1,6 +1,6 @@
 # Customer Integration Guide
 
-> **How customers integrate critichut auto-login into their applications**
+> **How customers integrate userbubble auto-login into their applications**
 
 **Last Updated:** 2025-11-08
 **Difficulty:** Easy (15 minutes)
@@ -25,7 +25,7 @@
 
 ```
 1. Generate HMAC signature on your backend
-2. Embed critichut SDK on your frontend
+2. Embed userbubble SDK on your frontend
 3. Add feedback links to your app
 ```
 
@@ -37,7 +37,7 @@
 
 ### Step 1: Get Your Secret Key
 
-1. Log into critichut dashboard: `https://app.critichut.com`
+1. Log into userbubble dashboard: `https://app.userbubble.com`
 2. Go to your organization settings
 3. Navigate to **API & Security** tab
 4. Copy your **Secret Key** (keep this private!)
@@ -49,7 +49,7 @@ The signature **MUST** be generated on your backend (never in client-side JavaSc
 #### Node.js / Next.js
 
 ```typescript
-// app/api/critichut/signature/route.ts
+// app/api/userbubble/signature/route.ts
 
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
@@ -70,7 +70,7 @@ export async function GET(req: Request) {
 
   // Generate HMAC signature (sign the user ID)
   const signature = crypto
-    .createHmac('sha256', process.env.critichut_SECRET_KEY!)
+    .createHmac('sha256', process.env.userbubble_SECRET_KEY!)
     .update(user.id) // Sign user's unique ID
     .digest('hex');
 
@@ -89,13 +89,13 @@ export async function GET(req: Request) {
 #### Express.js
 
 ```javascript
-// routes/critichut.js
+// routes/userbubble.js
 
 const express = require('express');
 const crypto = require('crypto');
 const router = express.Router();
 
-router.get('/critichut/signature', (req, res) => {
+router.get('/userbubble/signature', (req, res) => {
   // Get current user from session
   if (!req.session?.user) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -105,7 +105,7 @@ router.get('/critichut/signature', (req, res) => {
 
   // Generate HMAC signature
   const signature = crypto
-    .createHmac('sha256', process.env.critichut_SECRET_KEY)
+    .createHmac('sha256', process.env.userbubble_SECRET_KEY)
     .update(user.id)
     .digest('hex');
 
@@ -135,11 +135,11 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
 @login_required
-def critichut_signature(request):
+def userbubble_signature(request):
     user = request.user
 
     # Generate HMAC signature
-    secret_key = settings.critichut_SECRET_KEY
+    secret_key = settings.userbubble_SECRET_KEY
     message = str(user.id).encode('utf-8')
     signature = hmac.new(
         secret_key.encode('utf-8'),
@@ -161,16 +161,16 @@ def critichut_signature(request):
 #### Ruby / Rails
 
 ```ruby
-# app/controllers/critichut_controller.rb
+# app/controllers/userbubble_controller.rb
 
-class critichutController < ApplicationController
+class userbubbleController < ApplicationController
   before_action :authenticate_user!
 
   def signature
     user = current_user
 
     # Generate HMAC signature
-    secret_key = ENV['critichut_SECRET_KEY']
+    secret_key = ENV['userbubble_SECRET_KEY']
     signature = OpenSSL::HMAC.hexdigest('SHA256', secret_key, user.id.to_s)
 
     render json: {
@@ -191,7 +191,7 @@ end
 ```php
 // routes/web.php
 
-Route::get('/api/critichut/signature', function () {
+Route::get('/api/userbubble/signature', function () {
     $user = Auth::user();
 
     if (!$user) {
@@ -199,7 +199,7 @@ Route::get('/api/critichut/signature', function () {
     }
 
     // Generate HMAC signature
-    $secretKey = env('critichut_SECRET_KEY');
+    $secretKey = env('userbubble_SECRET_KEY');
     $signature = hash_hmac('sha256', $user->id, $secretKey);
 
     return response()->json([
@@ -218,7 +218,7 @@ Route::get('/api/critichut/signature', function () {
 
 ## Frontend Integration
 
-### Step 3: Embed critichut SDK
+### Step 3: Embed userbubble SDK
 
 Add the SDK to your HTML (works with any framework):
 
@@ -231,18 +231,18 @@ Add the SDK to your HTML (works with any framework):
 <body>
   <!-- Your app content -->
 
-  <!-- critichut SDK (load from CDN) -->
-  <script src="https://cdn.critichut.com/sdk.js" async></script>
+  <!-- userbubble SDK (load from CDN) -->
+  <script src="https://cdn.userbubble.com/sdk.js" async></script>
 
-  <!-- Initialize critichut -->
+  <!-- Initialize userbubble -->
   <script>
-    window.addEventListener('critichut:ready', async () => {
+    window.addEventListener('userbubble:ready', async () => {
       // Fetch user signature from your backend
-      const response = await fetch('/api/critichut/signature');
+      const response = await fetch('/api/userbubble/signature');
       const data = await response.json();
 
-      // Initialize critichut with your organization slug
-      window.critichut.init('YOUR_ORG_SLUG', {
+      // Initialize userbubble with your organization slug
+      window.userbubble.init('YOUR_ORG_SLUG', {
         user: {
           id: data.user.id,
           email: data.user.email,
@@ -266,28 +266,28 @@ Just add regular HTML links - the SDK automatically enhances them!
 ```html
 <!-- Navigation -->
 <nav>
-  <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
+  <a href="https://YOUR_ORG_SLUG.userbubble.com/feedback">
     Submit Feedback
   </a>
-  <a href="https://YOUR_ORG_SLUG.critichut.com/roadmap">
+  <a href="https://YOUR_ORG_SLUG.userbubble.com/roadmap">
     View Roadmap
   </a>
 </nav>
 
 <!-- Button -->
-<button onclick="window.location.href='https://YOUR_ORG_SLUG.critichut.com/feedback'">
+<button onclick="window.location.href='https://YOUR_ORG_SLUG.userbubble.com/feedback'">
   Give Feedback
 </button>
 
 <!-- Footer -->
 <footer>
-  <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
+  <a href="https://YOUR_ORG_SLUG.userbubble.com/feedback">
     Feature Requests
   </a>
 </footer>
 ```
 
-**That's it!** Users will be automatically logged into critichut when they click the link.
+**That's it!** Users will be automatically logged into userbubble when they click the link.
 
 ---
 
@@ -304,17 +304,17 @@ function App() {
   useEffect(() => {
     // Load SDK
     const script = document.createElement('script');
-    script.src = 'https://cdn.critichut.com/sdk.js';
+    script.src = 'https://cdn.userbubble.com/sdk.js';
     script.async = true;
     document.body.appendChild(script);
 
     // Initialize when ready
     const handleReady = async () => {
       try {
-        const response = await fetch('/api/critichut/signature');
+        const response = await fetch('/api/userbubble/signature');
         const data = await response.json();
 
-        window.critichut.init('YOUR_ORG_SLUG', {
+        window.userbubble.init('YOUR_ORG_SLUG', {
           user: {
             id: data.user.id,
             email: data.user.email,
@@ -324,22 +324,22 @@ function App() {
           }
         });
       } catch (error) {
-        console.error('critichut init failed:', error);
+        console.error('userbubble init failed:', error);
       }
     };
 
-    window.addEventListener('critichut:ready', handleReady);
+    window.addEventListener('userbubble:ready', handleReady);
 
     // Cleanup
     return () => {
-      window.removeEventListener('critichut:ready', handleReady);
+      window.removeEventListener('userbubble:ready', handleReady);
     };
   }, []);
 
   return (
     <div>
       <header>
-        <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
+        <a href="https://YOUR_ORG_SLUG.userbubble.com/feedback">
           Submit Feedback
         </a>
       </header>
@@ -363,21 +363,21 @@ export default function RootLayout({ children }) {
       <body>
         {children}
 
-        {/* Load critichut SDK */}
+        {/* Load userbubble SDK */}
         <Script
-          src="https://cdn.critichut.com/sdk.js"
+          src="https://cdn.userbubble.com/sdk.js"
           strategy="afterInteractive"
         />
 
-        {/* Initialize critichut */}
-        <Script id="critichut-init" strategy="afterInteractive">
+        {/* Initialize userbubble */}
+        <Script id="userbubble-init" strategy="afterInteractive">
           {`
-            window.addEventListener('critichut:ready', async () => {
+            window.addEventListener('userbubble:ready', async () => {
               try {
-                const res = await fetch('/api/critichut/signature');
+                const res = await fetch('/api/userbubble/signature');
                 const data = await res.json();
 
-                window.critichut.init('YOUR_ORG_SLUG', {
+                window.userbubble.init('YOUR_ORG_SLUG', {
                   user: {
                     id: data.user.id,
                     email: data.user.email,
@@ -387,7 +387,7 @@ export default function RootLayout({ children }) {
                   }
                 });
               } catch (error) {
-                console.error('critichut init failed:', error);
+                console.error('userbubble init failed:', error);
               }
             });
           `}
@@ -404,7 +404,7 @@ export default function RootLayout({ children }) {
 export function FeedbackLink() {
   return (
     <a
-      href="https://YOUR_ORG_SLUG.critichut.com/feedback"
+      href="https://YOUR_ORG_SLUG.userbubble.com/feedback"
       className="btn btn-primary"
     >
       Submit Feedback
@@ -421,7 +421,7 @@ export function FeedbackLink() {
 <template>
   <div>
     <header>
-      <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
+      <a href="https://YOUR_ORG_SLUG.userbubble.com/feedback">
         Submit Feedback
       </a>
     </header>
@@ -434,17 +434,17 @@ import { onMounted } from 'vue';
 onMounted(() => {
   // Load SDK
   const script = document.createElement('script');
-  script.src = 'https://cdn.critichut.com/sdk.js';
+  script.src = 'https://cdn.userbubble.com/sdk.js';
   script.async = true;
   document.body.appendChild(script);
 
   // Initialize when ready
-  window.addEventListener('critichut:ready', async () => {
+  window.addEventListener('userbubble:ready', async () => {
     try {
-      const response = await fetch('/api/critichut/signature');
+      const response = await fetch('/api/userbubble/signature');
       const data = await response.json();
 
-      window.critichut.init('YOUR_ORG_SLUG', {
+      window.userbubble.init('YOUR_ORG_SLUG', {
         user: {
           id: data.user.id,
           email: data.user.email,
@@ -454,7 +454,7 @@ onMounted(() => {
         }
       });
     } catch (error) {
-      console.error('critichut init failed:', error);
+      console.error('userbubble init failed:', error);
     }
   });
 });
@@ -472,17 +472,17 @@ onMounted(() => {
   onMount(() => {
     // Load SDK
     const script = document.createElement('script');
-    script.src = 'https://cdn.critichut.com/sdk.js';
+    script.src = 'https://cdn.userbubble.com/sdk.js';
     script.async = true;
     document.body.appendChild(script);
 
     // Initialize when ready
-    window.addEventListener('critichut:ready', async () => {
+    window.addEventListener('userbubble:ready', async () => {
       try {
-        const response = await fetch('/api/critichut/signature');
+        const response = await fetch('/api/userbubble/signature');
         const data = await response.json();
 
-        window.critichut.init('YOUR_ORG_SLUG', {
+        window.userbubble.init('YOUR_ORG_SLUG', {
           user: {
             id: data.user.id,
             email: data.user.email,
@@ -492,14 +492,14 @@ onMounted(() => {
           }
         });
       } catch (error) {
-        console.error('critichut init failed:', error);
+        console.error('userbubble init failed:', error);
       }
     });
   });
 </script>
 
 <header>
-  <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
+  <a href="https://YOUR_ORG_SLUG.userbubble.com/feedback">
     Submit Feedback
   </a>
 </header>
@@ -523,15 +523,15 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // Load SDK
     const script = document.createElement('script');
-    script.src = 'https://cdn.critichut.com/sdk.js';
+    script.src = 'https://cdn.userbubble.com/sdk.js';
     script.async = true;
     document.body.appendChild(script);
 
     // Initialize when ready
-    window.addEventListener('critichut:ready', async () => {
+    window.addEventListener('userbubble:ready', async () => {
       try {
-        this.http.get('/api/critichut/signature').subscribe((data: any) => {
-          window.critichut.init('YOUR_ORG_SLUG', {
+        this.http.get('/api/userbubble/signature').subscribe((data: any) => {
+          window.userbubble.init('YOUR_ORG_SLUG', {
             user: {
               id: data.user.id,
               email: data.user.email,
@@ -542,7 +542,7 @@ export class AppComponent implements OnInit {
           });
         });
       } catch (error) {
-        console.error('critichut init failed:', error);
+        console.error('userbubble init failed:', error);
       }
     });
   }
@@ -553,7 +553,7 @@ export class AppComponent implements OnInit {
 <!-- app.component.html -->
 
 <header>
-  <a href="https://YOUR_ORG_SLUG.critichut.com/feedback">
+  <a href="https://YOUR_ORG_SLUG.userbubble.com/feedback">
     Submit Feedback
   </a>
 </header>
@@ -567,7 +567,7 @@ export class AppComponent implements OnInit {
 
 1. **Check signature generation:**
    ```bash
-   curl -H "Cookie: your_session_cookie" http://localhost:3000/api/critichut/signature
+   curl -H "Cookie: your_session_cookie" http://localhost:3000/api/userbubble/signature
    ```
 
    Should return:
@@ -586,14 +586,14 @@ export class AppComponent implements OnInit {
 2. **Check SDK initialization:**
    - Open your app in browser
    - Open DevTools Console
-   - Look for: `[critichut] Initialized for org: YOUR_ORG_SLUG`
-   - Look for: `[critichut] User identified: test@example.com`
+   - Look for: `[userbubble] Initialized for org: YOUR_ORG_SLUG`
+   - Look for: `[userbubble] User identified: test@example.com`
 
 3. **Test auto-login:**
    - Click a feedback link
-   - Should redirect to: `https://YOUR_ORG_SLUG.critichut.com/feedback?auth=...`
-   - URL should clean to: `https://YOUR_ORG_SLUG.critichut.com/feedback`
-   - You should see your name/avatar in critichut
+   - Should redirect to: `https://YOUR_ORG_SLUG.userbubble.com/feedback?auth=...`
+   - URL should clean to: `https://YOUR_ORG_SLUG.userbubble.com/feedback`
+   - You should see your name/avatar in userbubble
    - You should be able to submit feedback
 
 ### Browser Compatibility Test
@@ -615,7 +615,7 @@ Test in all major browsers:
 **Cause:** HMAC signature doesn't match
 
 **Solutions:**
-1. Check secret key is correct (from critichut dashboard)
+1. Check secret key is correct (from userbubble dashboard)
 2. Ensure you're signing the user ID (not email or other field)
 3. Verify signature is hex-encoded (not base64)
 
@@ -648,14 +648,14 @@ const signature = crypto
 ```html
 <!-- ❌ Wrong order -->
 <script>
-  window.addEventListener('critichut:ready', ...); // Listener added
+  window.addEventListener('userbubble:ready', ...); // Listener added
 </script>
-<script src="https://cdn.critichut.com/sdk.js"></script> <!-- SDK loads
+<script src="https://cdn.userbubble.com/sdk.js"></script> <!-- SDK loads
 
 <!-- ✅ Correct order -->
-<script src="https://cdn.critichut.com/sdk.js"></script> <!-- SDK loads first
+<script src="https://cdn.userbubble.com/sdk.js"></script> <!-- SDK loads first
 <script>
-  window.addEventListener('critichut:ready', ...); // Then listener
+  window.addEventListener('userbubble:ready', ...); // Then listener
 </script>
 ```
 
@@ -668,12 +668,12 @@ const signature = crypto
 ```typescript
 // Add new links dynamically
 const link = document.createElement('a');
-link.href = 'https://acme.critichut.com/feedback';
+link.href = 'https://acme.userbubble.com/feedback';
 link.textContent = 'Feedback';
 document.body.appendChild(link);
 
 // Refresh link enhancement
-window.critichut.refreshLinks();
+window.userbubble.refreshLinks();
 ```
 
 ### Issue: Auto-login doesn't work in Safari
@@ -700,8 +700,8 @@ window.location.reload(); // Reload to show authenticated state
 
 **Cause:** Wrong organization slug
 
-**Solution:** Check your org slug in critichut dashboard:
-1. Go to `https://app.critichut.com`
+**Solution:** Check your org slug in userbubble dashboard:
+1. Go to `https://app.userbubble.com`
 2. Settings → Organization
 3. Copy exact slug (e.g., `acme`, not `Acme` or `ACME`)
 
@@ -712,7 +712,7 @@ window.location.reload(); // Reload to show authenticated state
 ### Custom Auth Endpoint (for testing)
 
 ```typescript
-window.critichut.init('YOUR_ORG_SLUG', {
+window.userbubble.init('YOUR_ORG_SLUG', {
   user: userData,
   authEndpoint: 'http://localhost:3000/api/auth/external-login',
 });
@@ -721,7 +721,7 @@ window.critichut.init('YOUR_ORG_SLUG', {
 ### Debug Mode
 
 ```typescript
-window.critichut.init('YOUR_ORG_SLUG', {
+window.userbubble.init('YOUR_ORG_SLUG', {
   user: userData,
   debug: true, // Enable verbose logging
 });
@@ -731,7 +731,7 @@ window.critichut.init('YOUR_ORG_SLUG', {
 
 ```typescript
 // Don't auto-enhance links
-window.critichut.init('YOUR_ORG_SLUG', {
+window.userbubble.init('YOUR_ORG_SLUG', {
   user: userData,
   autoEnhance: false,
 });
@@ -740,7 +740,7 @@ window.critichut.init('YOUR_ORG_SLUG', {
 const link = document.querySelector('#feedback-link');
 link.addEventListener('click', (e) => {
   e.preventDefault();
-  const url = window.critichut.generateAuthUrl(link.href);
+  const url = window.userbubble.generateAuthUrl(link.href);
   window.location.href = url;
 });
 ```
@@ -768,7 +768,7 @@ link.addEventListener('click', (e) => {
 
 ```bash
 # .env (never commit this file!)
-critichut_SECRET_KEY=your_secret_key_here
+userbubble_SECRET_KEY=your_secret_key_here
 ```
 
 ```javascript
@@ -776,7 +776,7 @@ critichut_SECRET_KEY=your_secret_key_here
 module.exports = {
   env: {
     // ❌ DON'T expose secret key to client
-    // critichut_SECRET_KEY: process.env.critichut_SECRET_KEY,
+    // userbubble_SECRET_KEY: process.env.userbubble_SECRET_KEY,
   },
 };
 ```
@@ -785,7 +785,7 @@ module.exports = {
 // ✅ DO: Use secret key only in API routes (server-side)
 export async function GET(req: Request) {
   const signature = crypto
-    .createHmac('sha256', process.env.critichut_SECRET_KEY!)
+    .createHmac('sha256', process.env.userbubble_SECRET_KEY!)
     .update(userId)
     .digest('hex');
 
@@ -799,10 +799,10 @@ export async function GET(req: Request) {
 
 ### Support Channels
 
-- **Documentation:** https://docs.critichut.com
-- **Email:** support@critichut.com
-- **Google:** https://google.gg/critichut
-- **GitHub Issues:** https://github.com/critichut/critichut
+- **Documentation:** https://docs.userbubble.com
+- **Email:** support@userbubble.com
+- **Google:** https://google.gg/userbubble
+- **GitHub Issues:** https://github.com/userbubble/userbubble
 
 ### Frequently Asked Questions
 
@@ -816,10 +816,10 @@ A: Yes! Use a WebView and the SDK works the same way.
 A: Yes! The SDK only runs in the browser, so it works with Next.js, Remix, etc.
 
 **Q: Can I customize the feedback widget appearance?**
-A: Yes! Go to your organization settings in critichut dashboard.
+A: Yes! Go to your organization settings in userbubble dashboard.
 
 **Q: Is there a cost per user?**
-A: No! critichut pricing is based on organizations, not identified users.
+A: No! userbubble pricing is based on organizations, not identified users.
 
 ---
 
@@ -829,28 +829,28 @@ A: No! critichut pricing is based on organizations, not identified users.
 
 ```typescript
 // Initialize
-window.critichut.init(orgSlug: string, config?: critichutConfig)
+window.userbubble.init(orgSlug: string, config?: userbubbleConfig)
 
 // Identify user
-window.critichut.identify(user: critichutUser)
+window.userbubble.identify(user: userbubbleUser)
 
 // Logout
-window.critichut.logout()
+window.userbubble.logout()
 
 // Get current user
-window.critichut.getUser(): critichutUser | null
+window.userbubble.getUser(): userbubbleUser | null
 
 // Check if identified
-window.critichut.isIdentified(): boolean
+window.userbubble.isIdentified(): boolean
 
 // Refresh links (for SPAs)
-window.critichut.refreshLinks()
+window.userbubble.refreshLinks()
 ```
 
 ### User Object
 
 ```typescript
-interface critichutUser {
+interface userbubbleUser {
   id: string;        // Required: User's unique ID
   email: string;     // Required: User's email
   name?: string;     // Optional: Display name
@@ -861,4 +861,4 @@ interface critichutUser {
 
 ---
 
-**Need help? Contact support@critichut.com**
+**Need help? Contact support@userbubble.com**

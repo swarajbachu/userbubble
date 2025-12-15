@@ -32,7 +32,7 @@ export const user = pgTable("user", (t) => ({
 }));
 
 /**
- * Session table (Better Auth core + critichut extensions)
+ * Session table (Better Auth core + userbubble extensions)
  */
 export const session = pgTable("session", (t) => ({
   id: t.text().primaryKey(),
@@ -51,7 +51,7 @@ export const session = pgTable("session", (t) => ({
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  // critichut custom fields for two-tier session system
+  // userbubble custom fields for two-tier session system
   // Session type: "identified" (limited) or "authenticated" (full access)
   sessionType: sessionTypeEnum("session_type")
     .notNull()

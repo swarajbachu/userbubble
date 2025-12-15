@@ -2,9 +2,9 @@
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar";
-import { cn } from "@critichut/ui";
 import { Tick02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cn } from "@userbubble/ui";
 import type * as React from "react";
 import {
   DropdownMenu,

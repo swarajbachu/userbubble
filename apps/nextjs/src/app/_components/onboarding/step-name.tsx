@@ -1,12 +1,12 @@
 "use client";
 
-import { createSlug } from "@critichut/db/schema";
-import { Icon } from "@critichut/ui/icon";
-import { Input } from "@critichut/ui/input";
 import {
   AlertCircleIcon,
   CheckmarkCircle01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
+import { createSlug } from "@userbubble/db/schema";
+import { Icon } from "@userbubble/ui/icon";
+import { Input } from "@userbubble/ui/input";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useWizard } from "./wizard-context";

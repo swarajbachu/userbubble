@@ -1,6 +1,5 @@
 "use client";
 
-import type { FeedbackStatus } from "@critichut/db/schema";
 import {
   DndContext,
   type DragEndEvent,
@@ -21,6 +20,7 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import type { FeedbackStatus } from "@userbubble/db/schema";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";

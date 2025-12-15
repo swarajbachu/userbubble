@@ -2,12 +2,12 @@
 /** biome-ignore-all lint/a11y/useSemanticElements: <explanation> */
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { cn } from "@critichut/ui";
 import {
   ArrowRight01Icon,
   MoreHorizontalCircle01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cn } from "@userbubble/ui";
 import type * as React from "react";
 
 function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {

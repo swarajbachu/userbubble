@@ -5,9 +5,9 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@critichut/ui/field";
-import { Input } from "@critichut/ui/input";
-import { TiptapEditor } from "@critichut/ui/tiptap-editor";
+} from "@userbubble/ui/field";
+import { Input } from "@userbubble/ui/input";
+import { TiptapEditor } from "@userbubble/ui/tiptap-editor";
 import { ChangelogTagSelector } from "./changelog-tag-selector";
 import { FeedbackSelector } from "./feedback-selector";
 import type { useChangelogForm } from "./use-changelog-form";

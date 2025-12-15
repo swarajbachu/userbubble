@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import type * as React from "react";
 
 function Avatar({

@@ -1,10 +1,10 @@
 "use client";
 
-import type { FeedbackCategory, FeedbackStatus } from "@critichut/db/schema";
-import { DoubleCard, DoubleCardInner } from "@critichut/ui/double-card";
-import { Icon } from "@critichut/ui/icon";
 import { Message01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import type { FeedbackCategory, FeedbackStatus } from "@userbubble/db/schema";
+import { DoubleCard, DoubleCardInner } from "@userbubble/ui/double-card";
+import { Icon } from "@userbubble/ui/icon";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { useTRPC } from "~/trpc/react";
 import { PostCard } from "./post-card";

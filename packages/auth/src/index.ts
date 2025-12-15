@@ -1,6 +1,6 @@
 import { expo } from "@better-auth/expo";
-import { db } from "@critichut/db/client";
-import * as schema from "@critichut/db/schema";
+import { db } from "@userbubble/db/client";
+import * as schema from "@userbubble/db/schema";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -80,8 +80,8 @@ export function initAuth<
       "expo://",
       "http://localhost:3000",
       options.baseUrl,
-      "https://*.critichut.vercel.app",
-      "https://critichut.vercel.app",
+      "https://*.userbubble.vercel.app",
+      "https://userbubble.vercel.app",
     ],
     onAPIError: {
       onError(error, ctx) {

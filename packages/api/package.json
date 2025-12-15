@@ -1,5 +1,5 @@
 {
-  "name": "@critichut/api",
+  "name": "@userbubble/api",
   "private": true,
   "type": "module",
   "exports": {
@@ -16,15 +16,15 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@critichut/auth": "workspace:*",
-    "@critichut/db": "workspace:*",
-    "@critichut/validators": "workspace:*",
+    "@userbubble/auth": "workspace:*",
+    "@userbubble/db": "workspace:*",
+    "@userbubble/validators": "workspace:*",
     "@trpc/server": "catalog:",
     "superjson": "2.2.3",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@critichut/tsconfig": "workspace:*",
+    "@userbubble/tsconfig": "workspace:*",
     "better-auth": "catalog:",
     "@types/pg": "^8.11.10",
     "typescript": "catalog:"

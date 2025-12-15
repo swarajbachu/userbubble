@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserAdd01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { Button } from "@userbubble/ui/button";
 import { useState } from "react";
 import { InviteMemberDialog } from "./invite-member-dialog";
 

@@ -1,4 +1,4 @@
-import { organizationQueries } from "@critichut/db/queries";
+import { organizationQueries } from "@userbubble/db/queries";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { cache } from "react";

@@ -1,9 +1,12 @@
 "use client";
 
-import type { AppRouter } from "@critichut/api";
-import { createFeedbackValidator } from "@critichut/db/schema";
-import { cn } from "@critichut/ui";
-import { Button } from "@critichut/ui/button";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { TRPCClientErrorLike } from "@trpc/client";
+import type { AppRouter } from "@userbubble/api";
+import { createFeedbackValidator } from "@userbubble/db/schema";
+import { cn } from "@userbubble/ui";
+import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
   DialogBody,
@@ -12,20 +15,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@critichut/ui/dialog";
-import { Icon } from "@critichut/ui/icon";
-import { Input } from "@critichut/ui/input";
+} from "@userbubble/ui/dialog";
+import { Icon } from "@userbubble/ui/icon";
+import { Input } from "@userbubble/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@critichut/ui/select";
-import { toast } from "@critichut/ui/toast";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { TRPCClientErrorLike } from "@trpc/client";
+} from "@userbubble/ui/select";
+import { toast } from "@userbubble/ui/toast";
 import { categoryConfig } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
 

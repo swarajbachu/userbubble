@@ -1,5 +1,5 @@
 {
-  "name": "@critichut/validators",
+  "name": "@userbubble/validators",
   "private": true,
   "type": "module",
   "exports": {
@@ -19,7 +19,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@critichut/tsconfig": "workspace:*",
+    "@userbubble/tsconfig": "workspace:*",
     "typescript": "catalog:"
   }
 }

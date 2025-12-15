@@ -1,12 +1,12 @@
-# critichut JavaScript SDK
+# userbubble JavaScript SDK
 
-Seamless user identification and authentication for the critichut feedback platform.
+Seamless user identification and authentication for the userbubble feedback platform.
 
 ## Features
 
 - 🔐 **HMAC-based authentication** - Secure, server-side signature verification
 - 🍪 **Safari compatible** - Works with Safari's ITP and third-party cookie blocking
-- 🔗 **Auto-login links** - Automatically enhance critichut links with auth tokens
+- 🔗 **Auto-login links** - Automatically enhance userbubble links with auth tokens
 - 📦 **Tiny footprint** - < 10KB gzipped
 - 🎯 **Zero dependencies** - Pure JavaScript, no external libraries
 - 📘 **TypeScript support** - Full type definitions included
@@ -16,9 +16,9 @@ Seamless user identification and authentication for the critichut feedback platf
 ### Via CDN (Recommended)
 
 ```html
-<script src="https://cdn.critichut.com/sdk/latest/sdk.min.js"></script>
+<script src="https://cdn.userbubble.com/sdk/latest/sdk.min.js"></script>
 <script>
-  critichut.init('your-org-slug', {
+  userbubble.init('your-org-slug', {
     user: {
       id: 'user123',
       email: 'user@example.com',
@@ -33,13 +33,13 @@ Seamless user identification and authentication for the critichut feedback platf
 ### Via NPM
 
 ```bash
-npm install @critichut/sdk
+npm install @userbubble/sdk
 ```
 
 ```javascript
-import critichut from '@critichut/sdk';
+import userbubble from '@userbubble/sdk';
 
-critichut.init('your-org-slug', {
+userbubble.init('your-org-slug', {
   user: {
     id: 'user123',
     email: 'user@example.com',
@@ -83,14 +83,14 @@ function createSignature(user, orgSlug, secretKey) {
 
 ```javascript
 // Initialize SDK with your organization slug
-critichut.init('your-org-slug', {
-  baseUrl: 'https://app.critichut.com', // Optional
+userbubble.init('your-org-slug', {
+  baseUrl: 'https://app.userbubble.com', // Optional
   autoLogin: true, // Optional, default: true
   debug: false // Optional, default: false
 });
 
 // Identify the current user
-critichut.identify({
+userbubble.identify({
   id: 'user123',
   email: 'user@example.com',
   name: 'John Doe',
@@ -102,14 +102,14 @@ critichut.identify({
 
 ### 3. Auto-Login on Link Clicks
 
-Once a user is identified, all critichut links will automatically include authentication:
+Once a user is identified, all userbubble links will automatically include authentication:
 
 ```html
 <!-- Before -->
-<a href="https://app.critichut.com/feedback">Give Feedback</a>
+<a href="https://app.userbubble.com/feedback">Give Feedback</a>
 
 <!-- After click, automatically becomes -->
-<!-- https://app.critichut.com/feedback?auth_token=eyJ... -->
+<!-- https://app.userbubble.com/feedback?auth_token=eyJ... -->
 <!-- Token is immediately removed after authentication -->
 ```
 
@@ -123,9 +123,9 @@ Initialize the SDK.
 - `orgSlug` (string): Your organization slug
 - `config` (object, optional):
   - `user`: User to identify immediately
-  - `baseUrl`: critichut base URL (default: `https://app.critichut.com`)
+  - `baseUrl`: userbubble base URL (default: `https://app.userbubble.com`)
   - `autoLogin`: Enable auto-login on link clicks (default: `true`)
-  - `linkSelector`: CSS selector for links to enhance (default: `a[href*='critichut.com']`)
+  - `linkSelector`: CSS selector for links to enhance (default: `a[href*='userbubble.com']`)
   - `debug`: Enable debug logging (default: `false`)
 
 ### `identify(user)`
@@ -149,7 +149,7 @@ Logout the current user.
 
 Get the current identified user.
 
-**Returns:** `critichutUser | null`
+**Returns:** `userbubbleUser | null`
 
 ### `isIdentified()`
 

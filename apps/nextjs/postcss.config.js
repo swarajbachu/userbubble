@@ -1,1 +1,1 @@
-export { default } from "@critichut/tailwind-config/postcss-config";
+export { default } from "@userbubble/tailwind-config/postcss-config";

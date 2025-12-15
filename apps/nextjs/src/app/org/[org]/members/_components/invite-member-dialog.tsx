@@ -1,6 +1,8 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
   DialogBody,
@@ -8,24 +10,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@critichut/ui/dialog";
+} from "@userbubble/ui/dialog";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@critichut/ui/field";
-import { Input } from "@critichut/ui/input";
+} from "@userbubble/ui/field";
+import { Input } from "@userbubble/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@critichut/ui/select";
-import { toast } from "@critichut/ui/toast";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+} from "@userbubble/ui/select";
+import { toast } from "@userbubble/ui/toast";
 import { z } from "zod";
 import { authClient } from "~/auth/client";
 

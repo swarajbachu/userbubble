@@ -1,16 +1,16 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
-import {
-  DoubleCard,
-  DoubleCardFooter,
-  DoubleCardInner,
-} from "@critichut/ui/double-card";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
+import { Button } from "@userbubble/ui/button";
+import {
+  DoubleCard,
+  DoubleCardFooter,
+  DoubleCardInner,
+} from "@userbubble/ui/double-card";
 import type { ReactNode } from "react";
 import { useWizard } from "./wizard-context";
 import { WizardProgress } from "./wizard-progress";

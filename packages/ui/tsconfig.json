@@ -1,5 +1,5 @@
 {
-  "extends": "@critichut/tsconfig/base.json",
+  "extends": "@userbubble/tsconfig/base.json",
   "compilerOptions": {
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "preserve",

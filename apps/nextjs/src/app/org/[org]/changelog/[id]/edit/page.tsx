@@ -1,4 +1,4 @@
-import { getChangelogEntry, memberQueries } from "@critichut/db/queries";
+import { getChangelogEntry, memberQueries } from "@userbubble/db/queries";
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "~/auth/server";
 import { getOrganization } from "~/lib/get-organization";

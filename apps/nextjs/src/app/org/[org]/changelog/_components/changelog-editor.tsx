@@ -1,14 +1,14 @@
 "use client";
 
-import type { getChangelogEntry } from "@critichut/db/queries";
-import { Button } from "@critichut/ui/button";
-import { Icon } from "@critichut/ui/icon";
 import {
   ArrowLeft01Icon,
   Delete02Icon,
   Rocket01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import type { getChangelogEntry } from "@userbubble/db/queries";
+import { Button } from "@userbubble/ui/button";
+import { Icon } from "@userbubble/ui/icon";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTRPC } from "~/trpc/react";

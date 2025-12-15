@@ -4,7 +4,7 @@ import type {
   Organization,
   Session,
   User,
-} from "@critichut/db/schema";
+} from "@userbubble/db/schema";
 import type { BetterAuthPlugin } from "better-auth";
 import { APIError, generateId } from "better-auth";
 import { createAuthEndpoint } from "better-auth/api";
@@ -84,7 +84,7 @@ export type ExternalLoginOptions = {
  *
  * ### Step 4: User Lookup or Creation
  * - **What**: Finds existing user by email or creates a new user account
- * - **Why**: Users need a CriticHut account to leave feedback and participate
+ * - **Why**: Users need a UserBubble account to leave feedback and participate
  * - **How**:
  *   - **Existing User**: Checks if user with this email already exists
  *     - **Admin Check**: If `blockAdminAccounts` is enabled, checks if user has organization membership
@@ -98,7 +98,7 @@ export type ExternalLoginOptions = {
  * - **Throws**: `FORBIDDEN` if admin tries to use external login
  *
  * ### Step 5: Identified User Link (External ID Mapping)
- * - **What**: Creates or updates the mapping between customer's user ID and CriticHut user ID
+ * - **What**: Creates or updates the mapping between customer's user ID and UserBubble user ID
  * - **Why**: Allows same external user to return and maintain their identity
  * - **How**:
  *   - Queries `identifiedUser` table for existing link (organizationId + externalId)
@@ -403,7 +403,7 @@ export const externalLogin = (
               userAgent: ctx.request?.headers.get("user-agent") ?? null,
               createdAt: new Date(),
               updatedAt: new Date(),
-              // Custom critichut fields
+              // Custom userbubble fields
               sessionType: "identified",
               authMethod: "external",
               activeOrganizationId: org.id,

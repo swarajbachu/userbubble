@@ -1,6 +1,6 @@
-import { authEnv } from "@critichut/auth/env";
 import { createEnv } from "@t3-oss/env-nextjs";
 import { vercel } from "@t3-oss/env-nextjs/presets-zod";
+import { authEnv } from "@userbubble/auth/env";
 import { z } from "zod/v4";
 
 export const env = createEnv({

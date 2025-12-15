@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "@critichut/ui";
-import { Button } from "@critichut/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowUp01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { cn } from "@userbubble/ui";
+import { Button } from "@userbubble/ui/button";
 import { memo } from "react";
 
 type VoteButtonProps = {

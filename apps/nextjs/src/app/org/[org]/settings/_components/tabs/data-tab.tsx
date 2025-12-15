@@ -1,7 +1,8 @@
 "use client";
 
-import type { Organization } from "@critichut/db/schema";
-import { Button } from "@critichut/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import type { Organization } from "@userbubble/db/schema";
+import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
   DialogBody,
@@ -10,16 +11,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@critichut/ui/dialog";
+} from "@userbubble/ui/dialog";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@critichut/ui/field";
-import { Input } from "@critichut/ui/input";
-import { toast } from "@critichut/ui/toast";
-import { useMutation } from "@tanstack/react-query";
+} from "@userbubble/ui/field";
+import { Input } from "@userbubble/ui/input";
+import { toast } from "@userbubble/ui/toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTRPC } from "~/trpc/react";

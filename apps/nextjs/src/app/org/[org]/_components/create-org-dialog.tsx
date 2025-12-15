@@ -1,7 +1,9 @@
 "use client";
 
-import { isReservedSlug, isValidSlug } from "@critichut/db/schema";
-import { Button } from "@critichut/ui/button";
+import { Add01Icon, Loading03Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { useQuery } from "@tanstack/react-query";
+import { isReservedSlug, isValidSlug } from "@userbubble/db/schema";
+import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
   DialogBody,
@@ -11,12 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@critichut/ui/dialog";
-import { Icon } from "@critichut/ui/icon";
-import { Input } from "@critichut/ui/input";
-import { Label } from "@critichut/ui/label";
-import { Add01Icon, Loading03Icon } from "@hugeicons-pro/core-bulk-rounded";
-import { useQuery } from "@tanstack/react-query";
+} from "@userbubble/ui/dialog";
+import { Icon } from "@userbubble/ui/icon";
+import { Input } from "@userbubble/ui/input";
+import { Label } from "@userbubble/ui/label";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -165,7 +165,7 @@ export function CreateOrgDialog({
                   value={slug}
                 />
                 <span className="inline-flex items-center rounded-e-md border border-input bg-input/30 px-3 text-muted-foreground text-sm">
-                  .critichut.com
+                  .userbubble.com
                 </span>
               </div>
               {isCheckingSlug && (

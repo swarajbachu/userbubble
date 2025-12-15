@@ -1,1 +1,1 @@
-module.exports = require("@critichut/tailwind-config/postcss-config");
+module.exports = require("@userbubble/tailwind-config/postcss-config");

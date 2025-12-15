@@ -1,4 +1,4 @@
-import { parseOrganizationSettings } from "@critichut/db/org/organization-settings";
+import { parseOrganizationSettings } from "@userbubble/db/org/organization-settings";
 import { getOrganization } from "~/lib/get-organization";
 import { BrandingProvider } from "../_components/branding-provider";
 import { ExternalHeader } from "../_components/external-header";

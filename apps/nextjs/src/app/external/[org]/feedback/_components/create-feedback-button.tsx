@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
-import { toast } from "@critichut/ui/toast";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Add01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { Button } from "@userbubble/ui/button";
+import { toast } from "@userbubble/ui/toast";
 import type { ComponentProps } from "react";
 import { useState } from "react";
 import { authClient } from "~/auth/client";

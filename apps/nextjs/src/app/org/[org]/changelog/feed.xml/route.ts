@@ -1,4 +1,4 @@
-import { getChangelogEntries } from "@critichut/db/queries";
+import { getChangelogEntries } from "@userbubble/db/queries";
 import { getOrganization } from "~/lib/get-organization";
 
 export async function GET(
@@ -26,9 +26,9 @@ export async function GET(
     <language>en</language>
     <atom:link href="${feedUrl}/feed.xml" rel="self" type="application/rss+xml"/>
     ${
-      organization.logoUrl
+      organization.logo
         ? `<image>
-      <url>${escapeXml(organization.logoUrl)}</url>
+      <url>${escapeXml(organization.logo)}</url>
       <title>${escapeXml(organization.name)}</title>
       <link>${feedUrl}</link>
     </image>`

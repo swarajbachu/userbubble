@@ -1,3 +1,4 @@
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import {
   canCreatePost,
   canDeleteComment,
@@ -15,14 +16,13 @@ import {
   removeVote,
   updateFeedbackPost,
   voteOnPost,
-} from "@critichut/db/queries";
+} from "@userbubble/db/queries";
 import {
   createFeedbackValidator,
   feedbackCategoryValidator,
   feedbackStatusValidator,
   updateFeedbackValidator,
-} from "@critichut/db/schema";
-import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
+} from "@userbubble/db/schema";
 import { z } from "zod";
 
 import { protectedProcedure, publicProcedure } from "../trpc";

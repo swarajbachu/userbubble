@@ -1,4 +1,4 @@
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import type * as React from "react";
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {

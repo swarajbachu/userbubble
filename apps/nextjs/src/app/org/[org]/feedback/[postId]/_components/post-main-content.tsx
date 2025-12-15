@@ -1,15 +1,15 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
+import { PencilEdit01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@userbubble/ui/button";
 import {
   DoubleCard,
   DoubleCardHeader,
   DoubleCardInner,
-} from "@critichut/ui/double-card";
-import { Icon } from "@critichut/ui/icon";
-import { PencilEdit01Icon } from "@hugeicons-pro/core-bulk-rounded";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+} from "@userbubble/ui/double-card";
+import { Icon } from "@userbubble/ui/icon";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";

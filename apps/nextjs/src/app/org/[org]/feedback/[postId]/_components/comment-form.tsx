@@ -1,9 +1,9 @@
 "use client";
 
-import type { FeedbackComment, User } from "@critichut/db/schema";
-import { cn } from "@critichut/ui";
-import { Button } from "@critichut/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { FeedbackComment, User } from "@userbubble/db/schema";
+import { cn } from "@userbubble/ui";
+import { Button } from "@userbubble/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";

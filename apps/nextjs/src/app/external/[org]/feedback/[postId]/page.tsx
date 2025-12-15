@@ -2,10 +2,10 @@ import {
   getFeedbackPost,
   getPostComments,
   getUserVote,
-} from "@critichut/db/queries";
-import { Avatar, AvatarFallback, AvatarImage } from "@critichut/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@critichut/ui/card";
-import { Icon } from "@critichut/ui/icon";
+} from "@userbubble/db/queries";
+import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@userbubble/ui/card";
+import { Icon } from "@userbubble/ui/icon";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CommentsSection } from "~/app/org/[org]/feedback/[postId]/_components/comments-section";
@@ -41,13 +41,13 @@ export async function generateMetadata({
       description,
       url: `/external/${org}/feedback/${postId}`,
       type: "article",
-      images: organization.logoUrl ? [{ url: organization.logoUrl }] : [],
+      images: organization.logo ? [{ url: organization.logo }] : [],
     },
     twitter: {
       card: "summary",
       title: post.post.title,
       description,
-      images: organization.logoUrl ? [organization.logoUrl] : [],
+      images: organization.logo ? [organization.logo] : [],
     },
   };
 }

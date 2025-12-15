@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
-import { Icon } from "@critichut/ui/icon";
 import { Add01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { Button } from "@userbubble/ui/button";
+import { Icon } from "@userbubble/ui/icon";
 import { useState } from "react";
 import { authClient } from "~/auth/client";
 import { CreateRequestDialog } from "./create-request-dialog";

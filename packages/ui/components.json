@@ -11,7 +11,7 @@
   },
   "iconLibrary": "hugeicons",
   "aliases": {
-    "utils": "@critichut/ui",
+    "utils": "@userbubble/ui",
     "components": "src/",
     "ui": "src/"
   },

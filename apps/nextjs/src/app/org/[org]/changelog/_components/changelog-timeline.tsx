@@ -1,7 +1,7 @@
 import type {
   getChangelogEntries,
   getLinkedFeedback,
-} from "@critichut/db/queries";
+} from "@userbubble/db/queries";
 import { ChangelogCard } from "./changelog-card";
 
 type ChangelogEntry = Awaited<

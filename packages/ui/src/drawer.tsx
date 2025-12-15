@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import type * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 

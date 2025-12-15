@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@critichut/ui";
 import {
   CodeIcon,
   CodeSquareIcon,
@@ -15,6 +14,7 @@ import {
 import type { Editor } from "@tiptap/react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { cn } from "@userbubble/ui";
 import { Icon } from "./icon";
 
 type TiptapEditorProps = {

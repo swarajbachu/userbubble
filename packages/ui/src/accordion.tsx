@@ -1,9 +1,9 @@
 "use client";
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
-import { cn } from "@critichut/ui";
 import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cn } from "@userbubble/ui";
 
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (

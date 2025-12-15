@@ -1,8 +1,8 @@
-import { Icon } from "@critichut/ui/icon";
 import {
   CheckmarkBadge01Icon,
   Link03Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
+import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
 
 type LinkedFeedbackListProps = {

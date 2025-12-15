@@ -1,6 +1,8 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
+import { Delete01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { useMutation } from "@tanstack/react-query";
+import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -9,10 +11,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@critichut/ui/dialog";
-import { Icon } from "@critichut/ui/icon";
-import { Delete01Icon } from "@hugeicons-pro/core-bulk-rounded";
-import { useMutation } from "@tanstack/react-query";
+} from "@userbubble/ui/dialog";
+import { Icon } from "@userbubble/ui/icon";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";

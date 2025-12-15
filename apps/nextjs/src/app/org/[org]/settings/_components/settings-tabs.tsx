@@ -1,7 +1,7 @@
 "use client";
 
-import type { Organization } from "@critichut/db/schema";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@critichut/ui/tabs";
+import type { Organization } from "@userbubble/db/schema";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@userbubble/ui/tabs";
 import { useState } from "react";
 import { BrandingTab } from "./tabs/branding-tab";
 import { ChangelogTab } from "./tabs/changelog-tab";

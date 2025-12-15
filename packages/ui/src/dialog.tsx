@@ -1,9 +1,9 @@
 "use client";
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { cn } from "@critichut/ui";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { MultiplicationSignIcon } from "@hugeicons-pro/core-bulk-rounded";
+import { cn } from "@userbubble/ui";
 import type * as React from "react";
 
 function Dialog({

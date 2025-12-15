@@ -1,6 +1,6 @@
-import { parseOrganizationSettings } from "@critichut/db/schema";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowDown01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { parseOrganizationSettings } from "@userbubble/db/schema";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { FeedbackBoard } from "~/components/feedback/feedback-board";
@@ -45,13 +45,13 @@ export async function generateMetadata({
       description,
       url: `/external/${org}/feedback`,
       type: "website",
-      images: organization.logoUrl ? [{ url: organization.logoUrl }] : [],
+      images: organization.logo ? [{ url: organization.logo }] : [],
     },
     twitter: {
       card: "summary_large_image",
       title: `${organization.name} ${title}`,
       description,
-      images: organization.logoUrl ? [organization.logoUrl] : [],
+      images: organization.logo ? [organization.logo] : [],
     },
   };
 }

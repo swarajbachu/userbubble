@@ -1,7 +1,5 @@
 "use client";
 
-import { isReservedSlug, isValidSlug } from "@critichut/db/schema";
-import { Input } from "@critichut/ui/input";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Cancel01Icon,
@@ -9,6 +7,8 @@ import {
   Tick01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
 import { useQuery } from "@tanstack/react-query";
+import { isReservedSlug, isValidSlug } from "@userbubble/db/schema";
+import { Input } from "@userbubble/ui/input";
 import { useEffect, useState } from "react";
 import { authClient } from "~/auth/client";
 import { useWizard } from "./wizard-context";
@@ -141,7 +141,7 @@ export function StepSubdomain() {
               value={slug}
             />
             <span className="inline-flex items-center rounded-e-md border border-input bg-input/30 px-3 text-muted-foreground text-sm">
-              .critichut.com
+              .userbubble.com
             </span>
           </div>
 
