@@ -1,12 +1,12 @@
 import { getChangelogEntries } from "@userbubble/db/queries";
-import { getOrganization } from "~/lib/get-organization";
+import { getPublicOrganization } from "~/lib/get-organization";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ org: string }> }
 ) {
   const { org } = await params;
-  const organization = await getOrganization(org);
+  const organization = await getPublicOrganization(org);
 
   const entries = await getChangelogEntries(organization.id, {
     published: true,

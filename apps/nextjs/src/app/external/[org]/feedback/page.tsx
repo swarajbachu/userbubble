@@ -4,7 +4,7 @@ import { parseOrganizationSettings } from "@userbubble/db/schema";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { FeedbackBoard } from "~/components/feedback/feedback-board";
-import { getOrganization } from "~/lib/get-organization";
+import { getPublicOrganization } from "~/lib/get-organization";
 import { FeedbackFilters } from "./_components/feedback-filters";
 import { FeedbackSidebar } from "./_components/feedback-sidebar";
 
@@ -19,7 +19,7 @@ export async function generateMetadata({
 }: ExternalFeedbackPageProps): Promise<Metadata> {
   const { org } = await params;
   const { category } = await searchParams;
-  const organization = await getOrganization(org);
+  const organization = await getPublicOrganization(org);
 
   const getBoardTitle = (c?: string) => {
     switch (c) {
@@ -64,7 +64,7 @@ export default async function ExternalFeedbackPage({
   const { category } = await searchParams;
 
   // Use cached helper - returns cached result from layout
-  const organization = await getOrganization(org);
+  const organization = await getPublicOrganization(org);
 
   // Parse organization settings for anonymous submission settings
   const settings = parseOrganizationSettings(organization.metadata);

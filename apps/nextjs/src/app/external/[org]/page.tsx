@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@userbubble/ui/card";
 import Link from "next/link";
-import { getOrganization } from "~/lib/get-organization";
+import { getPublicOrganization } from "~/lib/get-organization";
 
 type ExternalHomePageProps = {
   params: Promise<{ org: string }>;
@@ -22,8 +22,8 @@ export default async function ExternalHomePage({
 }: ExternalHomePageProps) {
   const { org } = await params;
 
-  // Use cached helper - follows Better Auth pattern
-  const organization = await getOrganization(org);
+  // Use public helper - no auth required for external routes
+  const organization = await getPublicOrganization(org);
 
   const features = [
     {

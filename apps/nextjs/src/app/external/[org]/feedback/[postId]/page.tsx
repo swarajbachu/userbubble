@@ -12,7 +12,7 @@ import { CommentsSection } from "~/app/org/[org]/feedback/[postId]/_components/c
 import { PostMainContent } from "~/app/org/[org]/feedback/[postId]/_components/post-main-content";
 import { getSession } from "~/auth/server";
 import { categoryLabels, statusConfig } from "~/components/feedback/config";
-import { getOrganization } from "~/lib/get-organization";
+import { getPublicOrganization } from "~/lib/get-organization";
 
 type ExternalFeedbackPostPageProps = {
   params: Promise<{ org: string; postId: string }>;
@@ -22,7 +22,7 @@ export async function generateMetadata({
   params,
 }: ExternalFeedbackPostPageProps): Promise<Metadata> {
   const { org, postId } = await params;
-  const organization = await getOrganization(org);
+  const organization = await getPublicOrganization(org);
   const post = await getFeedbackPost(postId);
 
   if (!post || post.post.organizationId !== organization.id) {
@@ -62,7 +62,7 @@ export default async function ExternalFeedbackPostPage({
   const { org, postId } = await params;
 
   // Fetch organization (cached from layout)
-  const organization = await getOrganization(org);
+  const organization = await getPublicOrganization(org);
 
   // Fetch post data
   const post = await getFeedbackPost(postId);

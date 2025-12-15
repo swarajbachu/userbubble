@@ -1,5 +1,5 @@
 import { parseOrganizationSettings } from "@userbubble/db/org/organization-settings";
-import { getOrganization } from "~/lib/get-organization";
+import { getPublicOrganization } from "~/lib/get-organization";
 import { BrandingProvider } from "../_components/branding-provider";
 import { ExternalHeader } from "../_components/external-header";
 
@@ -14,8 +14,8 @@ export default async function ExternalLayout({
 }: ExternalLayoutProps) {
   const { org } = await params;
 
-  // Use cached helper - follows Better Auth pattern
-  const organization = await getOrganization(org);
+  // Use public helper - no auth required for external routes
+  const organization = await getPublicOrganization(org);
 
   // Parse organization settings from metadata
   const settings = parseOrganizationSettings(organization.metadata);

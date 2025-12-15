@@ -2,7 +2,7 @@ import { getChangelogEntries } from "@userbubble/db/queries";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ChangelogBoard } from "~/app/org/[org]/changelog/_components/changelog-board";
-import { getOrganization } from "~/lib/get-organization";
+import { getPublicOrganization } from "~/lib/get-organization";
 
 type ExternalChangelogPageProps = {
   params: Promise<{ org: string }>;
@@ -12,7 +12,7 @@ export async function generateMetadata({
   params,
 }: ExternalChangelogPageProps): Promise<Metadata> {
   const { org } = await params;
-  const organization = await getOrganization(org);
+  const organization = await getPublicOrganization(org);
 
   const entries = await getChangelogEntries(organization.id, {
     published: true,
@@ -57,7 +57,7 @@ export default async function ExternalChangelogPage({
   params,
 }: ExternalChangelogPageProps) {
   const { org } = await params;
-  const organization = await getOrganization(org);
+  const organization = await getPublicOrganization(org);
 
   const entries = await getChangelogEntries(organization.id, {
     published: true,

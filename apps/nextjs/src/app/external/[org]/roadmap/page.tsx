@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { RoadmapBoard } from "~/components/roadmap/roadmap-board";
-import { getOrganization } from "~/lib/get-organization";
+import { getPublicOrganization } from "~/lib/get-organization";
 
 type ExternalRoadmapPageProps = {
   params: Promise<{ org: string }>;
@@ -11,7 +11,7 @@ export async function generateMetadata({
   params,
 }: ExternalRoadmapPageProps): Promise<Metadata> {
   const { org } = await params;
-  const organization = await getOrganization(org);
+  const organization = await getPublicOrganization(org);
 
   const description = `Explore the ${organization.name} product roadmap. See what we're working on, what's coming next, and what's been completed.`;
 
@@ -40,7 +40,7 @@ export default async function ExternalRoadmapPage({
   const { org } = await params;
 
   // Use cached helper - returns cached result from layout
-  const organization = await getOrganization(org);
+  const organization = await getPublicOrganization(org);
 
   return (
     <div className="w-full">
