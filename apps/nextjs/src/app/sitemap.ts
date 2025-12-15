@@ -1,14 +1,18 @@
-import { getChangelogEntries, getFeedbackPosts } from "@userbubble/db/queries";
+import {
+  getChangelogEntries,
+  getFeedbackPosts,
+  organizationQueries,
+} from "@userbubble/db/queries";
 import type { MetadataRoute } from "next";
-import { auth } from "~/auth/server";
+
+// Revalidate sitemap every 1 day
+export const revalidate = 86_400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-  // Get all organizations using Better Auth
-  const orgs = await auth.api.listOrganizations({
-    headers: new Headers(),
-  });
+  // Get all organizations - cached with ISR revalidation
+  const orgs = await organizationQueries.listAll();
 
   const publicPages: MetadataRoute.Sitemap = [];
 

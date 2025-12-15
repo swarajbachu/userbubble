@@ -70,6 +70,11 @@ export const organizationQueries = {
   },
 
   /**
+   * List all organizations (for sitemap generation)
+   */
+  listAll: async () => db.query.organization.findMany(),
+
+  /**
    * List user's organizations
    */
   listUserOrganizations: async (userId: string) =>
