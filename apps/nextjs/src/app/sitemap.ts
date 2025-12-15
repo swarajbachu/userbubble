@@ -1,12 +1,14 @@
-import { db } from "@critichut/db";
 import { getChangelogEntries, getFeedbackPosts } from "@critichut/db/queries";
 import type { MetadataRoute } from "next";
+import { auth } from "~/auth/server";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-  // Get all organizations
-  const orgs = await db.query.organization.findMany();
+  // Get all organizations using Better Auth
+  const orgs = await auth.api.listOrganizations({
+    headers: new Headers(),
+  });
 
   const publicPages: MetadataRoute.Sitemap = [];
 
@@ -18,10 +20,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     if (changelogEntries.length > 0) {
+      const changelogEntry = changelogEntries[0];
+      if (!changelogEntry) {
+        continue;
+      }
       publicPages.push({
         url: `${baseUrl}/external/${org.slug}/changelog`,
         lastModified: new Date(
-          changelogEntries[0].publishedAt ?? changelogEntries[0].updatedAt
+          changelogEntry.publishedAt ?? changelogEntry.updatedAt
         ),
         changeFrequency: "weekly",
         priority: 0.8,
