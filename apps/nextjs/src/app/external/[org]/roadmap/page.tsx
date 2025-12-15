@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { RoadmapBoard } from "~/components/roadmap/roadmap-board";
 import { getOrganization } from "~/lib/get-organization";
@@ -5,6 +6,33 @@ import { getOrganization } from "~/lib/get-organization";
 type ExternalRoadmapPageProps = {
   params: Promise<{ org: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: ExternalRoadmapPageProps): Promise<Metadata> {
+  const { org } = await params;
+  const organization = await getOrganization(org);
+
+  const description = `Explore the ${organization.name} product roadmap. See what we're working on, what's coming next, and what's been completed.`;
+
+  return {
+    title: `Roadmap - ${organization.name}`,
+    description,
+    openGraph: {
+      title: `${organization.name} Roadmap`,
+      description,
+      url: `/external/${org}/roadmap`,
+      type: "website",
+      images: organization.logoUrl ? [{ url: organization.logoUrl }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${organization.name} Roadmap`,
+      description,
+      images: organization.logoUrl ? [organization.logoUrl] : [],
+    },
+  };
+}
 
 export default async function ExternalRoadmapPage({
   params,

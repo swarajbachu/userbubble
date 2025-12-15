@@ -28,12 +28,10 @@ type ChangelogDisplayProps = {
 export function ChangelogDisplay({
   title,
   description,
-  version,
   coverImageUrl,
   tags,
   linkedFeedback,
   author,
-  date,
   status,
   org,
   actions,
@@ -43,32 +41,18 @@ export function ChangelogDisplay({
       <DoubleCardHeader>
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1 space-y-2">
-            {/* Title and version */}
-            <div className="flex items-center gap-2">
-              {version && (
-                <Badge className="shrink-0" variant="secondary">
-                  v{version}
-                </Badge>
-              )}
-              <h3 className="truncate font-semibold text-lg">
-                {title || "Untitled Entry"}
-              </h3>
-            </div>
+            {/* Title */}
+            <h3 className="truncate font-semibold text-xl">
+              {title || "Untitled Entry"}
+            </h3>
 
-            {/* Metadata */}
+            {/* Metadata (Author & Status only) */}
             <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-xs">
-              <time dateTime={date.toISOString()}>
-                {new Date(date).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </time>
               {author && (
-                <>
-                  <span>•</span>
-                  <span>by {author === "preview" ? "You" : author.name}</span>
-                </>
+                <div className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-gradient-to-br from-primary/20 to-primary/10" />
+                  <span>{author === "preview" ? "You" : author.name}</span>
+                </div>
               )}
               {status && (
                 <>
@@ -106,7 +90,7 @@ export function ChangelogDisplay({
         {/* Description */}
         {description ? (
           <div
-            className="tiptap-content"
+            className="tiptap-content prose prose-sm dark:prose-invert max-w-none"
             // biome-ignore lint/security/noDangerouslySetInnerHtml: Tiptap editor sanitizes content
             dangerouslySetInnerHTML={{ __html: description }}
           />

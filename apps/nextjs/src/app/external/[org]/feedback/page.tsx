@@ -1,6 +1,7 @@
 import { parseOrganizationSettings } from "@critichut/db/schema";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowDown01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { FeedbackBoard } from "~/components/feedback/feedback-board";
 import { getOrganization } from "~/lib/get-organization";
@@ -11,6 +12,49 @@ type ExternalFeedbackPageProps = {
   params: Promise<{ org: string }>;
   searchParams: Promise<{ category?: string }>;
 };
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: ExternalFeedbackPageProps): Promise<Metadata> {
+  const { org } = await params;
+  const { category } = await searchParams;
+  const organization = await getOrganization(org);
+
+  const getBoardTitle = (c?: string) => {
+    switch (c) {
+      case "feature_request":
+        return "Feature Requests";
+      case "bug":
+        return "Bug Reports";
+      default:
+        return "Feedback";
+    }
+  };
+
+  const title = getBoardTitle(category);
+  const description = category
+    ? `Browse and vote on ${title.toLowerCase()} for ${organization.name}. Share your ideas and help shape our product.`
+    : `Share feedback, request features, and report bugs for ${organization.name}. Help us build a better product together.`;
+
+  return {
+    title: `${title} - ${organization.name}`,
+    description,
+    openGraph: {
+      title: `${organization.name} ${title}`,
+      description,
+      url: `/external/${org}/feedback`,
+      type: "website",
+      images: organization.logoUrl ? [{ url: organization.logoUrl }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${organization.name} ${title}`,
+      description,
+      images: organization.logoUrl ? [organization.logoUrl] : [],
+    },
+  };
+}
 
 export default async function ExternalFeedbackPage({
   params,
