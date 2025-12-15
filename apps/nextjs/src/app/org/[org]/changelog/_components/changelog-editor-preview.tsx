@@ -7,7 +7,9 @@ import {
   DoubleCardInner,
 } from "@critichut/ui/double-card";
 import { Icon } from "@critichut/ui/icon";
+import Image from "next/image";
 import { tagConfig } from "~/components/changelog/config";
+import { LinkedFeedbackList } from "./linked-feedback-list";
 
 type ChangelogEditorPreviewProps = {
   title: string;
@@ -15,6 +17,8 @@ type ChangelogEditorPreviewProps = {
   version: string;
   coverImageUrl: string;
   tags: string[];
+  linkedFeedback?: { id: string; title: string }[];
+  org: string;
 };
 
 export function ChangelogEditorPreview({
@@ -23,23 +27,22 @@ export function ChangelogEditorPreview({
   version,
   coverImageUrl,
   tags,
+  linkedFeedback,
+  org,
 }: ChangelogEditorPreviewProps) {
   const mockDate = new Date();
 
   return (
     <div className="space-y-4">
-      {/* Preview label */}
       <div className="flex items-center gap-2 px-1">
         <h2 className="font-semibold text-muted-foreground text-sm">Preview</h2>
         <div className="h-px flex-1 bg-border" />
       </div>
 
-      {/* Preview card */}
       <DoubleCard>
         <DoubleCardHeader>
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1 space-y-2">
-              {/* Title and version */}
               <div className="flex items-center gap-2">
                 {version && (
                   <Badge className="shrink-0" variant="secondary">
@@ -51,7 +54,6 @@ export function ChangelogEditorPreview({
                 </h3>
               </div>
 
-              {/* Metadata */}
               <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-xs">
                 <time dateTime={mockDate.toISOString()}>
                   {mockDate.toLocaleDateString("en-US", {
@@ -70,18 +72,21 @@ export function ChangelogEditorPreview({
         </DoubleCardHeader>
 
         <DoubleCardInner className="space-y-4">
-          {/* Cover image */}
           {coverImageUrl && (
             <div className="overflow-hidden rounded-lg">
-              <img
+              <Image
                 alt={title || "Cover image"}
                 className="h-auto w-full object-cover"
+                height={0}
+                sizes="100vw"
                 src={coverImageUrl}
+                style={{ width: "100%", height: "auto" }}
+                unoptimized
+                width={0}
               />
             </div>
           )}
 
-          {/* Description */}
           {description ? (
             <div className="prose prose-sm dark:prose-invert max-w-none">
               <p className="whitespace-pre-wrap text-foreground/90 leading-relaxed">
@@ -94,12 +99,13 @@ export function ChangelogEditorPreview({
             </p>
           )}
 
-          {/* Tags */}
           {tags && tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => {
                 const config = tagConfig[tag as keyof typeof tagConfig];
-                if (!config) return null;
+                if (!config) {
+                  return null;
+                }
 
                 return (
                   <Badge className={config.bg} key={tag} variant="secondary">
@@ -113,6 +119,11 @@ export function ChangelogEditorPreview({
                 );
               })}
             </div>
+          )}
+
+          {/* Linked feedback */}
+          {linkedFeedback && linkedFeedback.length > 0 && (
+            <LinkedFeedbackList feedback={linkedFeedback} org={org} />
           )}
         </DoubleCardInner>
       </DoubleCard>

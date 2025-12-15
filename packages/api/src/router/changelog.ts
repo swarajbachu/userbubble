@@ -1,6 +1,6 @@
 import {
   canManageChangelog,
-  createChangelogEntry,
+  createChangelogEntryWithFeedback,
   deleteChangelogEntry,
   getChangelogEntries,
   getChangelogEntry,
@@ -130,8 +130,8 @@ export const changelogRouter = {
         });
       }
 
-      // Create entry
-      const entry = await createChangelogEntry({
+      // Create entry with linked feedback in a transaction
+      const entry = await createChangelogEntryWithFeedback({
         organizationId: input.organizationId,
         authorId: ctx.session.user.id,
         title: input.title,
@@ -141,19 +141,8 @@ export const changelogRouter = {
         tags: input.tags,
         isPublished: input.isPublished,
         publishedAt: input.isPublished ? new Date() : undefined,
+        feedbackPostIds: input.feedbackPostIds,
       });
-
-      if (!entry) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create changelog entry",
-        });
-      }
-
-      // Link feedback posts if provided
-      if (input.feedbackPostIds && input.feedbackPostIds.length > 0) {
-        await linkFeedbackToChangelog(entry.id, input.feedbackPostIds);
-      }
 
       return entry;
     }),

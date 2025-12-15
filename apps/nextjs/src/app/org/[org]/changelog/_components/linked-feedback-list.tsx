@@ -1,4 +1,3 @@
-import type { getLinkedFeedback } from "@critichut/db/queries";
 import { Icon } from "@critichut/ui/icon";
 import {
   CheckmarkBadge01Icon,
@@ -6,10 +5,8 @@ import {
 } from "@hugeicons-pro/core-bulk-rounded";
 import Link from "next/link";
 
-type LinkedFeedback = Awaited<ReturnType<typeof getLinkedFeedback>>;
-
 type LinkedFeedbackListProps = {
-  feedback: LinkedFeedback;
+  feedback: Array<{ id: string; title: string }>;
   org: string;
 };
 
