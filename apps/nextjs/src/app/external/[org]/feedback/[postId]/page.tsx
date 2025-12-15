@@ -39,7 +39,7 @@ export async function generateMetadata({
     openGraph: {
       title: post.post.title,
       description,
-      url: `/external/${org}/feedback/${postId}`,
+      url: `/feedback/${postId}`,
       type: "article",
       images: organization.logo ? [{ url: organization.logo }] : [],
     },

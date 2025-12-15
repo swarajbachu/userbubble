@@ -1,23 +1,46 @@
 "use client";
 
+import {
+  Add01Icon,
+  Dashboard01Icon,
+  Login01Icon,
+  Logout01Icon,
+  Settings01Icon,
+} from "@hugeicons-pro/core-bulk-rounded";
 import { cn } from "@userbubble/ui";
+import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
 import { Button } from "@userbubble/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@userbubble/ui/dropdown-menu";
+import { Icon } from "@userbubble/ui/icon";
+import { ThemeToggle } from "@userbubble/ui/theme";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { CreateFeedbackDialog } from "~/app/external/[org]/feedback/_components/create-feedback-dialog";
+import { authClient } from "~/auth/client";
 
 type ExternalHeaderProps = {
   organizationName: string;
   logoUrl?: string;
   orgSlug: string;
+  organizationId: string;
+  allowAnonymous: boolean;
 };
 
 export function ExternalHeader({
   organizationName,
   logoUrl,
   orgSlug,
+  organizationId,
+  allowAnonymous,
 }: ExternalHeaderProps) {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<string>("");
@@ -27,20 +50,29 @@ export function ExternalHeader({
     opacity: 0,
   });
   const navRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+
+  const getInitials = (name: string) =>
+    name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
 
   const tabs = useMemo(
     () => [
-      { name: "Feedback", href: `/external/${orgSlug}/feedback` },
-      { name: "Roadmap", href: `/external/${orgSlug}/roadmap` },
-      { name: "Updates", href: `/external/${orgSlug}/changelog` },
+      { name: "Feedback", href: "/feedback" },
+      { name: "Roadmap", href: "/roadmap" },
+      { name: "Updates", href: "/changelog" },
     ],
-    [orgSlug]
+    []
   );
 
   useEffect(() => {
     const active = tabs.find((tab) => pathname.startsWith(tab.href));
-    console.log(active, "active");
-    console.log(pathname, "pathname");
     setActiveTab(active ? active.href : "");
   }, [pathname, tabs]);
 
@@ -115,9 +147,65 @@ export function ExternalHeader({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="secondary">
-            <Link href="/dashboard">Dashboard</Link>
-          </Button>
+          <ThemeToggle />
+
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="gap-2" size="sm" variant="secondary">
+                  <Avatar size="xs">
+                    {user.image && (
+                      <AvatarImage alt={user.name} src={user.image} />
+                    )}
+                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                  </Avatar>
+                  <span className="hidden sm:inline">{user.name}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => setCreateDialogOpen(true)}>
+                  <Icon icon={Add01Icon} size={16} />
+                  <span>Create Post</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/settings`}
+                  >
+                    <Icon icon={Settings01Icon} size={16} />
+                    <span>Settings</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/feedback`}
+                  >
+                    <Icon icon={Dashboard01Icon} size={16} />
+                    <span>Dashboard</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => authClient.signOut()}>
+                  <Icon icon={Logout01Icon} size={16} />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button asChild size="sm" variant="secondary">
+              <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-in`}>
+                <Icon icon={Login01Icon} size={16} />
+                <span>Login</span>
+              </Link>
+            </Button>
+          )}
+
+          <CreateFeedbackDialog
+            allowAnonymous={allowAnonymous}
+            onOpenChange={setCreateDialogOpen}
+            open={createDialogOpen}
+            organizationId={organizationId}
+          />
         </div>
       </div>
     </header>

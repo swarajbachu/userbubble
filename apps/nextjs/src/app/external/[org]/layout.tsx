@@ -24,7 +24,9 @@ export default async function ExternalLayout({
     <BrandingProvider branding={settings.branding}>
       <div className="flex min-h-screen flex-col bg-background text-foreground">
         <ExternalHeader
+          allowAnonymous={settings.publicAccess.allowAnonymousSubmissions}
           logoUrl={settings.branding.logoUrl}
+          organizationId={organization.id}
           organizationName={organization.name}
           orgSlug={org}
         />

@@ -35,7 +35,7 @@ export async function generateMetadata({
     openGraph: {
       title: `${organization.name} Changelog`,
       description,
-      url: `/external/${org}/changelog`,
+      url: "/changelog",
       type: "website",
       images: organization.logo ? [{ url: organization.logo }] : [],
     },
@@ -47,7 +47,7 @@ export async function generateMetadata({
     },
     alternates: {
       types: {
-        "application/rss+xml": `/external/${org}/changelog/feed.xml`,
+        "application/rss+xml": "/changelog/feed.xml",
       },
     },
   };
@@ -69,7 +69,7 @@ export default async function ExternalChangelogPage({
     "@type": "Blog",
     name: `${organization.name} Changelog`,
     description: `Product updates and release notes for ${organization.name}`,
-    url: `/external/${org}/changelog`,
+    url: "/changelog",
     blogPost: entries.map((entry) => ({
       "@type": "BlogPosting",
       headline: entry.version

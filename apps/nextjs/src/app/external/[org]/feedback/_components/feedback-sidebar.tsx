@@ -89,7 +89,7 @@ export function FeedbackSidebar({
                       ? "bg-secondary font-medium text-foreground"
                       : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                   )}
-                  href={`/external/${org}/feedback${
+                  href={`/feedback${
                     board.category ? `?category=${board.category}` : ""
                   }`}
                   key={board.name}

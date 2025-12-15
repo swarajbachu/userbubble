@@ -43,7 +43,7 @@ export async function generateMetadata({
     openGraph: {
       title: `${organization.name} ${title}`,
       description,
-      url: `/external/${org}/feedback`,
+      url: "/feedback",
       type: "website",
       images: organization.logo ? [{ url: organization.logo }] : [],
     },
@@ -132,7 +132,11 @@ export default async function ExternalFeedbackPage({
             </div>
           }
         >
-          <FeedbackBoard org={org} organizationId={organization.id} />
+          <FeedbackBoard
+            isExternal={true}
+            org={org}
+            organizationId={organization.id}
+          />
         </Suspense>
       </div>
     </div>

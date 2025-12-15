@@ -14,7 +14,7 @@ export default async function ChangelogLayout({
   return (
     <>
       <link
-        href={`/external/${org}/changelog/feed.xml`}
+        href="/changelog/feed.xml"
         rel="alternate"
         title="Changelog RSS Feed"
         type="application/rss+xml"

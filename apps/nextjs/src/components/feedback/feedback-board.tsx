@@ -12,9 +12,14 @@ import { PostCard } from "./post-card";
 type FeedbackBoardProps = {
   org: string;
   organizationId: string;
+  isExternal?: boolean;
 };
 
-export function FeedbackBoard({ org, organizationId }: FeedbackBoardProps) {
+export function FeedbackBoard({
+  org,
+  organizationId,
+  isExternal = false,
+}: FeedbackBoardProps) {
   const trpc = useTRPC();
 
   const [status] = useQueryState(
@@ -61,6 +66,7 @@ export function FeedbackBoard({ org, organizationId }: FeedbackBoardProps) {
           // biome-ignore lint/style/noNonNullAssertion: author is always present for feedback posts
           author={item.author!}
           hasUserVoted={item.hasUserVoted}
+          isExternal={isExternal}
           key={item.post.id}
           org={org}
           post={item.post}

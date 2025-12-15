@@ -16,12 +16,14 @@ type PostCardProps = {
   author: { name: string | null; image: string | null };
   org: string;
   hasUserVoted: boolean;
+  isExternal?: boolean;
 };
 
 export const PostCard = memo(function PostCard({
   post,
   org,
   hasUserVoted,
+  isExternal = false,
 }: PostCardProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -86,7 +88,11 @@ export const PostCard = memo(function PostCard({
       <div className="min-w-0 flex-1">
         <Link
           className="flex items-center gap-2"
-          href={`/org/${org}/feedback/${post.id}`}
+          href={
+            isExternal
+              ? `/feedback/${post.id}`
+              : `/org/${org}/feedback/${post.id}`
+          }
         >
           <span className="truncate font-medium text-sm transition-colors group-hover:text-primary">
             {post.title}

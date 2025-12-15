@@ -21,7 +21,7 @@ export async function generateMetadata({
     openGraph: {
       title: `${organization.name} Roadmap`,
       description,
-      url: `/external/${org}/roadmap`,
+      url: "/roadmap",
       type: "website",
       images: organization.logo ? [{ url: organization.logo }] : [],
     },
