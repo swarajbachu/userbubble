@@ -11,7 +11,6 @@ export function CreateRequestButton() {
   const [open, setOpen] = useState(false);
 
   const { data: activeOrganization } = authClient.useActiveOrganization();
-  console.log(activeOrganization, "active");
   if (!activeOrganization) {
     return null;
   }

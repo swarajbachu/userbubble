@@ -19,7 +19,7 @@ const setCorsHeaders = (res: Response, origin?: string | null) => {
   res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.headers.set(
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, x-trpc-source, Cookie"
+    "Content-Type, Authorization, x-trpc-source, x-trpc-accept, trpc-accept, Cookie"
   );
   res.headers.set("Vary", "Origin");
 };

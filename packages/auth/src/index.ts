@@ -80,8 +80,7 @@ export function initAuth<
       "expo://",
       "http://localhost:3000",
       options.baseUrl,
-      "https://*.userbubble.vercel.app",
-      "https://userbubble.vercel.app",
+      "https://*.userbubble.com",
     ],
     onAPIError: {
       onError(error, ctx) {
