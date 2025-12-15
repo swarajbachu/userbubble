@@ -36,5 +36,5 @@ export * from "./org/organization.validators";
 // Organization settings (public access, branding)
 export * from "./org/organization-settings";
 export * from "./user/identified-user.sql";
-// User schemas (Better Auth core tables + critichut extensions)
+// User schemas (Better Auth core tables + userbubble extensions)
 export * from "./user/user.sql";

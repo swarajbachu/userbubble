@@ -1,4 +1,4 @@
-import { getChangelogEntries } from "@critichut/db/queries";
+import { getChangelogEntries } from "@userbubble/db/queries";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ChangelogBoard } from "~/app/org/[org]/changelog/_components/changelog-board";

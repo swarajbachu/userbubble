@@ -1,13 +1,13 @@
 "use client";
 
-import type { FeedbackComment, User } from "@critichut/db/schema";
+import { Message01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import type { FeedbackComment, User } from "@userbubble/db/schema";
 import {
   DoubleCard,
   DoubleCardHeader,
   DoubleCardInner,
-} from "@critichut/ui/double-card";
-import { Icon } from "@critichut/ui/icon";
-import { Message01Icon } from "@hugeicons-pro/core-bulk-rounded";
+} from "@userbubble/ui/double-card";
+import { Icon } from "@userbubble/ui/icon";
 import { useState } from "react";
 import { CommentForm } from "./comment-form";
 import { CommentItem } from "./comment-item";

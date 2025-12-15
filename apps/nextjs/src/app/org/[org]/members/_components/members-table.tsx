@@ -1,8 +1,10 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@critichut/ui/avatar";
-import { Badge } from "@critichut/ui/badge";
-import { Input } from "@critichut/ui/input";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Search01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
+import { Badge } from "@userbubble/ui/badge";
+import { Input } from "@userbubble/ui/input";
 import {
   Table,
   TableBody,
@@ -10,9 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@critichut/ui/table";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Search01Icon } from "@hugeicons-pro/core-bulk-rounded";
+} from "@userbubble/ui/table";
 import { useState } from "react";
 import { MemberActions } from "./member-actions";
 

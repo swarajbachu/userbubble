@@ -1,10 +1,10 @@
 "use client";
 
-import type { FeedbackPost } from "@critichut/db/schema";
-import { cn } from "@critichut/ui";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { FeedbackPost } from "@userbubble/db/schema";
+import { cn } from "@userbubble/ui";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";

@@ -1,4 +1,4 @@
-import { Button } from "@critichut/ui/button";
+import { Button } from "@userbubble/ui/button";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 

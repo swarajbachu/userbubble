@@ -1,4 +1,4 @@
-import { getChangelogEntries } from "@critichut/db/queries";
+import { getChangelogEntries } from "@userbubble/db/queries";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getOrganization } from "~/lib/get-organization";

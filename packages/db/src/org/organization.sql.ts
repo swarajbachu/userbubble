@@ -25,7 +25,7 @@ export const invitationStatusEnum = pgEnum(
 
 /**
  * Organization table
- * Represents a multi-tenant organization in critichut
+ * Represents a multi-tenant organization in userbubble
  */
 export const organization = pgTable("organization", {
   id: varchar("id", { length: 256 })
@@ -36,7 +36,7 @@ export const organization = pgTable("organization", {
   logo: text("logo"),
   website: text("website"),
 
-  // critichut-specific: Secret key for HMAC authentication (encrypted)
+  // userbubble-specific: Secret key for HMAC authentication (encrypted)
   // HMAC secret key for external authentication
   secretKey: text("secret_key"),
 

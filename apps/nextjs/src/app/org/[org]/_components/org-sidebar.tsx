@@ -1,20 +1,5 @@
 "use client";
 
-import { cn } from "@critichut/ui";
-import { Checkbox } from "@critichut/ui/checkbox";
-import { Icon } from "@critichut/ui/icon";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@critichut/ui/sidebar";
 import {
   Cancel01Icon,
   CheckmarkBadge01Icon,
@@ -29,6 +14,21 @@ import {
   UserMultiple02Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
 import { useQuery } from "@tanstack/react-query";
+import { cn } from "@userbubble/ui";
+import { Checkbox } from "@userbubble/ui/checkbox";
+import { Icon } from "@userbubble/ui/icon";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@userbubble/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";

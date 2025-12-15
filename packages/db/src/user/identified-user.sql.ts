@@ -5,13 +5,13 @@ import { user } from "./user.sql";
 
 /**
  * Identified User table
- * Links external users (from customer applications) to critichut users
+ * Links external users (from customer applications) to userbubble users
  *
- * Key concept: One critichut user can be identified by multiple organizations
+ * Key concept: One userbubble user can be identified by multiple organizations
  * with different external IDs.
  *
  * Example:
- * - john@example.com (critichut user)
+ * - john@example.com (userbubble user)
  *   - Identified by Org A as "customer_a_user_999"
  *   - Identified by Org B as "customer_b_user_777"
  *   - Identified by Org C as "customer_c_user_555"
@@ -21,7 +21,7 @@ export const identifiedUser = pgTable(
   {
     id: text("id").primaryKey(),
 
-    // critichut user ID
+    // userbubble user ID
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),

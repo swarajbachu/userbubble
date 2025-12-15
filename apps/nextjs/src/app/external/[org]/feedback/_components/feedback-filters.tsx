@@ -1,11 +1,5 @@
 "use client";
 
-import { cn } from "@critichut/ui";
-import { Button } from "@critichut/ui/button";
-import { Checkbox } from "@critichut/ui/checkbox";
-import { Icon } from "@critichut/ui/icon";
-import { Input } from "@critichut/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@critichut/ui/popover";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Cancel01Icon,
@@ -20,6 +14,16 @@ import {
   FilterHorizontalIcon,
   Search01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
+import { cn } from "@userbubble/ui";
+import { Button } from "@userbubble/ui/button";
+import { Checkbox } from "@userbubble/ui/checkbox";
+import { Icon } from "@userbubble/ui/icon";
+import { Input } from "@userbubble/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@userbubble/ui/popover";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 
 const STATUS_FILTERS = [

@@ -1,15 +1,19 @@
 "use client";
 
-import { Badge } from "@critichut/ui/badge";
-import { Button } from "@critichut/ui/button";
-import { Icon } from "@critichut/ui/icon";
-import { Input } from "@critichut/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@critichut/ui/popover";
 import {
   Cancel01Icon,
   CheckmarkBadge01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Badge } from "@userbubble/ui/badge";
+import { Button } from "@userbubble/ui/button";
+import { Icon } from "@userbubble/ui/icon";
+import { Input } from "@userbubble/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@userbubble/ui/popover";
 import { useState } from "react";
 import { useTRPC } from "~/trpc/react";
 

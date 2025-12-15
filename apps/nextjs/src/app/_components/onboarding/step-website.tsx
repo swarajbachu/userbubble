@@ -1,8 +1,8 @@
 "use client";
 
-import { Input } from "@critichut/ui/input";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { AlertCircleIcon } from "@hugeicons-pro/core-bulk-rounded";
+import { Input } from "@userbubble/ui/input";
 import { useState } from "react";
 import { z } from "zod";
 import { useWizard } from "./wizard-context";

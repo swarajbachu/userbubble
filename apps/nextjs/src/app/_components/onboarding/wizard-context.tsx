@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "@critichut/ui/toast";
+import { toast } from "@userbubble/ui/toast";
 import { useRouter } from "next/navigation";
 import {
   createContext,

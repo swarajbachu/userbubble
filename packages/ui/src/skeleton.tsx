@@ -1,4 +1,4 @@
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (

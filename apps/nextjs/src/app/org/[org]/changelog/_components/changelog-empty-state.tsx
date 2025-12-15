@@ -1,7 +1,7 @@
-import { Button } from "@critichut/ui/button";
-import { DoubleCard, DoubleCardInner } from "@critichut/ui/double-card";
-import { Icon } from "@critichut/ui/icon";
 import { Add01Icon, Rocket01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { Button } from "@userbubble/ui/button";
+import { DoubleCard, DoubleCardInner } from "@userbubble/ui/double-card";
+import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
 
 type ChangelogEmptyStateProps = {

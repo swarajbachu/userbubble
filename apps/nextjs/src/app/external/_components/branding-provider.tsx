@@ -1,6 +1,6 @@
 "use client";
 
-import type { OrganizationSettings } from "@critichut/db/org/organization-settings";
+import type { OrganizationSettings } from "@userbubble/db/org/organization-settings";
 
 type BrandingProviderProps = {
   children: React.ReactNode;

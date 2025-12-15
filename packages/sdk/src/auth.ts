@@ -15,19 +15,19 @@ export async function autoAuthenticate(
 
   if (!token) {
     if (debug) {
-      console.log("[critichut] No auth token in URL");
+      console.log("[userbubble] No auth token in URL");
     }
     return false;
   }
 
   if (debug) {
-    console.log("[critichut] Auth token found, attempting authentication");
+    console.log("[userbubble] Auth token found, attempting authentication");
   }
 
   // Decode token
   const authData = decodeToken(token);
   if (!authData) {
-    console.error("[critichut] Invalid auth token");
+    console.error("[userbubble] Invalid auth token");
     cleanUrl();
     return false;
   }
@@ -55,7 +55,7 @@ export async function autoAuthenticate(
       const error = await response
         .json()
         .catch(() => ({ message: "Unknown error" }));
-      console.error("[critichut] Authentication failed:", error);
+      console.error("[userbubble] Authentication failed:", error);
       cleanUrl();
       return false;
     }
@@ -63,7 +63,7 @@ export async function autoAuthenticate(
     const result = await response.json();
 
     if (debug) {
-      console.log("[critichut] Authentication successful:", result);
+      console.log("[userbubble] Authentication successful:", result);
     }
 
     // Clean URL immediately after successful authentication
@@ -71,7 +71,7 @@ export async function autoAuthenticate(
 
     return true;
   } catch (error) {
-    console.error("[critichut] Authentication request failed:", error);
+    console.error("[userbubble] Authentication request failed:", error);
     cleanUrl();
     return false;
   }
@@ -109,7 +109,7 @@ export async function logout(baseUrl: string): Promise<boolean> {
 
     return response.ok;
   } catch {
-    console.error("[critichut] Logout failed");
+    console.error("[userbubble] Logout failed");
     return false;
   }
 }

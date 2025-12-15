@@ -1,7 +1,7 @@
 {
-  "name": "@critichut/sdk",
+  "name": "@userbubble/sdk",
   "version": "0.1.0",
-  "description": "critichut JavaScript SDK for seamless user identification and authentication",
+  "description": "Userbubble JavaScript SDK for seamless user identification and authentication",
   "private": true,
   "type": "module",
   "main": "./dist/sdk.js",
@@ -24,7 +24,7 @@
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
-    "critichut",
+    "userbubble",
     "feedback",
     "authentication",
     "hmac",
@@ -32,7 +32,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@critichut/tsconfig": "workspace:*",
+    "@userbubble/tsconfig": "workspace:*",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.1",

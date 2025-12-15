@@ -1,5 +1,5 @@
 {
-  "extends": "@critichut/tsconfig/compiled-package.json",
+  "extends": "@userbubble/tsconfig/compiled-package.json",
   "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {

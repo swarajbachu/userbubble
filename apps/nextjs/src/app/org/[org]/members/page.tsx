@@ -1,4 +1,4 @@
-import { invitationQueries, memberQueries } from "@critichut/db/queries";
+import { invitationQueries, memberQueries } from "@userbubble/db/queries";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { getSession } from "~/auth/server";

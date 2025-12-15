@@ -2,9 +2,9 @@
 /** biome-ignore-all lint/a11y/useSemanticElements: <explanation> */
 "use client";
 
-import { cn } from "@critichut/ui";
 import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cn } from "@userbubble/ui";
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react";

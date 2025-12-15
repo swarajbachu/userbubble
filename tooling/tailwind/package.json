@@ -1,5 +1,5 @@
 {
-  "name": "@critichut/tailwind-config",
+  "name": "@userbubble/tailwind-config",
   "private": true,
   "type": "module",
   "exports": {
@@ -17,7 +17,7 @@
     "tailwindcss": "catalog:"
   },
   "devDependencies": {
-    "@critichut/tsconfig": "workspace:*",
+    "@userbubble/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:"
   }

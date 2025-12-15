@@ -10,7 +10,7 @@ export default function AuthLayout(props: { children: React.ReactNode }) {
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <span className="font-bold text-xs">C</span>
             </div>
-            Critichut
+            Userbubble
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
@@ -36,7 +36,7 @@ export default function AuthLayout(props: { children: React.ReactNode }) {
           <div className="mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;Critichut has transformed how we collect and prioritize
+                &ldquo;Userbubble has transformed how we collect and prioritize
                 user feedback. It's an essential tool for our product
                 team.&rdquo;
               </p>

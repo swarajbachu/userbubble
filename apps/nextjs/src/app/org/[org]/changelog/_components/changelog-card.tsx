@@ -1,16 +1,16 @@
 "use client";
 
-import type {
-  getChangelogEntries,
-  getLinkedFeedback,
-} from "@critichut/db/queries";
-import { Button } from "@critichut/ui/button";
-import { Icon } from "@critichut/ui/icon";
 import {
   Delete02Icon,
   PencilEdit01Icon,
   Rocket01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
+import type {
+  getChangelogEntries,
+  getLinkedFeedback,
+} from "@userbubble/db/queries";
+import { Button } from "@userbubble/ui/button";
+import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
 import { useState } from "react";
 import { ChangelogDisplay } from "./changelog-display";

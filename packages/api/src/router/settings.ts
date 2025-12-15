@@ -1,14 +1,14 @@
+import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import {
   memberQueries,
   organizationPermissions,
   organizationQueries,
-} from "@critichut/db/queries";
+} from "@userbubble/db/queries";
 import {
   organizationSettingsSchema,
   parseOrganizationSettings,
   serializeOrganizationSettings,
-} from "@critichut/db/schema";
-import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
+} from "@userbubble/db/schema";
 import { z } from "zod";
 
 import { protectedProcedure } from "../trpc";

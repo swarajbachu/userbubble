@@ -1,7 +1,7 @@
 "use client";
 
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 
 function Separator({
   className,

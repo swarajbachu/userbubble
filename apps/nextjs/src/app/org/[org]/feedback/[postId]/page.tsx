@@ -4,14 +4,14 @@ import {
   getPostComments,
   getUserVote,
   memberQueries,
-} from "@critichut/db/queries";
-import { Avatar, AvatarFallback, AvatarImage } from "@critichut/ui/avatar";
+} from "@userbubble/db/queries";
+import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
 import {
   DoubleCard,
   DoubleCardHeader,
   DoubleCardInner,
-} from "@critichut/ui/double-card";
-import { Icon } from "@critichut/ui/icon";
+} from "@userbubble/ui/double-card";
+import { Icon } from "@userbubble/ui/icon";
 import { notFound } from "next/navigation";
 import { getSession } from "~/auth/server";
 import { categoryLabels, statusConfig } from "~/components/feedback/config";

@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
-import { Icon } from "@critichut/ui/icon";
-import { Sheet, SheetContent, SheetTrigger } from "@critichut/ui/sheet";
-import { SidebarProvider } from "@critichut/ui/sidebar";
 import { Menu01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { Button } from "@userbubble/ui/button";
+import { Icon } from "@userbubble/ui/icon";
+import { Sheet, SheetContent, SheetTrigger } from "@userbubble/ui/sheet";
+import { SidebarProvider } from "@userbubble/ui/sidebar";
 import { OrgSidebar } from "./org-sidebar";
 
 type MobileNavProps = {

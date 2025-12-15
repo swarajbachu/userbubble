@@ -2,10 +2,10 @@ import {
   getFeedbackPost,
   getPostComments,
   getUserVote,
-} from "@critichut/db/queries";
-import { Avatar, AvatarFallback, AvatarImage } from "@critichut/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@critichut/ui/card";
-import { Icon } from "@critichut/ui/icon";
+} from "@userbubble/db/queries";
+import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@userbubble/ui/card";
+import { Icon } from "@userbubble/ui/icon";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CommentsSection } from "~/app/org/[org]/feedback/[postId]/_components/comments-section";

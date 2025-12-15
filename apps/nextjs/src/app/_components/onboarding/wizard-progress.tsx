@@ -1,4 +1,4 @@
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 
 type WizardProgressProps = {
   currentStep: number;

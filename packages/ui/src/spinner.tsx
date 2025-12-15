@@ -1,6 +1,6 @@
-import { cn } from "@critichut/ui";
 import { Loading03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cn } from "@userbubble/ui";
 
 function Spinner({
   className,

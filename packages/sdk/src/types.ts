@@ -1,11 +1,11 @@
 /**
- * TypeScript definitions for critichut SDK
+ * TypeScript definitions for Userbubble SDK
  */
 
 /**
  * User identity information with HMAC signature
  */
-export type critichutUser = {
+export type UserbubbleUser = {
   /**
    * Unique user ID from your system
    */
@@ -41,15 +41,15 @@ export type critichutUser = {
 /**
  * SDK configuration options
  */
-export type critichutConfig = {
+export type UserbubbleConfig = {
   /**
    * User to identify on initialization
    */
-  user?: critichutUser;
+  user?: UserbubbleUser;
 
   /**
-   * Base URL for critichut
-   * @default "https://app.critichut.com"
+   * Base URL for Userbubble
+   * @default "https://app.userbubble.com"
    */
   baseUrl?: string;
 
@@ -61,7 +61,7 @@ export type critichutConfig = {
 
   /**
    * CSS selector for links to enhance
-   * @default "a[href*='critichut.com']"
+   * @default "a[href*='userbubble.com']"
    */
   linkSelector?: string;
 
@@ -88,16 +88,16 @@ export type AuthToken = {
 /**
  * SDK instance interface
  */
-export type IcritichutSDK = {
+export type IUserbubbleSDK = {
   /**
    * Initialize the SDK
    */
-  init(orgSlug: string, config?: critichutConfig): void;
+  init(orgSlug: string, config?: UserbubbleConfig): void;
 
   /**
    * Identify a user
    */
-  identify(user: critichutUser): void;
+  identify(user: UserbubbleUser): void;
 
   /**
    * Logout current user
@@ -107,7 +107,7 @@ export type IcritichutSDK = {
   /**
    * Get current identified user
    */
-  getUser(): critichutUser | null;
+  getUser(): UserbubbleUser | null;
 
   /**
    * Check if user is identified

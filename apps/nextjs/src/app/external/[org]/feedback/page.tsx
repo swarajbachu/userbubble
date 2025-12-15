@@ -1,6 +1,6 @@
-import { parseOrganizationSettings } from "@critichut/db/schema";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowDown01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { parseOrganizationSettings } from "@userbubble/db/schema";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { FeedbackBoard } from "~/components/feedback/feedback-board";

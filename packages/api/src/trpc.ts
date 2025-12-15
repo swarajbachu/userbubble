@@ -7,9 +7,9 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 
-import type { Auth } from "@critichut/auth";
-import { db } from "@critichut/db/client";
 import { initTRPC, TRPCError } from "@trpc/server";
+import type { Auth } from "@userbubble/auth";
+import { db } from "@userbubble/db/client";
 import superjson from "superjson";
 import { ZodError, z } from "zod/v4";
 

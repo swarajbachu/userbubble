@@ -1,5 +1,5 @@
 {
-  "name": "@critichut/auth",
+  "name": "@userbubble/auth",
   "private": true,
   "type": "module",
   "exports": {
@@ -15,14 +15,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@critichut/db": "workspace:*",
+    "@userbubble/db": "workspace:*",
     "@better-auth/expo": "catalog:",
     "@t3-oss/env-core": "^0.13.8",
     "better-auth": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@critichut/tsconfig": "workspace:*",
+    "@userbubble/tsconfig": "workspace:*",
     "@better-auth/cli": "catalog:",
     "typescript": "catalog:"
   }

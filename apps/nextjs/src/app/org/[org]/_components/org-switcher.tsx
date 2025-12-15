@@ -1,13 +1,17 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
-import { Icon } from "@critichut/ui/icon";
-import { Popover, PopoverContent, PopoverTrigger } from "@critichut/ui/popover";
 import {
   ArrowDown01Icon,
   Building02Icon,
   Tick02Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
+import { Button } from "@userbubble/ui/button";
+import { Icon } from "@userbubble/ui/icon";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@userbubble/ui/popover";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 

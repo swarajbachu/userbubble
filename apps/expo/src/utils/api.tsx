@@ -1,7 +1,7 @@
-import type { AppRouter } from "@critichut/api";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
+import type { AppRouter } from "@userbubble/api";
 import superjson from "superjson";
 
 import { authClient } from "./auth";
@@ -46,4 +46,4 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
   queryClient,
 });
 
-export type { RouterInputs, RouterOutputs } from "@critichut/api";
+export type { RouterInputs, RouterOutputs } from "@userbubble/api";

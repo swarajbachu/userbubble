@@ -1,6 +1,6 @@
 "use client";
 
-import { Checkbox } from "@critichut/ui/checkbox";
+import { Checkbox } from "@userbubble/ui/checkbox";
 import {
   Dialog,
   DialogBody,
@@ -8,8 +8,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@critichut/ui/dialog";
-import { Label } from "@critichut/ui/label";
+} from "@userbubble/ui/dialog";
+import { Label } from "@userbubble/ui/label";
 import { useWizard } from "./wizard-context";
 
 type ChecklistItemProps = {

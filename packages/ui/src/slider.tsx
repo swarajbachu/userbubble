@@ -2,7 +2,7 @@
 "use client";
 
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import * as React from "react";
 
 function Slider({

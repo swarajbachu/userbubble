@@ -1,4 +1,4 @@
-# critichut Authentication Flow
+# userbubble Authentication Flow
 
 > **Complete guide to UserJot-style auto-login with HMAC authentication**
 
@@ -22,7 +22,7 @@
 
 ## Overview
 
-critichut uses a **Safari-compatible auto-login system** that mimics UserJot's seamless experience while providing enhanced security through HMAC signatures.
+userbubble uses a **Safari-compatible auto-login system** that mimics UserJot's seamless experience while providing enhanced security through HMAC signatures.
 
 ### Key Features
 
@@ -30,13 +30,13 @@ critichut uses a **Safari-compatible auto-login system** that mimics UserJot's s
 - ✅ **Clean URLs** - Tokens removed after authentication
 - ✅ **Secure HMAC signatures** - Customer-verified identity
 - ✅ **One-time tokens** - Session persists via first-party cookies
-- ✅ **Cross-subdomain sessions** - Works across all `*.critichut.com`
+- ✅ **Cross-subdomain sessions** - Works across all `*.userbubble.com`
 
 ### Architecture
 
 ```
-Customer's Website           critichut Subdomain
-(customer-app.com)          (acme.critichut.com)
+Customer's Website           userbubble Subdomain
+(customer-app.com)          (acme.userbubble.com)
        │                            │
        │ 1. SDK loaded              │
        │ 2. identify() called       │
@@ -51,7 +51,7 @@ Customer's Website           critichut Subdomain
        │                            │ 8. Clean URL
        │                            │
        │<──── Cookie set ───────────│
-       │    .critichut.com          │
+       │    .userbubble.com          │
        │                            │
        │ 9. Subsequent visits       │
        ├──── Cookie sent ──────────>│
@@ -76,15 +76,15 @@ Safari's Intelligent Tracking Prevention (ITP) blocks:
 
 ```javascript
 // ❌ DOESN'T WORK in Safari
-await fetch('https://api.critichut.com/identify', {
+await fetch('https://api.userbubble.com/identify', {
   credentials: 'include' // Cookie blocked by ITP!
 });
 
 // ✅ WORKS in Safari
 // 1. Pass identity via URL token
-window.location.href = 'https://acme.critichut.com/feedback?auth=TOKEN';
+window.location.href = 'https://acme.userbubble.com/feedback?auth=TOKEN';
 
-// 2. On critichut subdomain (first-party context!)
+// 2. On userbubble subdomain (first-party context!)
 await fetch('/api/auth/external-login', {
   credentials: 'include' // ✅ Safari allows (first-party)
 });
@@ -96,8 +96,8 @@ await fetch('/api/auth/external-login', {
 |----------|------------|--------|
 | **Cross-domain API + cookie** | ❌ Blocked | Third-party context |
 | **Iframe postMessage** | ❌ Blocked | Third-party iframe |
-| **URL token → First-party API** | ✅ Allowed | First-party context on critichut domain |
-| **First-party cookie on `.critichut.com`** | ✅ Allowed | Same-site cookie |
+| **URL token → First-party API** | ✅ Allowed | First-party context on userbubble domain |
+| **First-party cookie on `.userbubble.com`** | ✅ Allowed | Same-site cookie |
 
 ---
 
@@ -106,7 +106,7 @@ await fetch('/api/auth/external-login', {
 ### Step 1: Customer's Backend Generates HMAC Signature
 
 ```typescript
-// Customer's API: /api/critichut/user-signature
+// Customer's API: /api/userbubble/user-signature
 export async function GET(req: Request) {
   // Get user from customer's session
   const session = await getCustomerSession(req);
@@ -117,7 +117,7 @@ export async function GET(req: Request) {
 
   // Generate HMAC signature (sign the user ID)
   const signature = crypto
-    .createHmac('sha256', process.env.critichut_SECRET_KEY!)
+    .createHmac('sha256', process.env.userbubble_SECRET_KEY!)
     .update(session.user.id)
     .digest('hex');
 
@@ -136,12 +136,12 @@ export async function GET(req: Request) {
 **HMAC Signature Details:**
 - Input: User's unique ID from customer's system
 - Algorithm: HMAC-SHA256
-- Key: Customer's critichut secret key (from dashboard)
+- Key: Customer's userbubble secret key (from dashboard)
 - Output: Hex-encoded signature
 
 ---
 
-### Step 2: Customer Embeds critichut SDK
+### Step 2: Customer Embeds userbubble SDK
 
 ```html
 <!-- Customer's website (customer-app.com) -->
@@ -153,17 +153,17 @@ export async function GET(req: Request) {
 <body>
   <!-- Your app content -->
 
-  <!-- critichut SDK -->
-  <script src="https://cdn.critichut.com/sdk.js" async></script>
+  <!-- userbubble SDK -->
+  <script src="https://cdn.userbubble.com/sdk.js" async></script>
   <script>
     // Wait for SDK to load
-    window.addEventListener('critichut:ready', async () => {
+    window.addEventListener('userbubble:ready', async () => {
       // Fetch user signature from your backend
-      const response = await fetch('/api/critichut/user-signature');
+      const response = await fetch('/api/userbubble/user-signature');
       const data = await response.json();
 
-      // Initialize critichut
-      window.critichut.init('acme', {
+      // Initialize userbubble
+      window.userbubble.init('acme', {
         user: {
           id: data.user.id,
           email: data.user.email,
@@ -177,8 +177,8 @@ export async function GET(req: Request) {
 
   <!-- Regular feedback links - SDK auto-enhances them! -->
   <nav>
-    <a href="https://acme.critichut.com/feedback">Submit Feedback</a>
-    <a href="https://acme.critichut.com/roadmap">View Roadmap</a>
+    <a href="https://acme.userbubble.com/feedback">Submit Feedback</a>
+    <a href="https://acme.userbubble.com/roadmap">View Roadmap</a>
   </nav>
 </body>
 </html>
@@ -189,10 +189,10 @@ export async function GET(req: Request) {
 ### Step 3: SDK Stores Identity Locally
 
 ```typescript
-// critichut SDK (cdn.critichut.com/sdk.js)
+// userbubble SDK (cdn.userbubble.com/sdk.js)
 
-class critichutSDK {
-  init(orgSlug: string, config: { user: critichutUser }) {
+class userbubbleSDK {
+  init(orgSlug: string, config: { user: userbubbleUser }) {
     this.orgSlug = orgSlug;
     this.user = config.user;
 
@@ -203,24 +203,24 @@ class critichutSDK {
       timestamp: Date.now(),
     };
 
-    localStorage.setItem('critichut:identity', JSON.stringify(identityData));
+    localStorage.setItem('userbubble:identity', JSON.stringify(identityData));
 
-    console.log('[critichut] User identified:', config.user.email);
+    console.log('[userbubble] User identified:', config.user.email);
 
-    // Auto-enhance all critichut links
+    // Auto-enhance all userbubble links
     this.enhanceLinks();
   }
 
   private enhanceLinks() {
-    // Find all links to this org's critichut subdomain
-    const links = document.querySelectorAll(`a[href*="${this.orgSlug}.critichut.com"]`);
+    // Find all links to this org's userbubble subdomain
+    const links = document.querySelectorAll(`a[href*="${this.orgSlug}.userbubble.com"]`);
 
     links.forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
 
         // Get stored identity
-        const identityData = localStorage.getItem('critichut:identity');
+        const identityData = localStorage.getItem('userbubble:identity');
 
         if (identityData) {
           // Generate URL-safe token
@@ -244,10 +244,10 @@ class critichutSDK {
 }
 
 // Global instance
-window.critichut = new critichutSDK();
+window.userbubble = new userbubbleSDK();
 
 // Emit ready event
-window.dispatchEvent(new Event('critichut:ready'));
+window.dispatchEvent(new Event('userbubble:ready'));
 ```
 
 **What's Stored:**
@@ -271,10 +271,10 @@ window.dispatchEvent(new Event('critichut:ready'));
 ### Step 4: User Clicks Feedback Link
 
 ```
-User clicks: <a href="https://acme.critichut.com/feedback">Submit Feedback</a>
+User clicks: <a href="https://acme.userbubble.com/feedback">Submit Feedback</a>
 
 SDK intercepts click and redirects to:
-https://acme.critichut.com/feedback?auth=eyJvcmdTbHVnIjoiYWNtZSIsInVzZXIiOnsiaWQiOiJjdXN0b21lcl91c2VyXzEyMzQ1IiwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwibmFtZSI6IkpvaG4gRG9lIiwic2lnbmF0dXJlIjoiYTFiMmMzZDRlNWY2In0sInRpbWVzdGFtcCI6MTcwNDA2NzIwMDAwMH0
+https://acme.userbubble.com/feedback?auth=eyJvcmdTbHVnIjoiYWNtZSIsInVzZXIiOnsiaWQiOiJjdXN0b21lcl91c2VyXzEyMzQ1IiwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwibmFtZSI6IkpvaG4gRG9lIiwic2lnbmF0dXJlIjoiYTFiMmMzZDRlNWY2In0sInRpbWVzdGFtcCI6MTcwNDA2NzIwMDAwMH0
 
 Token contains:
 - Organization slug
@@ -285,7 +285,7 @@ Token contains:
 
 ---
 
-### Step 5: critichut Page Loads with Token
+### Step 5: userbubble Page Loads with Token
 
 ```typescript
 // apps/nextjs/src/app/_sites/[org]/layout.tsx
@@ -321,7 +321,7 @@ export default function OrgLayout({ children }) {
       const maxAge = 5 * 60 * 1000; // 5 minutes
 
       if (Math.abs(now - identityData.timestamp) > maxAge) {
-        console.error('[critichut] Auth token expired');
+        console.error('[userbubble] Auth token expired');
         cleanupUrl();
         return;
       }
@@ -343,7 +343,7 @@ export default function OrgLayout({ children }) {
       });
 
       if (response.ok) {
-        console.log('[critichut] Authentication successful');
+        console.log('[userbubble] Authentication successful');
 
         // Clean URL (remove auth token)
         cleanupUrl();
@@ -351,11 +351,11 @@ export default function OrgLayout({ children }) {
         // Reload to show authenticated state
         window.location.reload();
       } else {
-        console.error('[critichut] Authentication failed');
+        console.error('[userbubble] Authentication failed');
         cleanupUrl();
       }
     } catch (error) {
-      console.error('[critichut] Auth error:', error);
+      console.error('[userbubble] Auth error:', error);
       cleanupUrl();
     }
   }
@@ -380,8 +380,8 @@ export default function OrgLayout({ children }) {
 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { db } from '@critichut/db/client';
-import { organization, user, identifiedUser, session } from '@critichut/db/schema';
+import { db } from '@userbubble/db/client';
+import { organization, user, identifiedUser, session } from '@userbubble/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 
@@ -505,9 +505,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Cookie on .critichut.com domain (first-party!)
-    response.cookies.set('critichut_session', sessionToken, {
-      domain: '.critichut.com',
+    // Cookie on .userbubble.com domain (first-party!)
+    response.cookies.set('userbubble_session', sessionToken, {
+      domain: '.userbubble.com',
       path: '/',
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -517,7 +517,7 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('[critichut] Auth error:', error);
+    console.error('[userbubble] Auth error:', error);
     return NextResponse.json(
       { error: 'Authentication failed' },
       { status: 500 }
@@ -552,12 +552,12 @@ function decryptSecretKey(encrypted: string): string {
 
 ```
 1. Backend sets cookie:
-   critichut_session=xyz123; Domain=.critichut.com; Path=/; HttpOnly; Secure; SameSite=Lax
+   userbubble_session=xyz123; Domain=.userbubble.com; Path=/; HttpOnly; Secure; SameSite=Lax
 
 2. Frontend cleans URL:
-   https://acme.critichut.com/feedback?auth=TOKEN
+   https://acme.userbubble.com/feedback?auth=TOKEN
    →
-   https://acme.critichut.com/feedback
+   https://acme.userbubble.com/feedback
 
 3. Page reloads (now authenticated)
 
@@ -569,10 +569,10 @@ function decryptSecretKey(encrypted: string): string {
 ### Step 8: Subsequent Visits
 
 ```
-User directly visits: https://acme.critichut.com/feedback
+User directly visits: https://acme.userbubble.com/feedback
 
 Browser automatically sends:
-Cookie: critichut_session=xyz123
+Cookie: userbubble_session=xyz123
 
 Backend validates session:
 ✅ Session exists
@@ -609,7 +609,7 @@ const token = btoa(JSON.stringify(identityData))
   .replace(/=+$/, '');
 
 // Final URL
-const url = `https://acme.critichut.com/feedback?auth=${token}`;
+const url = `https://acme.userbubble.com/feedback?auth=${token}`;
 ```
 
 ### Token Validation
@@ -642,8 +642,8 @@ if (!isValid) {
 ### Cookie Configuration
 
 ```typescript
-response.cookies.set('critichut_session', sessionToken, {
-  domain: '.critichut.com',    // ✅ Works across all subdomains
+response.cookies.set('userbubble_session', sessionToken, {
+  domain: '.userbubble.com',    // ✅ Works across all subdomains
   path: '/',                   // ✅ Available site-wide
   httpOnly: true,              // ✅ Prevents XSS attacks
   secure: true,                // ✅ HTTPS only in production
@@ -656,7 +656,7 @@ response.cookies.set('critichut_session', sessionToken, {
 
 | Attribute | Purpose | Safari ITP |
 |-----------|---------|------------|
-| **domain: `.critichut.com`** | Share across all `*.critichut.com` | ✅ Allowed (first-party) |
+| **domain: `.userbubble.com`** | Share across all `*.userbubble.com` | ✅ Allowed (first-party) |
 | **sameSite: 'lax'** | Allow cross-site navigation | ✅ Allowed (user click) |
 | **secure: true** | HTTPS only | ✅ Required |
 | **httpOnly: true** | Prevent JavaScript access | ✅ Security best practice |
@@ -664,12 +664,12 @@ response.cookies.set('critichut_session', sessionToken, {
 ### Cross-Subdomain Behavior
 
 ```
-Cookie set on: acme.critichut.com
+Cookie set on: acme.userbubble.com
 Works on:
-  ✅ acme.critichut.com
-  ✅ acme.critichut.com/feedback
-  ✅ acme.critichut.com/roadmap
-  ✅ app.critichut.com (if authenticated session)
+  ✅ acme.userbubble.com
+  ✅ acme.userbubble.com/feedback
+  ✅ acme.userbubble.com/roadmap
+  ✅ app.userbubble.com (if authenticated session)
   ❌ customer-app.com (different domain)
 ```
 
@@ -686,7 +686,7 @@ const signature = crypto
   .update(userId)
   .digest('hex');
 
-// critichut verifies signature
+// userbubble verifies signature
 const expectedSignature = crypto
   .createHmac('sha256', SECRET_KEY)
   .update(userId)
@@ -778,7 +778,7 @@ if (!org) {
 try {
   const response = await fetch('/api/auth/external-login/sign-in', ...);
 } catch (error) {
-  console.error('[critichut] Network error:', error);
+  console.error('[userbubble] Network error:', error);
   showError('Connection failed. Please try again.');
 }
 ```
@@ -879,8 +879,8 @@ async function getSession(token: string) {
 1. ✅ **Customer embeds SDK** - Loads from CDN
 2. ✅ **SDK identifies user** - Stores in localStorage with HMAC signature
 3. ✅ **User clicks link** - SDK appends `?auth=token` to URL
-4. ✅ **critichut verifies** - HMAC signature + timestamp validation
-5. ✅ **Session created** - First-party cookie on `.critichut.com`
+4. ✅ **userbubble verifies** - HMAC signature + timestamp validation
+5. ✅ **Session created** - First-party cookie on `.userbubble.com`
 6. ✅ **URL cleaned** - Token removed from URL
 7. ✅ **User authenticated** - Subsequent visits use cookie
 

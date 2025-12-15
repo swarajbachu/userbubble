@@ -1,4 +1,4 @@
-import { getChangelogEntries } from "@critichut/db/queries";
+import { getChangelogEntries } from "@userbubble/db/queries";
 import { getOrganization } from "~/lib/get-organization";
 
 export async function GET(

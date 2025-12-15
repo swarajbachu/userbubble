@@ -1,5 +1,5 @@
 {
-  "extends": ["@critichut/tsconfig/base.json"],
+  "extends": ["@userbubble/tsconfig/base.json"],
   "compilerOptions": {
     "jsx": "react-native",
     "checkJs": false,

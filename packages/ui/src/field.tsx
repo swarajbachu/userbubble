@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import { useMemo } from "react";
 import { Label } from "./label";

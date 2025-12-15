@@ -1,16 +1,16 @@
 {
-  "extends": "@critichut/tsconfig/base.json",
+  "extends": "@userbubble/tsconfig/base.json",
   "compilerOptions": {
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "preserve",
     "paths": {
       "~/*": ["./src/*"],
-      "@critichut/ui/*": ["../../packages/ui/src/*"],
-      "@critichut/ui": ["../../packages/ui/src/index.ts"],
-      "@critichut/api/*": ["../../packages/api/src/*"],
-      "@critichut/auth/*": ["../../packages/auth/src/*"],
-      "@critichut/db/*": ["../../packages/db/src/*"],
-      "@critichut/validators/*": ["../../packages/validators/src/*"]
+      "@userbubble/ui/*": ["../../packages/ui/src/*"],
+      "@userbubble/ui": ["../../packages/ui/src/index.ts"],
+      "@userbubble/api/*": ["../../packages/api/src/*"],
+      "@userbubble/auth/*": ["../../packages/auth/src/*"],
+      "@userbubble/db/*": ["../../packages/db/src/*"],
+      "@userbubble/validators/*": ["../../packages/validators/src/*"]
     },
     "plugins": [
       {

@@ -1,4 +1,4 @@
-import { getChangelogEntries, getFeedbackPosts } from "@critichut/db/queries";
+import { getChangelogEntries, getFeedbackPosts } from "@userbubble/db/queries";
 import type { MetadataRoute } from "next";
 import { auth } from "~/auth/server";
 

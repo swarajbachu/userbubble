@@ -1,18 +1,18 @@
 "use client";
 
-import type { Organization } from "@critichut/db/schema";
-import { parseOrganizationSettings } from "@critichut/db/schema";
-import { Button } from "@critichut/ui/button";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Organization } from "@userbubble/db/schema";
+import { parseOrganizationSettings } from "@userbubble/db/schema";
+import { Button } from "@userbubble/ui/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@critichut/ui/field";
-import { Input } from "@critichut/ui/input";
-import { toast } from "@critichut/ui/toast";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+} from "@userbubble/ui/field";
+import { Input } from "@userbubble/ui/input";
+import { toast } from "@userbubble/ui/toast";
 import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
 

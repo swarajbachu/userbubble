@@ -1,26 +1,26 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@critichut/ui/card";
-import {
-  DoubleCard,
-  DoubleCardFooter,
-  DoubleCardInner,
-} from "@critichut/ui/double-card";
-import { Icon } from "@critichut/ui/icon";
-import { Input } from "@critichut/ui/input";
-import { Label } from "@critichut/ui/label";
-import { toast } from "@critichut/ui/toast";
 import {
   Tick01Icon,
   UserAccountIcon,
   UserSquareIcon,
 } from "@hugeicons-pro/core-bulk-rounded";
+import { Button } from "@userbubble/ui/button";
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@userbubble/ui/card";
+import {
+  DoubleCard,
+  DoubleCardFooter,
+  DoubleCardInner,
+} from "@userbubble/ui/double-card";
+import { Icon } from "@userbubble/ui/icon";
+import { Input } from "@userbubble/ui/input";
+import { Label } from "@userbubble/ui/label";
+import { toast } from "@userbubble/ui/toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 

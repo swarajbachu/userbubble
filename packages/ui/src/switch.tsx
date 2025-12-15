@@ -1,7 +1,7 @@
 "use client";
 
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 
 function Switch({
   className,

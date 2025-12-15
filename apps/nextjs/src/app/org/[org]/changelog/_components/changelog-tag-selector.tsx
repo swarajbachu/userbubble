@@ -1,5 +1,5 @@
-import { cn } from "@critichut/ui";
-import { Icon } from "@critichut/ui/icon";
+import { cn } from "@userbubble/ui";
+import { Icon } from "@userbubble/ui/icon";
 import { tagConfig } from "~/components/changelog/config";
 
 type ChangelogTagSelectorProps = {

@@ -44,7 +44,7 @@ export function decodeToken(token: string): AuthToken | null {
 
     return data;
   } catch (error) {
-    console.error("[critichut] Failed to decode token:", error);
+    console.error("[userbubble] Failed to decode token:", error);
     return null;
   }
 }

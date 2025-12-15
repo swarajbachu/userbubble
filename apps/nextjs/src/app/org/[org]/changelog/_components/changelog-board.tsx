@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
-import { Icon } from "@critichut/ui/icon";
 import { Add01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Button } from "@userbubble/ui/button";
+import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { authClient } from "~/auth/client";

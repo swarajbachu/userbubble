@@ -1,12 +1,12 @@
 "use client";
 
-import { Badge } from "@critichut/ui/badge";
+import { Badge } from "@userbubble/ui/badge";
 import {
   DoubleCard,
   DoubleCardHeader,
   DoubleCardInner,
-} from "@critichut/ui/double-card";
-import { Icon } from "@critichut/ui/icon";
+} from "@userbubble/ui/double-card";
+import { Icon } from "@userbubble/ui/icon";
 import Image from "next/image";
 import { tagConfig } from "~/components/changelog/config";
 import { LinkedFeedbackList } from "./linked-feedback-list";

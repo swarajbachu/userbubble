@@ -128,15 +128,15 @@ Biome's linter will catch most issues automatically. Focus your attention on:
 
 ```typescript
 // ✅ Correct - use package exports
-import { generateSecretKey, verifyHMAC } from "@critichut/auth";
-import { organizationQueries, memberQueries } from "@critichut/db/queries";
-import { createOrganizationValidator } from "@critichut/db/schema";
-import { createSlug, isValidSlug, isReservedSlug } from "@critichut/db/lib/slug";
+import { generateSecretKey, verifyHMAC } from "@userbubble/auth";
+import { organizationQueries, memberQueries } from "@userbubble/db/queries";
+import { createOrganizationValidator } from "@userbubble/db/schema";
+import { createSlug, isValidSlug, isReservedSlug } from "@userbubble/db/lib/slug";
 
 // ❌ Wrong - don't use deep imports
-import { generateSecretKey } from "@critichut/auth/utils/hmac";
-import { createOrganizationValidator } from "@critichut/db/validators";
-import { organizationQueries } from "@critichut/db/queries/organization";
+import { generateSecretKey } from "@userbubble/auth/utils/hmac";
+import { createOrganizationValidator } from "@userbubble/db/validators";
+import { organizationQueries } from "@userbubble/db/queries/organization";
 ```
 
 **Frontend imports:**
@@ -210,7 +210,7 @@ const data = await auth.api.checkOrganizationSlug({
 
 **When to use direct DB queries:**
 ```typescript
-import { organizationQueries } from "@critichut/db/queries";
+import { organizationQueries } from "@userbubble/db/queries";
 
 // ✅ Middleware - direct queries for performance
 const userOrgs = await organizationQueries.listUserOrganizations(userId);

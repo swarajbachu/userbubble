@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@critichut/ui";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Idea01Icon, Task01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import { cn } from "@userbubble/ui";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CreateFeedbackButton } from "./create-feedback-button";

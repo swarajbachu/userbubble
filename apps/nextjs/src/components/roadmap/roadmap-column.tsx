@@ -1,9 +1,9 @@
 "use client";
 
-import type { FeedbackPost } from "@critichut/db/schema";
-import { cn } from "@critichut/ui";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { InboxIcon } from "@hugeicons-pro/core-bulk-rounded";
+import type { FeedbackPost } from "@userbubble/db/schema";
+import { cn } from "@userbubble/ui";
 import type { ComponentProps } from "react";
 import { RoadmapCard } from "./roadmap-card";
 

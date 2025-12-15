@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
+import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@critichut/ui/dialog";
+} from "@userbubble/ui/dialog";
 
 type DeleteChangelogDialogProps = {
   open: boolean;

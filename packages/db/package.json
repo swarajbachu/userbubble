@@ -1,5 +1,5 @@
 {
-  "name": "@critichut/db",
+  "name": "@userbubble/db",
   "private": true,
   "type": "module",
   "exports": {
@@ -41,7 +41,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@critichut/tsconfig": "workspace:*",
+    "@userbubble/tsconfig": "workspace:*",
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.31.5",
     "typescript": "catalog:"

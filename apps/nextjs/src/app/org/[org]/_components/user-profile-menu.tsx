@@ -1,16 +1,16 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@critichut/ui/avatar";
-import { Button } from "@critichut/ui/button";
+import { Logout01Icon, UserIcon } from "@hugeicons-pro/core-bulk-rounded";
+import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
+import { Button } from "@userbubble/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@critichut/ui/dropdown-menu";
-import { Icon } from "@critichut/ui/icon";
-import { Logout01Icon, UserIcon } from "@hugeicons-pro/core-bulk-rounded";
+} from "@userbubble/ui/dropdown-menu";
+import { Icon } from "@userbubble/ui/icon";
 import { useRouter } from "next/navigation";
 import { authClient } from "~/auth/client";
 

@@ -1,7 +1,7 @@
 "use client";
 
-import type { getChangelogEntry } from "@critichut/db/queries";
 import { useForm } from "@tanstack/react-form";
+import type { getChangelogEntry } from "@userbubble/db/queries";
 import { useEffect } from "react";
 
 type ChangelogEntry = Awaited<ReturnType<typeof getChangelogEntry>>;

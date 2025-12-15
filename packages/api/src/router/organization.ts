@@ -1,5 +1,5 @@
-import { organizationQueries } from "@critichut/db/queries";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
+import { organizationQueries } from "@userbubble/db/queries";
 import { z } from "zod";
 
 import { publicProcedure } from "../trpc";

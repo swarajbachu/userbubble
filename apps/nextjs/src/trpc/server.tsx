@@ -1,8 +1,8 @@
-import type { AppRouter } from "@critichut/api";
-import { appRouter, createTRPCContext } from "@critichut/api";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import type { TRPCQueryOptions } from "@trpc/tanstack-react-query";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
+import type { AppRouter } from "@userbubble/api";
+import { appRouter, createTRPCContext } from "@userbubble/api";
 import { headers } from "next/headers";
 import { cache } from "react";
 

@@ -1,6 +1,6 @@
-import { desc, eq } from "@critichut/db";
-import { CreatePostSchema, Post } from "@critichut/db/schema";
 import type { TRPCRouterRecord } from "@trpc/server";
+import { desc, eq } from "@userbubble/db";
+import { CreatePostSchema, Post } from "@userbubble/db/schema";
 import { z } from "zod/v4";
 
 import { protectedProcedure, publicProcedure } from "../trpc";

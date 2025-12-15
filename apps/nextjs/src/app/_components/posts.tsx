@@ -1,24 +1,24 @@
 "use client";
 
-import type { RouterOutputs } from "@critichut/api";
-import { CreatePostSchema } from "@critichut/db/schema";
-import { cn } from "@critichut/ui";
-import { Button } from "@critichut/ui/button";
-import {
-  Field,
-  FieldContent,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@critichut/ui/field";
-import { Input } from "@critichut/ui/input";
-import { toast } from "@critichut/ui/toast";
 import { useForm } from "@tanstack/react-form";
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import type { RouterOutputs } from "@userbubble/api";
+import { CreatePostSchema } from "@userbubble/db/schema";
+import { cn } from "@userbubble/ui";
+import { Button } from "@userbubble/ui/button";
+import {
+  Field,
+  FieldContent,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@userbubble/ui/field";
+import { Input } from "@userbubble/ui/input";
+import { toast } from "@userbubble/ui/toast";
 
 import { useTRPC } from "~/trpc/react";
 

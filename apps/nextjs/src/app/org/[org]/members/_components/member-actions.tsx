@@ -1,6 +1,9 @@
 "use client";
 
-import { Button } from "@critichut/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { MoreVerticalIcon } from "@hugeicons-pro/core-bulk-rounded";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
   DialogBody,
@@ -9,11 +12,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@critichut/ui/dialog";
-import { toast } from "@critichut/ui/toast";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { MoreVerticalIcon } from "@hugeicons-pro/core-bulk-rounded";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+} from "@userbubble/ui/dialog";
+import { toast } from "@userbubble/ui/toast";
 import { useState } from "react";
 import { useTRPC } from "~/trpc/react";
 

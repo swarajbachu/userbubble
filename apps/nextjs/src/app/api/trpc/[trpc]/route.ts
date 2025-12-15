@@ -1,5 +1,5 @@
-import { appRouter, createTRPCContext } from "@critichut/api";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import { appRouter, createTRPCContext } from "@userbubble/api";
 import type { NextRequest } from "next/server";
 
 import { auth } from "~/auth/server";

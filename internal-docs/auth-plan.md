@@ -1,4 +1,4 @@
-# critichut Authentication Architecture Plan
+# userbubble Authentication Architecture Plan
 
 > **Complete implementation guide for multi-tenant user feedback platform with external authentication**
 
@@ -27,9 +27,9 @@
 
 ### System Design
 
-critichut is a multi-tenant SaaS platform where:
+userbubble is a multi-tenant SaaS platform where:
 
-- **Organizations** have isolated feedback boards at `{org-slug}.critichut.com`
+- **Organizations** have isolated feedback boards at `{org-slug}.userbubble.com`
 - **Identified users** from customer applications auto-authenticate via HMAC-signed tokens
 - **Real users** can claim their identified activity by signing up with the same email
 - **Admins** manage organizations and cannot use external authentication (security)
@@ -39,7 +39,7 @@ critichut is a multi-tenant SaaS platform where:
 - **Better Auth v1.4.0-beta.9** - Authentication with custom plugins
 - **Organization Plugin** - Multi-tenancy primitives
 - **Custom External Login Plugin** - HMAC-based auto-authentication
-- **critichut JavaScript SDK** - Safari-compatible auto-login (URL token-based)
+- **userbubble JavaScript SDK** - Safari-compatible auto-login (URL token-based)
 - **Drizzle ORM** - Type-safe database queries
 - **PostgreSQL** - Primary database
 - **Next.js 16** - Web application (subdomain routing)
@@ -48,12 +48,12 @@ critichut is a multi-tenant SaaS platform where:
 
 ### Authentication Strategy
 
-critichut uses a **UserJot-style SDK approach** for seamless auto-login:
+userbubble uses a **UserJot-style SDK approach** for seamless auto-login:
 
 1. **Customer embeds JavaScript SDK** on their site
 2. **SDK identifies user** with HMAC signature from customer's backend
 3. **User clicks feedback link** → SDK appends auth token to URL
-4. **critichut validates token** → Creates session with first-party cookie
+4. **userbubble validates token** → Creates session with first-party cookie
 5. **URL cleaned** → Token removed, user authenticated
 
 **Key advantage:** Safari-compatible (no third-party cookies needed)
@@ -67,10 +67,10 @@ critichut uses a **UserJot-style SDK approach** for seamless auto-login:
 
 ## User Types
 
-### 1. Organization Admins/Owners (Real critichut Accounts)
+### 1. Organization Admins/Owners (Real userbubble Accounts)
 
 **Who they are:**
-- Create and manage critichut organizations
+- Create and manage userbubble organizations
 - B2B customers who pay for the service
 - Configure feedback boards, branding, integrations
 
@@ -111,8 +111,8 @@ member {
 
 **Who they are:**
 - End users of customer applications
-- Submit feedback across multiple critichut organizations
-- Don't have critichut passwords (just "identified" by external ID + email)
+- Submit feedback across multiple userbubble organizations
+- Don't have userbubble passwords (just "identified" by external ID + email)
 - Can later "claim" their activity by creating a real account
 
 **Authentication:**
@@ -151,11 +151,11 @@ identifiedUser {
 }
 ```
 
-**Key Point:** One critichut user can be identified by multiple organizations with different external IDs.
+**Key Point:** One userbubble user can be identified by multiple organizations with different external IDs.
 
 **Example:**
 ```
-critichut User: john@example.com (user_def456)
+userbubble User: john@example.com (user_def456)
 ├── Identified by Org A as "customer_a_user_999"
 ├── Identified by Org B as "customer_b_user_777"
 └── Identified by Org C as "customer_c_user_555"
@@ -231,7 +231,7 @@ feedback {
 │       .digest('base64');                                       │
 │                                                                 │
 │  3. Build signed URL:                                          │
-│     https://org1.critichut.com/auth/external?                  │
+│     https://org1.userbubble.com/auth/external?                  │
 │       external_id=customer_user_12345&                         │
 │       email=john@example.com&                                  │
 │       name=John Doe&                                           │
@@ -243,7 +243,7 @@ feedback {
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                 critichut (org1.critichut.com)                  │
+│                 userbubble (org1.userbubble.com)                  │
 │                                                                 │
 │  1. Extract query parameters                                   │
 │  2. Validate timestamp (within 5 minutes)                      │
@@ -274,7 +274,7 @@ feedback {
 2. **Timestamp Validation** - 5-minute window prevents replay attacks
 3. **Per-Organization Secrets** - Each org has unique secret key
 4. **Encrypted Storage** - Secret keys encrypted in database
-5. **No Password Required** - Users don't need critichut credentials
+5. **No Password Required** - Users don't need userbubble credentials
 
 ---
 
@@ -283,7 +283,7 @@ feedback {
 **Standard Better Auth flow for organization owners**
 
 ```
-User → https://app.critichut.com/login
+User → https://app.userbubble.com/login
      → Email/password or OAuth (Google, GitHub, Google)
      → Better Auth validates credentials
      → Creates session
@@ -296,18 +296,18 @@ User → https://app.critichut.com/login
 
 ### Flow 3: Account Claiming (Identified → Real Account)
 
-**Identified user creates a real critichut account**
+**Identified user creates a real userbubble account**
 
 ```
 Timeline:
 
 Day 1: User identified via external auth
 ├── john@example.com auto-authenticated from customer-app.com
-├── Submits 5 feedback items to org1.critichut.com
+├── Submits 5 feedback items to org1.userbubble.com
 └── User record created (no password)
 
-Day 30: User wants to create real critichut account
-├── Visits app.critichut.com/signup
+Day 30: User wants to create real userbubble account
+├── Visits app.userbubble.com/signup
 ├── Signs up with john@example.com + password
 └── System detects existing user with same email
 
@@ -402,7 +402,7 @@ async function handleSignup(email: string, password: string) {
 ### Why This Matters
 
 **User Journey:**
-1. User discovers critichut through customer's feedback link
+1. User discovers userbubble through customer's feedback link
 2. Seamlessly submits feedback (no friction, no signup)
 3. Engages with multiple organizations over time
 4. Decides they want direct access (not just via customer links)
@@ -464,7 +464,7 @@ async function createIdentifiedUser(data: ExternalUserData) {
 ```
 User: john@example.com
 ├── Can only access via customer's signed links
-├── No direct login to critichut
+├── No direct login to userbubble
 ├── No ability to create organizations
 └── Feedback scattered across different org boards
 ```
@@ -472,7 +472,7 @@ User: john@example.com
 **After Claiming:**
 ```
 User: john@example.com (now has password)
-├── Can login directly at app.critichut.com
+├── Can login directly at app.userbubble.com
 ├── Can create their own organizations
 ├── Can view all feedback they've submitted (across orgs)
 ├── Can still be identified by external systems
@@ -648,7 +648,7 @@ import { multiSession } from "better-auth/plugins/multi-session";
 import { oAuthProxy } from "better-auth/plugins/oauth-proxy";
 import { expo } from "@better-auth/expo";
 import { externalLogin } from "./plugins/external-login";
-import { db } from "@critichut/db/client";
+import { db } from "@userbubble/db/client";
 
 export function initAuth(options: {
   baseUrl: string;
@@ -677,15 +677,15 @@ export function initAuth(options: {
     advanced: {
       crossSubDomainCookies: {
         enabled: true,
-        domain: ".critichut.com", // Replace with your domain
+        domain: ".userbubble.com", // Replace with your domain
       },
       useSecureCookies: process.env.NODE_ENV === "production",
     },
 
     // CORS configuration
     trustedOrigins: [
-      "https://critichut.com",
-      "https://*.critichut.com",
+      "https://userbubble.com",
+      "https://*.userbubble.com",
       "expo://",
       // Dynamic validation for customer domains
       async (request) => {
@@ -1005,9 +1005,9 @@ export const externalLogin = (
 
 If identified users' sessions propagate across all subdomains without restrictions, a malicious organization could:
 
-1. Create a legitimate organization on critichut
+1. Create a legitimate organization on userbubble
 2. Use HMAC to "identify" a victim user with email `victim@email.com`
-3. Victim's session cookie propagates to `app.critichut.com`
+3. Victim's session cookie propagates to `app.userbubble.com`
 4. Victim appears "logged in" and could potentially access admin features
 5. **MASSIVE SECURITY VULNERABILITY!**
 
@@ -1049,7 +1049,7 @@ Implement a two-tier session system where sessions are marked as either **identi
 - ✅ Generate API keys and secret keys
 - ✅ View analytics
 
-**Use Case:** Organization owners, admins, and team members who manage critichut organizations.
+**Use Case:** Organization owners, admins, and team members who manage userbubble organizations.
 
 ---
 
@@ -1149,7 +1149,7 @@ Protect admin routes from identified sessions:
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "@critichut/auth";
+import { auth } from "@userbubble/auth";
 
 export async function middleware(request: NextRequest) {
   const session = await auth.api.getSession({
@@ -1205,8 +1205,8 @@ Add session type helpers to tRPC context:
 ```typescript
 // packages/api/src/trpc.ts
 
-import { auth } from "@critichut/auth";
-import { db } from "@critichut/db/client";
+import { auth } from "@userbubble/auth";
+import { db } from "@userbubble/db/client";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth.api.getSession({ headers: opts.headers });
@@ -1481,17 +1481,17 @@ async function handleSignup(email: string, password: string) {
 #### For Identified Users:
 
 ```
-Scenario: User identified on org1.critichut.com via HMAC
+Scenario: User identified on org1.userbubble.com via HMAC
 └─ Session created: { sessionType: "identified", authMethod: "external" }
    └─ Cookie propagates to all subdomains ✅
 
-User visits org2.critichut.com/feedback
+User visits org2.userbubble.com/feedback
 ├─ Session cookie sent automatically
 ├─ Better Auth validates session
 ├─ Session type: "identified" ✅
 └─ Can submit feedback ✅
 
-User visits app.critichut.com/dashboard
+User visits app.userbubble.com/dashboard
 ├─ Session cookie sent automatically
 ├─ Better Auth validates session
 ├─ Session type: "identified" ❌
@@ -1502,17 +1502,17 @@ User visits app.critichut.com/dashboard
 #### For Authenticated Users:
 
 ```
-Scenario: User logs in with password on app.critichut.com
+Scenario: User logs in with password on app.userbubble.com
 └─ Session created: { sessionType: "authenticated", authMethod: "credential" }
    └─ Cookie propagates to all subdomains ✅
 
-User visits org1.critichut.com/feedback
+User visits org1.userbubble.com/feedback
 ├─ Session cookie sent automatically
 ├─ Better Auth validates session
 ├─ Session type: "authenticated" ✅
 └─ Can submit feedback ✅
 
-User visits app.critichut.com/dashboard
+User visits app.userbubble.com/dashboard
 ├─ Session cookie sent automatically
 ├─ Better Auth validates session
 ├─ Session type: "authenticated" ✅
@@ -1547,7 +1547,7 @@ export default function UpgradeAccountPage({
 
         {reason === "admin_required" && (
           <p className="mb-6 text-gray-600">
-            This feature requires a full critichut account. You're currently
+            This feature requires a full userbubble account. You're currently
             logged in via external authentication, which only allows feedback
             submission.
           </p>
@@ -1744,19 +1744,19 @@ export function decryptSecretKey(encrypted: string): string {
 ```html
 <!-- Customer's website -->
 <script>
-  window.critichutConfig = {
+  window.userbubbleConfig = {
     organizationSlug: "acme",
-    authEndpoint: "/api/critichut/auth", // Customer's backend
+    authEndpoint: "/api/userbubble/auth", // Customer's backend
     user: null, // Will be fetched from customer's session
   };
 </script>
-<script src="https://cdn.critichut.com/widget.js" async></script>
+<script src="https://cdn.userbubble.com/widget.js" async></script>
 ```
 
 **Customer's backend generates signed URL:**
 
 ```typescript
-// Customer's API route: /api/critichut/auth
+// Customer's API route: /api/userbubble/auth
 export async function POST(req: Request) {
   const session = await getSession(req); // Customer's session
 
@@ -1774,7 +1774,7 @@ export async function POST(req: Request) {
   });
 
   const signature = crypto
-    .createHmac("sha256", process.env.critichut_SECRET_KEY!)
+    .createHmac("sha256", process.env.userbubble_SECRET_KEY!)
     .update(data)
     .digest("base64");
 
@@ -1787,7 +1787,7 @@ export async function POST(req: Request) {
   });
 
   return Response.json({
-    signedUrl: `https://acme.critichut.com/auth/external?${params}`,
+    signedUrl: `https://acme.userbubble.com/auth/external?${params}`,
   });
 }
 ```
@@ -1799,10 +1799,10 @@ export async function POST(req: Request) {
 ```typescript
 // Customer's feedback button handler
 async function handleFeedbackClick() {
-  const response = await fetch("/api/critichut/auth", { method: "POST" });
+  const response = await fetch("/api/userbubble/auth", { method: "POST" });
   const { signedUrl } = await response.json();
 
-  // Redirect to critichut
+  // Redirect to userbubble
   window.location.href = signedUrl;
 }
 ```
@@ -1912,12 +1912,12 @@ trpc.feedback.vote({
 
 ```bash
 # Database
-POSTGRES_URL=postgresql://user:pass@host:5432/critichut
+POSTGRES_URL=postgresql://user:pass@host:5432/userbubble
 
 # Better Auth
 AUTH_SECRET=your-random-secret-key-here
-AUTH_URL=https://app.critichut.com
-PRODUCTION_URL=https://critichut.com
+AUTH_URL=https://app.userbubble.com
+PRODUCTION_URL=https://userbubble.com
 
 # Encryption (for secret keys)
 ENCRYPTION_KEY=64-character-hex-string # Generate with: crypto.randomBytes(32).toString('hex')
@@ -1938,9 +1938,9 @@ NEXT_PUBLIC_POSTHOG_HOST=
 ### Vercel Setup
 
 1. **Domain Configuration:**
-   - Add domain: `critichut.com`
-   - Add wildcard: `*.critichut.com`
-   - DNS: CNAME `*.critichut.com` → `cname.vercel-dns.com`
+   - Add domain: `userbubble.com`
+   - Add wildcard: `*.userbubble.com`
+   - DNS: CNAME `*.userbubble.com` → `cname.vercel-dns.com`
 
 2. **Build Settings:**
    ```json
@@ -2046,7 +2046,7 @@ describe("External Login", () => {
 A: No, only users with real accounts (password/OAuth) can create organizations.
 
 **Q: Can the same user be identified by multiple organizations?**
-A: Yes! One critichut user can have multiple `identifiedUser` entries with different external IDs.
+A: Yes! One userbubble user can have multiple `identifiedUser` entries with different external IDs.
 
 **Q: What happens if external ID changes?**
 A: A new `identifiedUser` link is created. The old link remains (user will appear as two different users to that org).

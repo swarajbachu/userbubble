@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@critichut/ui";
+import { cn } from "@userbubble/ui";
 import type * as React from "react";
 import * as ResizablePrimitive from "react-resizable-panels";
 
