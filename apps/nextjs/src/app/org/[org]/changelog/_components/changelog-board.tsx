@@ -1,13 +1,16 @@
 "use client";
 
+import { Button } from "@critichut/ui/button";
+import { Icon } from "@critichut/ui/icon";
+import { Add01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
 import { ChangelogEmptyState } from "./changelog-empty-state";
 import { ChangelogFilters } from "./changelog-filters";
 import { ChangelogTimeline } from "./changelog-timeline";
-import { CreateEntryButton } from "./create-entry-button";
 
 type ChangelogBoardProps = {
   org: string;
@@ -67,7 +70,15 @@ export function ChangelogBoard({ org, organizationId }: ChangelogBoardProps) {
       {/* Filters and create button */}
       <div className="flex items-center justify-between gap-4">
         <ChangelogFilters />
-        {isAdmin && <CreateEntryButton org={org} />}
+        {isAdmin && (
+          <Button
+            render={<Link href={`/org/${org}/changelog/create`} />}
+            size="lg"
+          >
+            <Icon icon={Add01Icon} size={20} />
+            Create Entry
+          </Button>
+        )}
       </div>
 
       {/* Timeline */}

@@ -1,7 +1,8 @@
+import { Button } from "@critichut/ui/button";
 import { DoubleCard, DoubleCardInner } from "@critichut/ui/double-card";
 import { Icon } from "@critichut/ui/icon";
-import { Rocket01Icon } from "@hugeicons-pro/core-bulk-rounded";
-import { CreateEntryButton } from "./create-entry-button";
+import { Add01Icon, Rocket01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import Link from "next/link";
 
 type ChangelogEmptyStateProps = {
   isAdmin: boolean;
@@ -49,7 +50,13 @@ export function ChangelogEmptyState({
             users.
           </p>
           <div className="mt-6">
-            <CreateEntryButton org={org} />
+            <Button
+              render={<Link href={`/org/${org}/changelog/create`} />}
+              size="lg"
+            >
+              <Icon icon={Add01Icon} size={20} />
+              Create Entry
+            </Button>
           </div>
         </DoubleCardInner>
       </DoubleCard>
