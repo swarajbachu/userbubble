@@ -23,7 +23,7 @@ const DoubleCardInner = React.forwardRef<
   React.ComponentProps<typeof Card>
 >(({ className, ...props }, ref) => (
   <Card
-    className={cn("border-none shadow-none", className)}
+    className={cn("border-none shadow-md", className)}
     ref={ref}
     {...props}
   />

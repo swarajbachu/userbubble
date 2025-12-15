@@ -2,8 +2,12 @@ import { cn } from "@critichut/ui";
 import { Loading03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
-function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
+function Spinner({
+  className,
+  ...props
+}: Omit<React.ComponentProps<"svg">, "strokeWidth">) {
   return (
+    //@ts-expect-error
     <HugeiconsIcon
       aria-label="Loading"
       className={cn("size-4 animate-spin", className)}

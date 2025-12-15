@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -149,9 +150,6 @@ export const feedbackComment = pgTable("feedback_comment", {
     onDelete: "cascade",
   }),
 
-  // Is this comment from a team member?
-  isTeamMember: boolean("is_team_member").notNull().default(false),
-
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
@@ -168,3 +166,50 @@ export type NewFeedbackVote = typeof feedbackVote.$inferInsert;
 
 export type FeedbackComment = typeof feedbackComment.$inferSelect;
 export type NewFeedbackComment = typeof feedbackComment.$inferInsert;
+
+// Relations
+export const feedbackPostRelations = relations(
+  feedbackPost,
+  ({ one, many }) => ({
+    organization: one(organization, {
+      fields: [feedbackPost.organizationId],
+      references: [organization.id],
+    }),
+    author: one(user, {
+      fields: [feedbackPost.authorId],
+      references: [user.id],
+    }),
+    votes: many(feedbackVote),
+    comments: many(feedbackComment),
+  })
+);
+
+export const feedbackVoteRelations = relations(feedbackVote, ({ one }) => ({
+  post: one(feedbackPost, {
+    fields: [feedbackVote.postId],
+    references: [feedbackPost.id],
+  }),
+  user: one(user, {
+    fields: [feedbackVote.userId],
+    references: [user.id],
+  }),
+}));
+
+export const feedbackCommentRelations = relations(
+  feedbackComment,
+  ({ one, many }) => ({
+    post: one(feedbackPost, {
+      fields: [feedbackComment.postId],
+      references: [feedbackPost.id],
+    }),
+    author: one(user, {
+      fields: [feedbackComment.authorId],
+      references: [user.id],
+    }),
+    parent: one(feedbackComment, {
+      fields: [feedbackComment.parentId],
+      references: [feedbackComment.id],
+    }),
+    replies: many(feedbackComment),
+  })
+);

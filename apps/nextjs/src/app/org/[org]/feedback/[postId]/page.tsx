@@ -46,8 +46,8 @@ export default async function FeedbackPostPage({
     notFound();
   }
 
-  // Fetch comments
-  const comments = await getPostComments(postId);
+  // Fetch comments with team member status
+  const comments = await getPostComments(postId, organization.id);
 
   // Get session and check permissions
   const session = await getSession();

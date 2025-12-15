@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@critichut/ui/dialog";
+import { Icon } from "@critichut/ui/icon";
 import { Input } from "@critichut/ui/input";
 import {
   Select,
@@ -25,6 +26,7 @@ import { toast } from "@critichut/ui/toast";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { TRPCClientErrorLike } from "@trpc/client";
+import { categoryConfig } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
@@ -195,7 +197,17 @@ export function CreateFeedbackDialog({
                       value={field.state.value}
                     >
                       <SelectTrigger className="h-8 w-auto gap-2 border-none bg-secondary/50 px-3 font-medium text-xs shadow-none hover:bg-secondary focus:ring-0">
-                        <SelectValue placeholder="Category" />
+                        <SelectValue>
+                          <div className="flex items-center gap-2">
+                            <Icon
+                              icon={categoryConfig[field.state.value].icon}
+                              size={16}
+                            />
+                            <span className="capitalize">
+                              {field.state.value.replace("_", " ")}
+                            </span>
+                          </div>
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="feature_request">

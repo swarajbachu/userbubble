@@ -14,7 +14,11 @@ import { CommentItem } from "./comment-item";
 
 type CommentsSectionProps = {
   postId: string;
-  initialComments: Array<{ comment: FeedbackComment; author: User | null }>;
+  initialComments: Array<{
+    comment: FeedbackComment;
+    author: User | null;
+    isTeamMember: boolean;
+  }>;
   isAuthenticated: boolean;
   userId: string | undefined;
   organizationId: string;
@@ -68,6 +72,7 @@ export function CommentsSection({
                   author={item.author}
                   canDelete={userId === item.comment.authorId}
                   comment={item.comment}
+                  isTeamMember={item.isTeamMember}
                   onDeleted={() => {
                     // Remove from list
                     setComments(

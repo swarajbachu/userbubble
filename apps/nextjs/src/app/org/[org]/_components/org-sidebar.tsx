@@ -14,7 +14,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@critichut/ui/sidebar";
 import {
   Cancel01Icon,
@@ -29,13 +28,17 @@ import {
   Settings01Icon,
   UserMultiple02Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import { authClient } from "~/auth/client";
+import { CreateOrgDialog } from "./create-org-dialog";
+import { OrgSwitcher } from "./org-switcher";
+import { UserProfileMenu } from "./user-profile-menu";
 
 type OrgSidebarProps = {
   org: string;
-  organizationName: string;
 };
 
 const MAIN_NAV_ITEMS = [
@@ -55,20 +58,7 @@ const MAIN_NAV_ITEMS = [
     title: "Changelog",
     href: "/changelog",
     icon: MarketingIcon,
-    badge: "Soon" as const,
-  },
-] as const;
-
-const SETTINGS_NAV_ITEMS = [
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: Settings01Icon,
-  },
-  {
-    title: "Members",
-    href: "/members",
-    icon: UserMultiple02Icon,
+    badge: undefined,
   },
 ] as const;
 
@@ -117,15 +107,49 @@ const STATUS_FILTERS = [
   },
 ] as const;
 
-export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
+export function OrgSidebar({ org }: OrgSidebarProps) {
   const pathname = usePathname();
   const [status, setStatus] = useQueryState(
     "status",
     parseAsArrayOf(parseAsString).withDefault([])
   );
 
+  // Fetch user session
+  const { data: session } = useQuery({
+    queryKey: ["session"],
+    queryFn: async () => {
+      const { data } = await authClient.getSession();
+      return data;
+    },
+  });
+
+  // Fetch user's organizations
+  const { data: organizations } = useQuery({
+    queryKey: ["organizations"],
+    queryFn: async () => {
+      const { data } = await authClient.organization.list();
+      return data;
+    },
+  });
+
   const isActive = (href: string) => pathname.includes(href);
   const isOnFeedbackPage = pathname.includes("/feedback");
+
+  // Plan checking logic (using metadata for now)
+  const currentOrgData = organizations?.find((o) => o.slug === org);
+  const orgPlan = currentOrgData?.metadata
+    ? (JSON.parse(currentOrgData.metadata) as { plan?: string }).plan || "free"
+    : "free";
+
+  // Determine max organizations based on plan
+  let maxOrgs = 1; // free plan
+  if (orgPlan === "pro") {
+    maxOrgs = 5;
+  } else if (orgPlan === "enterprise") {
+    maxOrgs = 999;
+  }
+
+  const canCreateOrg = (organizations?.length || 0) < maxOrgs;
 
   const isStatusActive = (value: string) => {
     if (value === "all") {
@@ -148,13 +172,31 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
     }
   };
 
+  // Loading state
+  if (!(session && organizations)) {
+    return (
+      <Sidebar variant="floating">
+        <SidebarHeader>
+          <div className="h-10 animate-pulse rounded bg-muted" />
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div className="h-10 animate-pulse rounded bg-muted" key={i} />
+              ))}
+            </div>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    );
+  }
+
   return (
     <Sidebar variant="floating">
       <SidebarHeader>
-        <div className="flex items-center justify-between px-4 py-2">
-          <h2 className="truncate font-semibold text-lg">{organizationName}</h2>
-          <SidebarTrigger />
-        </div>
+        <OrgSwitcher currentOrg={org} organizations={organizations || []} />
+        <CreateOrgDialog canCreateOrg={canCreateOrg} maxOrgs={maxOrgs} />
       </SidebarHeader>
 
       <SidebarContent>
@@ -191,7 +233,7 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
         {/* Status Filters (only on feedback page) */}
         {isOnFeedbackPage && (
           <SidebarGroup>
-            <SidebarGroupLabel>Requests</SidebarGroupLabel>
+            <SidebarGroupLabel>Filters</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {STATUS_FILTERS.map((filter) => (
@@ -227,23 +269,44 @@ export function OrgSidebar({ org, organizationName }: OrgSidebarProps) {
       </SidebarContent>
 
       <SidebarFooter>
-        {/* Settings Section */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {SETTINGS_NAV_ITEMS.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton isActive={isActive(item.href)}>
-                    <Link href={`/org/${org}${item.href}`}>
-                      <Icon icon={item.icon} size={20} />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Settings Row */}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton isActive={pathname.includes("/settings")}>
+              <Link
+                className="flex flex-row items-center gap-2"
+                href={`/org/${org}/settings`}
+              >
+                <Icon icon={Settings01Icon} size={20} />
+                <span>Settings</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+
+        {/* Members Row */}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton isActive={pathname.includes("/members")}>
+              <Link
+                className="flex flex-row items-center gap-2"
+                href={`/org/${org}/members`}
+              >
+                <Icon icon={UserMultiple02Icon} size={20} />
+                <span>Members</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+
+        {/* Profile Row */}
+        {session?.user && (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <UserProfileMenu user={session.user} />
+            </SidebarMenuItem>
+          </SidebarMenu>
+        )}
       </SidebarFooter>
     </Sidebar>
   );

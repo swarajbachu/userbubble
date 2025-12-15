@@ -154,3 +154,109 @@
   --tracking-wider: calc(var(--tracking-normal) + 0.05em);
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
 }
+
+/* Tiptap Editor & Content Styles */
+.ProseMirror,
+.tiptap-content {
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  > *:first-child {
+    margin-top: 0;
+  }
+
+  /* List styles */
+  ul,
+  ol {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li {
+    margin: 0.25rem 0;
+  }
+
+  li p {
+    margin: 0.25em 0;
+  }
+
+  /* Heading styles */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.2;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Code styles */
+  code {
+    background-color: var(--muted);
+    color: var(--foreground);
+    border-radius: 0.375rem;
+    font-size: 0.875em;
+    padding: 0.2em 0.4em;
+    font-family: var(--font-mono);
+  }
+
+  pre {
+    background-color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--foreground);
+    font-family: var(--font-mono);
+    margin: 1.5rem 0;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  pre code {
+    background: none;
+    color: inherit;
+    font-size: 0.875rem;
+    padding: 0;
+  }
+
+  /* Blockquote styles */
+  blockquote {
+    border-left: 4px solid var(--primary);
+    color: var(--muted-foreground);
+    font-style: italic;
+    margin: 1.5rem 0;
+    padding-left: 1rem;
+  }
+
+  /* Paragraph spacing */
+  p {
+    margin: 0.75rem 0;
+  }
+}
+
+.ProseMirror {
+  outline: none;
+}

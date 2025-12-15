@@ -25,6 +25,7 @@ type CommentFormProps = {
   onCommentAdded: (newComment: {
     comment: FeedbackComment;
     author: User | null;
+    isTeamMember: boolean;
   }) => void;
 };
 

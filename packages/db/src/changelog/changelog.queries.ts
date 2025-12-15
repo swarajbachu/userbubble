@@ -113,6 +113,56 @@ export async function createChangelogEntry(data: {
 }
 
 /**
+ * Create a new changelog entry with linked feedback posts in a transaction
+ */
+export async function createChangelogEntryWithFeedback(data: {
+  organizationId: string;
+  authorId: string;
+  title: string;
+  description: string;
+  version?: string;
+  coverImageUrl?: string;
+  tags?: string[];
+  isPublished?: boolean;
+  publishedAt?: Date;
+  feedbackPostIds?: string[];
+}) {
+  return await db.transaction(async (tx) => {
+    // Create the changelog entry
+    const [entry] = await tx
+      .insert(changelogEntry)
+      .values({
+        organizationId: data.organizationId,
+        authorId: data.authorId,
+        title: data.title,
+        description: data.description,
+        version: data.version,
+        coverImageUrl: data.coverImageUrl,
+        tags: data.tags,
+        isPublished: data.isPublished ?? false,
+        publishedAt: data.isPublished ? (data.publishedAt ?? new Date()) : null,
+      })
+      .returning();
+
+    if (!entry) {
+      throw new Error("Failed to create changelog entry");
+    }
+
+    // Link feedback posts if provided
+    if (data.feedbackPostIds && data.feedbackPostIds.length > 0) {
+      await tx.insert(changelogFeedbackLink).values(
+        data.feedbackPostIds.map((postId) => ({
+          changelogEntryId: entry.id,
+          feedbackPostId: postId,
+        }))
+      );
+    }
+
+    return entry;
+  });
+}
+
+/**
  * Update an existing changelog entry
  */
 export async function updateChangelogEntry(

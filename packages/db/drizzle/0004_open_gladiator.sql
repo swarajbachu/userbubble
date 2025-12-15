@@ -1,0 +1,1 @@
+ALTER TABLE "feedback_comment" DROP COLUMN "is_team_member";

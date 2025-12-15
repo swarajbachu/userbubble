@@ -22,6 +22,7 @@ type CommentItemProps = {
   comment: FeedbackComment;
   author: User | null;
   canDelete: boolean;
+  isTeamMember: boolean;
   onDeleted: () => void;
 };
 
@@ -29,6 +30,7 @@ export function CommentItem({
   comment,
   author,
   canDelete,
+  isTeamMember,
   onDeleted,
 }: CommentItemProps) {
   const trpc = useTRPC();
@@ -63,7 +65,7 @@ export function CommentItem({
                 <span className="font-medium text-sm">
                   {author?.name ?? "Anonymous"}
                 </span>
-                {comment.isTeamMember && (
+                {isTeamMember && (
                   <span className="rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary text-xs">
                     Team
                   </span>
@@ -106,7 +108,7 @@ export function CommentItem({
             undone.
           </DialogDescription>
           <DialogFooter>
-            <DialogClose asChild>
+            <DialogClose>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button

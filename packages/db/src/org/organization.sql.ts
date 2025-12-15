@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createUniqueIds } from "../lib/ids";
+import { identifiedUser } from "../user/identified-user.sql";
 import { user } from "../user/user.sql";
 
 // PostgreSQL Enums for type safety
@@ -111,6 +112,7 @@ export const invitation = pgTable("invitation", {
 export const organizationRelations = relations(organization, ({ many }) => ({
   members: many(member),
   invitations: many(invitation),
+  identifiedUsers: many(identifiedUser),
 }));
 
 export const memberRelations = relations(member, ({ one }) => ({

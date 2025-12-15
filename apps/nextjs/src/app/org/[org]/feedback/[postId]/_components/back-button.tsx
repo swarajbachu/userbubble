@@ -16,7 +16,7 @@ export function BackButton({ org }: { org: string }) {
       variant="ghost"
     >
       <Icon
-        className="group-hover:-translate-x-0.5 transition-transform"
+        className="transition-transform group-hover:-translate-x-0.5"
         icon={ArrowLeft01Icon}
         size={16}
       />
