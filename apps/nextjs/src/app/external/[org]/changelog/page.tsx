@@ -1,7 +1,7 @@
 import { getChangelogEntries } from "@critichut/db/queries";
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ChangelogBoard } from "~/components/changelog/changelog-board";
+import { ChangelogBoard } from "~/app/org/[org]/changelog/_components/changelog-board";
 import { getOrganization } from "~/lib/get-organization";
 
 type ExternalChangelogPageProps = {
@@ -37,13 +37,13 @@ export async function generateMetadata({
       description,
       url: `/external/${org}/changelog`,
       type: "website",
-      images: organization.logoUrl ? [{ url: organization.logoUrl }] : [],
+      images: organization.logo ? [{ url: organization.logo }] : [],
     },
     twitter: {
       card: "summary_large_image",
       title: `${organization.name} Changelog`,
       description,
-      images: organization.logoUrl ? [organization.logoUrl] : [],
+      images: organization.logo ? [organization.logo] : [],
     },
     alternates: {
       types: {
