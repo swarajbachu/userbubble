@@ -14,6 +14,7 @@ const publicPaths = [
   "/sign-in",
   "/sign-up",
   "/api/auth",
+  "/api/trpc",
   "/external",
   "/_next",
   "/favicon.ico",
