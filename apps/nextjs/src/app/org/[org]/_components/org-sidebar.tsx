@@ -58,7 +58,7 @@ const MAIN_NAV_ITEMS = [
     title: "Changelog",
     href: "/changelog",
     icon: MarketingIcon,
-    badge: "Soon" as const,
+    badge: undefined,
   },
 ] as const;
 
