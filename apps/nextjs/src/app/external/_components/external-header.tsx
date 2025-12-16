@@ -18,6 +18,7 @@ import {
 } from "@userbubble/ui/dropdown-menu";
 import { Icon } from "@userbubble/ui/icon";
 import { ThemeToggle } from "@userbubble/ui/theme";
+import { toast } from "@userbubble/ui/toast";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,6 +26,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CreateFeedbackDialog } from "~/app/external/[org]/feedback/_components/create-feedback-dialog";
 import { authClient } from "~/auth/client";
+import { AuthDialog } from "~/components/auth/auth-dialog";
 
 type ExternalHeaderProps = {
   organizationName: string;
@@ -50,6 +52,7 @@ export function ExternalHeader({
   });
   const navRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const { data: session } = authClient.useSession();
   const user = session?.user;
 
@@ -188,15 +191,20 @@ export function ExternalHeader({
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              nativeButton={false}
-              render={
-                <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-in`}>
-                  <Icon icon={Login01Icon} size={16} />
-                  <span>Login</span>
-                </Link>
-              }
-            />
+            <>
+              <Button onClick={() => setAuthDialogOpen(true)} size="sm">
+                <Icon icon={Login01Icon} size={16} />
+                <span>Login</span>
+              </Button>
+
+              <AuthDialog
+                onOpenChange={setAuthDialogOpen}
+                onSuccess={() => {
+                  toast.success("Welcome back!");
+                }}
+                open={authDialogOpen}
+              />
+            </>
           )}
 
           <CreateFeedbackDialog
