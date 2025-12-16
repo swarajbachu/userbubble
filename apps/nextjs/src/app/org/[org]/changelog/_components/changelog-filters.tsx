@@ -71,17 +71,19 @@ export function ChangelogFilters() {
     <div className="flex flex-wrap items-center gap-2">
       {/* Tag filter */}
       <Popover>
-        <PopoverTrigger>
-          <Button size="sm" variant="outline">
-            <Icon icon={FilterIcon} size={16} />
-            Tags
-            {tags.length > 0 && (
-              <Badge className="ml-1 h-5 min-w-5 px-1" variant="secondary">
-                {tags.length}
-              </Badge>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={(props) => (
+            <Button {...props} size="sm" variant="outline">
+              <Icon icon={FilterIcon} size={16} />
+              Tags
+              {tags.length > 0 && (
+                <Badge className="ml-1 h-5 min-w-5 px-1" variant="secondary">
+                  {tags.length}
+                </Badge>
+              )}
+            </Button>
+          )}
+        />
         <PopoverContent align="start" className="w-[280px] p-3">
           <div className="space-y-2">
             <p className="font-medium text-sm">Filter by tags</p>

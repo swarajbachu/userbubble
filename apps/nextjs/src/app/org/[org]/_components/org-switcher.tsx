@@ -48,24 +48,27 @@ export function OrgSwitcher({ currentOrg, organizations }: OrgSwitcherProps) {
 
   return (
     <Popover onOpenChange={setOpen} open={open}>
-      <PopoverTrigger>
-        <Button
-          className="h-auto w-full justify-between px-3 py-2"
-          variant="ghost"
-        >
-          <div className="flex min-w-0 items-center gap-2">
-            <Icon className="shrink-0" icon={Building02Icon} size={20} />
-            <span className="truncate font-semibold">
-              {currentOrgData?.name || currentOrg}
-            </span>
-          </div>
-          <Icon
-            className="shrink-0 text-muted-foreground"
-            icon={ArrowDown01Icon}
-            size={16}
-          />
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={(props) => (
+          <Button
+            {...props}
+            className="h-auto w-full justify-between px-3 py-2"
+            variant="ghost"
+          >
+            <div className="flex min-w-0 items-center gap-2">
+              <Icon className="shrink-0" icon={Building02Icon} size={20} />
+              <span className="truncate font-semibold">
+                {currentOrgData?.name || currentOrg}
+              </span>
+            </div>
+            <Icon
+              className="shrink-0 text-muted-foreground"
+              icon={ArrowDown01Icon}
+              size={16}
+            />
+          </Button>
+        )}
+      />
       <PopoverContent
         align="start"
         className="w-[--radix-popover-trigger-width] p-1"

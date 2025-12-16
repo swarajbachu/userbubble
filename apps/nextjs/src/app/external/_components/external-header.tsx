@@ -155,8 +155,8 @@ export function ExternalHeader({
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
-                  <Button className="gap-2" size="sm" variant="secondary">
-                    <Avatar size="lg">
+                  <Button className="gap-2" size="sm" variant="ghost">
+                    <Avatar size="sm">
                       {user.image && (
                         <AvatarImage alt={user.name} src={user.image} />
                       )}

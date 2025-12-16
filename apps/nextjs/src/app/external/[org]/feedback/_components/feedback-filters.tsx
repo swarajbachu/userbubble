@@ -86,22 +86,29 @@ export function FeedbackFilters() {
   return (
     <div className="flex items-center gap-2">
       <Popover>
-        <PopoverTrigger>
-          <Button className="h-9 gap-2" size="sm" variant="outline">
-            <HugeiconsIcon icon={FilterHorizontalIcon} size={16} />
-            Filter
-            {statusFilter.length > 0 && (
-              <span className="rounded-full bg-primary px-1.5 py-0.5 font-medium text-primary-foreground text-xs">
-                {statusFilter.length}
-              </span>
-            )}
-            <HugeiconsIcon
-              className="ml-auto opacity-50"
-              icon={ArrowDown01Icon}
-              size={16}
-            />
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={(props) => (
+            <Button
+              {...props}
+              className="h-9 gap-2"
+              size="sm"
+              variant="outline"
+            >
+              <HugeiconsIcon icon={FilterHorizontalIcon} size={16} />
+              Filter
+              {statusFilter.length > 0 && (
+                <span className="rounded-full bg-primary px-1.5 py-0.5 font-medium text-primary-foreground text-xs">
+                  {statusFilter.length}
+                </span>
+              )}
+              <HugeiconsIcon
+                className="ml-auto opacity-50"
+                icon={ArrowDown01Icon}
+                size={16}
+              />
+            </Button>
+          )}
+        />
         <PopoverContent align="start" className="w-56 p-2">
           <div className="space-y-1">
             <div className="px-2 py-1.5 font-medium text-muted-foreground text-sm">
@@ -148,17 +155,23 @@ export function FeedbackFilters() {
       </Popover>
 
       <Popover>
-        <PopoverTrigger>
-          <Button className="h-9 gap-2" size="sm" variant="outline">
-            <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
-            {sort === "recent" ? "Newest" : "Top Voted"}
-            <HugeiconsIcon
-              className="ml-auto opacity-50"
-              icon={ArrowDown01Icon}
-              size={16}
-            />
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={(props) => (
+            <Button
+              {...props}
+              className="h-9 gap-2"
+              size="sm"
+              variant="outline"
+            >
+              {sort === "recent" ? "Newest" : "Top Voted"}
+              <HugeiconsIcon
+                className="ml-auto opacity-50"
+                icon={ArrowDown01Icon}
+                size={16}
+              />
+            </Button>
+          )}
+        />
         <PopoverContent align="start" className="w-40 p-1">
           <Button
             className={cn(

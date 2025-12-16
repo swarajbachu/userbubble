@@ -73,18 +73,21 @@ export function FeedbackSelector({
 
       {/* Selector */}
       <Popover onOpenChange={setOpen} open={open}>
-        <PopoverTrigger>
-          <Button
-            className="w-full justify-start"
-            type="button"
-            variant="outline"
-          >
-            <Icon icon={CheckmarkBadge01Icon} size={16} />
-            {selectedPosts.length > 0
-              ? `${selectedPosts.length} feedback post${selectedPosts.length === 1 ? "" : "s"} selected`
-              : "Select feedback posts"}
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={(props) => (
+            <Button
+              {...props}
+              className="w-full justify-start"
+              type="button"
+              variant="outline"
+            >
+              <Icon icon={CheckmarkBadge01Icon} size={16} />
+              {selectedPosts.length > 0
+                ? `${selectedPosts.length} feedback post${selectedPosts.length === 1 ? "" : "s"} selected`
+                : "Select feedback posts"}
+            </Button>
+          )}
+        />
         <PopoverContent align="start" className="w-[400px] p-0">
           <div className="flex flex-col">
             {/* Search */}

@@ -1,5 +1,5 @@
 import { cn } from "@userbubble/ui";
-import { ThemeProvider, ThemeToggle } from "@userbubble/ui/theme";
+import { ThemeProvider } from "@userbubble/ui/theme";
 import { Toaster } from "@userbubble/ui/toast";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -78,9 +78,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           <TRPCReactProvider>
             <NuqsAdapter>{props.children}</NuqsAdapter>
           </TRPCReactProvider>
-          <div className="absolute right-4 bottom-4">
+          {/* <div className="absolute right-4 bottom-4">
             <ThemeToggle />
-          </div>
+          </div> */}
           <Toaster />
         </ThemeProvider>
       </body>

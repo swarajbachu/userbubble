@@ -1,6 +1,5 @@
 "use client";
 
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Desk01Icon,
   MoonIcon,
@@ -15,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
+import { Icon } from "./icon";
 
 const ThemeModeSchema = z.enum(["light", "dark", "auto"]);
 
@@ -114,7 +114,15 @@ const ThemeContext = React.createContext<ThemeContextProps | undefined>(
 );
 
 export function ThemeProvider({ children }: React.PropsWithChildren) {
-  const [themeMode, setThemeMode] = React.useState(getStoredThemeMode);
+  const [themeMode, setThemeMode] = React.useState<ThemeMode>("auto");
+
+  React.useEffect(() => {
+    const stored = getStoredThemeMode();
+    if (stored !== themeMode) {
+      setThemeMode(stored);
+      updateThemeClass(stored);
+    }
+  }, []);
 
   React.useEffect(() => {
     if (themeMode !== "auto") {
@@ -163,28 +171,20 @@ export function useTheme() {
 }
 
 export function ThemeToggle() {
-  const { setTheme } = useTheme();
+  const { setTheme, themeMode } = useTheme();
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button
-          className="[&>svg]:absolute [&>svg]:size-5 [&>svg]:scale-0"
-          size="icon"
-          variant="outline"
-        >
-          <HugeiconsIcon
-            className="auto:scale-0! light:scale-100!"
-            icon={SunIcon}
-          />
-          <HugeiconsIcon
-            className="auto:scale-0! dark:scale-100!"
-            icon={MoonIcon}
-          />
-          <HugeiconsIcon className="auto:scale-100!" icon={Desk01Icon} />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button size="icon" variant="outline">
+            {themeMode === "light" && <Icon icon={SunIcon} size={16} />}
+            {themeMode === "dark" && <Icon icon={MoonIcon} size={16} />}
+            {themeMode === "auto" && <Icon icon={Desk01Icon} size={16} />}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        }
+      />
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
           Light

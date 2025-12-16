@@ -36,9 +36,26 @@ export function initAuth<
     },
     advanced: {
       crossSubDomainCookies: {
-        enabled: true,
-        domain: "userbubble.com",
+        enabled: process.env.NODE_ENV === "production",
+        domain:
+          process.env.NODE_ENV === "production" ? "userbubble.com" : undefined,
       },
+      useSecureCookies: process.env.NODE_ENV === "production",
+      defaultCookieAttributes: {
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production",
+      },
+      // Remove the cookies.state configuration for development
+      ...(process.env.NODE_ENV === "production" && {
+        cookies: {
+          state: {
+            attributes: {
+              sameSite: "none",
+              secure: true,
+            },
+          },
+        },
+      }),
     },
     emailAndPassword: {
       enabled: true,
