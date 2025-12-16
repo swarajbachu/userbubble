@@ -34,6 +34,12 @@ export function initAuth<
         maxAge: 5 * 60, // 5 minutes (300 seconds)
       },
     },
+    advanced: {
+      crossSubDomainCookies: {
+        enabled: true,
+        domain: "userbubble.com",
+      },
+    },
     emailAndPassword: {
       enabled: true,
     },
