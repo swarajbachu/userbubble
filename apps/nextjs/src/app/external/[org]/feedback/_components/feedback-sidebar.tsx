@@ -14,7 +14,6 @@ type FeedbackSidebarProps = {
 };
 
 export function FeedbackSidebar({
-  org,
   organizationId,
   allowAnonymous,
 }: FeedbackSidebarProps) {

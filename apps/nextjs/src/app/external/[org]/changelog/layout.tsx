@@ -7,10 +7,7 @@ type ChangelogLayoutProps = {
 
 export default async function ChangelogLayout({
   children,
-  params,
 }: ChangelogLayoutProps) {
-  const { org } = await params;
-
   return (
     <>
       <link

@@ -27,20 +27,22 @@ export function AuthDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="sm:max-w-[425px]">
-        {mode === "signin" ? (
-          <SignInForm
-            onSuccess={handleSuccess}
-            onSwitchToSignUp={() => setMode("signup")}
-            showSwitchToSignUp
-          />
-        ) : (
-          <SignUpForm
-            onSuccess={handleSuccess}
-            onSwitchToSignIn={() => setMode("signin")}
-            showSwitchToSignIn
-          />
-        )}
+      <DialogContent className="p-0 sm:max-w-[450px]">
+        <div className="p-6">
+          {mode === "signin" ? (
+            <SignInForm
+              onSuccess={handleSuccess}
+              onSwitchToSignUp={() => setMode("signup")}
+              showSwitchToSignUp
+            />
+          ) : (
+            <SignUpForm
+              onSuccess={handleSuccess}
+              onSwitchToSignIn={() => setMode("signin")}
+              showSwitchToSignIn
+            />
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );

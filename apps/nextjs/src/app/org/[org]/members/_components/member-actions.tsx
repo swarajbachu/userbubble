@@ -39,7 +39,6 @@ export function MemberActions({
   member,
   organizationId,
   currentUserId,
-  currentUserRole,
 }: MemberActionsProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();

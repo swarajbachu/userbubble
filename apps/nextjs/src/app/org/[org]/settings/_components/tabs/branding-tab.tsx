@@ -13,6 +13,7 @@ import {
 } from "@userbubble/ui/field";
 import { Input } from "@userbubble/ui/input";
 import { toast } from "@userbubble/ui/toast";
+import Image from "next/image";
 import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
 
@@ -113,10 +114,12 @@ export function BrandingTab({ organization }: BrandingTabProps) {
                 <div className="flex items-center gap-4">
                   {field.state.value && (
                     <div className="flex size-12 items-center justify-center rounded-lg border bg-muted">
-                      <img
+                      <Image
                         alt="Logo preview"
                         className="size-10 rounded object-contain"
+                        height={48}
                         src={field.state.value}
+                        width={48}
                       />
                     </div>
                   )}

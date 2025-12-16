@@ -166,6 +166,11 @@
     margin-top: 0;
   }
 
+  /* Paragraph spacing */
+  p {
+    margin: 0.75rem 0;
+  }
+
   /* List styles */
   ul,
   ol {
@@ -249,11 +254,6 @@
     font-style: italic;
     margin: 1.5rem 0;
     padding-left: 1rem;
-  }
-
-  /* Paragraph spacing */
-  p {
-    margin: 0.75rem 0;
   }
 }
 
