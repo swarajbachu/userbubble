@@ -2,7 +2,6 @@
 
 import {
   Add01Icon,
-  Dashboard01Icon,
   Login01Icon,
   Logout01Icon,
   Settings01Icon,
@@ -151,39 +150,36 @@ export function ExternalHeader({
 
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="gap-2" size="sm" variant="secondary">
-                  <Avatar size="xs">
-                    {user.image && (
-                      <AvatarImage alt={user.name} src={user.image} />
-                    )}
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-                  </Avatar>
-                  <span className="hidden sm:inline">{user.name}</span>
-                </Button>
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger
+                render={
+                  <Button className="gap-2" size="sm" variant="secondary">
+                    <Avatar size="lg">
+                      {user.image && (
+                        <AvatarImage alt={user.name} src={user.image} />
+                      )}
+                      <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    </Avatar>
+                    <span className="hidden sm:inline">{user.name}</span>
+                  </Button>
+                }
+              />
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem onClick={() => setCreateDialogOpen(true)}>
                   <Icon icon={Add01Icon} size={16} />
                   <span>Create Post</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link
-                    href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/settings`}
-                  >
-                    <Icon icon={Settings01Icon} size={16} />
-                    <span>Settings</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/feedback`}
-                  >
-                    <Icon icon={Dashboard01Icon} size={16} />
-                    <span>Dashboard</span>
-                  </Link>
-                </DropdownMenuItem>
+                <DropdownMenuItem
+                  render={
+                    <Link
+                      href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/settings`}
+                    >
+                      <Icon icon={Settings01Icon} size={16} />
+                      <span>Settings</span>
+                    </Link>
+                  }
+                />
+
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => authClient.signOut()}>
                   <Icon icon={Logout01Icon} size={16} />
@@ -192,12 +188,15 @@ export function ExternalHeader({
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild size="sm" variant="secondary">
-              <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-in`}>
-                <Icon icon={Login01Icon} size={16} />
-                <span>Login</span>
-              </Link>
-            </Button>
+            <Button
+              nativeButton={false}
+              render={
+                <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-in`}>
+                  <Icon icon={Login01Icon} size={16} />
+                  <span>Login</span>
+                </Link>
+              }
+            />
           )}
 
           <CreateFeedbackDialog
