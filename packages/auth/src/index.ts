@@ -47,20 +47,6 @@ export function initAuth<
         sameSite: "none",
         secure: true,
       },
-      cookies: {
-        session_token: {
-          attributes: {
-            httpOnly: true,
-            sameSite: "none",
-            path: "/",
-            secure: true,
-            domain:
-              process.env.NODE_ENV === "production"
-                ? ".userbubble.com"
-                : ".host",
-          },
-        },
-      },
     },
     emailAndPassword: {
       enabled: true,
