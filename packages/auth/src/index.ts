@@ -40,7 +40,7 @@ export function initAuth<
       crossSubDomainCookies: {
         enabled: true,
         domain:
-          process.env.NODE_ENV === "production" ? ".userbubble.com" : ".host",
+          process.env.NODE_ENV === "production" ? "userbubble.com" : "host",
       },
       useSecureCookies: true,
       defaultCookieAttributes: {
