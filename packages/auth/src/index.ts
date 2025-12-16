@@ -44,7 +44,7 @@ export function initAuth<
       },
       useSecureCookies: true,
       defaultCookieAttributes: {
-        sameSite: "lax",
+        sameSite: "none",
         secure: true,
       },
       cookies: {
