@@ -35,27 +35,32 @@ export function initAuth<
       },
     },
     advanced: {
+      cookiePrefix:
+        process.env.NODE_ENV === "production" ? "userbubble" : "host",
       crossSubDomainCookies: {
-        enabled: process.env.NODE_ENV === "production",
+        enabled: true,
         domain:
-          process.env.NODE_ENV === "production" ? "userbubble.com" : undefined,
+          process.env.NODE_ENV === "production" ? ".userbubble.com" : ".host",
       },
-      useSecureCookies: process.env.NODE_ENV === "production",
+      useSecureCookies: true,
       defaultCookieAttributes: {
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        secure: true,
       },
-      // Remove the cookies.state configuration for development
-      ...(process.env.NODE_ENV === "production" && {
-        cookies: {
-          state: {
-            attributes: {
-              sameSite: "none",
-              secure: true,
-            },
+      cookies: {
+        session_token: {
+          attributes: {
+            httpOnly: true,
+            sameSite: "lax",
+            path: "/",
+            secure: true,
+            domain:
+              process.env.NODE_ENV === "production"
+                ? ".userbubble.com"
+                : ".host",
           },
         },
-      }),
+      },
     },
     emailAndPassword: {
       enabled: true,
@@ -96,7 +101,6 @@ export function initAuth<
       google: {
         clientId: options.googleClientId,
         clientSecret: options.googleClientSecret,
-        // redirectURI: `${options.productionUrl}/api/auth/callback/google`,
       },
     },
     trustedOrigins: [
@@ -104,6 +108,7 @@ export function initAuth<
       "http://localhost:3000",
       options.baseUrl,
       "https://*.userbubble.com",
+      "https://*.host",
     ],
     onAPIError: {
       onError(error, ctx) {

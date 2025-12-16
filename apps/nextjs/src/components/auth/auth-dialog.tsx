@@ -31,12 +31,14 @@ export function AuthDialog({
         <div className="p-6">
           {mode === "signin" ? (
             <SignInForm
+              callbackUrl={undefined}
               onSuccess={handleSuccess}
               onSwitchToSignUp={() => setMode("signup")}
               showSwitchToSignUp
             />
           ) : (
             <SignUpForm
+              callbackUrl={undefined}
               onSuccess={handleSuccess}
               onSwitchToSignIn={() => setMode("signin")}
               showSwitchToSignIn

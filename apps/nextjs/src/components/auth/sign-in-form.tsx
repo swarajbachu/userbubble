@@ -29,7 +29,7 @@ type SignInFormProps = {
 
 export function SignInForm({
   onSuccess,
-  callbackUrl = "/dashboard",
+  callbackUrl = "/",
   showSwitchToSignUp,
   onSwitchToSignUp,
 }: SignInFormProps) {
@@ -48,6 +48,7 @@ export function SignInForm({
       const result = await authClient.signIn.email({
         email,
         password,
+        callbackURL: callbackUrl,
       });
 
       if (result.error) {

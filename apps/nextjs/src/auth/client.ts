@@ -12,7 +12,7 @@ export const authClient = createAuthClient({
       schema: inferOrgAdditionalFields<typeof auth>(),
     }),
   ],
-  fetchOptions: {
-    credentials: "include",
-  },
+  // fetchOptions: {
+  //   credentials: "include",
+  // },
 });

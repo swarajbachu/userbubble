@@ -4,7 +4,8 @@ import { auth } from "~/auth/server";
 // Define allowed origins for CORS
 const allowedOrigins = new Set([
   "https://app.userbubble.com",
-  "https://delulusocial.userbubble.com",
+  "https://*.host",
+  "https://app.host",
 ]);
 
 const corsHeaders = {
