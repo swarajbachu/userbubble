@@ -101,6 +101,7 @@ export function initAuth<
       google: {
         clientId: options.googleClientId,
         clientSecret: options.googleClientSecret,
+        redirectURI: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/google`,
       },
     },
     trustedOrigins: [
