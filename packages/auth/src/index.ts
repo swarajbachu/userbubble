@@ -42,11 +42,6 @@ export function initAuth<
         domain:
           process.env.NODE_ENV === "production" ? "userbubble.com" : "host",
       },
-      useSecureCookies: true,
-      defaultCookieAttributes: {
-        sameSite: "none",
-        secure: true,
-      },
     },
     emailAndPassword: {
       enabled: true,
