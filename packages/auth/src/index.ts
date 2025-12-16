@@ -51,7 +51,7 @@ export function initAuth<
         session_token: {
           attributes: {
             httpOnly: true,
-            sameSite: "lax",
+            sameSite: "none",
             path: "/",
             secure: true,
             domain:
