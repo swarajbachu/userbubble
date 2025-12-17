@@ -34,29 +34,29 @@ export function initAuth<
         maxAge: 5 * 60, // 5 minutes (300 seconds)
       },
     },
-    advanced: {
-      ...(process.env.NODE_ENV === "production" && {
-        defaultCookieAttributes: {
-          sameSite: "None",
-          secure: true,
-        },
-        crossSubDomainCookies: {
-          enabled: true,
-          domain: ".userbubble.com",
-        },
-        // cookies: {
-        //   session_token: {
-        //     attributes: {
-        //       httpOnly: true,
-        //       sameSite: "lax",
-        //       path: "/",
-        //       secure: true,
-        //       domain: ".userbubble.com",
-        //     },
-        //   },
-        // },
-      }),
-    },
+    // advanced: {
+    //   ...(process.env.NODE_ENV === "production" && {
+    //     defaultCookieAttributes: {
+    //       sameSite: "None",
+    //       secure: true,
+    //     },
+    //     crossSubDomainCookies: {
+    //       enabled: true,
+    //       domain: ".userbubble.com",
+    //     },
+    //     // cookies: {
+    //     //   session_token: {
+    //     //     attributes: {
+    //     //       httpOnly: true,
+    //     //       sameSite: "lax",
+    //     //       path: "/",
+    //     //       secure: true,
+    //     //       domain: ".userbubble.com",
+    //     //     },
+    //     //   },
+    //     // },
+    //   }),
+    // },
     emailAndPassword: {
       enabled: true,
     },
