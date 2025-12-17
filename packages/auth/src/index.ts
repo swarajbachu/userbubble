@@ -4,6 +4,7 @@ import * as schema from "@userbubble/db/schema";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
 
 import { externalLogin } from "./plugins/external-login";
@@ -84,6 +85,7 @@ export function initAuth<
           },
         },
       }),
+      nextCookies(),
       // External login plugin for HMAC authentication
       externalLogin({
         sessionDuration: 7 * 24 * 60 * 60, // 7 days

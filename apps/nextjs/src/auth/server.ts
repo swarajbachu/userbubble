@@ -4,7 +4,6 @@ import { initAuth } from "@userbubble/auth";
 import { nextCookies } from "better-auth/next-js";
 import { headers } from "next/headers";
 import { cache } from "react";
-
 import { env } from "~/env";
 
 function getBaseUrl(): string {
