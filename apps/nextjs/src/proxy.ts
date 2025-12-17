@@ -64,6 +64,7 @@ export async function proxy(request: NextRequest) {
   try {
     // Use cached getSession instead of direct auth.api.getSession
     const session = await getSession();
+    console.log("session", session);
 
     const isAuthenticated = !!session?.user;
 

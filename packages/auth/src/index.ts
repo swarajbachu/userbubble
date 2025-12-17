@@ -29,12 +29,19 @@ export function initAuth<
     baseURL: options.baseUrl,
     secret: options.secret,
     advanced: {
-      ...(process.env.NODE_ENV === "production" && {
-        crossSubDomainCookies: {
-          enabled: true,
-          domain: ".userbubble.com",
-        },
-      }),
+      crossSubDomainCookies: {
+        enabled: true,
+        domain:
+          process.env.NODE_ENV === "production"
+            ? ".userbubble.com"
+            : ".host.local",
+      },
+      useSecureCookies: true,
+      disableCSRFCheck: false,
+      defaultCookieAttributes: {
+        sameSite: "None",
+        secure: true,
+      },
     },
     emailAndPassword: {
       enabled: true,
@@ -83,7 +90,8 @@ export function initAuth<
       "http://localhost:3000",
       options.baseUrl,
       "https://*.userbubble.com",
-      "https://*.host",
+      "https://*.host.local",
+      "https://delulusocial.host.local",
     ],
     onAPIError: {
       onError(error, ctx) {

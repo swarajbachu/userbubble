@@ -18,6 +18,7 @@ const config = {
 
   /** We already do linting and typechecking as separate tasks in CI */
   typescript: { ignoreBuildErrors: true },
+  // allowedDevOrigins: ["https://*.userbubble.com", "https://*.host.local"],
 
   /** Support path-based routing for local development */
   async rewrites() {
