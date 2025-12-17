@@ -45,17 +45,17 @@ export function initAuth<
           enabled: true,
           domain: ".userbubble.com",
         },
-        cookies: {
-          session_token: {
-            attributes: {
-              httpOnly: true,
-              sameSite: "lax",
-              path: "/",
-              secure: true,
-              domain: ".userbubble.com",
-            },
-          },
-        },
+        // cookies: {
+        //   session_token: {
+        //     attributes: {
+        //       httpOnly: true,
+        //       sameSite: "lax",
+        //       path: "/",
+        //       secure: true,
+        //       domain: ".userbubble.com",
+        //     },
+        //   },
+        // },
       }),
     },
     emailAndPassword: {
