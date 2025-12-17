@@ -8,7 +8,7 @@ import { env } from "~/env";
 
 function getBaseUrl(): string {
   if (env.VERCEL_ENV === "production") {
-    return `https://${process.env.NEXT_PUBLIC_APP_URL ?? "userbubble.com"}`;
+    return `${process.env.NEXT_PUBLIC_APP_URL ?? "https://app.userbubble.com"}`;
   }
   if (env.VERCEL_ENV === "preview") {
     return `https://${env.VERCEL_URL}`;
