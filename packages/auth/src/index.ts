@@ -35,41 +35,28 @@ export function initAuth<
       },
     },
     advanced: {
-      cookiePrefix: "userbubble_auth",
-      ...(process.env.NODE_ENV === "production"
-        ? {
-            defaultCookieAttributes: {
+      ...(process.env.NODE_ENV === "production" && {
+        defaultCookieAttributes: {
+          sameSite: "lax",
+          secure: true,
+        },
+        useSecureCookies: true,
+        crossSubDomainCookies: {
+          enabled: true,
+          domain: ".userbubble.com",
+        },
+        cookies: {
+          session_token: {
+            attributes: {
+              httpOnly: true,
               sameSite: "lax",
+              path: "/",
               secure: true,
-            },
-            useSecureCookies: true,
-            crossSubDomainCookies: {
-              enabled: true,
               domain: ".userbubble.com",
             },
-          }
-        : {
-            defaultCookieAttributes: {
-              sameSite: "lax",
-              secure: false,
-            },
-            useSecureCookies: false,
-          }),
-      cookies: {
-        session_token: {
-          attributes: {
-            httpOnly: true,
-            sameSite: "lax",
-            path: "/",
-            ...(process.env.NODE_ENV === "production"
-              ? {
-                  secure: true,
-                  domain: ".userbubble.com",
-                }
-              : {}),
           },
         },
-      },
+      }),
     },
     emailAndPassword: {
       enabled: true,

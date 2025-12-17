@@ -1,11 +1,11 @@
 import { cn } from "@userbubble/ui";
 import { ThemeProvider } from "@userbubble/ui/theme";
 import { Toaster } from "@userbubble/ui/toast";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-
 import { env } from "~/env";
 import { TRPCReactProvider } from "~/trpc/react";
 
@@ -74,6 +74,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           geistMono.variable
         )}
       >
+        <Analytics />
         <ThemeProvider>
           <TRPCReactProvider>
             <NuqsAdapter>{props.children}</NuqsAdapter>
