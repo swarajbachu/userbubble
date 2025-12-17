@@ -30,24 +30,9 @@ export function initAuth<
     secret: options.secret,
     advanced: {
       ...(process.env.NODE_ENV === "production" && {
-        defaultCookieAttributes: {
-          sameSite: "None",
-          secure: true,
-        },
         crossSubDomainCookies: {
           enabled: true,
           domain: ".userbubble.com",
-        },
-        cookies: {
-          session_token: {
-            attributes: {
-              httpOnly: true,
-              sameSite: "None",
-              path: "/",
-              secure: true,
-              domain: ".userbubble.com",
-            },
-          },
         },
       }),
     },
