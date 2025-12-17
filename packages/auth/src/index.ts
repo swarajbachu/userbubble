@@ -42,7 +42,7 @@ export function initAuth<
           session_token: {
             attributes: {
               httpOnly: true,
-              sameSite: "lax",
+              sameSite: "None",
               path: "/",
               secure: true,
               domain: ".userbubble.com",
