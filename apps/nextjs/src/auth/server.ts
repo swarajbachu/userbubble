@@ -20,7 +20,7 @@ const baseUrl = getBaseUrl();
 
 export const auth = initAuth({
   baseUrl,
-  productionUrl: `https://${process.env.NEXT_PUBLIC_APP_URL ?? "https://app.userbubble.com"}`,
+  productionUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://app.userbubble.com"}`,
   secret: env.AUTH_SECRET,
   googleClientId: env.AUTH_GOOGLE_ID,
   googleClientSecret: env.AUTH_GOOGLE_SECRET,
