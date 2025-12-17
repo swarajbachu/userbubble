@@ -8,7 +8,7 @@ import { env } from "~/env";
 
 function getBaseUrl(): string {
   if (env.VERCEL_ENV === "production") {
-    return `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`;
+    return `https://${process.env.NEXT_PUBLIC_APP_URL ?? "userbubble.com"}`;
   }
   if (env.VERCEL_ENV === "preview") {
     return `https://${env.VERCEL_URL}`;
@@ -20,7 +20,7 @@ const baseUrl = getBaseUrl();
 
 export const auth = initAuth({
   baseUrl,
-  productionUrl: `https://${env.VERCEL_PROJECT_PRODUCTION_URL ?? "turbo.t3.gg"}`,
+  productionUrl: `https://${process.env.NEXT_PUBLIC_APP_URL ?? "userbubble.com"}`,
   secret: env.AUTH_SECRET,
   googleClientId: env.AUTH_GOOGLE_ID,
   googleClientSecret: env.AUTH_GOOGLE_SECRET,
