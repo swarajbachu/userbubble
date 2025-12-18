@@ -1,4 +1,4 @@
-import { and, desc, eq, exists, inArray, or, sql } from "drizzle-orm";
+import { and, desc, eq, exists, inArray, or, type SQL, sql } from "drizzle-orm";
 import { db } from "../client";
 import { member } from "../org/organization.sql";
 import { user } from "../user/user.sql";
@@ -27,7 +27,9 @@ export async function getFeedbackPosts(
   }
 ) {
   // Build all conditions upfront
-  const conditions = [eq(feedbackPost.organizationId, organizationId)];
+  const conditions: (SQL | undefined)[] = [
+    eq(feedbackPost.organizationId, organizationId),
+  ];
 
   // PRIVACY FILTER: Show public posts OR posts where user is author OR team member
   if (filters?.userId) {
