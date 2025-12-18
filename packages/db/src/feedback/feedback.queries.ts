@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, exists, inArray, or, sql } from "drizzle-orm";
 import { db } from "../client";
 import { member } from "../org/organization.sql";
 import { user } from "../user/user.sql";
@@ -23,11 +23,39 @@ export async function getFeedbackPosts(
     status?: FeedbackStatus[];
     category?: FeedbackCategory;
     sortBy?: "votes" | "recent";
-    userId?: string; // Optional: Check if user has voted
+    userId?: string; // For vote lookup AND privacy check
   }
 ) {
   // Build all conditions upfront
   const conditions = [eq(feedbackPost.organizationId, organizationId)];
+
+  // PRIVACY FILTER: Show public posts OR posts where user is author OR team member
+  if (filters?.userId) {
+    // Authenticated: public + own private + org private (if team member)
+    conditions.push(
+      or(
+        eq(feedbackPost.isPublic, true),
+        eq(feedbackPost.authorId, filters.userId),
+        and(
+          eq(feedbackPost.isPublic, false),
+          exists(
+            db
+              .select()
+              .from(member)
+              .where(
+                and(
+                  eq(member.userId, filters.userId),
+                  eq(member.organizationId, organizationId)
+                )
+              )
+          )
+        )
+      )
+    );
+  } else {
+    // Anonymous: only public posts
+    conditions.push(eq(feedbackPost.isPublic, true));
+  }
 
   if (filters?.status) {
     conditions.push(inArray(feedbackPost.status, filters.status));
@@ -72,6 +100,7 @@ export async function getFeedbackPosts(
 
 /**
  * Get a single feedback post with details
+ * NOTE: Does NOT filter by privacy - caller must check canViewPost permission
  */
 export async function getFeedbackPost(postId: string) {
   const result = await db

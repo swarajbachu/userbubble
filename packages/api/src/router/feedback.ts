@@ -4,6 +4,7 @@ import {
   canDeleteComment,
   canDeletePost,
   canModifyPost,
+  canViewPost,
   createComment,
   createFeedbackPost,
   deleteComment,
@@ -50,10 +51,19 @@ export const feedbackRouter = {
   // Get a single feedback post
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const post = await getFeedbackPost(input.id);
 
       if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Feedback post not found",
+        });
+      }
+
+      // Privacy check: return 404 if can't view
+      const canView = await canViewPost(input.id, ctx.session?.user?.id);
+      if (!canView) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Feedback post not found",
@@ -188,10 +198,19 @@ export const feedbackRouter = {
   // Get comments for a post
   getComments: publicProcedure
     .input(z.object({ postId: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       // Get post to find organization ID
       const post = await getFeedbackPost(input.postId);
       if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Feedback post not found",
+        });
+      }
+
+      // Privacy check: return 404 if can't view
+      const canView = await canViewPost(input.postId, ctx.session?.user?.id);
+      if (!canView) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Feedback post not found",
@@ -214,6 +233,15 @@ export const feedbackRouter = {
       // Get post to find organization
       const post = await getFeedbackPost(input.postId);
       if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Feedback post not found",
+        });
+      }
+
+      // Privacy check: can't comment on posts you can't view
+      const canView = await canViewPost(input.postId, ctx.session.user.id);
+      if (!canView) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Feedback post not found",

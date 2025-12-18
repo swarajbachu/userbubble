@@ -197,3 +197,43 @@ export async function canCommentOnPost(
 
   return settings.publicAccess.allowAnonymousComments;
 }
+
+/**
+ * Check if user can view a feedback post
+ * Rules: Public posts = everyone, Private posts = author OR team member
+ */
+export async function canViewPost(
+  postId: string,
+  userId?: string | null
+): Promise<boolean> {
+  const post = await db.query.feedbackPost.findFirst({
+    where: eq(feedbackPost.id, postId),
+    columns: {
+      isPublic: true,
+      authorId: true,
+      organizationId: true,
+    },
+  });
+
+  if (!post) {
+    return false;
+  }
+
+  // Public posts are visible to everyone
+  if (post.isPublic) {
+    return true;
+  }
+
+  // Private posts require authentication
+  if (!userId) {
+    return false;
+  }
+
+  // Author can always view their own posts
+  if (post.authorId === userId) {
+    return true;
+  }
+
+  // Check if user is a team member of the organization
+  return memberQueries.isMember(userId, post.organizationId);
+}

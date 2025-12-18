@@ -123,7 +123,7 @@ export function CreateRequestDialog({
                   <div className="flex flex-col gap-2">
                     <Input
                       className={cn(
-                        "h-auto border-none bg-transparent p-0 font-semibold text-lg shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0",
+                        "h-auto rounded-none border-none bg-transparent p-0 font-semibold text-lg shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0 dark:bg-transparent",
                         isInvalid &&
                           "text-destructive placeholder:text-destructive"
                       )}
@@ -157,7 +157,7 @@ export function CreateRequestDialog({
                   <div className="flex flex-col gap-2">
                     <Textarea
                       className={cn(
-                        "min-h-[100px] resize-none border-none bg-transparent p-0 shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0",
+                        "min-h-[100px] resize-none rounded-none border-none bg-transparent p-0 shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0 dark:bg-transparent",
                         isInvalid &&
                           "text-destructive placeholder:text-destructive"
                       )}

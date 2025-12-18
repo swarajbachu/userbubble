@@ -34,6 +34,7 @@ type ExternalHeaderProps = {
   orgSlug: string;
   organizationId: string;
   allowAnonymous: boolean;
+  memberRole: "admin" | "owner" | "member" | null;
 };
 
 export function ExternalHeader({
@@ -42,6 +43,7 @@ export function ExternalHeader({
   orgSlug,
   organizationId,
   allowAnonymous,
+  memberRole,
 }: ExternalHeaderProps) {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<string>("");
@@ -171,17 +173,23 @@ export function ExternalHeader({
                   <Icon icon={Add01Icon} size={16} />
                   <span>Create Post</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  render={
-                    <Link
-                      href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/settings`}
-                    >
-                      <Icon icon={Settings01Icon} size={16} />
-                      <span>Settings</span>
-                    </Link>
-                  }
-                />
+
+                {/* Only show Settings for admin/owner */}
+                {(memberRole === "admin" || memberRole === "owner") && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      render={
+                        <Link
+                          href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/settings`}
+                        >
+                          <Icon icon={Settings01Icon} size={16} />
+                          <span>Settings</span>
+                        </Link>
+                      }
+                    />
+                  </>
+                )}
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => authClient.signOut()}>

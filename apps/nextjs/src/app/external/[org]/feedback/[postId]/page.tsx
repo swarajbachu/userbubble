@@ -1,4 +1,5 @@
 import {
+  canViewPost,
   getFeedbackPost,
   getPostComments,
   getUserVote,
@@ -26,6 +27,15 @@ export async function generateMetadata({
   const post = await getFeedbackPost(postId);
 
   if (!post || post.post.organizationId !== organization.id) {
+    return {
+      title: "Post Not Found",
+    };
+  }
+
+  // Privacy check for metadata
+  const session = await getSession();
+  const canView = await canViewPost(postId, session?.user?.id);
+  if (!canView) {
     return {
       title: "Post Not Found",
     };
@@ -75,12 +85,18 @@ export default async function ExternalFeedbackPostPage({
     notFound();
   }
 
-  // Fetch comments
-  const comments = await getPostComments(postId, organization.id);
-
   // Get session - external users might be anonymous
   const session = await getSession();
   const userId = session?.user?.id;
+
+  // Privacy check: return 404 if can't view
+  const canView = await canViewPost(postId, userId);
+  if (!canView) {
+    notFound();
+  }
+
+  // Fetch comments
+  const comments = await getPostComments(postId, organization.id);
 
   // Check if user voted
   const hasUserVoted = userId ? !!(await getUserVote(postId, userId)) : false;
