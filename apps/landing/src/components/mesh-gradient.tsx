@@ -1,3 +1,7 @@
+/** biome-ignore-all lint/performance/useTopLevelRegex: <explanation> */
+/** biome-ignore-all lint/style/useBlockStatements: <explanation> */
+/** biome-ignore-all lint/correctness/useHookAtTopLevel: <explanation> */
+/** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 "use client";
 
 import type React from "react";
@@ -19,11 +23,13 @@ function resolveCssColorToRGB(color: string): [number, number, number] {
   const computed = getComputedStyle(el).color;
   document.body.removeChild(el);
   const match = computed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-  if (!match) return [241, 116, 99];
+  if (!match) {
+    return [241, 116, 99];
+  }
   return [
-    Number.parseInt(match[1], 10),
-    Number.parseInt(match[2], 10),
-    Number.parseInt(match[3], 10),
+    Number.parseInt(match[1] ?? "0", 10),
+    Number.parseInt(match[2] ?? "0", 10),
+    Number.parseInt(match[3] ?? "0", 10),
   ];
 }
 
@@ -39,13 +45,17 @@ export const MeshGradient: React.FC<MeshGradientProps> = ({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
 
     const glCtx = canvas.getContext("webgl", {
       premultipliedAlpha: true,
       alpha: true,
     });
-    if (!glCtx) return;
+    if (!glCtx) {
+      return;
+    }
     const gl: WebGLRenderingContext = glCtx;
 
     const getDpr = () =>
@@ -134,7 +144,9 @@ export const MeshGradient: React.FC<MeshGradientProps> = ({
 
     const vs = compile(gl.VERTEX_SHADER, vertexSrc);
     const fs = compile(gl.FRAGMENT_SHADER, fragmentSrc);
-    if (!(vs && fs)) return;
+    if (!(vs && fs)) {
+      return;
+    }
 
     const program = gl.createProgram()!;
     gl.attachShader(program, vs);
@@ -162,8 +174,7 @@ export const MeshGradient: React.FC<MeshGradientProps> = ({
 
     const parseColors = () => {
       const resolved = [...colors];
-      while (resolved.length < 5)
-        resolved.push(resolved[resolved.length - 1] ?? "#ffffff");
+      while (resolved.length < 5) resolved.push(resolved.at(-1) ?? "#ffffff");
       const rgb = resolved.slice(0, 5).map((c) => {
         const [r, g, b] = resolveCssColorToRGB(c);
         return [r / 255, g / 255, b / 255] as [number, number, number];

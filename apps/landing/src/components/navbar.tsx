@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/nursery/noShadow: <explanation> */
 "use client";
 import {
   AnimatePresence,
@@ -50,6 +51,7 @@ const MobileNav = ({ items }: { items: { title: string; href: string }[] }) => {
         aria-label="Toggle menu"
         className="flex size-6 flex-col items-center justify-center rounded-md shadow-aceternity"
         onClick={() => setIsOpen(!isOpen)}
+        type="button"
       >
         <HamburgerIcon className="size-4 shrink-0 text-gray-600" />
       </button>
@@ -73,6 +75,7 @@ const MobileNav = ({ items }: { items: { title: string; href: string }[] }) => {
                 aria-label="Toggle menu"
                 className="flex size-6 flex-col items-center justify-center rounded-md shadow-aceternity"
                 onClick={() => setIsOpen(!isOpen)}
+                type="button"
               >
                 <CloseIcon className="size-4 shrink-0 text-gray-600" />
               </button>

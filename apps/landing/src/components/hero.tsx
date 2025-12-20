@@ -1,33 +1,38 @@
+/** biome-ignore-all lint/style/useConsistentBuiltinInstantiation: <explanation> */
 "use client";
+import { Button } from "@userbubble/ui/button";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { GartnerLogo, GartnerLogoText, Star } from "@/icons/general";
 import { Badge } from "./badge";
-import { Button } from "./button";
 import { Container } from "./container";
 import { Heading } from "./heading";
 import { SubHeading } from "./subheading";
 
 export const Hero = () => (
   <Container className="flex flex-col items-center justify-center border-divide border-x px-4 pt-10 pb-10 md:pt-32 md:pb-20">
-    <Badge text="For fast moving engineering teams." />
+    <Badge text="Built for developers, loved by users" />
     <Heading className="mt-4">
-      Manage and simulate <br /> agentic{" "}
-      <span className="text-brand">workflows</span>
+      Feedback collection that works{" "}
+      <span className="text-brand">everywhere</span>
     </Heading>
 
     <SubHeading className="mx-auto mt-6 max-w-lg">
-      We empower developers and technical teams to create, simulate, and manage
-      AI-driven workflows visually
+      Native SDKs for React, React Native, Swift, Next.js, and Vue. Lightweight,
+      fast, and framework-agnostic. Integrate once, deploy everywhere.
     </SubHeading>
 
     <div className="mt-6 flex items-center gap-4">
-      <Button as={Link} href="/sign-up">
-        Start building
-      </Button>
-      <Button as={Link} href="/pricing" variant="secondary">
-        View pricing
-      </Button>
+      <Link href="/sign-up">
+        <Button className="px-4 py-4" size="lg" variant="default">
+          Start building
+        </Button>
+      </Link>
+      <Link href="/pricing">
+        <Button className="px-4 py-4" size="lg" variant="secondary">
+          View pricing
+        </Button>
+      </Link>
     </div>
     <div className="mt-6 flex items-center gap-2">
       <GartnerLogo />
@@ -48,7 +53,7 @@ export const Hero = () => (
         ))}
       </div>
       <span className="border-gray-500 border-l pl-4 text-[10px] text-gray-600 sm:text-sm">
-        Innovative AI solution 2025 by
+        Loved by developers building cross-platform apps
       </span>
       <GartnerLogoText className="size-12 sm:size-16" />
     </div>

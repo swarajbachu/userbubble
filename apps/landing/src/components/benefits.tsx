@@ -1,16 +1,17 @@
 "use client";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Analytics02Icon,
+  Loading03Icon,
+  MoneyBag01Icon,
+  Notification02Icon,
+  Rocket01Icon,
+  Settings03Icon,
+  Shield01Icon,
+} from "@hugeicons-pro/core-duotone-rounded";
 import { AnimatePresence, motion } from "motion/react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { RealtimeSyncIcon } from "@/icons/bento-icons";
-import {
-  BellIcon,
-  GraphIcon,
-  ReuseBrainIcon,
-  RocketIcon,
-  ScreenCogIcon,
-  ShieldIcon,
-} from "@/icons/card-icons";
 import { OpenAILogo, SlackLogo } from "@/icons/general";
 import { Badge } from "./badge";
 import { HorizontalLine } from "./common/horizontal-line";
@@ -25,40 +26,88 @@ import { SubHeading } from "./subheading";
 export const Benefits = () => {
   const benefits = [
     {
-      title: "Launch Faster",
+      title: "Works with Your Tech Stack",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <RocketIcon className="size-6 text-brand" />,
+        "Native SDKs for React, React Native, Swift, Next.js, and Vue. Use the same feedback tool across web, iOS, and Android. No platform left behind.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={Shield01Icon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "Iterate Rapidly",
+      title: "5-Minute Integration",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <RealtimeSyncIcon className="size-6 text-brand" />,
+        "One npm install or CocoaPods dependency. Import the widget component and you're done. No backend setup, no API keys to configure, no complicated auth flows.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={Rocket01Icon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "Scale Smarter",
+      title: "Sub-10KB Footprint",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <GraphIcon className="size-6 text-brand" />,
+        "Your app stays fast. Our lightweight SDK loads in milliseconds and won't slow down your page speed scores. Lazy-loaded by default for zero performance impact.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={Analytics02Icon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "Reuse Intelligence",
+      title: "Comprehensive Documentation",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <ReuseBrainIcon className="size-6 text-brand" />,
+        "Clear guides for every framework. Quick-start examples, API references, and troubleshooting tips. Get up and running in minutes, not hours.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={Settings03Icon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "Prevent Breakdowns",
+      title: "Per-Org Pricing",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <ShieldIcon className="size-6 text-brand" />,
+        "As your team grows, your bill doesn't explode. Pay per organization, not per seat. Invite everyone on your team without worrying about costs.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={MoneyBag01Icon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "Automate More",
+      title: "Unified Cross-Platform Feedback",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <ScreenCogIcon className="size-6 text-brand" />,
+        "Feedback from web, iOS, and Android flows into one dashboard. See votes across all platforms, track trends, and share one roadmap for your entire product.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={Loading03Icon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
   ];
   return (
@@ -66,23 +115,23 @@ export const Benefits = () => {
       <div className="relative flex flex-col items-center">
         <Badge text="Benefits" />
         <SectionHeading className="mt-4">
-          Making Engineers 10x faster
+          Built for developers, loved by product teams
         </SectionHeading>
 
         <SubHeading as="p" className="mx-auto mt-6 max-w-lg">
-          We empower developers and technical teams to create, simulate, and
-          manage AI-driven workflows visually
+          Multi-platform SDKs, comprehensive docs, and unified feedback across
+          all your apps. Technical excellence meets developer experience.
         </SubHeading>
       </div>
       <div className="mt-20 grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="grid grid-cols-1 gap-4">
-          {benefits.slice(0, 3).map((benefit, index) => (
+          {benefits.slice(0, 3).map((benefit) => (
             <Card key={benefit.title} {...benefit} />
           ))}
         </div>
         <MiddleCard />
         <div className="grid grid-cols-1 gap-4">
-          {benefits.slice(3, 6).map((benefit, index) => (
+          {benefits.slice(3, 6).map((benefit) => (
             <Card key={benefit.title} {...benefit} />
           ))}
         </div>
@@ -142,7 +191,12 @@ const MiddleCard = () => {
                 key={activeText}
                 transition={{ duration: 0.3 }}
               >
-                <BellIcon className="size-3" />
+                <HugeiconsIcon
+                  color="currentColor"
+                  icon={Notification02Icon}
+                  size={12}
+                  strokeWidth={1.5}
+                />
                 <motion.span key={activeText}>{texts[activeText]}</motion.span>
               </motion.div>
             </AnimatePresence>

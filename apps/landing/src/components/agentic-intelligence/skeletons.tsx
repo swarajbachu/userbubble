@@ -237,7 +237,7 @@ export const TextToWorkflowBuilderSkeleton = () => {
           content:
             RANDOM_MESSAGES[Math.floor(Math.random() * RANDOM_MESSAGES.length)],
         },
-      ];
+      ] as { role: string; content: string }[];
       setChat(newMessages);
       setVisibleMessages(newMessages.length);
       setInputText("");
@@ -277,7 +277,7 @@ export const TextToWorkflowBuilderSkeleton = () => {
         behavior: "smooth",
       });
     }
-  }, [visibleMessages, chatContainerRef]);
+  }, [chatContainerRef]);
 
   return (
     <motion.div className="relative mx-auto mt-2 h-full max-h-70 min-h-40 w-[85%] p-4">
@@ -292,7 +292,11 @@ export const TextToWorkflowBuilderSkeleton = () => {
         />
         <div className="mr-4 flex items-center gap-2">
           <AttachmentIcon />
-          <button className="cursor-pointer" onClick={handleSendMessage}>
+          <button
+            className="cursor-pointer"
+            onClick={handleSendMessage}
+            type="button"
+          >
             <SendIcon />
           </button>
         </div>

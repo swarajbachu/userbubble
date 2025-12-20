@@ -1,11 +1,10 @@
 const config = {
   websiteName:
-    "Notus: Build and Manage AI-Driven Agentic Workflows | Aceternity UI Pro Template",
+    "UserBubble - Cross-Platform Feedback SDK for React, Swift, Vue & More",
   websiteUrl:
-    process.env.NEXT_PUBLIC_WEBSITE_URL ||
-    "https://notus-agent-marketing-template.vercel.app/",
+    process.env.NEXT_PUBLIC_WEBSITE_URL || "https://userbubble.com/",
   websiteDescription:
-    "Empower your technical teams to create, simulate and manage AI-driven workflows visually. Notus provides an intuitive platform for developing and testing agentic systems, helping you build the next generation of intelligent applications with confidence.",
+    "Native feedback SDKs for React, React Native, Swift, Next.js, and Vue. Lightweight, fast, and framework-agnostic. Integrate in 5 minutes. Works everywhere your app runs.",
 };
 
 export default config;

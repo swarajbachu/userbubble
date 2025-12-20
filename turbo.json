@@ -9,10 +9,6 @@
       "dependsOn": ["^build"],
       "outputs": [".cache/tsbuildinfo.json", "dist/**"]
     },
-    "@userbubble/landing#build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
-    },
     "dev": {
       "dependsOn": ["^dev"],
       "cache": false,

@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
+/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 "use client";
 import { AnimatePresence, motion } from "motion/react";
 import type React from "react";
@@ -24,27 +26,27 @@ type Tab = {
 export const HowItWorks = () => {
   const tabs = [
     {
-      title: "Design your Workflow",
+      title: "Install the SDK",
       description:
-        "A drag-and-drop interface to create, connect, and configure agents into logical workflows",
+        "Install our SDK for React, Vue, Swift, React Native, or Next.js. One npm install or CocoaPods dependency. Zero configuration required.",
       icon: FirstIcon,
-      id: "workflow",
+      id: "install",
       skeleton: <DesignYourWorkflowSkeleton />,
     },
     {
-      title: "Connect your Tools",
+      title: "Integrate the Widget",
       description:
-        "Agents operate independently and coordinate tasks to complete all complex goals together",
+        "Import our widget component and drop it into your app. Lightweight, customizable, and framework-agnostic. No backend setup needed.",
       icon: SecondIcon,
-      id: "tools",
+      id: "integrate",
       skeleton: <ConnectYourTooklsSkeleton />,
     },
     {
-      title: "Deploy & Scale",
+      title: "Collect & Share Feedback",
       description:
-        "Run agent workflows in a sandbox to preview behavior, debug logic, and test interactions",
+        "Feedback from all your platforms (web, iOS, Android) flows into one dashboard. Users vote, you organize, and your public roadmap shows what's shipping next.",
       icon: ThirdIcon,
-      id: "deploy",
+      id: "collect",
       skeleton: <DeployAndScaleSkeleton />,
     },
   ];
@@ -54,6 +56,10 @@ export const HowItWorks = () => {
   const DURATION = 8000;
 
   useEffect(() => {
+    if (!activeTab) {
+      setActiveTab(tabs[0]);
+      return;
+    }
     const interval = setInterval(() => {
       const currentIndex = tabs.findIndex((tab) => tab.id === activeTab.id);
       const nextIndex = (currentIndex + 1) % tabs.length;
@@ -61,34 +67,37 @@ export const HowItWorks = () => {
     }, DURATION);
 
     return () => clearInterval(interval);
-  }, [activeTab]);
+  }, [activeTab, tabs.findIndex]);
   return (
     <Container className="border-divide border-x">
       <div className="flex flex-col items-center pt-16">
         <Badge text="How it works" />
-        <SectionHeading className="mt-4">Integrates easily</SectionHeading>
+        <SectionHeading className="mt-4">
+          Integrate feedback in minutes, not hours
+        </SectionHeading>
 
         <SubHeading as="p" className="mx-auto mt-6 max-w-lg">
-          We empower developers and technical teams to create, simulate, and
-          manage AI-driven workflows visually
+          One SDK for every platform. Drop in our widget component and start
+          collecting feedback from web, iOS, and Android with a unified
+          dashboard.
         </SubHeading>
         {/* Desktop Tabs */}
         <div className="mt-16 hidden w-full grid-cols-2 divide-x divide-divide border-divide border-t lg:grid">
           <div className="divide-y divide-divide">
-            {tabs.map((tab, index) => (
+            {tabs.map((tab) => (
               <button
                 className="group relative flex w-full flex-col items-start overflow-hidden px-12 py-8 hover:bg-gray-100 dark:hover:bg-neutral-800"
                 key={tab.title}
                 onClick={() => setActiveTab(tab)}
               >
-                {tab.id === activeTab.id && (
+                {tab.id === activeTab?.id && (
                   <Canvas activeTab={tab} duration={2500} />
                 )}
-                {tab.id === activeTab.id && <Loader duration={DURATION} />}
+                {tab.id === activeTab?.id && <Loader duration={DURATION} />}
                 <div
                   className={cn(
                     "relative z-20 flex items-center gap-2 font-medium text-charcoal-700 dark:text-neutral-100",
-                    activeTab.id !== tab.id && "group-hover:text-brand"
+                    activeTab?.id !== tab.id && "group-hover:text-brand"
                   )}
                 >
                   <tab.icon className="shrink-0" /> {tab.title}
@@ -96,7 +105,7 @@ export const HowItWorks = () => {
                 <p
                   className={cn(
                     "relative z-20 mt-2 text-left text-gray-600 text-sm dark:text-neutral-300",
-                    activeTab.id === tab.id && "text-charcoal-700"
+                    activeTab?.id === tab.id && "text-charcoal-700"
                   )}
                 >
                   {tab.description}
@@ -111,20 +120,20 @@ export const HowItWorks = () => {
                 className="absolute inset-0"
                 exit={{ filter: "blur(10px)", opacity: 0 }}
                 initial={{ filter: "blur(10px)", opacity: 0 }}
-                key={activeTab.id}
+                key={activeTab?.id}
                 transition={{ duration: 0.5 }}
               >
-                {activeTab.skeleton}
+                {activeTab?.skeleton}
               </motion.div>
             </AnimatePresence>
           </div>
         </div>
         {/* Mobile Tabs */}
         <div className="mt-16 flex w-full flex-col divide-y divide-divide overflow-hidden border-divide border-t lg:hidden">
-          {tabs.map((tab, index) => (
+          {tabs.map((tab) => (
             <div
               className="group relative flex w-full flex-col items-start overflow-hidden px-4 py-4 md:px-12 md:py-8"
-              key={tab.title + "mobile"}
+              key={`${tab.title}mobile`}
             >
               <div className="relative z-20 flex items-center gap-2 font-medium text-charcoal-700 dark:text-neutral-100">
                 <tab.icon className="shrink-0" /> {tab.title}

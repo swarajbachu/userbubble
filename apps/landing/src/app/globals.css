@@ -1,13 +1,34 @@
 @import "tailwindcss";
+@import "@userbubble/tailwind-config/theme";
 @plugin "@tailwindcss/typography";
 
+@source "../../../../packages/ui/src/*.{ts,tsx}";
+
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+@custom-variant auto (&:where(.auto, .auto *));
 
 @layer base {
   button {
     @apply cursor-pointer;
   }
+  * {
+    @apply border-border;
+  }
+  body {
+    letter-spacing: var(--tracking-normal);
+  }
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
 @theme {
   --font-primary: Inter Display, sans-serif;
   --font-mono: DM Mono, monospace;
@@ -57,7 +78,6 @@
 
 :root {
   --divide: var(--color-gray-300);
-  --primary: var(--color-neutral-900);
   --canvas: var(--color-neutral-400);
   --canvas-fill: var(--color-neutral-300);
   --dots: var(--color-gray-300);
@@ -67,7 +87,6 @@
 
 .dark {
   --divide: var(--color-neutral-800);
-  --primary: var(--color-neutral-100);
   --canvas: var(--color-neutral-200);
   --canvas-fill: var(--color-neutral-800);
   --dots: var(--color-neutral-800);

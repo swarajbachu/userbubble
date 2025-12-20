@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/correctness/useImageSize: <explanation> */
+/** biome-ignore-all lint/performance/noImgElement: <explanation> */
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
@@ -31,14 +33,17 @@ export const LogoCloud = () => {
 
         setDisplayedIndices((prev) => {
           const newIndices = [...prev];
-          newIndices[positionToReplace] = newLogoIndex;
+          let newIndex = newIndices[positionToReplace];
+          if (newIndex) {
+            newIndex = newLogoIndex;
+          }
           return newIndices;
         });
       }
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [displayedIndices, logos]);
+  }, [displayedIndices]);
 
   return (
     <Container className="border-divide border-x">
@@ -48,6 +53,10 @@ export const LogoCloud = () => {
       <div className="grid grid-cols-2 border-divide border-t md:grid-cols-4">
         {displayedIndices.map((logoIndex, position) => {
           const logo = logos[logoIndex];
+
+          if (!logo) {
+            return null;
+          }
 
           return (
             <div

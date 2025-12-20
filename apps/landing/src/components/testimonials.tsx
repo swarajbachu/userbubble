@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/performance/noImgElement: <explanation> */
 "use client";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
@@ -15,6 +16,7 @@ export const Testimonials = () => {
 
   const totalTestimonials = testimonials.length;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % totalTestimonials);
@@ -22,6 +24,11 @@ export const Testimonials = () => {
 
     return () => clearInterval(intervalId);
   }, [totalTestimonials, currentIndex]);
+
+  if (!selectedTestimonial) {
+    return null;
+  }
+
   return (
     <>
       <Container className="border-divide border-x">
@@ -134,6 +141,7 @@ export const Testimonials = () => {
               onClick={() => {
                 setCurrentIndex(index);
               }}
+              type="button"
             >
               {selectedTestimonial.src === testimonial.src && (
                 <PixelatedCanvas
@@ -142,7 +150,7 @@ export const Testimonials = () => {
                   duration={2500}
                   fillColor="var(--color-canvas)"
                   isActive={true}
-                  key={testimonial.src + "indexcanvas"}
+                  key={`${testimonial.src}indexcanvas`}
                   size={2.5}
                 />
               )}
@@ -176,7 +184,9 @@ export const Testimonials = () => {
                       testimonial.logoClassName
                     )}
                     draggable={false}
+                    height={200}
                     src={testimonial.src}
+                    width={200}
                   />
                 </motion.div>
               </AnimatePresence>

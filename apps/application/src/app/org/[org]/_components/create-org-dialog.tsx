@@ -6,7 +6,6 @@ import { isReservedSlug, isValidSlug } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
-  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -135,83 +134,74 @@ export function CreateOrgDialog({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogBody>
-          <DialogHeader>
-            <DialogTitle>Create Organization</DialogTitle>
-            <DialogDescription>
-              Create a new organization to manage feedback and roadmaps.
-            </DialogDescription>
-          </DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Create Organization</DialogTitle>
+          <DialogDescription>
+            Create a new organization to manage feedback and roadmaps.
+          </DialogDescription>
+        </DialogHeader>
 
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Organization Name</Label>
-              <Input
-                id="name"
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Acme Inc."
-                value={name}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="slug">Subdomain</Label>
-              <div className="flex">
-                <Input
-                  className="-me-px rounded-e-none"
-                  id="slug"
-                  onChange={(e) => setSlug(e.target.value.toLowerCase())}
-                  placeholder="acme-inc"
-                  value={slug}
-                />
-                <span className="inline-flex items-center rounded-e-md border border-input bg-input/30 px-3 text-muted-foreground text-sm">
-                  .userbubble.com
-                </span>
-              </div>
-              {isCheckingSlug && (
-                <p className="flex items-center gap-1 text-muted-foreground text-xs">
-                  <Icon
-                    className="animate-spin"
-                    icon={Loading03Icon}
-                    size={12}
-                  />
-                  Checking availability...
-                </p>
-              )}
-              {!isCheckingSlug && slug.length >= 3 && !isSlugValid && (
-                <p className="text-destructive text-xs">
-                  Slug is unavailable or invalid
-                </p>
-              )}
-              {!isCheckingSlug && isSlugValid && (
-                <p className="text-green-600 text-xs">Subdomain is available</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="website">Website (Optional)</Label>
-              <Input
-                id="website"
-                onChange={(e) => setWebsite(e.target.value)}
-                placeholder="https://acme.com"
-                type="url"
-                value={website}
-              />
-            </div>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Organization Name</Label>
+            <Input
+              id="name"
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Acme Inc."
+              value={name}
+            />
           </div>
 
-          <DialogFooter>
-            <Button onClick={() => setOpen(false)} variant="outline">
-              Cancel
-            </Button>
-            <Button
-              disabled={!isSlugValid || isCreating}
-              onClick={handleCreate}
-            >
-              {isCreating ? "Creating..." : "Create Organization"}
-            </Button>
-          </DialogFooter>
-        </DialogBody>
+          <div className="space-y-2">
+            <Label htmlFor="slug">Subdomain</Label>
+            <div className="flex">
+              <Input
+                className="-me-px rounded-e-none"
+                id="slug"
+                onChange={(e) => setSlug(e.target.value.toLowerCase())}
+                placeholder="acme-inc"
+                value={slug}
+              />
+              <span className="inline-flex items-center rounded-e-md border border-input bg-input/30 px-3 text-muted-foreground text-sm">
+                .userbubble.com
+              </span>
+            </div>
+            {isCheckingSlug && (
+              <p className="flex items-center gap-1 text-muted-foreground text-xs">
+                <Icon className="animate-spin" icon={Loading03Icon} size={12} />
+                Checking availability...
+              </p>
+            )}
+            {!isCheckingSlug && slug.length >= 3 && !isSlugValid && (
+              <p className="text-destructive text-xs">
+                Slug is unavailable or invalid
+              </p>
+            )}
+            {!isCheckingSlug && isSlugValid && (
+              <p className="text-green-600 text-xs">Subdomain is available</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="website">Website (Optional)</Label>
+            <Input
+              id="website"
+              onChange={(e) => setWebsite(e.target.value)}
+              placeholder="https://acme.com"
+              type="url"
+              value={website}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button onClick={() => setOpen(false)} variant="outline">
+            Cancel
+          </Button>
+          <Button disabled={!isSlugValid || isCreating} onClick={handleCreate}>
+            {isCreating ? "Creating..." : "Create Organization"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

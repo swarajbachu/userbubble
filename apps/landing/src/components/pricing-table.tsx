@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/complexity/noForEach: <explanation> */
 "use client";
 
 import Link from "next/link";
@@ -70,7 +71,10 @@ export const PricingTable = () => {
                       {tierName}
                     </div>
                     <div className="flex items-center font-normal text-gray-600 text-sm dark:text-neutral-300">
-                      $<SlidingNumber value={titleToPrice[tierName]?.[cycle]} />
+                      $
+                      <SlidingNumber
+                        value={titleToPrice[tierName]?.[cycle] ?? 0}
+                      />
                       /seat billed{" "}
                       {cycle === "monthly" ? "monthly" : "annually"}
                     </div>

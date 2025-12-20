@@ -2,8 +2,8 @@ import { CheckIcon } from "@/icons/card-icons";
 import { CloseIcon } from "@/icons/general";
 
 export enum TierName {
-  TIER_1 = "Growth",
-  TIER_2 = "Scale",
+  TIER_1 = "Starter",
+  TIER_2 = "Growth",
   TIER_3 = "Enterprise",
 }
 
@@ -16,14 +16,14 @@ export const tiers = [
     ctaText: "Start building",
     ctaLink: "/sign-up",
     features: [
-      "Up to 5 active agents",
-      "50 simulation runs",
-      "Visual builder access",
-      "GitHub + Zapier integration",
-      "Basic support",
-      "1 team workspace",
-      "Workflow APIs",
-      "Community Slack access",
+      "Up to 100 feedback submissions/month",
+      "1 public roadmap",
+      "1 changelog",
+      "Community support",
+      "Custom subdomain",
+      "Basic analytics",
+      "HMAC auto-login",
+      "Email notifications",
     ],
   },
   {
@@ -34,14 +34,14 @@ export const tiers = [
     ctaText: "Start for free",
     ctaLink: "/sign-up",
     features: [
-      "Up to 25 active agents",
-      "150 simulation runs",
-      "Visual builder access",
-      "GitHub + Zapier integration",
+      "Up to 500 feedback submissions/month",
+      "Unlimited roadmaps",
+      "Unlimited changelogs",
       "Priority support",
-      "3 team workspace",
-      "Workflow APIs",
-      "Priority Slack access",
+      "3 team workspaces",
+      "Advanced analytics",
+      "Custom branding",
+      "Slack integration",
     ],
     featured: true,
   },
@@ -53,30 +53,30 @@ export const tiers = [
     ctaText: "Contact sales",
     ctaLink: "/contact",
     features: [
-      "Unlimited active agents",
-      "Unlimited simulation runs",
-      "Visual builder access",
-      "GitHub + Zapier integration",
-      "Priority support",
-      "Unlimited team workspace",
-      "Workflow APIs",
-      "Priority Slack access",
-      "Access to Fight Club",
+      "Unlimited feedback submissions",
+      "Unlimited workspaces",
+      "Dedicated support",
+      "Custom integrations",
+      "API access",
+      "SLA guarantee",
+      "Advanced security & compliance",
+      "Custom domain",
+      "White-label options",
     ],
   },
 ];
 
 export const pricingTable = [
   {
-    title: "Seat Limit",
+    title: "Feedback Submissions",
     tiers: [
       {
         title: TierName.TIER_1,
-        value: "Up to 3",
+        value: "100/month",
       },
       {
         title: TierName.TIER_2,
-        value: "Up to 10",
+        value: "500/month",
       },
       {
         title: TierName.TIER_3,
@@ -85,66 +85,15 @@ export const pricingTable = [
     ],
   },
   {
-    title: "Two-factor authentication",
+    title: "Public Roadmaps",
     tiers: [
       {
         title: TierName.TIER_1,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: "1",
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
-      },
-      {
-        title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
-      },
-    ],
-  },
-  {
-    title: "Pay-per-task billing",
-    tiers: [
-      {
-        title: TierName.TIER_1,
-        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
-      },
-      {
-        title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
-      },
-      {
-        title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
-      },
-    ],
-  },
-  {
-    title: "Static IP",
-    tiers: [
-      {
-        title: TierName.TIER_1,
-        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
-      },
-      {
-        title: TierName.TIER_2,
-        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
-      },
-      {
-        title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
-      },
-    ],
-  },
-  {
-    title: "Record Limit",
-    tiers: [
-      {
-        title: TierName.TIER_1,
-        value: "1,000",
-      },
-      {
-        title: TierName.TIER_2,
-        value: "10,000",
+        value: "Unlimited",
       },
       {
         title: TierName.TIER_3,
@@ -153,11 +102,28 @@ export const pricingTable = [
     ],
   },
   {
-    title: "Folder Permissions",
+    title: "Changelogs",
     tiers: [
       {
         title: TierName.TIER_1,
-        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
+        value: "1",
+      },
+      {
+        title: TierName.TIER_2,
+        value: "Unlimited",
+      },
+      {
+        title: TierName.TIER_3,
+        value: "Unlimited",
+      },
+    ],
+  },
+  {
+    title: "HMAC Auto-Login",
+    tiers: [
+      {
+        title: TierName.TIER_1,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
       },
       {
         title: TierName.TIER_2,
@@ -170,7 +136,41 @@ export const pricingTable = [
     ],
   },
   {
-    title: "Teams",
+    title: "In-App Widget SDK",
+    tiers: [
+      {
+        title: TierName.TIER_1,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_2,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_3,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+    ],
+  },
+  {
+    title: "Voting & Prioritization",
+    tiers: [
+      {
+        title: TierName.TIER_1,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_2,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_3,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+    ],
+  },
+  {
+    title: "Team Workspaces",
     tiers: [
       {
         title: TierName.TIER_1,
@@ -187,7 +187,41 @@ export const pricingTable = [
     ],
   },
   {
-    title: "Shared Nodes",
+    title: "Email Notifications",
+    tiers: [
+      {
+        title: TierName.TIER_1,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_2,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_3,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+    ],
+  },
+  {
+    title: "Custom Subdomain",
+    tiers: [
+      {
+        title: TierName.TIER_1,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_2,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_3,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+    ],
+  },
+  {
+    title: "Custom Branding",
     tiers: [
       {
         title: TierName.TIER_1,
@@ -204,7 +238,7 @@ export const pricingTable = [
     ],
   },
   {
-    title: "Shared app connections",
+    title: "Slack Integration",
     tiers: [
       {
         title: TierName.TIER_1,
@@ -221,41 +255,7 @@ export const pricingTable = [
     ],
   },
   {
-    title: "Agents",
-    tiers: [
-      {
-        title: TierName.TIER_1,
-        value: "5",
-      },
-      {
-        title: TierName.TIER_2,
-        value: "25",
-      },
-      {
-        title: TierName.TIER_3,
-        value: "Unlimited",
-      },
-    ],
-  },
-  {
-    title: "Chatbots",
-    tiers: [
-      {
-        title: TierName.TIER_1,
-        value: "2",
-      },
-      {
-        title: TierName.TIER_2,
-        value: "10",
-      },
-      {
-        title: TierName.TIER_3,
-        value: "Unlimited",
-      },
-    ],
-  },
-  {
-    title: "Nodus MCP",
+    title: "Zapier Webhooks",
     tiers: [
       {
         title: TierName.TIER_1,
@@ -272,7 +272,24 @@ export const pricingTable = [
     ],
   },
   {
-    title: "Nodus Canvas",
+    title: "Export Data (CSV/JSON)",
+    tiers: [
+      {
+        title: TierName.TIER_1,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_2,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_3,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+    ],
+  },
+  {
+    title: "Advanced Analytics",
     tiers: [
       {
         title: TierName.TIER_1,
@@ -289,53 +306,70 @@ export const pricingTable = [
     ],
   },
   {
-    title: "Tables",
+    title: "API Access",
     tiers: [
       {
         title: TierName.TIER_1,
-        value: "5",
+        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
       },
       {
         title: TierName.TIER_2,
-        value: "50",
+        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
       },
       {
         title: TierName.TIER_3,
-        value: "Unlimited",
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
       },
     ],
   },
   {
-    title: "Access Permissions",
+    title: "Custom Domain",
     tiers: [
       {
         title: TierName.TIER_1,
-        value: "Basic",
+        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
       },
       {
         title: TierName.TIER_2,
-        value: "Advanced",
+        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
       },
       {
         title: TierName.TIER_3,
-        value: "Enterprise",
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
       },
     ],
   },
   {
-    title: "Record Templates",
+    title: "White-Label Options",
     tiers: [
       {
         title: TierName.TIER_1,
-        value: "10",
+        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
       },
       {
         title: TierName.TIER_2,
-        value: "100",
+        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
       },
       {
         title: TierName.TIER_3,
-        value: "Unlimited",
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+      },
+    ],
+  },
+  {
+    title: "SLA Guarantee",
+    tiers: [
+      {
+        title: TierName.TIER_1,
+        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_2,
+        value: <CloseIcon className="mx-auto size-5 text-gray-600" />,
+      },
+      {
+        title: TierName.TIER_3,
+        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
       },
     ],
   },

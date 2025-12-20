@@ -3,7 +3,6 @@
 import { Checkbox } from "@userbubble/ui/checkbox";
 import {
   Dialog,
-  DialogBody,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -44,7 +43,7 @@ export function OnboardingChecklistModal() {
           </DialogDescription>
         </DialogHeader>
 
-        <DialogBody>
+        <div className="space-y-4 py-4">
           <div className="grid gap-6 md:grid-cols-2">
             {/* Setup Column */}
             <div className="space-y-4">
@@ -73,7 +72,7 @@ export function OnboardingChecklistModal() {
               </div>
             </div>
           </div>
-        </DialogBody>
+        </div>
       </DialogContent>
     </Dialog>
   );

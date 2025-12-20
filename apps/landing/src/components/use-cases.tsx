@@ -1,14 +1,15 @@
 "use client";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Analytics02Icon,
+  Database01Icon,
+  HeadphonesIcon,
+  PackageDeliveredIcon,
+  SourceCodeSquareIcon,
+  Wallet02Icon,
+} from "@hugeicons-pro/core-duotone-rounded";
 import { motion } from "motion/react";
 import { useState } from "react";
-import {
-  DatabaseIcon,
-  DevopsIcon,
-  GraphIcon,
-  PhoneIcon,
-  TruckIcon,
-  WalletIcon,
-} from "@/icons/card-icons";
 import { Badge } from "./badge";
 import { Container } from "./container";
 import { Scale } from "./scale";
@@ -18,40 +19,88 @@ import { SubHeading } from "./subheading";
 export const UseCases = () => {
   const useCases = [
     {
-      title: "DevOps",
+      title: "SaaS Startups",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <DevopsIcon className="size-6 text-brand" />,
+        "Ship features your customers actually want. Collect feedback, prioritize with votes, and share your roadmap—all in one place.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={SourceCodeSquareIcon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "SalesOps",
+      title: "B2B Platforms",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <GraphIcon className="size-6 text-brand" />,
+        "Give enterprise customers visibility into your product roadmap. Collect feature requests and keep stakeholders informed.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={Analytics02Icon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "Supply Chain",
+      title: "Developer Tools",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <TruckIcon className="size-6 text-brand" />,
+        "Built by developers for developers. Native SDKs for React, Swift, and Vue mean your users never leave your product. Integrate feedback seamlessly.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={Database01Icon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "Customer Support",
+      title: "Product Teams",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <PhoneIcon className="size-6 text-brand" />,
+        "Stop managing feedback in Slack, email, and spreadsheets. Centralize everything in one place with automatic organization.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={PackageDeliveredIcon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "DataOps",
+      title: "Customer Success",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <DatabaseIcon className="size-6 text-brand" />,
+        "Empower your CS team to capture customer feedback directly. Show customers you're listening by sharing your roadmap.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={HeadphonesIcon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
     {
-      title: "FinOps",
+      title: "API Companies",
       description:
-        "Visually orchestrate autonomous agents without writing boilerplate code",
-      icon: <WalletIcon className="size-6 text-brand" />,
+        "Collect feedback from technical users. Our lightweight, multi-platform SDK makes adoption seamless across web and mobile apps.",
+      icon: (
+        <HugeiconsIcon
+          className="text-brand"
+          color="currentColor"
+          icon={Wallet02Icon}
+          size={24}
+          strokeWidth={1.5}
+        />
+      ),
     },
   ];
   const [activeUseCase, setActiveUseCase] = useState<number | null>(null);
@@ -60,12 +109,12 @@ export const UseCases = () => {
       <div className="relative flex flex-col items-center py-20">
         <Badge text="Use Cases" />
         <SectionHeading className="mt-4">
-          Across various Industries
+          Built for product teams everywhere
         </SectionHeading>
 
         <SubHeading as="p" className="mx-auto mt-6 max-w-lg">
-          We empower developers and technical teams to create, simulate, and
-          manage AI-driven workflows visually
+          From early-stage startups to enterprise platforms, UserBubble helps
+          teams collect feedback and ship features faster.
         </SubHeading>
 
         <div className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">

@@ -1,32 +1,32 @@
 export const faqs = [
   {
-    question: "What exactly does this platform do?",
+    question: "Which frameworks and platforms does UserBubble support?",
     answer:
-      "Our platform lets you design, deploy, and manage AI-powered agentic workflows that can combine both automated (AI) and manual steps. These workflows connect to your existing tools (like Slack, Notion, or Google Sheets) and use AI agents to complete tasks.",
+      "We provide native SDKs for React, React Native, Swift (iOS), Next.js, and Vue. All SDKs share a consistent API, so you can use the same feedback tool across web, iOS, and Android. Support for Flutter and Kotlin is coming soon.",
   },
   {
-    question: "How do I get started with creating my first workflow?",
+    question: "How hard is it to integrate UserBubble into my app?",
     answer:
-      "Start by using our drag-and-drop interface to design your workflow. Connect the tools you already use, define the steps (both AI and manual), and test everything in our sandbox environment before deploying. No coding required.",
+      "Most developers integrate UserBubble in under 5 minutes. Install our SDK via npm or CocoaPods, import the widget component, and pass your project ID. No backend setup, no API configuration, no complicated authentication flows. Just drop in the component and you're live.",
   },
   {
-    question: "What tools and services can I integrate?",
+    question: "Will UserBubble slow down my app?",
     answer:
-      "We support hundreds of integrations including Slack, Notion, Google Workspace, Salesforce, GitHub, Zapier, and many more. You can also connect custom APIs and databases through our flexible connector system.",
+      "No. Our SDK is under 10KB and lazy-loads by default. It has zero impact on your initial page load or app startup time. We've optimized for performance across all platforms—web, iOS, and Android.",
   },
   {
-    question: "Is my data secure when using AI agents?",
+    question: "Can I use UserBubble across multiple apps (web + mobile)?",
     answer:
-      "Yes, we take security seriously. All data is encrypted in transit and at rest, we're SOC 2 compliant, and you maintain full control over what data your agents can access. Agents only interact with the specific tools and data you explicitly authorize.",
+      "Yes! That's exactly what we're built for. Use our React SDK for your web app, React Native for your mobile app, and Swift for your iOS app. All feedback flows into one unified dashboard, so you can see votes and requests across all platforms.",
   },
   {
-    question: "Can I test workflows before they go live?",
+    question: "Do you have documentation for each SDK?",
     answer:
-      "Absolutely. Our sandbox environment lets you preview and debug workflow logic safely before deployment. You can test different scenarios, validate agent behavior, and ensure everything works as expected without affecting your live systems.",
+      "Yes. We provide clear, framework-specific guides for React, Vue, Next.js, React Native, and Swift. Each guide includes quick-start examples, API references, and troubleshooting tips. Visit our docs to get started.",
   },
   {
-    question: "What's the difference between automated and manual steps?",
+    question: "Can I customize the look and feel of the feedback widget?",
     answer:
-      "Automated steps are handled entirely by AI agents (like data analysis, content generation, or API calls), while manual steps require human input or approval. You can mix both types to create workflows that leverage AI efficiency while maintaining human oversight where needed.",
+      "Yes! All our SDKs support custom theming. You can customize colors, fonts, and styles to match your brand. The Growth and Enterprise plans also include white-label options for a fully branded experience.",
   },
 ];

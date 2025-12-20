@@ -9,7 +9,6 @@ import { cn } from "@userbubble/ui";
 import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
-  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -25,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@userbubble/ui/select";
-import { toast } from "@userbubble/ui/toast";
+import { toast } from "sonner";
 import { categoryConfig } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
 
@@ -106,129 +105,127 @@ export function CreateFeedbackDialog({
             form.handleSubmit();
           }}
         >
-          <DialogBody className="space-y-4">
-            <DialogHeader className="sr-only">
-              <DialogTitle className="sr-only">Submit Feedback</DialogTitle>
-              <DialogDescription className="sr-only">
-                Share your ideas, report bugs, or suggest improvements. Your
-                feedback helps us build better products.
-              </DialogDescription>
-            </DialogHeader>
+          <DialogHeader className="sr-only">
+            <DialogTitle className="sr-only">Submit Feedback</DialogTitle>
+            <DialogDescription className="sr-only">
+              Share your ideas, report bugs, or suggest improvements. Your
+              feedback helps us build better products.
+            </DialogDescription>
+          </DialogHeader>
 
-            {/* Title */}
-            <form.Field name="title">
-              {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <div className="flex flex-col gap-2">
-                    <Input
-                      className={cn(
-                        "h-auto border-none bg-transparent p-0 font-semibold text-lg shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0",
-                        isInvalid &&
-                          "text-destructive placeholder:text-destructive"
-                      )}
-                      id={field.name}
-                      maxLength={256}
-                      minLength={3}
-                      name={field.name}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="Title"
-                      required
-                      type="text"
-                      value={field.state.value}
-                    />
-                    {isInvalid && (
-                      <span className="text-destructive text-xs">
-                        {field.state.meta.errors.join(", ")}
-                      </span>
+          {/* Title */}
+          <form.Field name="title">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <div className="flex flex-col gap-2">
+                  <Input
+                    className={cn(
+                      "h-auto border-none bg-transparent p-0 font-semibold text-lg shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0",
+                      isInvalid &&
+                        "text-destructive placeholder:text-destructive"
                     )}
-                  </div>
-                );
-              }}
-            </form.Field>
+                    id={field.name}
+                    maxLength={256}
+                    minLength={3}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Title"
+                    required
+                    type="text"
+                    value={field.state.value}
+                  />
+                  {isInvalid && (
+                    <span className="text-destructive text-xs">
+                      {field.state.meta.errors.join(", ")}
+                    </span>
+                  )}
+                </div>
+              );
+            }}
+          </form.Field>
 
-            {/* Description */}
-            <form.Field name="description">
-              {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <div className="flex flex-col gap-2">
-                    <Textarea
-                      className={cn(
-                        "min-h-[100px] resize-none border-none bg-transparent p-0 shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0",
-                        isInvalid &&
-                          "text-destructive placeholder:text-destructive"
-                      )}
-                      id={field.name}
-                      maxLength={5000}
-                      minLength={10}
-                      name={field.name}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="Describe your feedback..."
-                      required
-                      rows={6}
-                      value={field.state.value}
-                    />
-                    {isInvalid && (
-                      <span className="text-destructive text-xs">
-                        {field.state.meta.errors.join(", ")}
-                      </span>
+          {/* Description */}
+          <form.Field name="description">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <div className="flex flex-col gap-2">
+                  <Textarea
+                    className={cn(
+                      "min-h-[100px] resize-none border-none bg-transparent p-0 shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0",
+                      isInvalid &&
+                        "text-destructive placeholder:text-destructive"
                     )}
-                  </div>
-                );
-              }}
-            </form.Field>
+                    id={field.name}
+                    maxLength={5000}
+                    minLength={10}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Describe your feedback..."
+                    required
+                    rows={6}
+                    value={field.state.value}
+                  />
+                  {isInvalid && (
+                    <span className="text-destructive text-xs">
+                      {field.state.meta.errors.join(", ")}
+                    </span>
+                  )}
+                </div>
+              );
+            }}
+          </form.Field>
 
-            {/* Category */}
-            <form.Field name="category">
-              {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <div className="flex items-center gap-2 pt-2">
-                    <Select
-                      onValueChange={(value) =>
-                        field.handleChange(value as typeof field.state.value)
-                      }
-                      value={field.state.value}
-                    >
-                      <SelectTrigger className="h-8 w-auto gap-2 border-none bg-secondary/50 px-3 font-medium text-xs shadow-none hover:bg-secondary focus:ring-0">
-                        <SelectValue>
-                          <div className="flex items-center gap-2">
-                            <Icon
-                              icon={categoryConfig[field.state.value].icon}
-                              size={16}
-                            />
-                            <span className="capitalize">
-                              {field.state.value.replace("_", " ")}
-                            </span>
-                          </div>
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="feature_request">
-                          Feature Request
-                        </SelectItem>
-                        <SelectItem value="bug">Bug Report</SelectItem>
-                        <SelectItem value="improvement">Improvement</SelectItem>
-                        <SelectItem value="question">Question</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {isInvalid && (
-                      <span className="text-destructive text-xs">
-                        {field.state.meta.errors.join(", ")}
-                      </span>
-                    )}
-                  </div>
-                );
-              }}
-            </form.Field>
-          </DialogBody>
+          {/* Category */}
+          <form.Field name="category">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <div className="flex items-center gap-2 pt-2">
+                  <Select
+                    onValueChange={(value) =>
+                      field.handleChange(value as typeof field.state.value)
+                    }
+                    value={field.state.value}
+                  >
+                    <SelectTrigger className="h-8 w-auto gap-2 border-none bg-secondary/50 px-3 font-medium text-xs shadow-none hover:bg-secondary focus:ring-0">
+                      <SelectValue>
+                        <div className="flex items-center gap-2">
+                          <Icon
+                            icon={categoryConfig[field.state.value].icon}
+                            size={16}
+                          />
+                          <span className="capitalize">
+                            {field.state.value.replace("_", " ")}
+                          </span>
+                        </div>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="feature_request">
+                        Feature Request
+                      </SelectItem>
+                      <SelectItem value="bug">Bug Report</SelectItem>
+                      <SelectItem value="improvement">Improvement</SelectItem>
+                      <SelectItem value="question">Question</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {isInvalid && (
+                    <span className="text-destructive text-xs">
+                      {field.state.meta.errors.join(", ")}
+                    </span>
+                  )}
+                </div>
+              );
+            }}
+          </form.Field>
 
           <DialogFooter>
             <Button

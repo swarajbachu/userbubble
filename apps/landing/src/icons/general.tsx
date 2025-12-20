@@ -343,12 +343,24 @@ export const NotionLogo = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export function CloseIcon() {
-  return <Icon color="currentColor" icon={Cancel01Icon} size={24} />;
+export function CloseIcon({ className }: { className?: string }) {
+  return (
+    <Icon
+      className={className}
+      color="currentColor"
+      icon={Cancel01Icon}
+      size={24}
+    />
+  );
 }
 
-export const HamburgerIcon = () => (
-  <Icon color="currentColor" icon={Menu01Icon} size={24} />
+export const HamburgerIcon = ({ className }: { className?: string }) => (
+  <Icon
+    className={className}
+    color="currentColor"
+    icon={Menu01Icon}
+    size={24}
+  />
 );
 
 export const LinkedInIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -494,4 +506,141 @@ export const MoonIcon = ({ className }: { className?: string }) => (
 
 export const SunIcon = ({ className }: { className?: string }) => (
   <Icon className={className} color="currentColor" icon={Sun03Icon} size={24} />
+);
+
+export const ReactLogo = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    height="29"
+    viewBox="0 0 29 29"
+    width="29"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M14.5 16.5C15.6046 16.5 16.5 15.6046 16.5 14.5C16.5 13.3954 15.6046 12.5 14.5 12.5C13.3954 12.5 12.5 13.3954 12.5 14.5C12.5 15.6046 13.3954 16.5 14.5 16.5Z"
+      fill="#61DAFB"
+    />
+    <path
+      d="M14.5 19.5C20.2 19.5 24.5 17.2 24.5 14.5C24.5 11.8 20.2 9.5 14.5 9.5C8.8 9.5 4.5 11.8 4.5 14.5C4.5 17.2 8.8 19.5 14.5 19.5Z"
+      fill="none"
+      stroke="#61DAFB"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M11 18.5C13.8 23.5 17.8 26.2 19.5 25C21.2 23.8 20.2 18.8 17.5 13.8C14.8 8.8 10.8 5.8 9 7C7.3 8.2 8.2 13.5 11 18.5Z"
+      fill="none"
+      stroke="#61DAFB"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M11 10.5C8.2 15.5 7.3 20.8 9 22C10.8 23.2 14.8 20.2 17.5 15.2C20.2 10.2 21.2 5.2 19.5 4C17.8 2.8 13.8 5.5 11 10.5Z"
+      fill="none"
+      stroke="#61DAFB"
+      strokeWidth="1.5"
+    />
+  </svg>
+);
+
+export const VueLogo = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    height="29"
+    viewBox="0 0 29 29"
+    width="29"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M5.5 6.5L14.5 22.5L23.5 6.5H19.5L14.5 15.5L9.5 6.5H5.5Z"
+      fill="#42B883"
+    />
+    <path
+      d="M9.5 6.5L14.5 15.5L19.5 6.5H16L14.5 9.5L13 6.5H9.5Z"
+      fill="#35495E"
+    />
+  </svg>
+);
+
+export const NextJSLogo = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    height="29"
+    viewBox="0 0 29 29"
+    width="29"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <circle
+      cx="14.5"
+      cy="14.5"
+      fill="black"
+      r="10"
+      stroke="currentColor"
+      strokeWidth="0.5"
+    />
+    <path
+      d="M11.5 8.5V20.5M11.5 8.5H8.5M11.5 8.5H14.5V11.5M18.5 8.5H21.5L16 15.5V20.5"
+      stroke="white"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+    />
+  </svg>
+);
+
+export const ReactNativeLogo = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    height="29"
+    viewBox="0 0 29 29"
+    width="29"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M14.5 16.5C15.6046 16.5 16.5 15.6046 16.5 14.5C16.5 13.3954 15.6046 12.5 14.5 12.5C13.3954 12.5 12.5 13.3954 12.5 14.5C12.5 15.6046 13.3954 16.5 14.5 16.5Z"
+      fill="#61DAFB"
+    />
+    <ellipse
+      cx="14.5"
+      cy="14.5"
+      fill="none"
+      rx="10"
+      ry="4"
+      stroke="#61DAFB"
+      strokeWidth="1.5"
+    />
+    <ellipse
+      cx="14.5"
+      cy="14.5"
+      fill="none"
+      rx="4"
+      ry="10"
+      stroke="#61DAFB"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M10.5 10.5L18.5 18.5M18.5 10.5L10.5 18.5"
+      stroke="#61DAFB"
+      strokeWidth="1.5"
+    />
+  </svg>
+);
+
+export const SwiftLogo = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    height="29"
+    viewBox="0 0 29 29"
+    width="29"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <rect fill="#F05138" height="20" rx="4" width="20" x="4.5" y="4.5" />
+    <path
+      d="M8 19C10 17 14 14 16 12C15 13 12 15 10 17M16 12C18 10 19.5 8.5 20 8C19 9 17 11 16 12M20 8C20.5 7.5 21 7 21 6.5C20.5 7 20 7.5 20 8M10 17C12 16 15 15.5 18 16C15 16.5 12 17 10 17M18 16C19.5 16.5 20.5 17.5 21 19C20 17.5 19 16.5 18 16Z"
+      fill="white"
+    />
+  </svg>
 );

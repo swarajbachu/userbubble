@@ -1,21 +1,17 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
 "use client";
 
 import Link from "next/link";
 import type React from "react";
 import {
-  AnthropicLogo,
-  AppleIcon,
-  FacebookIcon,
-  GoogleIcon,
-  LinearLogo,
-  MetaLogo,
-  NotionLogo,
-  OpenAILogo,
-  SlackLogo,
-  SupabaseLogo,
+  ReactLogo,
+  VueLogo,
+  NextJSLogo,
+  ReactNativeLogo,
+  SwiftLogo,
 } from "@/icons/general";
 import { cn } from "@/lib/utils";
-import { Button } from "./button";
+import { Button } from "@userbubble/ui/button";
 import { Container } from "./container";
 import { SectionHeading } from "./seciton-heading";
 
@@ -33,11 +29,19 @@ export const CTA = () => (
   <Container className="relative flex min-h-60 flex-col items-center justify-center overflow-hidden border-divide border-x px-4 py-4 md:min-h-120">
     <CTAOrbit className="-top-120 mask-b-from-30% absolute inset-x-0" />
     <SectionHeading className="relative z-10 text-center lg:text-6xl">
-      Connect your Current Stack <br /> and Start Automating
+      Start collecting feedback
+      <br /> across every platform
     </SectionHeading>
-    <Button as={Link} className="relative z-20 mt-4" href="/sign-up">
-      Start Building for Free
-    </Button>
+    <p className="relative z-10 mt-4 text-center text-gray-600 dark:text-neutral-300">
+      Join developers building cross-platform apps with React, Swift, Vue, and
+      more.
+    </p>
+    <Link className="relative z-20" href="/sign-up">
+      <Button className="mt-4">Start Building</Button>
+    </Link>
+    <p className="relative z-10 mt-2 text-center text-gray-500 text-xs dark:text-neutral-400">
+      No credit card required • Integrate in 5 minutes
+    </p>
   </Container>
 );
 
@@ -49,19 +53,19 @@ export const CTAOrbit: React.FC<CTAOrbitProps> = ({
   numRings = 3,
 }) => {
   const logos = [
-    SupabaseLogo,
-    OpenAILogo,
-    MetaLogo,
-    SlackLogo,
-    NotionLogo,
-    LinearLogo,
-    AnthropicLogo,
-    SupabaseLogo,
-    OpenAILogo,
-    MetaLogo,
-    GoogleIcon,
-    FacebookIcon,
-    AppleIcon,
+    ReactLogo,
+    VueLogo,
+    NextJSLogo,
+    ReactNativeLogo,
+    SwiftLogo,
+    ReactLogo,
+    VueLogo,
+    NextJSLogo,
+    ReactNativeLogo,
+    SwiftLogo,
+    ReactLogo,
+    VueLogo,
+    SwiftLogo,
   ];
   const total = logos.length;
 
@@ -124,7 +128,7 @@ export const CTAOrbit: React.FC<CTAOrbitProps> = ({
         }}
       >
         <div className="relative h-full w-full">
-          {ringLogos.map((Logo, idx) => {
+          {ringLogos?.map((Logo, idx) => {
             const angleDeg = (360 / count) * idx;
             const translate = radius;
             return (
