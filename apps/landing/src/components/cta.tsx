@@ -1,11 +1,10 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: CSS custom properties use any for dynamic style values */
 "use client";
 
-import { Button } from "@userbubble/ui/button";
 import Image from "next/image";
-import Link from "next/link";
 import type React from "react";
 import { cn } from "@/lib/utils";
+import { AuthButton } from "./auth-button";
 import { Container } from "./container";
 import { SectionHeading } from "./seciton-heading";
 
@@ -34,9 +33,9 @@ export const CTA = () => (
       Join developers building cross-platform apps with React, Swift, Vue, and
       more.
     </p>
-    <Link className="relative z-20" href="/sign-up">
-      <Button className="mt-4">Start Building</Button>
-    </Link>
+    <div className="relative z-20">
+      <AuthButton className="mt-4" />
+    </div>
     <p className="relative z-10 mt-2 text-center text-gray-500 text-xs dark:text-neutral-400">
       No credit card required • Integrate in 5 minutes
     </p>

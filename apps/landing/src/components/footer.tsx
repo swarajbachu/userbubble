@@ -1,43 +1,44 @@
 import Link from "next/link";
-import { SendIcon } from "@/icons/bento-icons";
-import { Button } from "./button";
+import { AuthButton } from "./auth-button";
 import { Container } from "./container";
 import { Logo } from "./logo";
 import { SubHeading } from "./subheading";
 
 export const Footer = () => {
-  const product = [
-    {
-      title: "Agent Builder",
-      href: "#",
-    },
-    {
-      title: "Simulation",
-      href: "#",
-    },
-    {
-      title: "Integrations",
-      href: "#",
-    },
-    {
-      title: "Multi Agent",
-      href: "#",
-    },
-    {
-      title: "Workflow API",
-      href: "#",
-    },
+  const product: { title: string; href: string }[] = [
+    // Commented out - not yet configured
+    // {
+    //   title: "Agent Builder",
+    //   href: "#",
+    // },
+    // {
+    //   title: "Simulation",
+    //   href: "#",
+    // },
+    // {
+    //   title: "Integrations",
+    //   href: "#",
+    // },
+    // {
+    //   title: "Multi Agent",
+    //   href: "#",
+    // },
+    // {
+    //   title: "Workflow API",
+    //   href: "#",
+    // },
   ];
 
   const company = [
-    {
-      title: "Sign In",
-      href: "/sign-in",
-    },
-    {
-      title: "About",
-      href: "/about",
-    },
+    // Commented out - not yet configured
+    // {
+    //   title: "Sign In",
+    //   href: "/sign-in",
+    // },
+    // {
+    //   title: "About",
+    //   href: "/about",
+    // },
     {
       title: "Contact",
       href: "/contact",
@@ -46,37 +47,38 @@ export const Footer = () => {
       title: "Pricing",
       href: "/pricing",
     },
-    {
-      title: "Careers",
-      href: "/careers",
-    },
-    {
-      title: "Docs",
-      href: "#",
-    },
-    {
-      title: "Changelog",
-      href: "#",
-    },
-    {
-      title: "Glossary",
-      href: "#",
-    },
+    // {
+    //   title: "Careers",
+    //   href: "/careers",
+    // },
+    // {
+    //   title: "Docs",
+    //   href: "#",
+    // },
+    // {
+    //   title: "Changelog",
+    //   href: "#",
+    // },
+    // {
+    //   title: "Glossary",
+    //   href: "#",
+    // },
   ];
 
-  const legal = [
-    {
-      title: "Privacy Policy",
-      href: "/privacy-policy",
-    },
-    {
-      title: "Terms of Service",
-      href: "/terms-of-service",
-    },
-    {
-      title: "Cookie Policy",
-      href: "/cookie-policy",
-    },
+  const legal: { title: string; href: string }[] = [
+    // Commented out - legal pages not yet configured
+    // {
+    //   title: "Privacy Policy",
+    //   href: "/privacy-policy",
+    // },
+    // {
+    //   title: "Terms of Service",
+    //   href: "/terms-of-service",
+    // },
+    // {
+    //   title: "Cookie Policy",
+    //   href: "/cookie-policy",
+    // },
   ];
   return (
     <Container>
@@ -86,20 +88,22 @@ export const Footer = () => {
           <SubHeading as="p" className="mt-4 max-w-lg text-left">
             Manage and simulate agentic workflows
           </SubHeading>
-          <Button className="mt-4 mb-8 lg:mb-0">Start building</Button>
+          <AuthButton className="mt-4 mb-8 lg:mb-0" />
         </div>
-        <div className="col-span-1 mb-4 flex flex-col gap-2 md:col-span-1 md:mb-0">
-          <p className="font-medium text-gray-600 text-sm">Product</p>
-          {product.map((item) => (
-            <Link
-              className="my-2 font-medium text-footer-link text-sm"
-              href={item.href}
-              key={item.title}
-            >
-              {item.title}
-            </Link>
-          ))}
-        </div>
+        {product.length > 0 && (
+          <div className="col-span-1 mb-4 flex flex-col gap-2 md:col-span-1 md:mb-0">
+            <p className="font-medium text-gray-600 text-sm">Product</p>
+            {product.map((item) => (
+              <Link
+                className="my-2 font-medium text-footer-link text-sm"
+                href={item.href}
+                key={item.title}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </div>
+        )}
         <div className="col-span-1 mb-4 flex flex-col gap-2 md:col-span-1 md:mb-0">
           <p className="font-medium text-gray-600 text-sm">Company</p>
           {company.map((item) => (
@@ -112,18 +116,21 @@ export const Footer = () => {
             </Link>
           ))}
         </div>
-        <div className="col-span-1 mb-4 flex flex-col gap-2 md:col-span-1 md:mb-0">
-          <p className="font-medium text-gray-600 text-sm">Legal</p>
-          {legal.map((item) => (
-            <Link
-              className="my-2 font-medium text-footer-link text-sm"
-              href={item.href}
-              key={item.title}
-            >
-              {item.title}
-            </Link>
-          ))}
-        </div>
+        {legal.length > 0 && (
+          <div className="col-span-1 mb-4 flex flex-col gap-2 md:col-span-1 md:mb-0">
+            <p className="font-medium text-gray-600 text-sm">Legal</p>
+            {legal.map((item) => (
+              <Link
+                className="my-2 font-medium text-footer-link text-sm"
+                href={item.href}
+                key={item.title}
+              >
+                {item.title}
+              </Link>
+            ))}
+          </div>
+        )}
+        {/* Newsletter section - commented out until configured
         <div className="col-span-1 mb-4 flex flex-col items-start md:col-span-1 md:mb-0 lg:col-span-2">
           <p className="font-medium text-footer-link text-sm">Newsletter</p>
           <div className="mt-2 flex w-full items-center rounded-xl border border-gray-300 bg-gray-200 p-1 placeholder-gray-600 dark:border-neutral-700 dark:bg-neutral-800">
@@ -132,9 +139,9 @@ export const Footer = () => {
               placeholder="Your email"
               type="email"
             />
-            <Button className="my-0 flex size-8 shrink-0 items-center justify-center rounded-lg px-0 py-0 text-center">
+            <button className="my-0 flex size-8 shrink-0 items-center justify-center rounded-lg px-0 py-0 text-center">
               <SendIcon />
-            </Button>
+            </button>
           </div>
           <SubHeading
             as="p"
@@ -143,6 +150,7 @@ export const Footer = () => {
             Get the latest product news and behind the scenes updates.
           </SubHeading>
         </div>
+        */}
       </div>
       <div className="my-4 flex flex-col items-center justify-between px-4 pt-8 md:flex-row">
         <p className="text-footer-link text-sm">

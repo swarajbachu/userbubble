@@ -4,6 +4,7 @@ import { Button } from "@userbubble/ui/button";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { GartnerLogo, GartnerLogoText, Star } from "@/icons/general";
+import { AuthButton } from "./auth-button";
 import { Badge } from "./badge";
 import { Container } from "./container";
 import { Heading } from "./heading";
@@ -23,11 +24,7 @@ export const Hero = () => (
     </SubHeading>
 
     <div className="mt-6 flex items-center gap-4">
-      <Link href="/sign-up">
-        <Button className="px-4 py-4" size="lg" variant="default">
-          Start building
-        </Button>
-      </Link>
+      <AuthButton className="px-4 py-4" />
       <Link href="/pricing">
         <Button className="px-4 py-4" size="lg" variant="secondary">
           View pricing

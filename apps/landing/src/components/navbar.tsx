@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { CloseIcon, HamburgerIcon } from "@/icons/general";
-import { Button } from "./button";
+import { AuthButton } from "./auth-button";
 import { Container } from "./container";
 import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
@@ -20,18 +20,18 @@ const items = [
     title: "Pricing",
     href: "/pricing",
   },
-  {
-    title: "About",
-    href: "/about",
-  },
-  {
-    title: "Careers",
-    href: "/careers",
-  },
-  {
-    title: "Blog",
-    href: "/blog",
-  },
+  // {
+  //   title: "About",
+  //   href: "/about",
+  // },
+  // {
+  //   title: "Careers",
+  //   href: "/careers",
+  // },
+  // {
+  //   title: "Blog",
+  //   href: "/blog",
+  // },
 ];
 
 export const Navbar = () => (
@@ -100,14 +100,7 @@ const MobileNav = ({ items }: { items: { title: string; href: string }[] }) => {
                 </Link>
               ))}
               <div className="mt-4 p-4">
-                <Button
-                  as={Link}
-                  className="w-full"
-                  href="/sign-up"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Start building
-                </Button>
+                <AuthButton className="w-full" />
               </div>
             </div>
           </motion.div>
@@ -137,9 +130,7 @@ const DesktopNav = ({
     </div>
     <div className="flex items-center gap-2">
       <ModeToggle />
-      <Button as={Link} href="/sign-up">
-        Start building
-      </Button>
+      <AuthButton />
     </div>
   </div>
 );
@@ -177,9 +168,7 @@ const FloatingNav = ({
       </div>
       <div className="flex items-center gap-2">
         <ModeToggle />
-        <Button as={Link} href="/sign-up">
-          Start building
-        </Button>
+        <AuthButton />
       </div>
     </motion.div>
   );
