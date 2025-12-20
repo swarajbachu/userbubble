@@ -22,7 +22,7 @@
   --color-gray-500: #c0c0c0;
   --color-gray-600: #8b8b8b;
 
-  --color-brand: #f17463;
+  --color-brand: oklch(0.51 0.23 277);
   --shadow-aceternity:
     0px 2px 3px -1px rgba(0, 0, 0, 0.1), 0px 1px 0px 0px rgba(25, 28, 33, 0.02),
     0px 0px 0px 1px rgba(25, 28, 33, 0.08);
