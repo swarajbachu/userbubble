@@ -29,11 +29,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@userbubble/ui/sidebar";
+import { ThemeToggle } from "@userbubble/ui/theme";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { authClient } from "~/auth/client";
-import { CreateOrgDialog } from "./create-org-dialog";
+// import { CreateOrgDialog } from "./create-org-dialog";
 import { OrgSwitcher } from "./org-switcher";
 import { UserProfileMenu } from "./user-profile-menu";
 
@@ -136,20 +137,20 @@ export function OrgSidebar({ org }: OrgSidebarProps) {
   const isOnFeedbackPage = pathname.includes("/feedback");
 
   // Plan checking logic (using metadata for now)
-  const currentOrgData = organizations?.find((o) => o.slug === org);
-  const orgPlan = currentOrgData?.metadata
-    ? (JSON.parse(currentOrgData.metadata) as { plan?: string }).plan || "free"
-    : "free";
+  // const currentOrgData = organizations?.find((o) => o.slug === org);
+  // const orgPlan = currentOrgData?.metadata
+  //   ? (JSON.parse(currentOrgData.metadata) as { plan?: string }).plan || "free"
+  //   : "free";
 
   // Determine max organizations based on plan
-  let maxOrgs = 1; // free plan
-  if (orgPlan === "pro") {
-    maxOrgs = 5;
-  } else if (orgPlan === "enterprise") {
-    maxOrgs = 999;
-  }
+  // let maxOrgs = 1; // free plan
+  // if (orgPlan === "pro") {
+  //   maxOrgs = 5;
+  // } else if (orgPlan === "enterprise") {
+  //   maxOrgs = 999;
+  // }
 
-  const canCreateOrg = (organizations?.length || 0) < maxOrgs;
+  // const canCreateOrg = (organizations?.length || 0) < maxOrgs;
 
   const isStatusActive = (value: string) => {
     if (value === "all") {
@@ -195,8 +196,11 @@ export function OrgSidebar({ org }: OrgSidebarProps) {
   return (
     <Sidebar variant="floating">
       <SidebarHeader>
-        <OrgSwitcher currentOrg={org} organizations={organizations || []} />
-        <CreateOrgDialog canCreateOrg={canCreateOrg} maxOrgs={maxOrgs} />
+        <div className="flex items-center justify-between">
+          <OrgSwitcher currentOrg={org} organizations={organizations || []} />
+          <ThemeToggle />
+        </div>
+        {/* <CreateOrgDialog canCreateOrg={canCreateOrg} maxOrgs={maxOrgs} /> */}
       </SidebarHeader>
 
       <SidebarContent>
@@ -209,22 +213,32 @@ export function OrgSidebar({ org }: OrgSidebarProps) {
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     className={cn(
-                      "h-8",
-                      isActive(item.href) &&
-                        "shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)]"
+                      "h-8 transition-all duration-200",
+                      isActive(item.href) && [
+                        "bg-gradient-to-l bg-white from-indigo-500/20 to-transparent text-zinc-900 ring-1 ring-zinc-200",
+                        "shadow-[inset_0_1px_0_0_rgba(255,255,255,1)]",
+                        "dark:bg-gradient-to-l dark:from-indigo-500/30 dark:to-transparent",
+                        "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]",
+                        "dark:text-white dark:ring-0",
+                      ]
                     )}
                     isActive={isActive(item.href)}
                   >
                     <Link
-                      className="flex flex-row items-center justify-between gap-4"
+                      className="relative flex w-full flex-row items-center justify-between gap-4"
                       href={`/org/${org}${item.href}`}
                     >
-                      <Icon icon={item.icon} size={20} />
-                      <span>{item.title}</span>
+                      <div className="flex items-center gap-2">
+                        <Icon icon={item.icon} size={20} />
+                        <span>{item.title}</span>
+                      </div>
                       {item.badge && (
                         <span className="ml-auto text-muted-foreground text-xs">
                           {item.badge}
                         </span>
+                      )}
+                      {isActive(item.href) && (
+                        <div className="-translate-y-1/2 absolute top-1/2 right-0 h-5 w-1 rounded-full bg-indigo-500 shadow-[0_0_12px_#6366f1]" />
                       )}
                     </Link>
                   </SidebarMenuButton>
@@ -276,13 +290,28 @@ export function OrgSidebar({ org }: OrgSidebarProps) {
         {/* Settings Row */}
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton isActive={pathname.includes("/settings")}>
+            <SidebarMenuButton
+              className={cn(
+                "transition-all duration-200",
+                pathname.includes("/settings") && [
+                  "bg-gradient-to-l bg-white from-indigo-500/20 to-transparent text-zinc-900 ring-1 ring-zinc-200",
+                  "shadow-[inset_0_1px_0_0_rgba(255,255,255,1)]",
+                  "dark:bg-gradient-to-l dark:from-indigo-500/30 dark:to-transparent",
+                  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]",
+                  "dark:text-white dark:ring-0",
+                ]
+              )}
+              isActive={pathname.includes("/settings")}
+            >
               <Link
-                className="flex flex-row items-center gap-2"
+                className="relative flex w-full flex-row items-center gap-2"
                 href={`/org/${org}/settings`}
               >
                 <Icon icon={Settings01Icon} size={20} />
                 <span>Settings</span>
+                {pathname.includes("/settings") && (
+                  <div className="-translate-y-1/2 absolute top-1/2 right-0 h-5 w-1 rounded-full bg-indigo-500 shadow-[0_0_12px_#6366f1]" />
+                )}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -291,13 +320,28 @@ export function OrgSidebar({ org }: OrgSidebarProps) {
         {/* Members Row */}
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton isActive={pathname.includes("/members")}>
+            <SidebarMenuButton
+              className={cn(
+                "transition-all duration-200",
+                pathname.includes("/members") && [
+                  "bg-gradient-to-l bg-white from-indigo-500/20 to-transparent text-zinc-900 ring-1 ring-zinc-200",
+                  "shadow-[inset_0_1px_0_0_rgba(255,255,255,1)]",
+                  "dark:bg-gradient-to-l dark:from-indigo-500/30 dark:to-transparent",
+                  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]",
+                  "dark:text-white dark:ring-0",
+                ]
+              )}
+              isActive={pathname.includes("/members")}
+            >
               <Link
-                className="flex flex-row items-center gap-2"
+                className="relative flex w-full flex-row items-center gap-2"
                 href={`/org/${org}/members`}
               >
                 <Icon icon={UserMultiple02Icon} size={20} />
                 <span>Members</span>
+                {pathname.includes("/members") && (
+                  <div className="-translate-y-1/2 absolute top-1/2 right-0 h-5 w-1 rounded-full bg-indigo-500 shadow-[0_0_12px_#6366f1]" />
+                )}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

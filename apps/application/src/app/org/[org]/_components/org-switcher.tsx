@@ -52,7 +52,7 @@ export function OrgSwitcher({ currentOrg, organizations }: OrgSwitcherProps) {
         render={(props) => (
           <Button
             {...props}
-            className="h-auto w-full justify-between px-3 py-2"
+            className="h-auto flex-1 justify-between px-3 py-2"
             variant="ghost"
           >
             <div className="flex min-w-0 items-center gap-2">
