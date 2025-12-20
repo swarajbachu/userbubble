@@ -74,7 +74,7 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
   );
 }
 
-function PlaceholderTab({
+function _PlaceholderTab({
   title,
   description,
 }: {
