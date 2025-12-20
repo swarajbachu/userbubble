@@ -1,6 +1,8 @@
+import { parseOrganizationSettings } from "@userbubble/db/lib/organization-settings";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { RoadmapBoard } from "~/components/roadmap/roadmap-board";
+import { RoadmapComingSoon } from "~/components/roadmap/roadmap-coming-soon";
 import { getPublicOrganization } from "~/lib/get-organization";
 
 type ExternalRoadmapPageProps = {
@@ -41,6 +43,12 @@ export default async function ExternalRoadmapPage({
 
   // Use cached helper - returns cached result from layout
   const organization = await getPublicOrganization(org);
+
+  // Check if roadmap is enabled
+  const settings = parseOrganizationSettings(organization.metadata);
+  if (!settings.feedback?.enableRoadmap) {
+    return <RoadmapComingSoon />;
+  }
 
   return (
     <div className="w-full">

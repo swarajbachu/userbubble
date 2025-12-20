@@ -4,6 +4,7 @@ import {
   RoadIcon,
   TaskDaily01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
+import { parseOrganizationSettings } from "@userbubble/db/lib/organization-settings";
 import {
   Card,
   CardDescription,
@@ -25,7 +26,10 @@ export default async function ExternalHomePage({
   // Use public helper - no auth required for external routes
   const organization = await getPublicOrganization(org);
 
-  const features = [
+  // Parse organization settings
+  const settings = parseOrganizationSettings(organization.metadata);
+
+  const allFeatures = [
     {
       title: "Feedback",
       description: "Share your ideas and vote on features you'd like to see",
@@ -45,6 +49,12 @@ export default async function ExternalHomePage({
       icon: TaskDaily01Icon,
     },
   ];
+
+  // Filter out roadmap if disabled
+  const features = allFeatures.filter(
+    (feature) =>
+      feature.title !== "Roadmap" || (settings.feedback?.enableRoadmap ?? true)
+  );
 
   return (
     <div className="space-y-8">

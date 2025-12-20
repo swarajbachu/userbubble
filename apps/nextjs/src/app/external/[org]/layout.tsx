@@ -40,6 +40,7 @@ export default async function ExternalLayout({
       <div className="flex min-h-screen flex-col bg-background text-foreground">
         <ExternalHeader
           allowAnonymous={settings.publicAccess.allowAnonymousSubmissions}
+          enableRoadmap={settings.feedback?.enableRoadmap ?? true}
           logoUrl={settings.branding.logoUrl}
           memberRole={memberRole}
           organizationId={organization.id}

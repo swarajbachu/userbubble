@@ -152,12 +152,16 @@ export async function deleteFeedbackPost(postId: string) {
  * Vote on a feedback post
  */
 export async function voteOnPost(vote: NewFeedbackVote) {
+  // Determine conflict target based on auth type
+  const conflictTarget = vote.userId
+    ? [feedbackVote.postId, feedbackVote.userId]
+    : [feedbackVote.postId, feedbackVote.sessionId];
   // Insert vote (or update if exists due to unique constraint)
   await db
     .insert(feedbackVote)
     .values(vote)
     .onConflictDoUpdate({
-      target: [feedbackVote.postId, feedbackVote.userId],
+      target: conflictTarget,
       set: { value: vote.value },
     });
 
@@ -177,12 +181,29 @@ export async function voteOnPost(vote: NewFeedbackVote) {
 /**
  * Remove vote from a post
  */
-export async function removeVote(postId: string, userId: string) {
-  await db
-    .delete(feedbackVote)
-    .where(
-      and(eq(feedbackVote.postId, postId), eq(feedbackVote.userId, userId))
+export async function removeVote(
+  postId: string,
+  userId: string | null,
+  sessionId?: string | null
+) {
+  // Build delete condition based on auth type
+  let deleteCondition: SQL | undefined;
+  if (userId) {
+    deleteCondition = and(
+      eq(feedbackVote.postId, postId),
+      eq(feedbackVote.userId, userId)
     );
+  } else if (sessionId) {
+    deleteCondition = and(
+      eq(feedbackVote.postId, postId),
+      eq(feedbackVote.sessionId, sessionId)
+    );
+  } else {
+    // Neither userId nor sessionId provided - nothing to delete
+    return;
+  }
+
+  await db.delete(feedbackVote).where(deleteCondition);
 
   // Update vote count
   await db
@@ -200,14 +221,29 @@ export async function removeVote(postId: string, userId: string) {
 /**
  * Get user's vote on a post
  */
-export async function getUserVote(postId: string, userId: string) {
-  const result = await db
-    .select()
-    .from(feedbackVote)
-    .where(
-      and(eq(feedbackVote.postId, postId), eq(feedbackVote.userId, userId))
-    )
-    .limit(1);
+export async function getUserVote(
+  postId: string,
+  userId: string | null,
+  sessionId?: string | null
+) {
+  // Build query condition based on auth type
+  let condition: SQL | undefined;
+  if (userId) {
+    condition = and(
+      eq(feedbackVote.postId, postId),
+      eq(feedbackVote.userId, userId)
+    );
+  } else if (sessionId) {
+    condition = and(
+      eq(feedbackVote.postId, postId),
+      eq(feedbackVote.sessionId, sessionId)
+    );
+  } else {
+    // Neither userId nor sessionId provided - return null
+    return null;
+  }
+
+  const result = await db.select().from(feedbackVote).where(condition).limit(1);
 
   return result[0];
 }

@@ -1,5 +1,7 @@
+import { parseOrganizationSettings } from "@userbubble/db/lib/organization-settings";
 import { Suspense } from "react";
 import { getSession } from "~/auth/server";
+import { RoadmapComingSoon } from "~/components/roadmap/roadmap-coming-soon";
 import { getOrganization } from "~/lib/get-organization";
 import { RoadmapBoard } from "./_components/roadmap-board";
 
@@ -12,6 +14,12 @@ export default async function RoadmapPage({ params }: RoadmapPageProps) {
 
   // Use cached helper - returns cached result from layout
   const organization = await getOrganization(org);
+
+  // Check if roadmap is enabled
+  const settings = parseOrganizationSettings(organization.metadata);
+  if (!settings.feedback?.enableRoadmap) {
+    return <RoadmapComingSoon />;
+  }
 
   // Get auth session for authenticated state
   const session = await getSession();

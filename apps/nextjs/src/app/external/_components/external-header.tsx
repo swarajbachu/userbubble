@@ -35,6 +35,7 @@ type ExternalHeaderProps = {
   organizationId: string;
   allowAnonymous: boolean;
   memberRole: "admin" | "owner" | "member" | null;
+  enableRoadmap: boolean;
 };
 
 export function ExternalHeader({
@@ -44,6 +45,7 @@ export function ExternalHeader({
   organizationId,
   allowAnonymous,
   memberRole,
+  enableRoadmap,
 }: ExternalHeaderProps) {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<string>("");
@@ -66,14 +68,16 @@ export function ExternalHeader({
       .toUpperCase()
       .slice(0, 2);
 
-  const tabs = useMemo(
-    () => [
+  const tabs = useMemo(() => {
+    const allTabs = [
       { name: "Feedback", href: "/feedback" },
       { name: "Roadmap", href: "/roadmap" },
       { name: "Updates", href: "/changelog" },
-    ],
-    []
-  );
+    ];
+
+    // Filter out roadmap if disabled
+    return allTabs.filter((tab) => tab.name !== "Roadmap" || enableRoadmap);
+  }, [enableRoadmap]);
 
   useEffect(() => {
     const active = tabs.find((tab) => pathname.startsWith(tab.href));

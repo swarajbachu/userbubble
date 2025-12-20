@@ -59,7 +59,7 @@ export function DataTab({
 
   return (
     <div className="space-y-6">
-      <div>
+      {/* <div>
         <h3 className="mb-4 font-semibold text-lg">Data Import</h3>
         <p className="text-muted-foreground text-sm">
           Import data from your existing tools.
@@ -105,7 +105,7 @@ export function DataTab({
         <Button disabled size="sm" variant="outline">
           Export
         </Button>
-      </div>
+      </div> */}
 
       <div className="border-t pt-6">
         <h3 className="mb-4 font-semibold text-destructive text-lg">

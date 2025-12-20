@@ -1,10 +1,12 @@
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import {
+  canCommentOnPost,
   canCreatePost,
   canDeleteComment,
   canDeletePost,
   canModifyPost,
   canViewPost,
+  canVoteOnPost,
   createComment,
   createFeedbackPost,
   deleteComment,
@@ -141,22 +143,36 @@ export const feedbackRouter = {
     }),
 
   // Vote on a post
-  vote: protectedProcedure
+  vote: publicProcedure
     .input(
       z.object({
         postId: z.string(),
         value: z.number().min(-1).max(1),
+        sessionId: z.string().optional(), // For anonymous users
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session?.user?.id ?? null;
+      const sessionId = userId ? null : (input.sessionId ?? null);
+
+      // Permission check
+      const canVote = await canVoteOnPost(input.postId, userId);
+      if (!canVote) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to vote on this post",
+        });
+      }
+
       if (input.value === 0) {
         // Remove vote
-        await removeVote(input.postId, ctx.session.user.id);
+        await removeVote(input.postId, userId, sessionId);
       } else {
         // Add or update vote
         await voteOnPost({
           postId: input.postId,
-          userId: ctx.session.user.id,
+          userId,
+          sessionId,
           value: input.value,
         });
       }
@@ -221,15 +237,27 @@ export const feedbackRouter = {
     }),
 
   // Create a comment
-  createComment: protectedProcedure
+  createComment: publicProcedure
     .input(
       z.object({
         postId: z.string(),
         content: z.string().min(1).max(2000),
         parentId: z.string().optional(),
+        authorName: z.string().min(1).max(100).optional(), // For anonymous users
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session?.user?.id ?? null;
+
+      // Permission check
+      const canComment = await canCommentOnPost(input.postId, userId);
+      if (!canComment) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to comment on this post",
+        });
+      }
+
       // Get post to find organization
       const post = await getFeedbackPost(input.postId);
       if (!post) {
@@ -240,7 +268,7 @@ export const feedbackRouter = {
       }
 
       // Privacy check: can't comment on posts you can't view
-      const canView = await canViewPost(input.postId, ctx.session.user.id);
+      const canView = await canViewPost(input.postId, userId);
       if (!canView) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -250,7 +278,8 @@ export const feedbackRouter = {
 
       const newComment = await createComment({
         postId: input.postId,
-        authorId: ctx.session.user.id,
+        authorId: userId,
+        authorName: userId ? null : input.authorName, // Only for anonymous
         content: input.content,
         parentId: input.parentId,
       });
@@ -262,25 +291,26 @@ export const feedbackRouter = {
         });
       }
 
-      // Check if user is a team member
-      const isAuthorTeamMember = await memberQueries.isMember(
-        ctx.session.user.id,
-        post.post.organizationId
-      );
+      // Check if user is a team member (only for authenticated users)
+      const isAuthorTeamMember = userId
+        ? await memberQueries.isMember(userId, post.post.organizationId)
+        : false;
 
       // Return comment with author info (matching getComments structure)
-      // Map session user to database User type
       return {
         comment: newComment,
-        author: {
-          id: ctx.session.user.id,
-          name: ctx.session.user.name,
-          email: ctx.session.user.email,
-          emailVerified: ctx.session.user.emailVerified,
-          image: ctx.session.user.image ?? null,
-          createdAt: ctx.session.user.createdAt,
-          updatedAt: ctx.session.user.updatedAt,
-        },
+        author:
+          userId && ctx.session?.user
+            ? {
+                id: ctx.session.user.id,
+                name: ctx.session.user.name,
+                email: ctx.session.user.email,
+                emailVerified: ctx.session.user.emailVerified,
+                image: ctx.session.user.image ?? null,
+                createdAt: ctx.session.user.createdAt,
+                updatedAt: ctx.session.user.updatedAt,
+              }
+            : null, // Anonymous author
         isTeamMember: isAuthorTeamMember,
       };
     }),

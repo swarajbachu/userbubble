@@ -204,11 +204,15 @@ export function OrgSidebar({ org }: OrgSidebarProps) {
         <SidebarGroup>
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-2">
               {MAIN_NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
-                    className="h-12"
+                    className={cn(
+                      "h-8",
+                      isActive(item.href) &&
+                        "shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)]"
+                    )}
                     isActive={isActive(item.href)}
                   >
                     <Link

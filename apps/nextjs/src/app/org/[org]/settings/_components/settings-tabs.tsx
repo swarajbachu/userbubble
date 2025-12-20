@@ -26,7 +26,7 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
         <TabsTrigger value="billing">Billing</TabsTrigger>
         <TabsTrigger value="domain">Domain</TabsTrigger>
         <TabsTrigger value="integrations">Integrations</TabsTrigger>
-        <TabsTrigger value="sso">SSO</TabsTrigger>
+        {/* <TabsTrigger value="sso">SSO</TabsTrigger> */}
         <TabsTrigger value="data">Data</TabsTrigger>
       </TabsList>
 
@@ -60,12 +60,12 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
         />
       </TabsContent>
 
-      <TabsContent value="sso">
+      {/* <TabsContent value="sso">
         <PlaceholderTab
           description="Configure single sign-on for your organization."
           title="SSO"
         />
-      </TabsContent>
+      </TabsContent> */}
 
       <TabsContent value="data">
         <DataTab organization={organization} userRole={userRole} />
