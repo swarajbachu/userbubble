@@ -69,7 +69,7 @@ export function MembersTable({
       {/* Search */}
       <div className="relative">
         <HugeiconsIcon
-          className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
+          className="-translate-y-1/2 absolute top-1/2 left-3 text-muted-foreground"
           icon={Search01Icon}
           size={16}
         />

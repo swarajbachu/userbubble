@@ -51,7 +51,7 @@ function Slider({
         </SliderPrimitive.Track>
         {Array.from({ length: _values.length }, (_, index) => (
           <SliderPrimitive.Thumb
-            className="relative block size-3 shrink-0 select-none rounded-full border border-ring bg-white ring-ring/50 transition-[color,box-shadow] after:absolute after:-inset-2 hover:ring-[3px] focus-visible:outline-hidden focus-visible:ring-[3px] active:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
+            className="after:-inset-2 relative block size-3 shrink-0 select-none rounded-full border border-ring bg-white ring-ring/50 transition-[color,box-shadow] after:absolute hover:ring-[3px] focus-visible:outline-hidden focus-visible:ring-[3px] active:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
             data-slot="slider-thumb"
             key={index}
           />
