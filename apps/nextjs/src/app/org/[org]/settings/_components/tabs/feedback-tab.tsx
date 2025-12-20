@@ -40,7 +40,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
       allowAnonymousComments:
         settings.publicAccess?.allowAnonymousComments ?? false,
       enableRoadmap: settings.feedback?.enableRoadmap ?? true,
-      enableDigestEmails: settings.feedback?.enableDigestEmails ?? false,
+      // enableDigestEmails: settings.feedback?.enableDigestEmails ?? false,
     },
     onSubmit: async ({ value }) => {
       await updateSettings.mutateAsync({
@@ -54,7 +54,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
           },
           feedback: {
             enableRoadmap: value.enableRoadmap,
-            enableDigestEmails: value.enableDigestEmails,
+            // enableDigestEmails: value.enableDigestEmails,
             boards: settings.feedback?.boards ?? [],
             tags: settings.feedback?.tags ?? [],
           },
@@ -154,7 +154,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
               )}
             </form.Field>
 
-            <form.Field name="enableDigestEmails">
+            {/* <form.Field name="enableDigestEmails">
               {(field) => (
                 <Field orientation="horizontal">
                   <div className="flex-1">
@@ -169,7 +169,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
                   />
                 </Field>
               )}
-            </form.Field>
+            </form.Field> */}
           </div>
 
           {/* Save Button */}

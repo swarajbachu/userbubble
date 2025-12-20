@@ -43,32 +43,31 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button
-          className="h-auto w-full justify-start gap-3 px-3 py-2"
-          variant="ghost"
-        >
-          <Avatar size="sm">
-            {user.image && <AvatarImage alt={user.name} src={user.image} />}
-            <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-          </Avatar>
-          <div className="flex min-w-0 flex-col items-end justify-start">
-            <span className="w-full truncate text-left font-medium text-sm">
-              {user.name}
-            </span>
-            <span className="w-full truncate text-muted-foreground text-xs">
-              {user.email}
-            </span>
-          </div>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            className="h-auto w-full justify-start gap-3 px-3 py-2"
+            variant="ghost"
+          >
+            <Avatar size="sm">
+              {user.image && <AvatarImage alt={user.name} src={user.image} />}
+              <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+            </Avatar>
+            <div className="flex min-w-0 flex-col items-end justify-start">
+              <span className="w-full truncate text-left font-medium text-sm">
+                {user.name}
+              </span>
+            </div>
+          </Button>
+        }
+      />
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem onClick={() => router.push("/profile")}>
           <Icon icon={UserIcon} size={16} />
           <span>Profile</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut}>
+        <DropdownMenuItem onClick={handleSignOut} variant="destructive">
           <Icon icon={Logout01Icon} size={16} />
           <span>Logout</span>
         </DropdownMenuItem>

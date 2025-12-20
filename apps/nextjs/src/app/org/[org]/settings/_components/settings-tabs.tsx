@@ -6,7 +6,7 @@ import { useState } from "react";
 import { BrandingTab } from "./tabs/branding-tab";
 import { ChangelogTab } from "./tabs/changelog-tab";
 import { DataTab } from "./tabs/data-tab";
-import { DomainTab } from "./tabs/domain-tab";
+// import { DomainTab } from "./tabs/domain-tab";
 import { FeedbackTab } from "./tabs/feedback-tab";
 
 type SettingsTabsProps = {
@@ -23,9 +23,9 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
         <TabsTrigger value="branding">Branding</TabsTrigger>
         <TabsTrigger value="feedback">Feedback</TabsTrigger>
         <TabsTrigger value="changelog">Changelog</TabsTrigger>
-        <TabsTrigger value="billing">Billing</TabsTrigger>
-        <TabsTrigger value="domain">Domain</TabsTrigger>
-        <TabsTrigger value="integrations">Integrations</TabsTrigger>
+        {/* <TabsTrigger value="billing">Billing</TabsTrigger> */}
+        {/* <TabsTrigger value="domain">Domain</TabsTrigger> */}
+        {/* <TabsTrigger value="integrations">Integrations</TabsTrigger> */}
         {/* <TabsTrigger value="sso">SSO</TabsTrigger> */}
         <TabsTrigger value="data">Data</TabsTrigger>
       </TabsList>
@@ -42,23 +42,23 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
         <ChangelogTab organization={organization} />
       </TabsContent>
 
-      <TabsContent value="billing">
+      {/* <TabsContent value="billing">
         <PlaceholderTab
           description="Manage your subscription and billing settings."
           title="Billing"
         />
-      </TabsContent>
+      </TabsContent> */}
 
-      <TabsContent value="domain">
+      {/* <TabsContent value="domain">
         <DomainTab organization={organization} />
-      </TabsContent>
+      </TabsContent> */}
 
-      <TabsContent value="integrations">
+      {/* <TabsContent value="integrations">
         <PlaceholderTab
           description="Connect third-party services and tools."
           title="Integrations"
         />
-      </TabsContent>
+      </TabsContent> */}
 
       {/* <TabsContent value="sso">
         <PlaceholderTab

@@ -6,7 +6,7 @@ type IconProps = ComponentProps<typeof HugeiconsIcon>;
 export function Icon({
   size = 20,
   color = "currentColor",
-  strokeWidth = 2,
+  strokeWidth = 1,
   ...rest
 }: IconProps) {
   return (
