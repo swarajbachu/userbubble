@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/correctness/useImageSize: <explanation> */
-/** biome-ignore-all lint/performance/noImgElement: <explanation> */
+/** biome-ignore-all lint/correctness/useImageSize: logo sizes are responsive and controlled by CSS */
+/** biome-ignore-all lint/performance/noImgElement: using img for animated logo cloud with motion */
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";

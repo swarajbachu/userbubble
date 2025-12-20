@@ -16,6 +16,8 @@ import { LogoSVG } from "../logo";
 import { Scale } from "../scale";
 import { Card } from "../tech-card";
 
+const WORD_SPLIT_REGEX = /(\s+)/;
+
 export const DesignYourWorkflowSkeleton = () => (
   <div className="mt-12 flex flex-col items-center">
     <div className="relative">
@@ -64,13 +66,15 @@ export const ConnectYourTooklsSkeleton = () => {
   const text =
     "Write the first and second rule of it using Claude and ChatGPT.";
   const [mounted, setMounted] = useState(false);
-  const randomWidth = useMemo(() => Math.random() * 100, [mounted]);
+  const randomWidth = useMemo(() => Math.random() * 100, []);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="relative flex h-full w-full items-center justify-between">
@@ -95,7 +99,7 @@ export const ConnectYourTooklsSkeleton = () => {
         <div className="mt-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="font-normal text-[10px] text-charcoal-700 leading-loose md:text-xs dark:text-neutral-200">
-              {text.split(/(\s+)/).map((word, index) => (
+              {text.split(WORD_SPLIT_REGEX).map((word, index) => (
                 <motion.span
                   animate={{
                     opacity: 1,
@@ -118,7 +122,7 @@ export const ConnectYourTooklsSkeleton = () => {
           </div>
         </div>
         <div className="mt-2 flex flex-col">
-          {[...Array(2)].map((_, index) => (
+          {[...new Array(2)].map((_, index) => (
             <motion.div
               animate={{
                 width: `${randomWidth}%`,
@@ -195,7 +199,7 @@ export const ConnectYourTooklsSkeleton = () => {
           </div>
         </div>
         <div className="mt-2 flex flex-col">
-          {[...Array(3)].map((_, index) => (
+          {[...new Array(3)].map((_, index) => (
             <motion.div
               animate={{
                 width: `${70 + Math.random() * 30}%`,
@@ -220,73 +224,149 @@ export const ConnectYourTooklsSkeleton = () => {
   );
 };
 
+type DeployCardData = {
+  title: string;
+  subtitle: string;
+  branch: string;
+  variant?: "default" | "danger" | "success" | "warning";
+};
+
+const AnimatedDeployCard = ({
+  card,
+  index,
+  y,
+  offset,
+  itemHeight,
+}: {
+  card: DeployCardData;
+  index: number;
+  y: ReturnType<typeof useMotionValue<number>>;
+  offset: number;
+  itemHeight: number;
+}) => {
+  const scale = useTransform(
+    y,
+    [
+      offset + (index - 2) * -itemHeight,
+      offset + (index - 1) * -itemHeight,
+      offset + index * -itemHeight,
+      offset + (index + 1) * -itemHeight,
+      offset + (index + 2) * -itemHeight,
+    ],
+    [0.85, 0.95, 1.1, 0.95, 0.85]
+  );
+
+  const background = useTransform(
+    y,
+    [
+      offset + (index - 1) * -itemHeight,
+      offset + index * -itemHeight,
+      offset + (index + 1) * -itemHeight,
+    ],
+    ["#FFFFFF", "#f17463", "#FFFFFF"]
+  );
+
+  const borderColor = useTransform(
+    y,
+    [
+      offset + (index - 1) * -itemHeight,
+      offset + index * -itemHeight,
+      offset + (index + 1) * -itemHeight,
+    ],
+    ["#FFFFFF", "#f17463", "#FFFFFF"]
+  );
+
+  return (
+    <motion.div
+      className="mx-auto mt-4 w-full max-w-sm shrink-0 rounded-2xl shadow-xl"
+      key={`${index}-${card.title}`}
+      style={{
+        scale,
+        background,
+        borderColor,
+      }}
+    >
+      <DeployCard
+        branch={card.branch}
+        subtitle={card.subtitle}
+        title={card.title}
+        variant={card.variant}
+      />
+    </motion.div>
+  );
+};
+
 export const DeployAndScaleSkeleton = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerHeight, setContainerHeight] = useState(0);
 
   // Define deploy cards data for reusability
-  const deployCards = [
+  const deployCards: DeployCardData[] = [
     { title: "deploy-dev-eu-324", subtitle: "2h ago", branch: "master" },
     {
       title: "deploy-prod-eu-128",
       subtitle: "10m ago",
       branch: "main",
-      variant: "success" as const,
+      variant: "success",
     },
-    { title: "deploy-dev-us-445", subtitle: "45m ago", branch: "feature/auth" },
+    {
+      title: "deploy-dev-us-445",
+      subtitle: "45m ago",
+      branch: "feature/auth",
+    },
     {
       title: "deploy-prod-ap-223",
       subtitle: "1h ago",
       branch: "main",
-      variant: "success" as const,
+      variant: "success",
     },
     {
       title: "deploy-dev-eu-891",
       subtitle: "2h ago",
       branch: "fix/cache",
-      variant: "warning" as const,
+      variant: "warning",
     },
     {
       title: "deploy-prod-us-337",
       subtitle: "3h ago",
       branch: "main",
-      variant: "success" as const,
+      variant: "success",
     },
     {
       title: "deploy-dev-ap-556",
       subtitle: "4h ago",
       branch: "feat/api",
-      variant: "danger" as const,
+      variant: "danger",
     },
     {
       title: "deploy-dev-eu-672",
       subtitle: "5h ago",
       branch: "feat/search",
-      variant: "default" as const,
+      variant: "default",
     },
     {
       title: "deploy-prod-ap-445",
       subtitle: "6h ago",
       branch: "main",
-      variant: "success" as const,
+      variant: "success",
     },
     {
       title: "deploy-dev-us-891",
       subtitle: "7h ago",
       branch: "fix/perf",
-      variant: "warning" as const,
+      variant: "warning",
     },
     {
       title: "deploy-prod-eu-223",
       subtitle: "8h ago",
       branch: "main",
-      variant: "success" as const,
+      variant: "success",
     },
     {
       title: "deploy-dev-ap-337",
       subtitle: "9h ago",
       branch: "feat/analytics",
-      variant: "default" as const,
+      variant: "default",
     },
   ];
 
@@ -350,49 +430,14 @@ export const DeployAndScaleSkeleton = () => {
         style={{ y }}
       >
         {extendedCards.map((card, index) => (
-          <motion.div
-            className="mx-auto mt-4 w-full max-w-sm shrink-0 rounded-2xl shadow-xl"
+          <AnimatedDeployCard
+            card={card}
+            index={index}
+            itemHeight={itemHeight}
             key={`${index}-${card.title}`}
-            style={{
-              scale: useTransform(
-                y,
-                [
-                  offset + (index - 2) * -itemHeight,
-                  offset + (index - 1) * -itemHeight,
-                  offset + index * -itemHeight,
-                  offset + (index + 1) * -itemHeight,
-                  offset + (index + 2) * -itemHeight,
-                ],
-                [0.85, 0.95, 1.1, 0.95, 0.85]
-              ),
-
-              background: useTransform(
-                y,
-                [
-                  offset + (index - 1) * -itemHeight,
-                  offset + index * -itemHeight,
-                  offset + (index + 1) * -itemHeight,
-                ],
-                ["#FFFFFF", "#f17463", "#FFFFFF"]
-              ),
-              borderColor: useTransform(
-                y,
-                [
-                  offset + (index - 1) * -itemHeight,
-                  offset + index * -itemHeight,
-                  offset + (index + 1) * -itemHeight,
-                ],
-                ["#FFFFFF", "#f17463", "#FFFFFF"]
-              ),
-            }}
-          >
-            <DeployCard
-              branch={card.branch}
-              subtitle={card.subtitle}
-              title={card.title}
-              variant={card.variant}
-            />
-          </motion.div>
+            offset={offset}
+            y={y}
+          />
         ))}
       </motion.div>
     </div>
@@ -444,7 +489,7 @@ const DeployCard = ({
 );
 
 const LeftSVG = (props: React.SVGProps<SVGSVGElement>) => {
-  const path =
+  const _path =
     "M127.457 0.0891113L127.576 95.9138L127.457 0.0891113ZM-0.0609919 96.0731L-0.160632 16.2484C-0.172351 6.85959 7.4293 -0.761068 16.8181 -0.772787L16.8206 1.22721C8.53637 1.23755 1.82903 7.96166 1.83937 16.2459L1.93901 96.0706L-0.0609919 96.0731ZM-0.160632 16.2484C-0.172351 6.85959 7.4293 -0.761068 16.8181 -0.772787L127.455 -0.910888L127.458 1.08911L16.8206 1.22721C8.53637 1.23755 1.82903 7.96166 1.83937 16.2459L-0.160632 16.2484ZM127.576 95.9138L0.939007 96.0718L127.576 95.9138Z";
   return (
     <motion.svg
@@ -510,7 +555,7 @@ const LeftSVG = (props: React.SVGProps<SVGSVGElement>) => {
 };
 
 const RightSVG = (props: React.SVGProps<SVGSVGElement>) => {
-  const PATH =
+  const _PATH =
     "M0.619629 0L0.500018 95.8247L0.619629 0ZM128.137 95.984L128.237 16.1593C128.249 6.77047 120.647 -0.850179 111.258 -0.861898L111.256 1.1381C119.54 1.14844 126.247 7.87255 126.237 16.1568L126.137 95.9815L128.137 95.984ZM128.237 16.1593C128.249 6.77047 120.647 -0.850179 111.258 -0.861898L0.620877 -0.999999L0.618381 0.999999L111.256 1.1381C119.54 1.14844 126.247 7.87255 126.237 16.1568L128.237 16.1593ZM0.500018 95.8247L127.137 95.9827L0.500018 95.8247Z";
   return (
     <motion.svg

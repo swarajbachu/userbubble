@@ -8,16 +8,29 @@ import { Heading } from "@/components/heading";
 import { SubHeading } from "@/components/subheading";
 import { getBlogs } from "@/lib/blogs";
 
+type Blog = {
+  slug: string;
+  title: string;
+  description?: string;
+  date?: string;
+  image: string;
+  authorName?: string;
+  authorSrc?: string;
+};
+
 export const metadata: Metadata = {
   title: "All blogs | Minimal Portfolio Website Template - Aceternity UI Pro",
   description:
     "A perfect portfolio website template that showcases your skills, minimal and smooth microinteractions, perfect for developers and designers.",
 };
 const truncate = (str: string, length: number) =>
-  str.length > length ? str.substring(0, length) + "..." : str;
+  str.length > length ? `${str.substring(0, length)}...` : str;
 
 export default async function BlogsPage() {
   const allBlogs = await getBlogs();
+  const validBlogs = allBlogs.filter(
+    (blog): blog is Blog => blog.title !== undefined && blog.image !== undefined
+  );
 
   return (
     <div>
@@ -30,8 +43,8 @@ export default async function BlogsPage() {
           solutions for the world.
         </SubHeading>
         <div className="mt-10 flex w-full flex-col divide-y divide-divide border-divide border-y">
-          <GridLayout blogs={allBlogs.slice(0, 3)} />
-          {allBlogs.slice(3).map((blog, idx) => (
+          <GridLayout blogs={validBlogs.slice(0, 3)} />
+          {validBlogs.slice(3).map((blog, _idx) => (
             <RowLayout blog={blog} key={blog.title} />
           ))}
         </div>
@@ -42,9 +55,9 @@ export default async function BlogsPage() {
   );
 }
 
-const GridLayout = ({ blogs }: { blogs: any[] }) => (
+const GridLayout = ({ blogs }: { blogs: Blog[] }) => (
   <div className="grid grid-cols-1 divide-y divide-divide lg:grid-cols-3 lg:divide-x lg:divide-y-0">
-    {blogs.map((blog, index) => (
+    {blogs.map((blog, _index) => (
       <Link
         className="p-4 hover:bg-gray-50 md:p-8 dark:hover:bg-neutral-800"
         href={`/blog/${blog.slug}`}
@@ -62,7 +75,7 @@ const GridLayout = ({ blogs }: { blogs: any[] }) => (
             {blog.title}
           </h2>
           <p className="max-w-lg pt-2 text-base text-gray-600 md:text-sm dark:text-neutral-400">
-            {truncate(blog.description || "", 100)}
+            {truncate(blog.description ?? "", 100)}
           </p>
         </div>
       </Link>
@@ -70,7 +83,7 @@ const GridLayout = ({ blogs }: { blogs: any[] }) => (
   </div>
 );
 
-const RowLayout = ({ blog }: { blog: any }) => (
+const RowLayout = ({ blog }: { blog: Blog }) => (
   <Link
     className="flex flex-col justify-between px-4 py-4 hover:bg-gray-50 md:flex-row md:items-center md:px-8 dark:hover:bg-neutral-800"
     href={`/blog/${blog.slug}`}

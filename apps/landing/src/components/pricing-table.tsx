@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/complexity/noForEach: <explanation> */
+/** biome-ignore-all lint/complexity/noForEach: forEach used for pricing feature iteration */
 "use client";
 
 import Link from "next/link";

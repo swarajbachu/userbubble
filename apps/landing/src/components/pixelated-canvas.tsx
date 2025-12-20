@@ -108,7 +108,7 @@ export const PixelatedCanvas: React.FC<PixelatedCanvasProps> = ({
     };
   }, [isActive, dimensions, SQUARE_SIZE, duration]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: canvas rendering depends on filledSquares state changes
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || dimensions.width === 0 || dimensions.height === 0) {

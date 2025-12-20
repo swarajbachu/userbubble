@@ -1,10 +1,25 @@
-export enum Department {
-  INTERNSHIPS = "Internships",
-  ENGINEERING = "Engineering",
-  DESIGN = "Design",
-}
+export const Department = {
+  INTERNSHIPS: "Internships",
+  ENGINEERING: "Engineering",
+  DESIGN: "Design",
+} as const;
 
-export const careers = [
+export type Department = (typeof Department)[keyof typeof Department];
+
+export type Career = {
+  id: string;
+  title: string;
+  department: Department;
+  location: string;
+  type: string;
+  href: string;
+  createdAt: string;
+  description: string;
+  shortDescription: string;
+  requirements: string[];
+};
+
+export const careers: Career[] = [
   // Internships
   {
     id: "intern-software-engineer",

@@ -24,7 +24,9 @@ export const HeroImage = () => {
   const translateY = useTransform(springY, [-0.5, 0.5], [-40, 40]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (!ref.current) {
+      return;
+    }
 
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;

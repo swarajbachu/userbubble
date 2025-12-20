@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
-/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: tabs state depends on findIndex */
+/** biome-ignore-all lint/a11y/useButtonType: tab buttons handle clicks */
 "use client";
 import { AnimatePresence, motion } from "motion/react";
 import type React from "react";

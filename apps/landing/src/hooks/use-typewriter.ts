@@ -16,7 +16,7 @@ export const useTypewriter = (text: string, speed = 100) => {
     let i = 0;
     const timer = setInterval(() => {
       setDisplayText(text.slice(0, i + 1));
-      i++;
+      i += 1;
       if (i === text.length) {
         setIsComplete(true);
         clearInterval(timer);

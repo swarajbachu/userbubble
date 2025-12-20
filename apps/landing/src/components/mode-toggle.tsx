@@ -40,6 +40,7 @@ export function ModeToggle() {
     <button
       className="relative flex cursor-pointer items-center justify-center rounded-xl p-2 text-neutral-500 hover:shadow-input dark:text-neutral-500"
       onClick={SWITCH}
+      type="button"
     >
       <SunIcon className="dark:-rotate-90 size-4 rotate-0 scale-100 text-gray-600 transition-all dark:scale-0 dark:text-gray-300" />
       <MoonIcon className="absolute size-4 rotate-90 scale-0 text-gray-600 transition-all dark:rotate-0 dark:scale-100 dark:text-gray-300" />

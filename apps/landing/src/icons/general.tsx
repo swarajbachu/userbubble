@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: decorative icons use aria-label on parent elements */
 import {
   Cancel01Icon,
   Menu01Icon,

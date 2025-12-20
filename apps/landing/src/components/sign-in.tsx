@@ -11,7 +11,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 export const SignIn = () => {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const _handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("submitted");
   };

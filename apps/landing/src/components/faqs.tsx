@@ -14,7 +14,7 @@ import { SubHeading } from "./subheading";
 const ChevronDownIcon = (
   props: React.SVGProps<SVGSVGElement> & { rotated?: boolean }
 ) => {
-  const { rotated, className, ...rest } = props;
+  const { className, ...rest } = props;
   return (
     <svg
       className={className}
@@ -42,8 +42,11 @@ export const FAQs = () => {
   const toggle = (index: number) => {
     setOpenItems((prev) => {
       const next = new Set(prev);
-      if (next.has(index)) next.delete(index);
-      else next.add(index);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
       return next;
     });
   };

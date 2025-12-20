@@ -1,11 +1,13 @@
 import { CheckIcon } from "@/icons/card-icons";
 import { CloseIcon } from "@/icons/general";
 
-export enum TierName {
-  TIER_1 = "Starter",
-  TIER_2 = "Growth",
-  TIER_3 = "Enterprise",
-}
+export const TierName = {
+  TIER_1: "Starter",
+  TIER_2: "Growth",
+  TIER_3: "Enterprise",
+} as const;
+
+export type TierName = (typeof TierName)[keyof typeof TierName];
 
 export const tiers = [
   {

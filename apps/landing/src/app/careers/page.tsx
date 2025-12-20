@@ -8,7 +8,7 @@ import { DivideX } from "@/components/divide";
 import { ScalesContainer } from "@/components/scales-container";
 import { SectionHeading } from "@/components/seciton-heading";
 import { SubHeading } from "@/components/subheading";
-import { careers } from "@/constants/careers";
+import { type Career, careers } from "@/constants/careers";
 import {
   BoltIcon,
   CloudCheckIcon,
@@ -148,7 +148,7 @@ export default function CareersPage() {
             </div>
           </div>
           <div className="flex flex-col items-center justify-center divide-y divide-divide border-divide">
-            {careers.slice(0, 3).map((career, index) => (
+            {careers.slice(0, 3).map((career, _index) => (
               <Link
                 className="block cursor-pointer px-4 py-4 hover:bg-gray-100 md:px-8 dark:hover:bg-neutral-800"
                 href={career.href}
@@ -163,8 +163,7 @@ export default function CareersPage() {
                   <div className="hidden size-1 rounded-full bg-gray-400 sm:block dark:bg-neutral-600" />
                   <span className="font-medium text-gray-600 text-xs dark:text-neutral-400">
                     {Math.floor(
-                      (new Date().getTime() -
-                        new Date(career.createdAt).getTime()) /
+                      (Date.now() - new Date(career.createdAt).getTime()) /
                         (1000 * 60 * 60 * 24)
                     )}{" "}
                     days ago
@@ -219,7 +218,7 @@ export default function CareersPage() {
           {images.map((image) => (
             <ScalesContainer
               className={cn("h-80 w-full", image.className)}
-              key={image.src + "careers"}
+              key={`${image.src}careers`}
             >
               <Image
                 alt="Team"
@@ -258,7 +257,7 @@ export default function CareersPage() {
           Why Work at Nodus?
         </SectionHeading>
         <div className="mt-12 grid grid-cols-1 gap-10 px-4 md:grid-cols-2 md:px-8 lg:grid-cols-3">
-          {why.map((useCase, index) => (
+          {why.map((useCase, _index) => (
             <div
               className="relative z-10 rounded-lg bg-gray-50 p-4 transition duration-200 md:p-5 dark:bg-neutral-800"
               key={useCase.title}
@@ -277,7 +276,7 @@ export default function CareersPage() {
   );
 }
 
-const Row = ({ job, index }: { job: any; index: number }) => (
+const Row = ({ job, index }: { job: Career; index: number }) => (
   <Link
     className="group flex flex-col px-4 py-4 hover:bg-gray-100 md:flex-row md:items-center md:justify-between md:px-8 dark:hover:bg-neutral-800"
     href={job.href}
@@ -312,7 +311,7 @@ const Row = ({ job, index }: { job: any; index: number }) => (
   </Link>
 );
 
-const JobSection = ({ title, jobs }: { title: string; jobs: any[] }) => (
+const JobSection = ({ title, jobs }: { title: string; jobs: Career[] }) => (
   <div className="mb-12 border-divide border-b">
     <h2 className="bg-gray-50 px-4 py-4 font-semibold text-charcoal-700 text-xl md:px-8 dark:bg-neutral-800 dark:text-neutral-100">
       {title}

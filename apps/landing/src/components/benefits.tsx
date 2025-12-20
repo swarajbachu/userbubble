@@ -10,9 +10,10 @@ import {
   Shield01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
 import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { OpenAILogo, SlackLogo } from "@/icons/general";
+// Logos now loaded from public/logos/
 import { Badge } from "./badge";
 import { HorizontalLine } from "./common/horizontal-line";
 import { IconBlock } from "./common/icon-block";
@@ -141,7 +142,11 @@ export const Benefits = () => {
 };
 
 const MiddleCard = () => {
-  const texts = ["Meeting created", "Chat history saved", "You talking to me"];
+  const texts = [
+    "npm install complete",
+    "Widget initialized",
+    "Feedback received",
+  ];
   const [activeText, setActiveText] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -154,7 +159,17 @@ const MiddleCard = () => {
       <div className="mask-radial-from-10% absolute inset-0 bg-[radial-gradient(var(--color-dots)_1px,transparent_1px)] shadow-xl [background-size:10px_10px]" />
 
       <div className="flex items-center justify-center">
-        <IconBlock icon={<OpenAILogo className="size-6" />} />
+        <IconBlock
+          icon={
+            <Image
+              alt="OpenAI"
+              className="size-6"
+              height={24}
+              src="/logos/companies/openai.svg"
+              width={24}
+            />
+          }
+        />
         <HorizontalLine />
         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md bg-gray-200 p-px shadow-xl dark:bg-neutral-700">
           <div className="absolute inset-0 scale-[1.4] animate-spin rounded-full bg-conic [animation-duration:2s] [background-image:conic-gradient(at_center,transparent,var(--color-blue-500)_20%,transparent_30%)]" />
@@ -164,7 +179,17 @@ const MiddleCard = () => {
           </div>
         </div>
         <HorizontalLine />
-        <IconBlock icon={<SlackLogo className="size-6" />} />
+        <IconBlock
+          icon={
+            <Image
+              alt="Slack"
+              className="size-6"
+              height={24}
+              src="/logos/integrations/slack.svg"
+              width={24}
+            />
+          }
+        />
       </div>
       <div className="relative z-20 flex flex-col items-center justify-center">
         <VerticalLine />
@@ -211,9 +236,9 @@ const MiddleCard = () => {
 
               <div className="mask-b-from-50% mt-4 flex flex-col gap-y-3">
                 {[
-                  { label: "API Calls", width: 85 },
-                  { label: "Success Rate", width: 92 },
-                  { label: "Workflows", width: 65 },
+                  { label: "SDK Integration", width: 85 },
+                  { label: "Widget Loaded", width: 92 },
+                  { label: "Feedback Collected", width: 65 },
                 ].map((item, index) => (
                   <div className="space-y-1" key={item.label}>
                     <div className="flex items-center justify-between text-xs">

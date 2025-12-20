@@ -222,7 +222,7 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="divide-y divide-divide border-divide border-t lg:border-t-0">
-            {careers.slice(0, 4).map((career, index) => (
+            {careers.slice(0, 4).map((career, _index) => (
               <Link
                 className="block cursor-pointer px-4 py-4 hover:bg-gray-100 md:px-8 dark:hover:bg-neutral-800"
                 href={career.href}
@@ -237,8 +237,7 @@ export default function AboutPage() {
                   <div className="hidden size-1 rounded-full bg-gray-400 sm:block dark:bg-neutral-600" />
                   <span className="font-medium text-gray-600 text-xs dark:text-neutral-400">
                     {Math.floor(
-                      (new Date().getTime() -
-                        new Date(career.createdAt).getTime()) /
+                      (Date.now() - new Date(career.createdAt).getTime()) /
                         (1000 * 60 * 60 * 24)
                     )}{" "}
                     days ago

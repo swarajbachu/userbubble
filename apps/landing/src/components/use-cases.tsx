@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/a11y/noNoninteractiveElementInteractions: hover effect for visual feedback only */
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: decorative hover animation */
 "use client";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {

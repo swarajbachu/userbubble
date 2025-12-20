@@ -41,6 +41,7 @@ export const Pricing = () => {
               className="relative z-20 flex w-32 justify-center py-1 text-center sm:w-40"
               key={tab.value}
               onClick={() => setActiveTier(tab.value as "monthly" | "yearly")}
+              type="button"
             >
               {activeTier === tab.value && (
                 <motion.div
@@ -64,7 +65,7 @@ export const Pricing = () => {
       <Container className="border-divide border-x">
         <div className="grid grid-cols-1 divide-y divide-divide md:grid-cols-3 md:divide-x md:divide-y-0">
           {tiers.map((tier, tierIdx) => (
-            <div className="p-4 md:p-8" key={tier.title + "tier-meta"}>
+            <div className="p-4 md:p-8" key={`${tier.title}tier-meta`}>
               <h3 className="font-medium text-charcoal-700 text-xl dark:text-neutral-100">
                 {tier.title}
               </h3>
@@ -81,7 +82,7 @@ export const Pricing = () => {
 
               <div
                 className="flex flex-col gap-4 px-0 py-4 md:hidden md:p-8"
-                key={tier.title + "tier-list-of-items"}
+                key={`${tier.title}tier-list-of-items`}
               >
                 {tier.features.map((tierFeature, idx) => (
                   <Step key={tierFeature + tierIdx + idx}>{tierFeature}</Step>
@@ -105,7 +106,7 @@ export const Pricing = () => {
           {tiers.map((tier, index) => (
             <div
               className="flex flex-col gap-4 p-4 md:p-8"
-              key={tier.title + "tier-list-of-items"}
+              key={`${tier.title}tier-list-of-items`}
             >
               {tier.features.map((tierFeature, idx) => (
                 <Step key={tierFeature + index + idx}>{tierFeature}</Step>

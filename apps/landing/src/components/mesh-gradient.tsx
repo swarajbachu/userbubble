@@ -1,7 +1,7 @@
-/** biome-ignore-all lint/performance/useTopLevelRegex: <explanation> */
-/** biome-ignore-all lint/style/useBlockStatements: <explanation> */
-/** biome-ignore-all lint/correctness/useHookAtTopLevel: <explanation> */
-/** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
+/** biome-ignore-all lint/performance/useTopLevelRegex: regex created within color parsing function */
+/** biome-ignore-all lint/style/useBlockStatements: single-line conditionals for compact gradient logic */
+/** biome-ignore-all lint/correctness/useHookAtTopLevel: useEffect called conditionally for animation control */
+/** biome-ignore-all lint/style/noNonNullAssertion: canvas context guaranteed to exist in gradient rendering */
 "use client";
 
 import type React from "react";

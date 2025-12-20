@@ -1,21 +1,19 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
+/** biome-ignore-all lint/suspicious/noExplicitAny: CSS custom properties use any for dynamic style values */
 "use client";
 
+import { Button } from "@userbubble/ui/button";
+import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
-import {
-  ReactLogo,
-  VueLogo,
-  NextJSLogo,
-  ReactNativeLogo,
-  SwiftLogo,
-} from "@/icons/general";
 import { cn } from "@/lib/utils";
-import { Button } from "@userbubble/ui/button";
 import { Container } from "./container";
 import { SectionHeading } from "./seciton-heading";
 
-type SvgComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+type LogoItem = {
+  src: string;
+  alt: string;
+  className?: string;
+};
 
 export type CTAOrbitProps = {
   size?: number;
@@ -52,20 +50,28 @@ export const CTAOrbit: React.FC<CTAOrbitProps> = ({
   ringDurationsSec,
   numRings = 3,
 }) => {
-  const logos = [
-    ReactLogo,
-    VueLogo,
-    NextJSLogo,
-    ReactNativeLogo,
-    SwiftLogo,
-    ReactLogo,
-    VueLogo,
-    NextJSLogo,
-    ReactNativeLogo,
-    SwiftLogo,
-    ReactLogo,
-    VueLogo,
-    SwiftLogo,
+  const logos: LogoItem[] = [
+    { src: "/logos/frameworks/react.svg", alt: "React", className: "" },
+    { src: "/logos/frameworks/vue.svg", alt: "Vue", className: "" },
+    {
+      src: "/logos/frameworks/nextjs.svg",
+      alt: "Next.js",
+      className: "dark:invert",
+    },
+    { src: "/logos/frameworks/react.svg", alt: "React Native", className: "" },
+    { src: "/logos/frameworks/swift.svg", alt: "Swift", className: "" },
+    { src: "/logos/frameworks/react.svg", alt: "React", className: "" },
+    { src: "/logos/frameworks/vue.svg", alt: "Vue", className: "" },
+    {
+      src: "/logos/frameworks/nextjs.svg",
+      alt: "Next.js",
+      className: "dark:invert",
+    },
+    { src: "/logos/frameworks/react.svg", alt: "React Native", className: "" },
+    { src: "/logos/frameworks/swift.svg", alt: "Swift", className: "" },
+    { src: "/logos/frameworks/react.svg", alt: "React", className: "" },
+    { src: "/logos/frameworks/vue.svg", alt: "Vue", className: "" },
+    { src: "/logos/frameworks/swift.svg", alt: "Swift", className: "" },
   ];
   const total = logos.length;
 
@@ -76,13 +82,13 @@ export const CTAOrbit: React.FC<CTAOrbitProps> = ({
   let remainder = total - countsBase.reduce((a, b) => a + b, 0);
   // Distribute remainder from outermost inward to favor outer rings
   for (let i = numRings - 1; i >= 0 && remainder > 0; i--) {
-    countsBase[i] += 1;
-    remainder--;
+    countsBase[i] = (countsBase[i] ?? 0) + 1;
+    remainder -= 1;
   }
   const counts: number[] = countsBase; // inner→outer
 
   let cursor = 0;
-  const rings: SvgComponent[][] = counts.map((count) => {
+  const rings: LogoItem[][] = counts.map((count) => {
     const slice = logos.slice(cursor, cursor + count);
     cursor += count;
     return slice;
@@ -102,16 +108,21 @@ export const CTAOrbit: React.FC<CTAOrbitProps> = ({
 
   const renderRing = (ringIndex: number) => {
     const ringLogos = rings[ringIndex];
-    const count = ringLogos.length;
-    if (count === 0) return null;
+    const count = ringLogos?.length;
+    if (count === 0) {
+      return null;
+    }
+
+    if (typeof ringScaleFactors[ringIndex] === "undefined") {
+      return null;
+    }
 
     const diameter = Math.round(size * ringScaleFactors[ringIndex]);
     const radius = diameter / 2;
     const defaultBase = 18;
     const defaultStep = 8;
     const duration =
-      (ringDurationsSec && ringDurationsSec[ringIndex]) ??
-      defaultBase + defaultStep * ringIndex;
+      ringDurationsSec?.[ringIndex] ?? defaultBase + defaultStep * ringIndex;
     const reverse = ringIndex % 2 === 1;
 
     return (
@@ -128,33 +139,42 @@ export const CTAOrbit: React.FC<CTAOrbitProps> = ({
         }}
       >
         <div className="relative h-full w-full">
-          {ringLogos?.map((Logo, idx) => {
-            const angleDeg = (360 / count) * idx;
-            const translate = radius;
-            return (
-              <div
-                className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2"
-                key={`ring-${ringIndex}-logo-${idx}`}
-                style={{
-                  transform: `rotate(${angleDeg}deg) translateX(${translate}px)`,
-                }}
-              >
-                <div style={{ transform: `rotate(${-angleDeg}deg)` }}>
-                  <div
-                    className={cn(
-                      "flex size-14 items-center justify-center rounded-md bg-white shadow-aceternity dark:bg-neutral-950",
-                      reverse ? "animate-orbit" : "animate-counter-orbit"
-                    )}
-                    style={{
-                      ["--duration" as any]: `${duration}s`,
-                    }}
-                  >
-                    <Logo className="size-8 shrink-0" />
+          {typeof count === "number" &&
+            count > 0 &&
+            ringLogos?.map((logo, idx) => {
+              const angleDeg = (360 / count) * idx;
+              const translate = radius;
+              return (
+                <div
+                  className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2"
+                  key={`ring-${ringIndex}-logo-${idx}`}
+                  style={{
+                    transform: `rotate(${angleDeg}deg) translateX(${translate}px)`,
+                  }}
+                >
+                  <div style={{ transform: `rotate(${-angleDeg}deg)` }}>
+                    <div
+                      className={cn(
+                        "flex size-14 items-center justify-center rounded-md bg-white shadow-aceternity dark:bg-neutral-950",
+                        reverse ? "animate-orbit" : "animate-counter-orbit"
+                      )}
+                      style={{
+                        ["--duration" as any]: `${duration}s`,
+                      }}
+                    >
+                      <Image
+                        alt={logo.alt}
+                        className={cn("size-8 shrink-0", logo.className)}
+                        height={32}
+                        src={logo.src}
+                        unoptimized
+                        width={32}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
     );
@@ -172,7 +192,8 @@ export const CTAOrbit: React.FC<CTAOrbitProps> = ({
         <div className="pointer-events-none absolute inset-0 z-0">
           {Array.from({ length: numRings }, (_, idx) => numRings - 1 - idx).map(
             (i) => {
-              const diameter = Math.round(size * ringScaleFactors[i]);
+              const scaleFactor = ringScaleFactors?.[i] ?? 1;
+              const diameter = Math.round(size * scaleFactor);
               return (
                 <div
                   className={cn(

@@ -1,25 +1,17 @@
+/** biome-ignore-all lint/correctness/useImageSize: logo images are SVGs with responsive sizes */
+/** biome-ignore-all lint/performance/noImgElement: using img for animated SDK logos with motion */
 "use client";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Attachment01Icon,
+  BrowserIcon,
+  Rocket01Icon,
+  SmartPhone01Icon,
+} from "@hugeicons-pro/core-duotone-rounded";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTypewriter } from "@/hooks/use-typewriter";
-import {
-  AttachmentIcon,
-  CodeIcon,
-  IntegrationsLogo,
-  PhoneIcon,
-  SendIcon,
-  WindowIcon,
-} from "@/icons/bento-icons";
-import {
-  AnthropicLogo,
-  LinearLogo,
-  MetaLogo,
-  NotionLogo,
-  OpenAILogo,
-  SlackLogo,
-  SupabaseLogo,
-} from "@/icons/general";
 import { cn } from "@/lib/utils";
 import { IconBlock } from "../common/icon-block";
 import { DivideX } from "../divide";
@@ -28,22 +20,22 @@ import { LogoSVG } from "../logo";
 export const LLMModelSelectorSkeleton = () => {
   const models = [
     {
-      name: "Claude 4 Opus",
-      logo: AnthropicLogo,
-      status: "Unavailable",
-      variant: "danger",
-    },
-    {
-      name: "ChatGPT",
-      logo: OpenAILogo,
-      status: "Connected",
+      name: "React SDK",
+      logo: "/logos/frameworks/react.svg",
+      status: "Installed",
       variant: "success",
     },
     {
-      name: "Llama 3.2",
-      logo: MetaLogo,
-      status: "Waiting",
+      name: "Swift SDK",
+      logo: "/logos/frameworks/swift.svg",
+      status: "Available",
       variant: "warning",
+    },
+    {
+      name: "Vue SDK",
+      logo: "/logos/frameworks/vue.svg",
+      status: "Ready",
+      variant: "success",
     },
   ];
   return (
@@ -57,14 +49,18 @@ export const LLMModelSelectorSkeleton = () => {
       >
         <div className="flex w-full items-center justify-between p-2">
           <div className="flex items-center gap-2 font-medium">
-            <OpenAILogo />
-            Open AI
+            <img
+              alt="React Native"
+              className="h-4 w-4"
+              src="/logos/frameworks/react.svg"
+            />
+            React Native
           </div>
-          <p className="font-mono text-gray-600">GPT 5</p>
+          <p className="font-mono text-gray-600">v2.0</p>
         </div>
         <DivideX />
         <div className="m-2 rounded-sm border border-blue-500 bg-blue-50 px-2 py-0.5 text-blue-500 dark:bg-blue-50/10">
-          Connected
+          Installed
         </div>
       </motion.div>
       <div className="mb-4 flex gap-2">
@@ -73,12 +69,16 @@ export const LLMModelSelectorSkeleton = () => {
         <div className="h-3 w-3 rounded-full bg-green-500" />
       </div>
       <div className="mt-12 flex items-center gap-2">
-        <IntegrationsLogo />
+        <img
+          alt="React"
+          className="h-4 w-4"
+          src="/logos/frameworks/react.svg"
+        />
         <span className="font-medium text-charcoal-700 text-sm dark:text-neutral-200">
-          All Models
+          All SDKs
         </span>
         <span className="rounded-lg border border-gray-200 bg-gray-50 px-2 py-0.5 text-charcoal-700 text-xs dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200">
-          69,420
+          5
         </span>
       </div>
       <DivideX className="mt-2" />
@@ -97,7 +97,11 @@ export const LLMModelSelectorSkeleton = () => {
             whileInView={{ clipPath: "inset(0 0% 0 0)", filter: "blur(0px)" }}
           >
             <div className="flex items-center gap-2">
-              <model.logo className="h-4 w-4 shrink-0" />
+              <img
+                alt={model.name}
+                className="h-4 w-4 shrink-0"
+                src={model.logo}
+              />
               <span className="font-medium text-charcoal-700 text-sm dark:text-neutral-200">
                 {model.name}
               </span>
@@ -189,20 +193,19 @@ export const TextToWorkflowBuilderSkeleton = () => {
   const initialChat = [
     {
       role: "user",
-      content: "Hello, how are you?",
+      content: "Dark mode toggle would be nice",
     },
     {
       role: "assistant",
-      content: "I'm good, thank you! How can I help you today?",
+      content: "Thanks for the feedback! We've added this to our roadmap.",
     },
     {
       role: "user",
-      content:
-        "I want to create a workflow that will send an email to all my clients",
+      content: "Export feature for reports would help our team a lot",
     },
     {
       role: "assistant",
-      content: "Nah, do it yourself.",
+      content: "Great suggestion! This is now planned for Q2.",
     },
   ];
 
@@ -216,12 +219,12 @@ export const TextToWorkflowBuilderSkeleton = () => {
   const INITIAL_DELAY = 200;
   const MESSAGE_DELAY = 400;
   const RANDOM_MESSAGES = [
-    "Do you really think I was gonna answer?",
-    "I'm not a real assistant, I'm just a skeleton",
-    "Meri ek taang nakli hai, mai hockey ka bohot bada khiladi tha. Ek din Uday bhai ko meri kisi baat pe gussa aagaya aur mere hi hockey se meri taang ke do tukde kar diye. Lekin dil ke bohot ache hain, fauran mujhe hospital le gaye aur ye nakli taang lagwayi",
-    "Mimicking chat here, this isn't real.",
-    "Bro stop.",
-    "Main langotiya jeetu ka mara hua yaar bol rha hoon.",
+    "Thanks for your feedback! We're reviewing this.",
+    "Great idea! This has been added to our backlog.",
+    "We're prioritizing this feature based on votes.",
+    "Your feedback helps us build a better product.",
+    "This is now being tracked on our public roadmap.",
+    "We'll notify you when this ships!",
   ];
 
   const handleSendMessage = () => {
@@ -286,18 +289,28 @@ export const TextToWorkflowBuilderSkeleton = () => {
           className="flex-1 border-none px-4 py-4 text-xs placeholder-neutral-600 focus:outline-none"
           onChange={(e) => setInputText(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Ask Notus AI"
+          placeholder="Submit feedback..."
           type="text"
           value={inputText}
         />
         <div className="mr-4 flex items-center gap-2">
-          <AttachmentIcon />
+          <HugeiconsIcon
+            color="currentColor"
+            icon={Attachment01Icon}
+            size={16}
+            strokeWidth={1.5}
+          />
           <button
             className="cursor-pointer"
             onClick={handleSendMessage}
             type="button"
           >
-            <SendIcon />
+            <HugeiconsIcon
+              color="currentColor"
+              icon={Rocket01Icon}
+              size={16}
+              strokeWidth={1.5}
+            />
           </button>
         </div>
       </div>
@@ -427,13 +440,42 @@ export const NativeToolsIntegrationSkeleton = () => (
     <motion.div className="relative mx-auto my-12 hidden h-full max-h-70 min-h-80 max-w-[67rem] grid-cols-2 p-4 lg:grid">
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-10">
-          <TextIconBlock icon={<WindowIcon />} text="Meeting Summarizer">
+          <TextIconBlock
+            icon={
+              <HugeiconsIcon
+                color="currentColor"
+                icon={BrowserIcon}
+                size={16}
+                strokeWidth={1.5}
+              />
+            }
+            text="Web App"
+          >
             <TopSVG className="-right-84 absolute top-2" />
           </TextIconBlock>
-          <TextIconBlock icon={<CodeIcon />} text="Code Reviewer">
+          <TextIconBlock
+            icon={
+              <img
+                alt="Swift"
+                className="h-4 w-4"
+                src="/logos/frameworks/swift.svg"
+              />
+            }
+            text="iOS App"
+          >
             <MiddleSVG className="-right-84 absolute top-2" />
           </TextIconBlock>
-          <TextIconBlock icon={<PhoneIcon />} text="Customer Support">
+          <TextIconBlock
+            icon={
+              <HugeiconsIcon
+                color="currentColor"
+                icon={SmartPhone01Icon}
+                size={16}
+                strokeWidth={1.5}
+              />
+            }
+            text="Android App"
+          >
             <BottomSVG className="-right-84 absolute bottom-2" />
           </TextIconBlock>
         </div>
@@ -452,19 +494,59 @@ export const NativeToolsIntegrationSkeleton = () => (
             Connected
           </span>
           <div className="-top-30 absolute inset-x-0 flex h-full flex-col items-center">
-            <IconBlock icon={<NotionLogo className="size-6" />} />
+            <IconBlock
+              icon={
+                <img
+                  alt="Notion"
+                  className="size-6"
+                  src="/logos/integrations/notion.svg"
+                />
+              }
+            />
             <VerticalLine />
             <VerticalLine />
-            <IconBlock icon={<LinearLogo className="size-6" />} />
+            <IconBlock
+              icon={
+                <img
+                  alt="Linear"
+                  className="size-6"
+                  src="/logos/integrations/linear.svg"
+                />
+              }
+            />
           </div>
         </div>
         <div className="2 -top-4 absolute right-30 flex h-full flex-col items-center">
-          <IconBlock icon={<SupabaseLogo className="size-6" />} />
+          <IconBlock
+            icon={
+              <img
+                alt="Anthropic"
+                className="size-6"
+                src="/logos/companies/anthropic.svg"
+              />
+            }
+          />
           <VerticalLine />
-          <IconBlock icon={<SlackLogo className="size-6" />} />
+          <IconBlock
+            icon={
+              <img
+                alt="Slack"
+                className="size-6"
+                src="/logos/integrations/slack.svg"
+              />
+            }
+          />
         </div>
         <RightSideSVG />
-        <IconBlock icon={<OpenAILogo className="size-6" />} />
+        <IconBlock
+          icon={
+            <img
+              alt="OpenAI"
+              className="size-6"
+              src="/logos/companies/openai.svg"
+            />
+          }
+        />
       </div>
     </motion.div>
   </>

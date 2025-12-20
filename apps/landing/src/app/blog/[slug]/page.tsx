@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Container } from "@/components/container";
 import { DivideX } from "@/components/divide";
@@ -18,7 +19,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: frontmatter.title + " by Manu Arora",
+    title: `${frontmatter.title} by Manu Arora`,
     description: frontmatter.description,
   };
 }
@@ -37,16 +38,16 @@ export default async function SingleBlogPage({
 
   const { content, frontmatter } = blog;
 
-  console.log(frontmatter);
-
   return (
     <div>
       <DivideX />
       <Container className="border-divide border-x px-8 pt-10 md:pt-20 md:pb-10">
-        <img
+        <Image
           alt={frontmatter.title}
           className="rouned-full mx-auto mb-20 max-h-96 w-full max-w-2xl rounded-2xl object-cover shadow-xl"
+          height={400}
           src={frontmatter.image}
+          width={800}
         />
         <div className="prose prose-base dark:prose-invert mx-auto">
           {content}

@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/nursery/noShadow: <explanation> */
+/** biome-ignore-all lint/nursery/noShadow: items param shadows outer items const intentionally */
 "use client";
 import {
   AnimatePresence,

@@ -10,7 +10,7 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 
 export const Contact = () => {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const _handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("submitted");
   };

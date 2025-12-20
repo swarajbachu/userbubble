@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/style/useConsistentBuiltinInstantiation: <explanation> */
+/** biome-ignore-all lint/style/useConsistentBuiltinInstantiation: Array constructor used for star rating animation */
 "use client";
 import { Button } from "@userbubble/ui/button";
 import { motion } from "motion/react";

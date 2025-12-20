@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/performance/noImgElement: <explanation> */
+/** biome-ignore-all lint/performance/noImgElement: using img for testimonial avatars with motion animations */
 "use client";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
@@ -16,7 +16,7 @@ export const Testimonials = () => {
 
   const totalTestimonials = testimonials.length;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: interval depends on currentIndex for rotation control
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % totalTestimonials);

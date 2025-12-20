@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/a11y/noNoninteractiveElementInteractions: div has keyboard support via onKeyDown */
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: hover effect for visual feedback with keyboard support */
 "use client";
 import { motion } from "motion/react";
 import { useState } from "react";
@@ -43,6 +45,11 @@ export const InformationBlock = () => {
         <div
           className="relative h-full"
           key={useCase.title}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              setActiveUseCase(index);
+            }
+          }}
           onMouseEnter={() => setActiveUseCase(index)}
         >
           {activeUseCase === index && (

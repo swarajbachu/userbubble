@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import config from "@/config";
 
-interface SEOProps {
+type SEOProps = {
   title?: string;
   description?: string;
   canonicalUrlRelative?: string;
   keywords?: string[];
-}
+};
 
 export function getSEOTags({
   title,
@@ -33,13 +33,13 @@ export function getSEOTags({
       siteName: config.websiteName,
       locale: "en_US",
       type: "website",
-      images: [{ url: config.websiteUrl + "/banner.png" }],
+      images: [{ url: `${config.websiteUrl}/banner.png` }],
     },
     twitter: {
       card: "summary_large_image",
       title: seoTitle,
       description: seoDescription,
-      images: [{ url: config.websiteUrl + "/banner.png" }],
+      images: [{ url: `${config.websiteUrl}/banner.png` }],
     },
   };
 
@@ -55,7 +55,7 @@ export function generateSchemaObject() {
     name: websiteName,
     description: config.websiteDescription,
     url: websiteUrl,
-    image: config.websiteUrl + "/banner.png",
+    image: `${config.websiteUrl}/banner.png`,
     sameAs: [],
   };
 }
@@ -90,7 +90,7 @@ export function getArticleSEOTags({
       tags,
       images: image
         ? [{ url: image }]
-        : [{ url: config.websiteUrl + "/banner.png" }],
+        : [{ url: `${config.websiteUrl}/banner.png` }],
     },
   };
 }

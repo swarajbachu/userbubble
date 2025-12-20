@@ -1,6 +1,5 @@
 "use client";
 import { motion } from "motion/react";
-import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -42,8 +41,6 @@ export const Dot = ({
       setIsNearMouse(distance <= 100);
     }
   }, [mousePosition]);
-
-  const { theme } = useTheme();
 
   return (
     <motion.div

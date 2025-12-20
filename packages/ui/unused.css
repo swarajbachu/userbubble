@@ -28,7 +28,11 @@
   --foreground: var(--color-zinc-800);
   --input: --alpha(var(--color-black) / 12%);
   --muted: --alpha(var(--color-black) / 4%);
-  --muted-foreground: color-mix(in srgb, var(--color-zinc-500) 90%, var(--color-black));
+  --muted-foreground: color-mix(
+    in srgb,
+    var(--color-zinc-500) 90%,
+    var(--color-black)
+  );
   --popover: var(--color-white);
   --popover-foreground: var(--color-zinc-800);
   --primary: var(--color-zinc-800);
@@ -56,7 +60,11 @@
   --warning-foreground: var(--color-amber-400);
   --accent: --alpha(var(--color-white) / 6%);
   --accent-foreground: var(--color-zinc-200);
-  --background: color-mix(in srgb, var(--color-zinc-950) 98%, var(--color-white));
+  --background: color-mix(
+    in srgb,
+    var(--color-zinc-950) 98%,
+    var(--color-white)
+  );
   --border: --alpha(var(--color-white) / 12%);
   --card: color-mix(in srgb, var(--background) 98%, var(--color-white));
   --card-foreground: var(--color-zinc-200);
@@ -64,7 +72,11 @@
   --foreground: var(--color-zinc-200);
   --input: --alpha(var(--color-white) / 12%);
   --muted: --alpha(var(--color-white) / 6%);
-  --muted-foreground: color-mix(in srgb, var(--color-zinc-500) 90%, var(--color-white));
+  --muted-foreground: color-mix(
+    in srgb,
+    var(--color-zinc-500) 90%,
+    var(--color-white)
+  );
   --popover: color-mix(in srgb, var(--background) 96%, var(--color-white));
   --popover-foreground: var(--color-zinc-200);
   --primary: var(--color-zinc-200);
@@ -110,8 +122,8 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   @keyframes skeleton {
-  to {
-    background-position: -200% 0;
+    to {
+      background-position: -200% 0;
     }
   }
 }
