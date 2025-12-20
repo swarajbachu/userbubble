@@ -1,5 +1,5 @@
 {
-  "name": "@userbubble/nextjs",
+  "name": "@userbubble/application",
   "private": true,
   "type": "module",
   "scripts": {
