@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@userbubble/tailwind-config/theme";
+
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+/* Landing-specific animations */
+@theme {
+  --animate-orbit: orbit 24s linear infinite;
+  --animate-counter-orbit: counter-orbit 24s linear infinite;
+
+  @keyframes orbit {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes counter-orbit {
+    0% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+}
+
+/* Landing-specific CSS variables mapped to shared theme */
+:root {
+  --divide: var(--color-border);
+  --primary: var(--color-foreground);
+  --canvas: var(--color-muted);
+  --canvas-fill: var(--color-muted-foreground);
+  --dots: var(--color-border);
+  --line: var(--color-border);
+  --footer-link: var(--color-muted-foreground);
+}
+
+.dark {
+  --divide: var(--color-border);
+  --primary: var(--color-foreground);
+  --canvas: var(--color-muted);
+  --canvas-fill: var(--color-muted-foreground);
+  --dots: var(--color-border);
+  --line: var(--color-border);
+  --footer-link: var(--color-muted-foreground);
+}
+
+@theme inline {
+  --color-divide: var(--divide);
+  --color-primary: var(--primary);
+  --color-canvas: var(--canvas);
+  --color-canvas-fill: var(--canvas-fill);
+  --color-dots: var(--dots);
+  --color-line: var(--line);
+  --color-footer-link: var(--footer-link);
+}

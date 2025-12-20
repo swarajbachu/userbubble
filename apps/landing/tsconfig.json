@@ -1,0 +1,25 @@
+{
+  "extends": "@userbubble/tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*": ["./src/*"],
+      "@userbubble/auth/*": ["../../packages/auth/src/*"],
+      "@userbubble/ui/*": ["../../packages/ui/src/*"],
+      "@userbubble/ui": ["../../packages/ui/src/index.ts"],
+      "@userbubble/api/*": ["../../packages/api/src/*"],
+      "@userbubble/db/*": ["../../packages/db/src/*"],
+      "@userbubble/validators/*": ["../../packages/validators/src/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
+  },
+  "include": [".", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

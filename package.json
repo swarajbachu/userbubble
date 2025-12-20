@@ -17,6 +17,7 @@
     "db:studio": "turbo -F @userbubble/db studio",
     "dev": "turbo watch dev --continue",
     "dev:app": "turbo watch dev -F @userbubble/application...",
+    "dev:landing": "turbo watch dev -F @userbubble/landing...",
     "typecheck": "turbo run typecheck",
     "format": "ultracite fix .",
     "lint": "ultracite lint .",

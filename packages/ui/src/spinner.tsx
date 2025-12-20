@@ -7,7 +7,6 @@ function Spinner({
   ...props
 }: Omit<React.ComponentProps<"svg">, "strokeWidth">) {
   return (
-    //@ts-expect-error
     <HugeiconsIcon
       aria-label="Loading"
       className={cn("size-4 animate-spin", className)}
