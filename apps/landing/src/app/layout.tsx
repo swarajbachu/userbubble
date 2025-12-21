@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
-import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { ThemeProvider } from "@/context/theme-provider";
 import { getSEOTags } from "@/lib/seo";
@@ -36,7 +34,7 @@ export default function RootLayout({
           <main className="antialiase h-full bg-background">
             <Navbar />
             {children}
-            <Footer />
+            {/* <Footer /> */}
           </main>
         </ThemeProvider>
       </body>

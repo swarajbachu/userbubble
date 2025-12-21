@@ -1,4 +1,5 @@
-import { CheckIcon } from "@/icons/card-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckmarkCircle02Icon } from "@hugeicons-pro/core-duotone-rounded";
 import { CloseIcon } from "@/icons/general";
 
 export const TierName = {
@@ -125,15 +126,36 @@ export const pricingTable = [
     tiers: [
       {
         title: TierName.TIER_1,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -142,15 +164,36 @@ export const pricingTable = [
     tiers: [
       {
         title: TierName.TIER_1,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -159,15 +202,36 @@ export const pricingTable = [
     tiers: [
       {
         title: TierName.TIER_1,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -193,15 +257,36 @@ export const pricingTable = [
     tiers: [
       {
         title: TierName.TIER_1,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -210,15 +295,36 @@ export const pricingTable = [
     tiers: [
       {
         title: TierName.TIER_1,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -231,11 +337,25 @@ export const pricingTable = [
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -248,11 +368,25 @@ export const pricingTable = [
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -265,11 +399,25 @@ export const pricingTable = [
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -278,15 +426,36 @@ export const pricingTable = [
     tiers: [
       {
         title: TierName.TIER_1,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -299,11 +468,25 @@ export const pricingTable = [
       },
       {
         title: TierName.TIER_2,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -320,7 +503,14 @@ export const pricingTable = [
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -337,7 +527,14 @@ export const pricingTable = [
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -354,7 +551,14 @@ export const pricingTable = [
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },
@@ -371,7 +575,14 @@ export const pricingTable = [
       },
       {
         title: TierName.TIER_3,
-        value: <CheckIcon className="mx-auto size-5 text-gray-600" />,
+        value: (
+          <HugeiconsIcon
+            className="mx-auto text-gray-600"
+            color="currentColor"
+            icon={CheckmarkCircle02Icon}
+            size={20}
+          />
+        ),
       },
     ],
   },

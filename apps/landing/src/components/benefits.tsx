@@ -2,7 +2,9 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Analytics02Icon,
+  DashboardSquare02Icon,
   Loading03Icon,
+  MobileNavigator01Icon,
   MoneyBag01Icon,
   Notification02Icon,
   Rocket01Icon,
@@ -10,7 +12,6 @@ import {
   Shield01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
 import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
 import type React from "react";
 import { useEffect, useState } from "react";
 // Logos now loaded from public/logos/
@@ -27,9 +28,9 @@ import { SubHeading } from "./subheading";
 export const Benefits = () => {
   const benefits = [
     {
-      title: "Works with Your Tech Stack",
+      title: "Built for Mobile",
       description:
-        "Native SDKs for React, React Native, Swift, Next.js, and Vue. Use the same feedback tool across web, iOS, and Android. No platform left behind.",
+        "Native SDKs for mobile platforms. React Native support available now (Expo and bare workflows). Native Swift and Kotlin SDKs coming soon.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -43,7 +44,7 @@ export const Benefits = () => {
     {
       title: "5-Minute Integration",
       description:
-        "One npm install or CocoaPods dependency. Import the widget component and you're done. No backend setup, no API keys to configure, no complicated auth flows.",
+        "One npm install and you're ready. Import the widget component and drop it anywhere in your app. No backend setup, no API keys to manage.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -71,7 +72,7 @@ export const Benefits = () => {
     {
       title: "Comprehensive Documentation",
       description:
-        "Clear guides for every framework. Quick-start examples, API references, and troubleshooting tips. Get up and running in minutes, not hours.",
+        "Step-by-step guides for mobile development. Code examples for common scenarios. Platform-specific tips for iOS and Android.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -97,9 +98,9 @@ export const Benefits = () => {
       ),
     },
     {
-      title: "Unified Cross-Platform Feedback",
+      title: "Mobile-First Dashboard",
       description:
-        "Feedback from web, iOS, and Android flows into one dashboard. See votes across all platforms, track trends, and share one roadmap for your entire product.",
+        "View feedback from all your mobile users in one dashboard. Filter by platform (iOS/Android), track votes, and prioritize features that matter most.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -116,12 +117,13 @@ export const Benefits = () => {
       <div className="relative flex flex-col items-center">
         <Badge text="Benefits" />
         <SectionHeading className="mt-4">
-          Built for developers, loved by product teams
+          Built for mobile developers
         </SectionHeading>
 
         <SubHeading as="p" className="mx-auto mt-6 max-w-lg">
-          Multi-platform SDKs, comprehensive docs, and unified feedback across
-          all your apps. Technical excellence meets developer experience.
+          Lightweight SDKs, comprehensive docs, and seamless integration. Get
+          feedback from mobile users without disrupting your development
+          workflow.
         </SubHeading>
       </div>
       <div className="mt-20 grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -161,12 +163,12 @@ const MiddleCard = () => {
       <div className="flex items-center justify-center">
         <IconBlock
           icon={
-            <Image
-              alt="OpenAI"
-              className="size-6"
-              height={24}
-              src="/logos/companies/openai.svg"
-              width={24}
+            <HugeiconsIcon
+              className="text-gray-600"
+              color="currentColor"
+              icon={MobileNavigator01Icon}
+              size={24}
+              strokeWidth={1.5}
             />
           }
         />
@@ -181,12 +183,12 @@ const MiddleCard = () => {
         <HorizontalLine />
         <IconBlock
           icon={
-            <Image
-              alt="Slack"
-              className="size-6"
-              height={24}
-              src="/logos/integrations/slack.svg"
-              width={24}
+            <HugeiconsIcon
+              className="text-gray-600"
+              color="currentColor"
+              icon={DashboardSquare02Icon}
+              size={24}
+              strokeWidth={1.5}
             />
           }
         />

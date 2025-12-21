@@ -75,11 +75,20 @@ export const HeroImage = () => {
         >
           <Image
             alt="Hero Image"
-            className="w-full"
+            className="hidden w-full rounded-md dark:block"
             draggable={false}
             height={1000}
             priority
-            src="/dashboard@3x.png"
+            src="/dash-light.png"
+            width={1000}
+          />
+          <Image
+            alt="Hero Image"
+            className="block w-full rounded-md dark:hidden"
+            draggable={false}
+            height={1000}
+            priority
+            src="/dash-dark.png"
             width={1000}
           />
         </motion.div>

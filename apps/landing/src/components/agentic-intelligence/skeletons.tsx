@@ -4,38 +4,35 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Attachment01Icon,
-  BrowserIcon,
   Rocket01Icon,
-  SmartPhone01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTypewriter } from "@/hooks/use-typewriter";
 import { cn } from "@/lib/utils";
-import { IconBlock } from "../common/icon-block";
 import { DivideX } from "../divide";
 import { LogoSVG } from "../logo";
 
 export const LLMModelSelectorSkeleton = () => {
   const models = [
     {
-      name: "React SDK",
+      name: "React Native",
       logo: "/logos/frameworks/react.svg",
       status: "Installed",
       variant: "success",
     },
     {
-      name: "Swift SDK",
+      name: "Swift (iOS)",
       logo: "/logos/frameworks/swift.svg",
-      status: "Available",
+      status: "Coming Soon",
       variant: "warning",
     },
     {
-      name: "Vue SDK",
-      logo: "/logos/frameworks/vue.svg",
-      status: "Ready",
-      variant: "success",
+      name: "Kotlin (Android)",
+      logo: "/logos/frameworks/react.svg",
+      status: "Coming Soon",
+      variant: "warning",
     },
   ];
   return (
@@ -75,10 +72,10 @@ export const LLMModelSelectorSkeleton = () => {
           src="/logos/frameworks/react.svg"
         />
         <span className="font-medium text-charcoal-700 text-sm dark:text-neutral-200">
-          All SDKs
+          Mobile SDKs
         </span>
         <span className="rounded-lg border border-gray-200 bg-gray-50 px-2 py-0.5 text-charcoal-700 text-xs dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200">
-          5
+          3
         </span>
       </div>
       <DivideX className="mt-2" />
@@ -437,121 +434,165 @@ export const NativeToolsIntegrationSkeleton = () => (
         width={1200}
       />
     </div>
-    <motion.div className="relative mx-auto my-12 hidden h-full max-h-70 min-h-80 max-w-[67rem] grid-cols-2 p-4 lg:grid">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-10">
-          <TextIconBlock
-            icon={
-              <HugeiconsIcon
-                color="currentColor"
-                icon={BrowserIcon}
-                size={16}
-                strokeWidth={1.5}
-              />
-            }
-            text="Web App"
-          >
-            <TopSVG className="-right-84 absolute top-2" />
-          </TextIconBlock>
-          <TextIconBlock
-            icon={
-              <img
-                alt="Swift"
-                className="h-4 w-4"
-                src="/logos/frameworks/swift.svg"
-              />
-            }
-            text="iOS App"
-          >
-            <MiddleSVG className="-right-84 absolute top-2" />
-          </TextIconBlock>
-          <TextIconBlock
-            icon={
-              <HugeiconsIcon
-                color="currentColor"
-                icon={SmartPhone01Icon}
-                size={16}
-                strokeWidth={1.5}
-              />
-            }
-            text="Android App"
-          >
-            <BottomSVG className="-right-84 absolute bottom-2" />
-          </TextIconBlock>
-        </div>
-        <div className="relative h-16 w-16 overflow-hidden rounded-md bg-gray-200 p-px shadow-xl dark:bg-neutral-700">
-          <div className="absolute inset-0 scale-[1.4] animate-spin rounded-full bg-conic [animation-duration:2s] [background-image:conic-gradient(at_center,transparent,var(--color-blue-500)_20%,transparent_30%)]" />
-          <div className="absolute inset-0 scale-[1.4] animate-spin rounded-full [animation-delay:1s] [animation-duration:2s] [background-image:conic-gradient(at_center,transparent,var(--color-brand)_20%,transparent_30%)]" />
-          <div className="relative z-20 flex h-full w-full items-center justify-center rounded-[5px] bg-white dark:bg-neutral-900">
-            <LogoSVG className="text-black dark:text-white" />
+    <motion.div className="relative mx-auto my-12 hidden h-full max-h-70 min-h-80 max-w-[67rem] items-center justify-center p-4 lg:flex">
+      <div className="flex items-center gap-8">
+        {/* Left Phone - iOS Style */}
+        <motion.div
+          animate={{ opacity: 1, x: 0 }}
+          className="relative h-[420px] w-[200px] overflow-hidden rounded-[2.5rem] border-[12px] border-gray-900 bg-black shadow-2xl"
+          initial={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.6 }}
+        >
+          {/* Notch */}
+          <div className="-translate-x-1/2 absolute top-0 left-1/2 z-10 h-6 w-32 rounded-b-2xl bg-gray-900" />
+
+          {/* Screen Content */}
+          <div className="relative h-full bg-white dark:bg-neutral-900">
+            {/* Status Bar */}
+            <div className="flex items-center justify-between px-6 pt-3 text-xs">
+              <span className="font-semibold">9:41</span>
+              <div className="flex items-center gap-1">
+                <div className="h-3 w-3 rounded-full bg-gray-300" />
+                <div className="h-3 w-2 rounded-sm bg-gray-300" />
+              </div>
+            </div>
+
+            {/* App Content */}
+            <div className="p-4 pt-8">
+              <motion.div
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 p-5 shadow-sm dark:from-blue-950 dark:to-indigo-950"
+                initial={{ opacity: 0, y: 10 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+              >
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
+                    <div className="h-4 w-4 rounded-full bg-white" />
+                  </div>
+                  <span className="font-semibold text-sm">Share Feedback</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="h-2 w-4/5 rounded-full bg-blue-200 dark:bg-blue-900" />
+                  <div className="h-2 w-3/5 rounded-full bg-blue-200 dark:bg-blue-900" />
+                </div>
+                <motion.button
+                  animate={{ scale: 1 }}
+                  className="mt-4 w-full rounded-xl bg-blue-600 py-2.5 font-medium text-sm text-white shadow-lg"
+                  initial={{ scale: 0.95 }}
+                  transition={{ delay: 0.6, duration: 0.3 }}
+                  type="button"
+                >
+                  Submit
+                </motion.button>
+              </motion.div>
+
+              {/* Recent Feedback */}
+              <motion.div
+                animate={{ opacity: 1 }}
+                className="mt-6 space-y-2.5"
+                initial={{ opacity: 0 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+              >
+                <div className="text-gray-500 text-xs">Recent</div>
+                {[42, 28, 15].map((votes, i) => (
+                  <div
+                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-2.5 dark:bg-neutral-800"
+                    key={i}
+                  >
+                    <div className="flex shrink-0 flex-col items-center rounded-lg bg-white px-2 py-1 dark:bg-neutral-700">
+                      <div className="text-[10px]">▲</div>
+                      <div className="font-bold text-xs">{votes}</div>
+                    </div>
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-neutral-700" />
+                      <div className="h-1.5 w-2/3 rounded-full bg-gray-200 dark:bg-neutral-700" />
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div className="relative flex h-full w-full items-center justify-start">
-        <RightSideSVG />
-        <div className="relative flex flex-col items-center gap-2">
-          <span className="relative z-20 rounded-sm border border-blue-500 bg-blue-50 px-2 py-0.5 text-blue-500 text-xs dark:bg-blue-900 dark:text-white">
-            Connected
-          </span>
-          <div className="-top-30 absolute inset-x-0 flex h-full flex-col items-center">
-            <IconBlock
-              icon={
-                <img
-                  alt="Notion"
-                  className="size-6"
-                  src="/logos/integrations/notion.svg"
-                />
-              }
-            />
-            <VerticalLine />
-            <VerticalLine />
-            <IconBlock
-              icon={
-                <img
-                  alt="Linear"
-                  className="size-6"
-                  src="/logos/integrations/linear.svg"
-                />
-              }
-            />
+        </motion.div>
+
+        {/* Right Phone - Android Style */}
+        <motion.div
+          animate={{ opacity: 1, x: 0 }}
+          className="relative h-[420px] w-[200px] overflow-hidden rounded-[2.5rem] border-[12px] border-gray-800 bg-black shadow-2xl"
+          initial={{ opacity: 0, x: 20 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
+          {/* Screen Content */}
+          <div className="relative h-full bg-white dark:bg-neutral-900">
+            {/* Status Bar */}
+            <div className="flex items-center justify-between bg-gray-50 px-6 py-2 dark:bg-neutral-800">
+              <span className="text-xs">9:41</span>
+              <div className="flex items-center gap-1">
+                <div className="h-3 w-3 rounded-full bg-gray-300" />
+                <div className="h-3 w-2 rounded-sm bg-gray-300" />
+              </div>
+            </div>
+
+            {/* App Content */}
+            <div className="p-4">
+              <motion.div
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 p-5 shadow-sm dark:from-purple-950 dark:to-pink-950"
+                initial={{ opacity: 0, y: 10 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+              >
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500">
+                    <div className="h-4 w-4 rounded-full bg-white" />
+                  </div>
+                  <span className="font-semibold text-sm">Give Feedback</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="h-2 w-4/5 rounded-full bg-purple-200 dark:bg-purple-900" />
+                  <div className="h-2 w-3/5 rounded-full bg-purple-200 dark:bg-purple-900" />
+                </div>
+                <motion.button
+                  animate={{ scale: 1 }}
+                  className="mt-4 w-full rounded-xl bg-purple-600 py-2.5 font-medium text-sm text-white shadow-lg"
+                  initial={{ scale: 0.95 }}
+                  transition={{ delay: 0.8, duration: 0.3 }}
+                  type="button"
+                >
+                  Send
+                </motion.button>
+              </motion.div>
+
+              {/* Feature Votes */}
+              <motion.div
+                animate={{ opacity: 1 }}
+                className="mt-6 space-y-2.5"
+                initial={{ opacity: 0 }}
+                transition={{ delay: 1, duration: 0.5 }}
+              >
+                <div className="text-gray-500 text-xs">Popular Requests</div>
+                {[35, 19, 12].map((votes, i) => (
+                  <div
+                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-2.5 dark:bg-neutral-800"
+                    key={i}
+                  >
+                    <div className="flex shrink-0 flex-col items-center rounded-lg bg-white px-2 py-1 dark:bg-neutral-700">
+                      <div className="text-[10px]">▲</div>
+                      <div className="font-bold text-xs">{votes}</div>
+                    </div>
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-neutral-700" />
+                      <div className="h-1.5 w-2/3 rounded-full bg-gray-200 dark:bg-neutral-700" />
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
           </div>
-        </div>
-        <div className="2 -top-4 absolute right-30 flex h-full flex-col items-center">
-          <IconBlock
-            icon={
-              <img
-                alt="Anthropic"
-                className="size-6"
-                src="/logos/companies/anthropic.svg"
-              />
-            }
-          />
-          <VerticalLine />
-          <IconBlock
-            icon={
-              <img
-                alt="Slack"
-                className="size-6"
-                src="/logos/integrations/slack.svg"
-              />
-            }
-          />
-        </div>
-        <RightSideSVG />
-        <IconBlock
-          icon={
-            <img
-              alt="OpenAI"
-              className="size-6"
-              src="/logos/companies/openai.svg"
-            />
-          }
-        />
+        </motion.div>
       </div>
     </motion.div>
   </>
 );
-const VerticalLine = (
+const _VerticalLine = (
   props: React.SVGProps<SVGSVGElement> & { stopColor?: string }
 ) => (
   <svg
@@ -609,7 +650,7 @@ const VerticalLine = (
   </svg>
 );
 
-const RightSideSVG = (props: React.SVGProps<SVGSVGElement>) => (
+const _RightSideSVG = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     fill="none"
     height="2"
@@ -666,7 +707,7 @@ const RightSideSVG = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const TopSVG = (props: React.SVGProps<SVGSVGElement>) => (
+const _TopSVG = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     fill="none"
     height="33"
@@ -843,7 +884,7 @@ export const BottomSVG = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const TextIconBlock = ({
+const _TextIconBlock = ({
   icon,
   text,
   children,

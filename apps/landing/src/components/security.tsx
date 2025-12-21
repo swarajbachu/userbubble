@@ -10,18 +10,19 @@ export const Security = () => (
   <>
     <Container className="border-divide border-x">
       <h2 className="pt-10 pb-5 text-center font-mono text-neutral-500 text-sm uppercase tracking-tight md:pt-20 md:pb-10 dark:text-neutral-400">
-        FOR SECURITY FIRST TEAMS
+        ENTERPRISE READY
       </h2>
     </Container>
     <DivideX />
     <Container className="grid grid-cols-1 border-divide border-x bg-gray-100 px-8 py-12 md:grid-cols-2 dark:bg-neutral-900">
       <div>
         <SectionHeading className="text-left">
-          Scale securely with confidence
+          Secure and compliant
         </SectionHeading>
         <SubHeading as="p" className="mt-4 text-left">
-          Our AI assistant is designed with enterprise-grade security practices
-          and compliant with global data protection standards.
+          Built with enterprise-grade security practices and compliant with
+          global data protection standards. Your users' feedback data is
+          encrypted and secure.
         </SubHeading>
         <Button
           as={Link}

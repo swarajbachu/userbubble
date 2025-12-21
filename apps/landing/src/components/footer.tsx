@@ -154,7 +154,7 @@ export const Footer = () => {
       </div>
       <div className="my-4 flex flex-col items-center justify-between px-4 pt-8 md:flex-row">
         <p className="text-footer-link text-sm">
-          © 2024 Notus Aceternity Fight Club. All rights reserved.
+          © 2024 UserBubble. All rights reserved.
         </p>
         <div className="mt-4 flex items-center gap-4 md:mt-0">
           <Link

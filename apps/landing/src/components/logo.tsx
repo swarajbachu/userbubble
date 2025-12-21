@@ -19,6 +19,6 @@ export const LogoSVG = (props: React.SVGProps<SVGSVGElement>) => (
 export const Logo = () => (
   <Link className="flex items-center gap-2" href="/">
     <LogoSVG />
-    <span className="font-medium text-2xl">Notus</span>
+    <span className="font-medium text-lg">UserBubble</span>
   </Link>
 );

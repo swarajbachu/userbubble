@@ -21,9 +21,9 @@ import { SubHeading } from "./subheading";
 export const UseCases = () => {
   const useCases = [
     {
-      title: "SaaS Startups",
+      title: "Mobile-First Startups",
       description:
-        "Ship features your customers actually want. Collect feedback, prioritize with votes, and share your roadmap—all in one place.",
+        "Building the next big mobile app? Collect feedback directly from users, prioritize with votes, and ship features your users actually want.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -35,9 +35,9 @@ export const UseCases = () => {
       ),
     },
     {
-      title: "B2B Platforms",
+      title: "Cross-Platform Apps",
       description:
-        "Give enterprise customers visibility into your product roadmap. Collect feature requests and keep stakeholders informed.",
+        "Building for multiple mobile platforms? Collect feedback from both iOS and Android users in one unified dashboard.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -51,7 +51,7 @@ export const UseCases = () => {
     {
       title: "Developer Tools",
       description:
-        "Built by developers for developers. Native SDKs for React, Swift, and Vue mean your users never leave your product. Integrate feedback seamlessly.",
+        "Building for mobile developers? Our mobile SDKs let your users submit feedback without leaving your app. Native experience, zero friction.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -77,9 +77,9 @@ export const UseCases = () => {
       ),
     },
     {
-      title: "Customer Success",
+      title: "Mobile Product Teams",
       description:
-        "Empower your CS team to capture customer feedback directly. Show customers you're listening by sharing your roadmap.",
+        "Managing a mobile product? Empower your team to collect feedback from users, track feature requests, and share your mobile roadmap.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -91,9 +91,9 @@ export const UseCases = () => {
       ),
     },
     {
-      title: "API Companies",
+      title: "Consumer Apps",
       description:
-        "Collect feedback from technical users. Our lightweight, multi-platform SDK makes adoption seamless across web and mobile apps.",
+        "Building a consumer mobile app? Lightweight SDK that won't impact your app's performance. Users can vote on features and see your roadmap.",
       icon: (
         <HugeiconsIcon
           className="text-brand"

@@ -12,15 +12,14 @@ import { SubHeading } from "./subheading";
 
 export const Hero = () => (
   <Container className="flex flex-col items-center justify-center border-divide border-x px-4 pt-10 pb-10 md:pt-32 md:pb-20">
-    <Badge text="Built for developers, loved by users" />
+    <Badge text="Built for mobile developers" />
     <Heading className="mt-4">
-      Feedback collection that works{" "}
-      <span className="text-brand">everywhere</span>
+      Feedback collection for <span className="text-brand">mobile apps</span>
     </Heading>
 
     <SubHeading className="mx-auto mt-6 max-w-lg">
-      Native SDKs for React, React Native, Swift, Next.js, and Vue. Lightweight,
-      fast, and framework-agnostic. Integrate once, deploy everywhere.
+      Native SDKs for React Native, Swift, and more coming soon. Lightweight and
+      fast. Collect feedback from users directly in your mobile app.
     </SubHeading>
 
     <div className="mt-6 flex items-center gap-4">
@@ -50,7 +49,7 @@ export const Hero = () => (
         ))}
       </div>
       <span className="border-gray-500 border-l pl-4 text-[10px] text-gray-600 sm:text-sm">
-        Loved by developers building cross-platform apps
+        Loved by mobile app developers
       </span>
       <GartnerLogoText className="size-12 sm:size-16" />
     </div>

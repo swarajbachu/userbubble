@@ -69,7 +69,7 @@ const MobileNav = ({ items }: { items: { title: string; href: string }[] }) => {
               <ModeToggle />
             </div>
 
-            <div className="flex items-center justify-between p-2">
+            <div className="flex items-center justify-between p-4">
               <Logo />
               <button
                 aria-label="Toggle menu"
@@ -151,7 +151,7 @@ const FloatingNav = ({
   );
   return (
     <motion.div
-      className="fixed inset-x-0 top-0 z-50 mx-auto hidden max-w-[calc(80rem-4rem)] items-center justify-between bg-white/80 px-2 py-2 shadow-aceternity backdrop-blur-sm md:flex xl:rounded-2xl dark:bg-neutral-900/80 dark:shadow-[0px_2px_0px_0px_var(--color-neutral-800),0px_-2px_0px_0px_var(--color-neutral-800)]"
+      className="fixed inset-x-0 top-0 z-50 mx-auto hidden max-w-[calc(80rem-4rem)] items-center justify-between bg-white/80 px-6 py-2 shadow-aceternity backdrop-blur-sm md:flex xl:rounded-2xl dark:bg-neutral-900/80 dark:shadow-[0px_2px_0px_0px_var(--color-neutral-800),0px_-2px_0px_0px_var(--color-neutral-800)]"
       style={{ y }}
     >
       <Logo />

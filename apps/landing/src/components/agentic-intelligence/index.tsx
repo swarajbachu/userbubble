@@ -24,12 +24,12 @@ export const AgenticIntelligence = () => (
     <div className="flex flex-col items-center py-16">
       <Badge text="Features" />
       <SectionHeading className="mt-4">
-        Everything you need to close the feedback loop
+        Everything you need for mobile feedback
       </SectionHeading>
 
       <SubHeading as="p" className="mx-auto mt-6 max-w-lg px-2">
-        Collect feedback, let users vote, share your roadmap, and keep everyone
-        informed—all with zero friction for your customers.
+        Collect feedback from mobile users, prioritize with votes, and ship
+        features faster—all without leaving your existing workflow.
       </SubHeading>
       <div className="mt-16 grid grid-cols-1 divide-y divide-divide border-divide border-y md:grid-cols-2 md:divide-x">
         <Card className="mask-b-from-80% overflow-hidden">
@@ -40,12 +40,11 @@ export const AgenticIntelligence = () => (
               size={24}
               strokeWidth={1.5}
             />
-            <CardTitle>Native SDKs for Every Platform</CardTitle>
+            <CardTitle>Mobile-First SDKs</CardTitle>
           </div>
           <CardDescription>
-            First-class support for React, React Native, Swift, Next.js, and
-            Vue. Works with your tech stack, not against it. Consistent API
-            across all platforms.
+            Native SDKs built for mobile platforms. Starting with React Native
+            for iOS and Android. Native Swift and Kotlin SDKs coming soon.
           </CardDescription>
           <LLMModelSelectorSkeleton />
         </Card>
@@ -60,8 +59,8 @@ export const AgenticIntelligence = () => (
             <CardTitle>Lightweight & Fast</CardTitle>
           </div>
           <CardDescription>
-            Sub-10KB bundle size. Zero impact on your app's performance.
-            Lazy-loaded by default. Works offline with local caching.
+            Sub-10KB bundle size won't slow down your app. Lazy-loaded by
+            default. Works offline with local storage—syncs when connected.
           </CardDescription>
           <TextToWorkflowBuilderSkeleton />
         </Card>
@@ -76,11 +75,12 @@ export const AgenticIntelligence = () => (
               size={24}
               strokeWidth={1.5}
             />
-            <CardTitle>Framework-Agnostic Widget</CardTitle>
+            <CardTitle>Native Mobile Experience</CardTitle>
           </div>
           <CardDescription>
-            Drop in our feedback widget with one line of code. Customizable UI
-            that matches your brand. Works in web, mobile, and native apps.
+            Feedback widget that feels native to iOS and Android. Follows
+            platform design guidelines. Supports dark mode and accessibility
+            features out of the box.
           </CardDescription>
           <NativeToolsIntegrationSkeleton />
         </Card>
@@ -97,9 +97,9 @@ export const AgenticIntelligence = () => (
             <CardTitle>Developer-Friendly Docs</CardTitle>
           </div>
           <CardDescription>
-            Clear guides for every framework. Quick-start examples, API
-            references, and troubleshooting tips. Built by developers, for
-            developers.
+            Clear guides for mobile development. Quick-start examples, API
+            references, and troubleshooting tips. Built by mobile developers,
+            for mobile developers.
           </CardDescription>
         </Card>
         <Card>

@@ -1,228 +1,120 @@
 "use client";
-import { motion, useMotionValue, useTransform } from "motion/react";
+import { motion, type useMotionValue, useTransform } from "motion/react";
 import type React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { IntegrationsLogo } from "@/icons/bento-icons";
-import {
-  AnthropicLogo,
-  ForkIcon,
-  MetaLogo,
-  OpenAILogo,
-  SlackLogo,
-} from "@/icons/general";
+import { ForkIcon } from "@/icons/general";
 import { cn } from "@/lib/utils";
 import { DivideX } from "../divide";
 import { LogoSVG } from "../logo";
-import { Scale } from "../scale";
-import { Card } from "../tech-card";
 
-const WORD_SPLIT_REGEX = /(\s+)/;
+// const WORD_SPLIT_REGEX = /(\s+)/;
 
 export const DesignYourWorkflowSkeleton = () => (
-  <div className="mt-12 flex flex-col items-center">
-    <div className="relative">
-      <Card
-        cta="Connected"
-        logo={<SlackLogo />}
-        subtitle="#standups"
-        title="Slack"
-        tone="default"
-      />
-      <LeftSVG className="-left-32 absolute top-12" />
-      <RightSVG className="-right-32 absolute top-12" />
-      <CenterSVG className="absolute top-24 right-[107px]" />
+  <motion.div
+    className="relative mx-auto mt-12 h-full max-h-70 min-h-40 w-[85%] rounded-2xl border-gray-300 border-t bg-white p-6 shadow-2xl dark:border-neutral-700 dark:bg-neutral-900"
+    initial={{ opacity: 0, y: 20 }}
+    transition={{ duration: 0.5 }}
+    viewport={{ once: true }}
+    whileInView={{ opacity: 1, y: 0 }}
+  >
+    <div className="mb-4 flex gap-2">
+      <div className="h-3 w-3 rounded-full bg-red-500" />
+      <div className="h-3 w-3 rounded-full bg-yellow-500" />
+      <div className="h-3 w-3 rounded-full bg-green-500" />
     </div>
-
-    <div className="mt-12 flex flex-row gap-4.5">
-      <Card
-        cta="UI Generator"
-        delay={0.2}
-        logo={<AnthropicLogo />}
-        subtitle="Claude 4"
-        title="Anthropic"
-        tone="danger"
-      />
-      <Card
-        cta="Text Generator"
-        delay={0.4}
-        logo={<MetaLogo />}
-        subtitle="Llama 2"
-        title="Meta"
-        tone="default"
-      />
-      <Card
-        cta="Code Generator"
-        delay={0.6}
-        logo={<OpenAILogo />}
-        subtitle="GPT-5"
-        title="OpenAI"
-        tone="success"
-      />
+    <div className="rounded-lg bg-gray-900 p-4 font-mono text-sm dark:bg-neutral-950">
+      <div className="flex gap-2">
+        <span className="text-green-400">$</span>
+        <motion.span
+          animate={{ opacity: 1 }}
+          className="text-gray-300"
+          initial={{ opacity: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          npm install @userbubble/react-native
+        </motion.span>
+      </div>
+      <motion.div
+        animate={{ opacity: 1 }}
+        className="mt-4 text-gray-500"
+        initial={{ opacity: 0 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+      >
+        <div>✓ Installing dependencies...</div>
+        <div className="mt-1">✓ Setup complete!</div>
+      </motion.div>
     </div>
-  </div>
+    <motion.div
+      animate={{ opacity: 1 }}
+      className="mt-4 rounded-lg border border-green-500/20 bg-green-50 p-3 text-green-700 text-sm dark:bg-green-950 dark:text-green-400"
+      initial={{ opacity: 0 }}
+      transition={{ duration: 0.5, delay: 1.2 }}
+    >
+      <div className="font-medium">Ready to integrate!</div>
+      <div className="mt-1 text-xs">
+        Import the SDK in your app to get started.
+      </div>
+    </motion.div>
+  </motion.div>
 );
 
-export const ConnectYourTooklsSkeleton = () => {
-  const text =
-    "Write the first and second rule of it using Claude and ChatGPT.";
-  const [mounted, setMounted] = useState(false);
-  const randomWidth = useMemo(() => Math.random() * 100, []);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
-  return (
-    <div className="relative flex h-full w-full items-center justify-between">
-      <motion.div
-        animate={{ y: 0, opacity: 1 }}
-        className="-translate-x-2 relative h-70 w-60 rounded-2xl border-gray-300 border-t bg-white p-4 shadow-2xl md:translate-x-0 dark:border-neutral-700 dark:bg-neutral-900"
-        initial={{ y: -20, opacity: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="-top-4 -right-4 absolute flex h-14 w-14 items-center justify-center rounded-lg bg-white shadow-xl">
-          <Scale />
-          <OpenAILogo className="relative z-20 h-8 w-8" />
+export const ConnectYourTooklsSkeleton = () => (
+  <motion.div
+    className="relative mx-auto mt-12 h-full max-h-70 min-h-40 w-[85%] rounded-3xl border-8 border-gray-300 bg-gray-900 p-6 shadow-2xl dark:border-neutral-700"
+    initial={{ opacity: 0, scale: 0.9 }}
+    transition={{ duration: 0.5 }}
+    viewport={{ once: true }}
+    whileInView={{ opacity: 1, scale: 1 }}
+  >
+    <div className="relative h-full rounded-2xl bg-white p-4 dark:bg-neutral-900">
+      <div className="flex items-center justify-between border-gray-200 border-b pb-3 dark:border-neutral-700">
+        <div className="flex items-center gap-2">
+          <LogoSVG className="size-5" />
+          <span className="font-semibold text-sm">Feedback</span>
         </div>
-        <div className="mt-12 flex items-center gap-2">
-          <IntegrationsLogo />
-          <span className="font-medium text-charcoal-700 text-sm dark:text-neutral-200">
-            Tasks
-          </span>
-        </div>
-        <DivideX className="mt-2" />
-
-        <div className="mt-4 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="font-normal text-[10px] text-charcoal-700 leading-loose md:text-xs dark:text-neutral-200">
-              {text.split(WORD_SPLIT_REGEX).map((word, index) => (
-                <motion.span
-                  animate={{
-                    opacity: 1,
-                  }}
-                  className="inline-block"
-                  initial={{
-                    opacity: 0,
-                  }}
-                  key={index}
-                  transition={{
-                    duration: 0.2,
-                    delay: index * 0.02,
-                    ease: "linear",
-                  }}
-                >
-                  {word === " " ? "\u00A0" : word}
-                </motion.span>
-              ))}
-            </span>
-          </div>
-        </div>
-        <div className="mt-2 flex flex-col">
-          {[...new Array(2)].map((_, index) => (
-            <motion.div
-              animate={{
-                width: `${randomWidth}%`,
-              }}
-              className="mt-2 h-4 w-full rounded-full bg-gray-200 dark:bg-neutral-800"
-              initial={{
-                width: "0%",
-              }}
-              key={`width-bar-right-${index}`}
-              transition={{
-                duration: 4,
-                delay: index * 0.2,
-                ease: "easeInOut",
-                repeat: Number.POSITIVE_INFINITY,
-                repeatType: "reverse",
-              }}
-            />
-          ))}
-        </div>
-      </motion.div>
+        <div className="size-6 rounded-full bg-gray-200 dark:bg-neutral-700" />
+      </div>
 
       <motion.div
         animate={{ opacity: 1 }}
-        className="absolute inset-x-0 z-30 hidden items-center justify-center md:flex"
+        className="mt-4"
         initial={{ opacity: 0 }}
-        transition={{ duration: 1, delay: 1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       >
-        <div className="size-3 rounded-full border-2 border-blue-500 bg-white dark:bg-neutral-800" />
-        <div className="h-[2px] w-38 bg-blue-500" />
-        <div className="size-3 rounded-full border-2 border-blue-500 bg-white dark:bg-neutral-800" />
+        <div className="block text-gray-700 text-sm dark:text-neutral-300">
+          What would you like to see improved?
+        </div>
+        <motion.div
+          animate={{ opacity: 1 }}
+          className="mt-2 rounded-lg border border-gray-300 bg-gray-50 p-3 text-gray-600 text-sm dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-400"
+          initial={{ opacity: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <div className="h-2 w-3/4 rounded bg-gray-300 dark:bg-neutral-600" />
+          <div className="mt-2 h-2 w-1/2 rounded bg-gray-300 dark:bg-neutral-600" />
+        </motion.div>
       </motion.div>
-      <motion.div
-        animate={{ y: 0, opacity: 1 }}
-        className="relative h-70 w-60 translate-x-10 rounded-2xl border-gray-300 border-t bg-white p-4 shadow-2xl md:translate-x-0 dark:border-neutral-700 dark:bg-neutral-900"
-        initial={{ y: -20, opacity: 0 }}
-        transition={{ duration: 0.5, delay: 1 }}
+
+      <motion.button
+        animate={{ opacity: 1 }}
+        className="mt-4 w-full rounded-lg bg-blue-500 py-2.5 font-medium text-sm text-white"
+        initial={{ opacity: 0 }}
+        transition={{ duration: 0.5, delay: 0.9 }}
+        type="button"
       >
-        <div className="-top-4 -left-4 absolute flex h-14 w-14 items-center justify-center rounded-lg bg-white shadow-xl dark:bg-neutral-800">
-          <Scale />
-          <LogoSVG className="relative z-20 h-8 w-8" />
-        </div>
-        <div className="mt-12 flex items-center gap-2">
-          <IntegrationsLogo className="dark:text-neutral-200" />
-          <span className="font-medium text-charcoal-700 text-xs md:text-sm dark:text-neutral-200">
-            Integrations
-          </span>
-          <span className="rounded-lg border border-gray-200 bg-gray-50 px-2 py-0.5 text-charcoal-700 text-xs dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200">
-            200
-          </span>
-        </div>
-        <DivideX className="mt-2" />
-        <div className="mt-4 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <OpenAILogo className="h-4 w-4 shrink-0" />
-            <span className="font-medium text-charcoal-700 text-xs md:text-sm dark:text-neutral-200">
-              ChatGPT
-            </span>
-          </div>
+        Submit Feedback
+      </motion.button>
 
-          <div className="rounded-sm border border-blue-500 bg-blue-50 px-2 py-0.5 text-blue-500 text-xs">
-            Connected
-          </div>
-        </div>
-        <div className="mt-4 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <AnthropicLogo className="h-4 w-4 shrink-0" />
-            <span className="font-medium text-charcoal-700 text-xs md:text-sm dark:text-neutral-200">
-              Claude 4 Opus
-            </span>
-          </div>
-
-          <div className="rounded-sm border border-blue-500 bg-blue-50 px-2 py-0.5 text-blue-500 text-xs">
-            Connected
-          </div>
-        </div>
-        <div className="mt-2 flex flex-col">
-          {[...new Array(3)].map((_, index) => (
-            <motion.div
-              animate={{
-                width: `${70 + Math.random() * 30}%`,
-              }}
-              className="mt-2 h-4 w-full rounded-full bg-gray-200 dark:bg-neutral-800"
-              initial={{
-                width: `${20 + Math.random() * 20}%`,
-              }}
-              key={`width-bar-right-${index}`}
-              transition={{
-                duration: 4,
-                delay: index * 0.2,
-                ease: "easeInOut",
-                repeat: Number.POSITIVE_INFINITY,
-                repeatType: "reverse",
-              }}
-            />
-          ))}
-        </div>
+      <motion.div
+        animate={{ opacity: 1 }}
+        className="mt-3 text-center text-gray-500 text-xs dark:text-neutral-500"
+        initial={{ opacity: 0 }}
+        transition={{ duration: 0.5, delay: 1.1 }}
+      >
+        Powered by UserBubble
       </motion.div>
     </div>
-  );
-};
+  </motion.div>
+);
 
 type DeployCardData = {
   title: string;
@@ -231,7 +123,7 @@ type DeployCardData = {
   variant?: "default" | "danger" | "success" | "warning";
 };
 
-const AnimatedDeployCard = ({
+const _AnimatedDeployCard = ({
   card,
   index,
   y,
@@ -297,150 +189,63 @@ const AnimatedDeployCard = ({
 };
 
 export const DeployAndScaleSkeleton = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerHeight, setContainerHeight] = useState(0);
-
-  // Define deploy cards data for reusability
-  const deployCards: DeployCardData[] = [
-    { title: "deploy-dev-eu-324", subtitle: "2h ago", branch: "master" },
-    {
-      title: "deploy-prod-eu-128",
-      subtitle: "10m ago",
-      branch: "main",
-      variant: "success",
-    },
-    {
-      title: "deploy-dev-us-445",
-      subtitle: "45m ago",
-      branch: "feature/auth",
-    },
-    {
-      title: "deploy-prod-ap-223",
-      subtitle: "1h ago",
-      branch: "main",
-      variant: "success",
-    },
-    {
-      title: "deploy-dev-eu-891",
-      subtitle: "2h ago",
-      branch: "fix/cache",
-      variant: "warning",
-    },
-    {
-      title: "deploy-prod-us-337",
-      subtitle: "3h ago",
-      branch: "main",
-      variant: "success",
-    },
-    {
-      title: "deploy-dev-ap-556",
-      subtitle: "4h ago",
-      branch: "feat/api",
-      variant: "danger",
-    },
-    {
-      title: "deploy-dev-eu-672",
-      subtitle: "5h ago",
-      branch: "feat/search",
-      variant: "default",
-    },
-    {
-      title: "deploy-prod-ap-445",
-      subtitle: "6h ago",
-      branch: "main",
-      variant: "success",
-    },
-    {
-      title: "deploy-dev-us-891",
-      subtitle: "7h ago",
-      branch: "fix/perf",
-      variant: "warning",
-    },
-    {
-      title: "deploy-prod-eu-223",
-      subtitle: "8h ago",
-      branch: "main",
-      variant: "success",
-    },
-    {
-      title: "deploy-dev-ap-337",
-      subtitle: "9h ago",
-      branch: "feat/analytics",
-      variant: "default",
-    },
+  const feedbackItems = [
+    { title: "Dark mode support", votes: 42, status: "Planned" },
+    { title: "Export to CSV feature", votes: 28, status: "In Progress" },
+    { title: "Mobile app notifications", votes: 35, status: "Planned" },
+    { title: "Better search functionality", votes: 19, status: "Under Review" },
   ];
 
-  const extendedCards = [...deployCards, ...deployCards, ...deployCards];
-
-  const cardHeight = 64;
-  const gap = 4;
-  const itemHeight = cardHeight + gap;
-  const offset = (containerHeight - cardHeight) / 2;
-
-  useEffect(() => {
-    const observer = new ResizeObserver((entries) => {
-      const height = entries[0]?.contentRect.height ?? 0;
-      setContainerHeight(height);
-    });
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const y = useMotionValue(0);
-  const totalHeight = extendedCards.length * itemHeight;
-
-  useEffect(() => {
-    let animationFrame: number;
-    let lastTime = performance.now();
-    const speed = 30;
-
-    function animateScroll(now: number) {
-      const elapsed = (now - lastTime) / 1000;
-      lastTime = now;
-      let current = y.get();
-      current -= speed * elapsed;
-
-      if (Math.abs(current) >= totalHeight / 3) {
-        current += totalHeight / 3;
-      }
-      y.set(current);
-      animationFrame = requestAnimationFrame(animateScroll);
-    }
-    animationFrame = requestAnimationFrame(animateScroll);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [y, totalHeight]);
-
   return (
-    <div
-      className="relative h-full w-full overflow-hidden"
-      ref={containerRef}
-      style={{
-        maskImage:
-          "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
-        WebkitMaskImage:
-          "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
-      }}
+    <motion.div
+      className="relative mx-auto mt-12 h-full max-h-70 min-h-40 w-[85%] rounded-2xl border-gray-300 border-t bg-white p-6 shadow-2xl dark:border-neutral-700 dark:bg-neutral-900"
+      initial={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
+      whileInView={{ opacity: 1, y: 0 }}
     >
-      <motion.div
-        className="-translate-x-1/2 absolute left-1/2 flex w-full flex-col items-center"
-        style={{ y }}
-      >
-        {extendedCards.map((card, index) => (
-          <AnimatedDeployCard
-            card={card}
-            index={index}
-            itemHeight={itemHeight}
-            key={`${index}-${card.title}`}
-            offset={offset}
-            y={y}
-          />
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h3 className="font-semibold text-lg">Feedback Dashboard</h3>
+          <p className="text-gray-600 text-sm dark:text-neutral-400">
+            All submissions in one place
+          </p>
+        </div>
+        <div className="rounded-lg bg-blue-50 px-3 py-1 font-medium text-blue-600 text-sm dark:bg-blue-950 dark:text-blue-400">
+          124 total
+        </div>
+      </div>
+
+      <DivideX />
+
+      <div className="mt-4 space-y-3">
+        {feedbackItems.map((item, index) => (
+          <motion.div
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-neutral-700 dark:bg-neutral-800"
+            initial={{ opacity: 0, x: -20 }}
+            key={item.title}
+            transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex flex-col items-center gap-1 rounded-md bg-white px-2 py-1 dark:bg-neutral-900">
+                <div className="text-xs">▲</div>
+                <div className="font-semibold text-sm">{item.votes}</div>
+              </div>
+              <div>
+                <div className="font-medium text-sm">{item.title}</div>
+                <div className="text-gray-600 text-xs dark:text-neutral-400">
+                  2 hours ago
+                </div>
+              </div>
+            </div>
+            <div className="rounded-full bg-green-100 px-3 py-1 text-green-700 text-xs dark:bg-green-950 dark:text-green-400">
+              {item.status}
+            </div>
+          </motion.div>
         ))}
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 };
 
@@ -488,7 +293,7 @@ const DeployCard = ({
   </div>
 );
 
-const LeftSVG = (props: React.SVGProps<SVGSVGElement>) => {
+const _LeftSVG = (props: React.SVGProps<SVGSVGElement>) => {
   const _path =
     "M127.457 0.0891113L127.576 95.9138L127.457 0.0891113ZM-0.0609919 96.0731L-0.160632 16.2484C-0.172351 6.85959 7.4293 -0.761068 16.8181 -0.772787L16.8206 1.22721C8.53637 1.23755 1.82903 7.96166 1.83937 16.2459L1.93901 96.0706L-0.0609919 96.0731ZM-0.160632 16.2484C-0.172351 6.85959 7.4293 -0.761068 16.8181 -0.772787L127.455 -0.910888L127.458 1.08911L16.8206 1.22721C8.53637 1.23755 1.82903 7.96166 1.83937 16.2459L-0.160632 16.2484ZM127.576 95.9138L0.939007 96.0718L127.576 95.9138Z";
   return (
@@ -554,7 +359,7 @@ const LeftSVG = (props: React.SVGProps<SVGSVGElement>) => {
   );
 };
 
-const RightSVG = (props: React.SVGProps<SVGSVGElement>) => {
+const _RightSVG = (props: React.SVGProps<SVGSVGElement>) => {
   const _PATH =
     "M0.619629 0L0.500018 95.8247L0.619629 0ZM128.137 95.984L128.237 16.1593C128.249 6.77047 120.647 -0.850179 111.258 -0.861898L111.256 1.1381C119.54 1.14844 126.247 7.87255 126.237 16.1568L126.137 95.9815L128.137 95.984ZM128.237 16.1593C128.249 6.77047 120.647 -0.850179 111.258 -0.861898L0.620877 -0.999999L0.618381 0.999999L111.256 1.1381C119.54 1.14844 126.247 7.87255 126.237 16.1568L128.237 16.1593ZM0.500018 95.8247L127.137 95.9827L0.500018 95.8247Z";
   return (
@@ -621,7 +426,7 @@ const RightSVG = (props: React.SVGProps<SVGSVGElement>) => {
   );
 };
 
-const CenterSVG = (props: React.SVGProps<SVGSVGElement>) => (
+const _CenterSVG = (props: React.SVGProps<SVGSVGElement>) => (
   <motion.svg
     animate={{
       opacity: 1,
