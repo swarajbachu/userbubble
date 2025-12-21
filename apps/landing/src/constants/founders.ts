@@ -2,7 +2,7 @@ export const founders = [
   {
     name: "Manu Arora",
     title: "Founder",
-    src: "/avatars/manu.png",
+    src: "/avatars/raj.jpg",
     url: "https://twitter.com/mannupaaji",
   },
   {
