@@ -7,10 +7,10 @@ import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
   DialogClose,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPopup,
   DialogTitle,
 } from "@userbubble/ui/dialog";
 import { Icon } from "@userbubble/ui/icon";
@@ -99,17 +99,17 @@ export function CommentItem({
       </div>
 
       <Dialog onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>
-        <DialogContent>
+        <DialogPopup className="pt-4 sm:max-w-[450px]">
           <DialogHeader>
             <DialogTitle>Delete Comment</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this comment? This action cannot
+              be undone.
+            </DialogDescription>
           </DialogHeader>
-          <DialogDescription className="p-4 text-foreground text-xl">
-            Are you sure you want to delete this comment? This action cannot be
-            undone.
-          </DialogDescription>
           <DialogFooter>
-            <DialogClose>
-              <Button variant="outline">Cancel</Button>
+            <DialogClose render={<Button variant="outline" />}>
+              Cancel
             </DialogClose>
             <Button
               disabled={deleteComment.isPending}
@@ -119,7 +119,7 @@ export function CommentItem({
               {deleteComment.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
-        </DialogContent>
+        </DialogPopup>
       </Dialog>
     </>
   );

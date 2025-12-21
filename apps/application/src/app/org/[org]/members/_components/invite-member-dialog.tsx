@@ -5,13 +5,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
-  DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPopup,
   DialogTitle,
 } from "@userbubble/ui/dialog";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
-import { Fieldset } from "@userbubble/ui/fieldset";
 import { Input } from "@userbubble/ui/input";
 import {
   Select,
@@ -75,7 +75,7 @@ export function InviteMemberDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent>
+      <DialogPopup className="pt-4 sm:max-w-[500px]">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -84,9 +84,12 @@ export function InviteMemberDialog({
         >
           <DialogHeader>
             <DialogTitle>Invite Team Member</DialogTitle>
+            <DialogDescription>
+              Invite a new team member to your organization
+            </DialogDescription>
           </DialogHeader>
 
-          <Fieldset className="space-y-4">
+          <div className="space-y-4 p-6">
             <form.Field name="email">
               {(field) => (
                 <Field>
@@ -129,7 +132,7 @@ export function InviteMemberDialog({
                 </Field>
               )}
             </form.Field>
-          </Fieldset>
+          </div>
 
           <DialogFooter>
             <Button
@@ -144,7 +147,7 @@ export function InviteMemberDialog({
             </Button>
           </DialogFooter>
         </form>
-      </DialogContent>
+      </DialogPopup>
     </Dialog>
   );
 }

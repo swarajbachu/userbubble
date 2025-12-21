@@ -3,10 +3,10 @@
 import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPopup,
   DialogTitle,
 } from "@userbubble/ui/dialog";
 
@@ -25,7 +25,7 @@ export function DeleteChangelogDialog({
 }: DeleteChangelogDialogProps) {
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent>
+      <DialogPopup className="pt-4 sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle>Delete Changelog Entry</DialogTitle>
           <DialogDescription>
@@ -49,7 +49,7 @@ export function DeleteChangelogDialog({
             {isPending ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
-      </DialogContent>
+      </DialogPopup>
     </Dialog>
   );
 }

@@ -5,10 +5,11 @@ import type { Organization } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPanel,
+  DialogPopup,
   DialogTitle,
 } from "@userbubble/ui/dialog";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
@@ -136,7 +137,7 @@ export function DataTab({
 
       {/* Delete Confirmation Dialog */}
       <Dialog onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>
-        <DialogContent>
+        <DialogPopup className="pt-4 sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Delete Workspace</DialogTitle>
             <DialogDescription>
@@ -145,21 +146,23 @@ export function DataTab({
             </DialogDescription>
           </DialogHeader>
 
-          <Fieldset className="space-y-4">
-            <Field>
-              <FieldLabel>
-                Type <strong>{organization.name}</strong> to confirm
-              </FieldLabel>
-              <Input
-                onChange={(e) => setConfirmationName(e.target.value)}
-                placeholder={organization.name}
-                value={confirmationName}
-              />
-              <FieldDescription>
-                This action is irreversible. All data will be lost.
-              </FieldDescription>
-            </Field>
-          </Fieldset>
+          <DialogPanel>
+            <Fieldset className="space-y-4">
+              <Field>
+                <FieldLabel>
+                  Type <strong>{organization.name}</strong> to confirm
+                </FieldLabel>
+                <Input
+                  onChange={(e) => setConfirmationName(e.target.value)}
+                  placeholder={organization.name}
+                  value={confirmationName}
+                />
+                <FieldDescription>
+                  This action is irreversible. All data will be lost.
+                </FieldDescription>
+              </Field>
+            </Fieldset>
+          </DialogPanel>
 
           <DialogFooter>
             <Button
@@ -181,7 +184,7 @@ export function DataTab({
               {deleteOrg.isPending ? "Deleting..." : "Delete Workspace"}
             </Button>
           </DialogFooter>
-        </DialogContent>
+        </DialogPopup>
       </Dialog>
     </div>
   );

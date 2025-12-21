@@ -6,11 +6,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogPanel,
+  DialogPopup,
   DialogTitle,
 } from "@userbubble/ui/dialog";
 import { useState } from "react";
@@ -121,7 +121,7 @@ export function MemberActions({
         onOpenChange={setChangeRoleDialogOpen}
         open={changeRoleDialogOpen}
       >
-        <DialogContent>
+        <DialogPopup className="pt-4 sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Change Member Role</DialogTitle>
             <DialogDescription>
@@ -181,12 +181,12 @@ export function MemberActions({
               {updateRoleMutation.isPending ? "Updating..." : "Update Role"}
             </Button>
           </DialogFooter>
-        </DialogContent>
+        </DialogPopup>
       </Dialog>
 
       {/* Remove Member Dialog */}
       <Dialog onOpenChange={setRemoveDialogOpen} open={removeDialogOpen}>
-        <DialogContent>
+        <DialogPopup className="pt-4 sm:max-w-[450px]">
           <DialogHeader>
             <DialogTitle>Remove Member</DialogTitle>
             <DialogDescription>
@@ -211,7 +211,7 @@ export function MemberActions({
               {removeMemberMutation.isPending ? "Removing..." : "Remove Member"}
             </Button>
           </DialogFooter>
-        </DialogContent>
+        </DialogPopup>
       </Dialog>
     </>
   );

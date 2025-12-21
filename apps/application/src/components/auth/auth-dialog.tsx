@@ -1,6 +1,12 @@
 "use client";
 
-import { Dialog, DialogContent } from "@userbubble/ui/dialog";
+import {
+  Dialog,
+  DialogDescription,
+  DialogHeader,
+  DialogPopup,
+  DialogTitle,
+} from "@userbubble/ui/dialog";
 import { useState } from "react";
 import { SignInForm } from "./sign-in-form";
 import { SignUpForm } from "./sign-up-form";
@@ -27,7 +33,17 @@ export function AuthDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="p-0 sm:max-w-[450px]">
+      <DialogPopup className="p-0 sm:max-w-[450px]">
+        <DialogHeader className="sr-only">
+          <DialogTitle className="sr-only">
+            {mode === "signin" ? "Sign In" : "Sign Up"}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            {mode === "signin"
+              ? "Sign in to your account to continue"
+              : "Create a new account to get started"}
+          </DialogDescription>
+        </DialogHeader>
         <div className="p-6">
           {mode === "signin" ? (
             <SignInForm
@@ -45,7 +61,7 @@ export function AuthDialog({
             />
           )}
         </div>
-      </DialogContent>
+      </DialogPopup>
     </Dialog>
   );
 }
