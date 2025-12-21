@@ -18,12 +18,12 @@ import {
 } from "@userbubble/ui/dropdown-menu";
 import { Icon } from "@userbubble/ui/icon";
 import { ThemeToggle } from "@userbubble/ui/theme";
-import { toast } from "@userbubble/ui/toast";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { CreateFeedbackDialog } from "~/app/external/[org]/feedback/_components/create-feedback-dialog";
 import { authClient } from "~/auth/client";
 import { AuthDialog } from "~/components/auth/auth-dialog";

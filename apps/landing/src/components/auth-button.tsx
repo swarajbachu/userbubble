@@ -11,10 +11,7 @@ export const AuthButton = ({ className }: { className?: string }) => {
 
   if (session.data) {
     return (
-      <Button
-        className={className}
-        render={<Link href={`${APP_URL}/dashboard`} />}
-      >
+      <Button className={className} render={<Link href={`${APP_URL}/`} />}>
         Dashboard
       </Button>
     );

@@ -5,14 +5,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Organization } from "@userbubble/db/schema";
 import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@userbubble/ui/field";
+import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
+import { Fieldset } from "@userbubble/ui/fieldset";
 import { Switch } from "@userbubble/ui/switch";
-import { toast } from "@userbubble/ui/toast";
+import { toast } from "sonner";
+
 import { useTRPC } from "~/trpc/react";
 
 export function FeedbackTab({ organization }: { organization: Organization }) {
@@ -78,13 +75,13 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
           </p>
         </div>
 
-        <FieldGroup className="space-y-6">
+        <Fieldset className="space-y-6">
           <div className="space-y-4">
             <h4 className="font-medium text-sm">Allow Guest Submissions</h4>
 
             <form.Field name="allowAnonymousSubmissions">
               {(field) => (
-                <Field orientation="horizontal">
+                <Field>
                   <div className="flex-1">
                     <FieldLabel>Allow Guest Feedback</FieldLabel>
                     <FieldDescription>
@@ -101,7 +98,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
 
             <form.Field name="allowAnonymousVoting">
               {(field) => (
-                <Field orientation="horizontal">
+                <Field>
                   <div className="flex-1">
                     <FieldLabel>Allow Guest Voting</FieldLabel>
                     <FieldDescription>
@@ -118,7 +115,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
 
             <form.Field name="allowAnonymousComments">
               {(field) => (
-                <Field orientation="horizontal">
+                <Field>
                   <div className="flex-1">
                     <FieldLabel>Allow Guest Comments</FieldLabel>
                     <FieldDescription>
@@ -139,7 +136,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
 
             <form.Field name="enableRoadmap">
               {(field) => (
-                <Field orientation="horizontal">
+                <Field>
                   <div className="flex-1">
                     <FieldLabel>Enable Roadmap</FieldLabel>
                     <FieldDescription>
@@ -178,7 +175,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
               {updateSettings.isPending ? "Saving..." : "Save"}
             </Button>
           </div>
-        </FieldGroup>
+        </Fieldset>
       </div>
     </form>
   );

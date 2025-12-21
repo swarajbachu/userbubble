@@ -434,161 +434,49 @@ export const NativeToolsIntegrationSkeleton = () => (
         width={1200}
       />
     </div>
-    <motion.div className="relative mx-auto my-12 hidden h-full max-h-70 min-h-80 max-w-[67rem] items-center justify-center p-4 lg:flex">
-      <div className="flex items-center gap-8">
-        {/* Left Phone - iOS Style */}
-        <motion.div
-          animate={{ opacity: 1, x: 0 }}
-          className="relative h-[420px] w-[200px] overflow-hidden rounded-[2.5rem] border-[12px] border-gray-900 bg-black shadow-2xl"
-          initial={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Notch */}
-          <div className="-translate-x-1/2 absolute top-0 left-1/2 z-10 h-6 w-32 rounded-b-2xl bg-gray-900" />
-
-          {/* Screen Content */}
-          <div className="relative h-full bg-white dark:bg-neutral-900">
-            {/* Status Bar */}
-            <div className="flex items-center justify-between px-6 pt-3 text-xs">
-              <span className="font-semibold">9:41</span>
-              <div className="flex items-center gap-1">
-                <div className="h-3 w-3 rounded-full bg-gray-300" />
-                <div className="h-3 w-2 rounded-sm bg-gray-300" />
+    <motion.div className="relative mx-auto my-8 hidden h-full max-h-60 min-h-48 max-w-2xl items-center justify-center lg:flex">
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900"
+        initial={{ opacity: 0, y: 20 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="space-y-0 divide-y divide-gray-200 dark:divide-neutral-700">
+          {[
+            { title: "Dark mode support", votes: 42, status: "Planned" },
+            {
+              title: "Export feedback to CSV",
+              votes: 28,
+              status: "In Progress",
+            },
+            { title: "Push notifications", votes: 15, status: "Under Review" },
+          ].map((item, i) => (
+            <motion.div
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-3 px-4 py-3"
+              initial={{ opacity: 0, x: -10 }}
+              key={item.title}
+              transition={{ delay: 0.2 + i * 0.1 }}
+            >
+              <div className="flex shrink-0 flex-col items-center gap-0.5 rounded border border-gray-200 bg-gray-50 px-2 py-1 dark:border-neutral-700 dark:bg-neutral-800">
+                <div className="text-gray-400 text-xs">▲</div>
+                <div className="font-semibold text-xs">{item.votes}</div>
               </div>
-            </div>
 
-            {/* App Content */}
-            <div className="p-4 pt-8">
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 p-5 shadow-sm dark:from-blue-950 dark:to-indigo-950"
-                initial={{ opacity: 0, y: 10 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-              >
-                <div className="mb-3 flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
-                    <div className="h-4 w-4 rounded-full bg-white" />
-                  </div>
-                  <span className="font-semibold text-sm">Share Feedback</span>
+              <div className="min-w-0 flex-1">
+                <div className="font-medium text-sm">{item.title}</div>
+                <div className="text-gray-500 text-xs dark:text-neutral-500">
+                  2h ago
                 </div>
-                <div className="space-y-2">
-                  <div className="h-2 w-4/5 rounded-full bg-blue-200 dark:bg-blue-900" />
-                  <div className="h-2 w-3/5 rounded-full bg-blue-200 dark:bg-blue-900" />
-                </div>
-                <motion.button
-                  animate={{ scale: 1 }}
-                  className="mt-4 w-full rounded-xl bg-blue-600 py-2.5 font-medium text-sm text-white shadow-lg"
-                  initial={{ scale: 0.95 }}
-                  transition={{ delay: 0.6, duration: 0.3 }}
-                  type="button"
-                >
-                  Submit
-                </motion.button>
-              </motion.div>
-
-              {/* Recent Feedback */}
-              <motion.div
-                animate={{ opacity: 1 }}
-                className="mt-6 space-y-2.5"
-                initial={{ opacity: 0 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
-              >
-                <div className="text-gray-500 text-xs">Recent</div>
-                {[42, 28, 15].map((votes, i) => (
-                  <div
-                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-2.5 dark:bg-neutral-800"
-                    key={i}
-                  >
-                    <div className="flex shrink-0 flex-col items-center rounded-lg bg-white px-2 py-1 dark:bg-neutral-700">
-                      <div className="text-[10px]">▲</div>
-                      <div className="font-bold text-xs">{votes}</div>
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-neutral-700" />
-                      <div className="h-1.5 w-2/3 rounded-full bg-gray-200 dark:bg-neutral-700" />
-                    </div>
-                  </div>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Right Phone - Android Style */}
-        <motion.div
-          animate={{ opacity: 1, x: 0 }}
-          className="relative h-[420px] w-[200px] overflow-hidden rounded-[2.5rem] border-[12px] border-gray-800 bg-black shadow-2xl"
-          initial={{ opacity: 0, x: 20 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-        >
-          {/* Screen Content */}
-          <div className="relative h-full bg-white dark:bg-neutral-900">
-            {/* Status Bar */}
-            <div className="flex items-center justify-between bg-gray-50 px-6 py-2 dark:bg-neutral-800">
-              <span className="text-xs">9:41</span>
-              <div className="flex items-center gap-1">
-                <div className="h-3 w-3 rounded-full bg-gray-300" />
-                <div className="h-3 w-2 rounded-sm bg-gray-300" />
               </div>
-            </div>
 
-            {/* App Content */}
-            <div className="p-4">
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 p-5 shadow-sm dark:from-purple-950 dark:to-pink-950"
-                initial={{ opacity: 0, y: 10 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-              >
-                <div className="mb-3 flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500">
-                    <div className="h-4 w-4 rounded-full bg-white" />
-                  </div>
-                  <span className="font-semibold text-sm">Give Feedback</span>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-2 w-4/5 rounded-full bg-purple-200 dark:bg-purple-900" />
-                  <div className="h-2 w-3/5 rounded-full bg-purple-200 dark:bg-purple-900" />
-                </div>
-                <motion.button
-                  animate={{ scale: 1 }}
-                  className="mt-4 w-full rounded-xl bg-purple-600 py-2.5 font-medium text-sm text-white shadow-lg"
-                  initial={{ scale: 0.95 }}
-                  transition={{ delay: 0.8, duration: 0.3 }}
-                  type="button"
-                >
-                  Send
-                </motion.button>
-              </motion.div>
-
-              {/* Feature Votes */}
-              <motion.div
-                animate={{ opacity: 1 }}
-                className="mt-6 space-y-2.5"
-                initial={{ opacity: 0 }}
-                transition={{ delay: 1, duration: 0.5 }}
-              >
-                <div className="text-gray-500 text-xs">Popular Requests</div>
-                {[35, 19, 12].map((votes, i) => (
-                  <div
-                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-2.5 dark:bg-neutral-800"
-                    key={i}
-                  >
-                    <div className="flex shrink-0 flex-col items-center rounded-lg bg-white px-2 py-1 dark:bg-neutral-700">
-                      <div className="text-[10px]">▲</div>
-                      <div className="font-bold text-xs">{votes}</div>
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-neutral-700" />
-                      <div className="h-1.5 w-2/3 rounded-full bg-gray-200 dark:bg-neutral-700" />
-                    </div>
-                  </div>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+              <div className="shrink-0 rounded-full bg-blue-50 px-2.5 py-1 text-blue-600 text-xs dark:bg-blue-950 dark:text-blue-400">
+                {item.status}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </motion.div>
   </>
 );

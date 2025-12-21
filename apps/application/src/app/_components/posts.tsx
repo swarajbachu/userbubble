@@ -10,15 +10,10 @@ import type { RouterOutputs } from "@userbubble/api";
 import { CreatePostSchema } from "@userbubble/db/schema";
 import { cn } from "@userbubble/ui";
 import { Button } from "@userbubble/ui/button";
-import {
-  Field,
-  FieldContent,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@userbubble/ui/field";
+import { Field, FieldError, FieldLabel } from "@userbubble/ui/field";
+import { Fieldset } from "@userbubble/ui/fieldset";
 import { Input } from "@userbubble/ui/input";
-import { toast } from "@userbubble/ui/toast";
+import { toast } from "sonner";
 
 import { useTRPC } from "~/trpc/react";
 
@@ -61,16 +56,14 @@ export function CreatePostForm() {
         void form.handleSubmit();
       }}
     >
-      <FieldGroup>
+      <Fieldset>
         <form.Field
           children={(field) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
               <Field data-invalid={isInvalid}>
-                <FieldContent>
-                  <FieldLabel htmlFor={field.name}>Bug Title</FieldLabel>
-                </FieldContent>
+                <FieldLabel htmlFor={field.name}>Bug Title</FieldLabel>
                 <Input
                   aria-invalid={isInvalid}
                   id={field.name}
@@ -92,9 +85,7 @@ export function CreatePostForm() {
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
               <Field data-invalid={isInvalid}>
-                <FieldContent>
-                  <FieldLabel htmlFor={field.name}>Content</FieldLabel>
-                </FieldContent>
+                <FieldLabel htmlFor={field.name}>Content</FieldLabel>
                 <Input
                   aria-invalid={isInvalid}
                   id={field.name}
@@ -110,7 +101,7 @@ export function CreatePostForm() {
           }}
           name="content"
         />
-      </FieldGroup>
+      </Fieldset>
       <Button type="submit">Create</Button>
     </form>
   );

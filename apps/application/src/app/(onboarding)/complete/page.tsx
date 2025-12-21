@@ -20,9 +20,9 @@ import {
 import { Icon } from "@userbubble/ui/icon";
 import { Input } from "@userbubble/ui/input";
 import { Label } from "@userbubble/ui/label";
-import { toast } from "@userbubble/ui/toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { authClient } from "~/auth/client";
 

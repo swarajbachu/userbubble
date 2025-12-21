@@ -5,23 +5,18 @@ import type { Organization } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
-  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@userbubble/ui/dialog";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@userbubble/ui/field";
+import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
+import { Fieldset } from "@userbubble/ui/fieldset";
 import { Input } from "@userbubble/ui/input";
-import { toast } from "@userbubble/ui/toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";
 
 export function DataTab({
@@ -150,23 +145,21 @@ export function DataTab({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogBody>
-            <FieldGroup className="space-y-4">
-              <Field>
-                <FieldLabel>
-                  Type <strong>{organization.name}</strong> to confirm
-                </FieldLabel>
-                <Input
-                  onChange={(e) => setConfirmationName(e.target.value)}
-                  placeholder={organization.name}
-                  value={confirmationName}
-                />
-                <FieldDescription>
-                  This action is irreversible. All data will be lost.
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
-          </DialogBody>
+          <Fieldset className="space-y-4">
+            <Field>
+              <FieldLabel>
+                Type <strong>{organization.name}</strong> to confirm
+              </FieldLabel>
+              <Input
+                onChange={(e) => setConfirmationName(e.target.value)}
+                placeholder={organization.name}
+                value={confirmationName}
+              />
+              <FieldDescription>
+                This action is irreversible. All data will be lost.
+              </FieldDescription>
+            </Field>
+          </Fieldset>
 
           <DialogFooter>
             <Button

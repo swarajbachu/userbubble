@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "@userbubble/ui/toast";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -9,6 +8,7 @@ import {
   useContext,
   useState,
 } from "react";
+import { toast } from "sonner";
 import { authClient } from "~/auth/client";
 
 type WizardState = {

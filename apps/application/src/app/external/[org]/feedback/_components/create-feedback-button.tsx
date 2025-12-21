@@ -3,9 +3,9 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Add01Icon } from "@hugeicons-pro/core-duotone-rounded";
 import { Button } from "@userbubble/ui/button";
-import { toast } from "@userbubble/ui/toast";
 import type { ComponentProps } from "react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { authClient } from "~/auth/client";
 import { CreateFeedbackDialog } from "./create-feedback-dialog";
 

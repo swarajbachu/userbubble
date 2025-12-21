@@ -6,15 +6,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
-  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPanel,
   DialogTitle,
 } from "@userbubble/ui/dialog";
-import { toast } from "@userbubble/ui/toast";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";
 
 type Member = {
@@ -129,7 +129,7 @@ export function MemberActions({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogBody>
+          <DialogPanel>
             <div className="space-y-2">
               <label className="flex items-center gap-2">
                 <input
@@ -165,7 +165,7 @@ export function MemberActions({
                 </div>
               </label>
             </div>
-          </DialogBody>
+          </DialogPanel>
 
           <DialogFooter>
             <Button

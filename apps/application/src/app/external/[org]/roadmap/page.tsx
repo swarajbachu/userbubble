@@ -1,4 +1,4 @@
-import { parseOrganizationSettings } from "@userbubble/db/lib/organization-settings";
+import { parseOrganizationSettings } from "@userbubble/db/schema";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { RoadmapBoard } from "~/components/roadmap/roadmap-board";

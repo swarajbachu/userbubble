@@ -4,7 +4,7 @@ import {
   RoadIcon,
   TaskDaily01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
-import { parseOrganizationSettings } from "@userbubble/db/lib/organization-settings";
+import { parseOrganizationSettings } from "@userbubble/db/schema";
 import {
   Card,
   CardDescription,

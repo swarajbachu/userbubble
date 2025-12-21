@@ -1,11 +1,7 @@
 "use client";
 
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@userbubble/ui/field";
+import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
+import { Fieldset } from "@userbubble/ui/fieldset";
 import { Input } from "@userbubble/ui/input";
 import { TiptapEditor } from "@userbubble/ui/tiptap-editor";
 import { ChangelogTagSelector } from "./changelog-tag-selector";
@@ -22,7 +18,7 @@ export function ChangelogEditorForm({
   organizationId,
 }: ChangelogEditorFormProps) {
   return (
-    <FieldGroup className="grid gap-6">
+    <Fieldset className="grid gap-6">
       <div className="grid gap-4 sm:grid-cols-4">
         {/* Title */}
         <form.Field name="title">
@@ -124,6 +120,6 @@ export function ChangelogEditorForm({
           )}
         </form.Field>
       </div>
-    </FieldGroup>
+    </Fieldset>
   );
 }
