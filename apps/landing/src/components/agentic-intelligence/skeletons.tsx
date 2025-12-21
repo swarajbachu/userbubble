@@ -380,7 +380,7 @@ const UserMessage = ({
           alt="user"
           className="rounded-full"
           height={32}
-          src="/avatar.webp"
+          src="/avatars/raj.jpg"
           width={32}
         />
       </div>
