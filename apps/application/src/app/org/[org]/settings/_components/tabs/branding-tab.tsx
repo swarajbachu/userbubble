@@ -6,7 +6,6 @@ import type { Organization } from "@userbubble/db/schema";
 import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
-import { Fieldset } from "@userbubble/ui/fieldset";
 import { Input } from "@userbubble/ui/input";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -101,7 +100,7 @@ export function BrandingTab({ organization }: BrandingTabProps) {
           </p>
         </div>
 
-        <Fieldset className="space-y-6">
+        <div className="w-full space-y-6">
           {/* Logo */}
           <form.Field name="logo">
             {(field) => (
@@ -193,7 +192,7 @@ export function BrandingTab({ organization }: BrandingTabProps) {
               {isLoading ? "Saving..." : "Save"}
             </Button>
           </div>
-        </Fieldset>
+        </div>
       </div>
     </form>
   );

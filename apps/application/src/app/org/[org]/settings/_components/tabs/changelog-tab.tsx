@@ -6,7 +6,6 @@ import type { Organization } from "@userbubble/db/schema";
 import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
-import { Fieldset } from "@userbubble/ui/fieldset";
 import { Switch } from "@userbubble/ui/switch";
 import { toast } from "sonner";
 
@@ -53,7 +52,7 @@ export function ChangelogTab({ organization }: { organization: Organization }) {
         form.handleSubmit();
       }}
     >
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div>
           <h3 className="mb-4 font-semibold text-lg">Manage Changelog</h3>
           <p className="text-muted-foreground text-sm">
@@ -61,10 +60,10 @@ export function ChangelogTab({ organization }: { organization: Organization }) {
           </p>
         </div>
 
-        <Fieldset className="space-y-6">
+        <div className="w-full space-y-6">
           <form.Field name="enabled">
             {(field) => (
-              <Field orientation="horizontal">
+              <Field className="flex flex-row items-start justify-between gap-2">
                 <div className="flex-1">
                   <FieldLabel>Enable Changelog</FieldLabel>
                   <FieldDescription>
@@ -85,7 +84,7 @@ export function ChangelogTab({ organization }: { organization: Organization }) {
               {updateSettings.isPending ? "Saving..." : "Save"}
             </Button>
           </div>
-        </Fieldset>
+        </div>
       </div>
     </form>
   );

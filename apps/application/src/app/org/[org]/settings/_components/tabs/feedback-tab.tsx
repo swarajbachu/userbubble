@@ -6,7 +6,6 @@ import type { Organization } from "@userbubble/db/schema";
 import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
-import { Fieldset } from "@userbubble/ui/fieldset";
 import { Switch } from "@userbubble/ui/switch";
 import { toast } from "sonner";
 
@@ -67,7 +66,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
         form.handleSubmit();
       }}
     >
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <div>
           <h3 className="mb-4 font-semibold text-lg">Manage Feedback</h3>
           <p className="text-muted-foreground text-sm">
@@ -75,13 +74,13 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
           </p>
         </div>
 
-        <Fieldset className="space-y-6">
+        <div className="w-full space-y-6">
           <div className="space-y-4">
             <h4 className="font-medium text-sm">Allow Guest Submissions</h4>
 
             <form.Field name="allowAnonymousSubmissions">
               {(field) => (
-                <Field>
+                <Field className="flex flex-row items-start justify-between gap-2">
                   <div className="flex-1">
                     <FieldLabel>Allow Guest Feedback</FieldLabel>
                     <FieldDescription>
@@ -98,7 +97,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
 
             <form.Field name="allowAnonymousVoting">
               {(field) => (
-                <Field>
+                <Field className="flex flex-row items-start justify-between gap-2">
                   <div className="flex-1">
                     <FieldLabel>Allow Guest Voting</FieldLabel>
                     <FieldDescription>
@@ -115,7 +114,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
 
             <form.Field name="allowAnonymousComments">
               {(field) => (
-                <Field>
+                <Field className="flex flex-row items-start justify-between gap-2">
                   <div className="flex-1">
                     <FieldLabel>Allow Guest Comments</FieldLabel>
                     <FieldDescription>
@@ -136,7 +135,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
 
             <form.Field name="enableRoadmap">
               {(field) => (
-                <Field>
+                <Field className="flex flex-row items-start justify-between gap-2">
                   <div className="flex-1">
                     <FieldLabel>Enable Roadmap</FieldLabel>
                     <FieldDescription>
@@ -175,7 +174,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
               {updateSettings.isPending ? "Saving..." : "Save"}
             </Button>
           </div>
-        </Fieldset>
+        </div>
       </div>
     </form>
   );
