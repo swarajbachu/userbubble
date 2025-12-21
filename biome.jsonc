@@ -7,6 +7,10 @@
         "noExcessiveCognitiveComplexity": "off",
         "noVoid": "off"
       },
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "useSemanticElements": "off"
+      },
       "suspicious": {
         "useAwait": "off"
       },
