@@ -8,6 +8,7 @@ import { compare, hash } from "bcryptjs";
 const API_KEY_PREFIX = "ub_";
 const API_KEY_BYTES = 32; // 32 bytes = 64 hex characters
 const BCRYPT_ROUNDS = 10;
+const HEX_REGEX = /^[\da-f]+$/i;
 
 /**
  * Generate a new API key in format: ub_xxx (64 hex chars after prefix)
@@ -83,5 +84,5 @@ export function isValidApiKeyFormat(key: string): boolean {
   }
 
   // Should only contain hex characters (0-9, a-f)
-  return /^[\da-f]+$/i.test(hexPart);
+  return HEX_REGEX.test(hexPart);
 }

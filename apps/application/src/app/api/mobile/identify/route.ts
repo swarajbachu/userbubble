@@ -3,11 +3,8 @@ import {
   apiKeyQueries,
   identifiedUserQueries,
   organizationQueries,
-  userQueries,
 } from "@userbubble/db/queries";
-import { createUniqueIds } from "@userbubble/db/schema";
 import { generateId } from "better-auth";
-import { setSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "~/auth/server";
@@ -16,7 +13,7 @@ const identifySchema = z.object({
   id: z.string().min(1, "User ID is required"),
   email: z.string().email("Valid email is required"),
   name: z.string().optional(),
-  avatar: z.string().url().optional(),
+  avatar: z.string().optional(),
 });
 
 /**
@@ -62,12 +59,9 @@ export async function POST(request: NextRequest) {
     const { id: externalId, email, name, avatar } = validation.data;
 
     // 4. Find matching API key by verifying hash
-    // We need to check all active keys since we don't know which org yet
-    let matchedKey: Awaited<ReturnType<typeof apiKeyQueries.findById>> | null =
-      null;
-    let matchedOrganization: Awaited<
-      ReturnType<typeof organizationQueries.findById>
-    > | null = null;
+    let matchedKeyId: string | null = null;
+    let matchedOrganizationId: string | null = null;
+    let matchedOrganizationSlug: string | null = null;
 
     // Get all organizations to check their API keys
     const orgs = await organizationQueries.listAll();
@@ -79,104 +73,137 @@ export async function POST(request: NextRequest) {
       for (const key of activeKeys) {
         const isValid = await verifyApiKey(apiKeyHeader, key.keyHash);
         if (isValid) {
-          matchedKey = key;
-          matchedOrganization = org;
+          // Check if key is expired
+          if (key.expiresAt && new Date() > new Date(key.expiresAt)) {
+            continue; // Skip expired keys
+          }
+
+          matchedKeyId = key.id;
+          matchedOrganizationId = org.id;
+          matchedOrganizationSlug = org.slug;
           break;
         }
       }
 
-      if (matchedKey) break;
+      if (matchedKeyId) {
+        break;
+      }
     }
 
-    if (!(matchedKey && matchedOrganization)) {
+    const isValidMatch =
+      matchedKeyId !== null &&
+      matchedOrganizationId !== null &&
+      matchedOrganizationSlug !== null;
+
+    if (!isValidMatch) {
       return NextResponse.json(
         { error: "Invalid or inactive API key" },
         { status: 401 }
       );
     }
 
-    // 5. Check if key is expired
-    if (matchedKey.expiresAt && new Date() > new Date(matchedKey.expiresAt)) {
-      return NextResponse.json(
-        { error: "API key has expired" },
-        { status: 401 }
-      );
-    }
+    // 5. Update lastUsedAt timestamp (async, don't block)
+    // At this point, we've validated all values are non-null
+    void apiKeyQueries.updateLastUsed(matchedKeyId as string);
 
-    // 6. Update lastUsedAt timestamp (async, don't block)
-    void apiKeyQueries.updateLastUsed(matchedKey.id);
-
-    // 7. Find or create user
-    let user = await userQueries.findByEmail(email);
-
-    if (user) {
-      // Update user info if changed
-      await userQueries.update(user.id, {
-        name: name ?? user.name,
-        image: avatar ?? user.image,
-      });
-    } else {
-      // Create new user
-      const sanitizedUsername = email
-        .split("@")[0]
-        ?.replace(/[^\dA-Za-z]/g, "");
-      const randomSuffix = Math.random().toString(36).substring(2, 10);
-      const generatedName = name ?? `${sanitizedUsername}${randomSuffix}`;
-
-      user = await userQueries.create({
-        id: createUniqueIds("user"),
-        email,
-        name: generatedName,
-        image: avatar ?? null,
-        emailVerified: false,
-      });
-    }
-
-    // 8. Create or update identified user link
-    await identifiedUserQueries.upsert({
-      id: createUniqueIds("user"),
-      userId: user.id,
-      organizationId: matchedOrganization.id,
-      externalId,
-    });
-
-    // 9. Create session using Better Auth
-    const sessionDuration = 7 * 24 * 60 * 60; // 7 days in seconds
-    const expiresAt = new Date(Date.now() + sessionDuration * 1000);
-    const token = generateId();
-
-    // Get Better Auth adapter from auth instance
-    const authApi = auth.api;
+    // 6. Find or create user using Better Auth adapter
     const adapter = (
       auth as unknown as { options: { database: { adapter: unknown } } }
     ).options.database.adapter;
 
-    // Use Better Auth adapter to create session
-    const session = await (
-      adapter as {
-        create: (params: {
-          model: string;
-          data: {
-            userId: string;
-            token: string;
-            expiresAt: Date;
-            ipAddress: string | null;
-            userAgent: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-            sessionType: string;
-            authMethod: string;
-            activeOrganizationId: string;
-          };
-        }) => Promise<{
-          id: string;
-          userId: string;
-          expiresAt: Date;
-          sessionType: string;
-          activeOrganizationId: string;
-        }>;
-      }
-    ).create({
+    type BetterAuthAdapter = {
+      findOne: <T>(params: {
+        model: string;
+        where: Array<{ field: string; operator: string; value: unknown }>;
+      }) => Promise<T | null>;
+      create: <T>(params: {
+        model: string;
+        data: Record<string, unknown>;
+      }) => Promise<T>;
+      update: (params: {
+        model: string;
+        where: Array<{ field: string; operator: string; value: unknown }>;
+        update: Record<string, unknown>;
+      }) => Promise<void>;
+    };
+
+    const betterAuthAdapter = adapter as BetterAuthAdapter;
+
+    type User = {
+      id: string;
+      email: string;
+      name: string;
+      image: string | null;
+      emailVerified: boolean;
+      createdAt: Date;
+      updatedAt: Date;
+    };
+
+    let user = await betterAuthAdapter.findOne<User>({
+      model: "user",
+      where: [{ field: "email", operator: "eq", value: email }],
+    });
+
+    if (user) {
+      // Update user info if changed
+      await betterAuthAdapter.update({
+        model: "user",
+        where: [{ field: "id", operator: "eq", value: user.id }],
+        update: {
+          name: name ?? user.name,
+          image: avatar ?? user.image,
+          updatedAt: new Date(),
+        },
+      });
+    } else {
+      // Create new user
+      const sanitizedUsername =
+        email.split("@")[0]?.replace(/[\W_]+/g, "") ?? "user";
+      const randomSuffix = Math.random().toString(36).substring(2, 10);
+      const generatedName = name ?? `${sanitizedUsername}${randomSuffix}`;
+
+      user = await betterAuthAdapter.create<User>({
+        model: "user",
+        data: {
+          email,
+          name: generatedName,
+          image: avatar ?? null,
+          emailVerified: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    }
+
+    // 7. Create or update identified user link
+    // We've validated matchedOrganizationId is non-null above
+    await identifiedUserQueries.upsert({
+      id: generateId(),
+      userId: user.id,
+      organizationId: matchedOrganizationId as string,
+      externalId,
+    });
+
+    // 8. Create session using Better Auth adapter
+    const sessionDuration = 7 * 24 * 60 * 60; // 7 days in seconds
+    const expiresAt = new Date(Date.now() + sessionDuration * 1000);
+    const token = generateId();
+
+    type Session = {
+      id: string;
+      userId: string;
+      token: string;
+      expiresAt: Date;
+      ipAddress: string | null;
+      userAgent: string | null;
+      createdAt: Date;
+      updatedAt: Date;
+      sessionType: string;
+      authMethod: string;
+      activeOrganizationId: string;
+    };
+
+    const session = await betterAuthAdapter.create<Session>({
       model: "session",
       data: {
         userId: user.id,
@@ -186,31 +213,13 @@ export async function POST(request: NextRequest) {
         userAgent: request.headers.get("user-agent") ?? null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        // Custom userbubble fields
         sessionType: "identified",
         authMethod: "mobile",
-        activeOrganizationId: matchedOrganization.id,
+        activeOrganizationId: matchedOrganizationId as string,
       },
     });
 
-    // 10. Set session cookie
-    // Convert Next.js Request to web Request for Better Auth
-    const webRequest = new Request(request.url, {
-      method: request.method,
-      headers: request.headers,
-    });
-
-    const ctx = {
-      request: webRequest,
-      // biome-ignore lint: Better Auth typing issue
-      headers: new Headers(),
-      // biome-ignore lint: Better Auth typing issue
-      setCookie: () => {},
-    } as unknown as Parameters<typeof setSessionCookie>[0];
-
-    await setSessionCookie(ctx, { session, user });
-
-    // Build response with cookies
+    // 9. Build response with session cookie
     const response = NextResponse.json({
       user: {
         id: user.id,
@@ -218,15 +227,25 @@ export async function POST(request: NextRequest) {
         name: user.name,
         avatar: user.image,
       },
-      organizationSlug: matchedOrganization.slug,
+      organizationSlug: matchedOrganizationSlug as string,
     });
 
-    // Copy cookies from Better Auth context to Next.js response
-    for (const [key, value] of ctx.headers.entries()) {
-      if (key.toLowerCase() === "set-cookie") {
-        response.headers.set("set-cookie", value);
-      }
-    }
+    // 10. Set session cookie manually
+    // Cookie format matches Better Auth's session cookie
+    const isProduction = process.env.NODE_ENV === "production";
+    const cookieDomain = isProduction ? ".userbubble.com" : ".host.local";
+
+    const cookieValue = [
+      `better-auth.session_token=${session.token}`,
+      "Path=/",
+      `Domain=${cookieDomain}`,
+      "HttpOnly",
+      "Secure",
+      "SameSite=None",
+      `Max-Age=${7 * 24 * 60 * 60}`, // 7 days
+    ].join("; ");
+
+    response.headers.set("Set-Cookie", cookieValue);
 
     return response;
   } catch (error) {

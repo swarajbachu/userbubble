@@ -1,5 +1,5 @@
-import type React from "react";
-import { createContext, useCallback, useEffect, useState } from "react";
+// biome-ignore lint/style/useImportType: <explanation>
+import React, { createContext, useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
 import * as auth from "../auth/authenticate";
 import { createStorageAdapter, StorageManager } from "../storage";
@@ -64,7 +64,7 @@ export function UserbubbleProvider({
     }
 
     init();
-  }, [config]);
+  }, [config, log.debug]);
 
   // Identify user
   const identifyUser = useCallback(

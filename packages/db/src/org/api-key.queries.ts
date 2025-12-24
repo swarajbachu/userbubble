@@ -93,7 +93,9 @@ export const apiKeyQueries = {
    * Check if key is expired
    */
   isExpired: (key: ApiKey): boolean => {
-    if (!key.expiresAt) return false;
+    if (!key.expiresAt) {
+      return false;
+    }
     return new Date() > new Date(key.expiresAt);
   },
 };
