@@ -1,4 +1,5 @@
 import { QueryClientProvider } from "@tanstack/react-query";
+import { UserbubbleProvider } from "@userbubble/react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "react-native";
@@ -12,22 +13,30 @@ import "../styles.css";
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   return (
-    <QueryClientProvider client={queryClient}>
-      {/*
+    <UserbubbleProvider
+      config={{
+        apiKey: "ub_test_key_placeholder", // Replace with actual API key
+        baseUrl: "http://localhost:3000", // Point to your local development server
+        debug: true,
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        {/*
           The Stack component displays the current page.
-          It also allows you to configure your screens 
+          It also allows you to configure your screens
         */}
-      <Stack
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "#c03484",
-          },
-          contentStyle: {
-            backgroundColor: colorScheme === "dark" ? "#09090B" : "#FFFFFF",
-          },
-        }}
-      />
-      <StatusBar />
-    </QueryClientProvider>
+        <Stack
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: "#c03484",
+            },
+            contentStyle: {
+              backgroundColor: colorScheme === "dark" ? "#09090B" : "#FFFFFF",
+            },
+          }}
+        />
+        <StatusBar />
+      </QueryClientProvider>
+    </UserbubbleProvider>
   );
 }

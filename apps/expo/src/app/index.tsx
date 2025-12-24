@@ -1,8 +1,9 @@
 import { LegendList } from "@legendapp/list";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useUserbubble } from "@userbubble/react-native";
 import { Link, Stack } from "expo-router";
 import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { RouterOutputs } from "~/utils/api";
@@ -123,6 +124,83 @@ function MobileAuth() {
   );
 }
 
+function UserbubbleTest() {
+  const { identify, isIdentified, user, openUserbubble, logout } =
+    useUserbubble();
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+
+  const handleIdentify = async () => {
+    try {
+      await identify({
+        id: `test_user_${Date.now()}`,
+        email: email || "test@example.com",
+        name: name || "Test User",
+      });
+      Alert.alert("Success", "User identified successfully!");
+    } catch (error) {
+      Alert.alert("Error", `Failed to identify: ${error}`);
+    }
+  };
+
+  const handleOpenFeedback = async () => {
+    try {
+      await openUserbubble("/feedback");
+    } catch (error) {
+      Alert.alert("Error", `Failed to open: ${error}`);
+    }
+  };
+
+  return (
+    <View className="mt-4 rounded-lg bg-muted p-4">
+      <Text className="pb-2 font-bold text-foreground text-xl">
+        Userbubble SDK Test
+      </Text>
+
+      {isIdentified ? (
+        <View className="gap-2">
+          <Text className="text-foreground">
+            Identified as: {user?.email ?? "Unknown"}
+          </Text>
+          <Pressable
+            className="flex items-center rounded-sm bg-primary p-2"
+            onPress={handleOpenFeedback}
+          >
+            <Text className="text-foreground">Open Feedback</Text>
+          </Pressable>
+          <Pressable
+            className="flex items-center rounded-sm bg-destructive p-2"
+            onPress={logout}
+          >
+            <Text className="text-foreground">Logout</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <View className="gap-2">
+          <TextInput
+            className="rounded-md border border-input bg-background px-3 text-foreground text-lg"
+            onChangeText={setEmail}
+            placeholder="Email (optional)"
+            value={email}
+          />
+          <TextInput
+            className="rounded-md border border-input bg-background px-3 text-foreground text-lg"
+            onChangeText={setName}
+            placeholder="Name (optional)"
+            value={name}
+          />
+          <Pressable
+            className="flex items-center rounded-sm bg-primary p-2"
+            onPress={handleIdentify}
+          >
+            <Text className="text-foreground">Identify User</Text>
+          </Pressable>
+        </View>
+      )}
+    </View>
+  );
+}
+
 export default function Index() {
   const queryClient = useQueryClient();
 
@@ -145,6 +223,8 @@ export default function Index() {
         </Text>
 
         <MobileAuth />
+
+        <UserbubbleTest />
 
         <View className="py-2">
           <Text className="font-semibold text-primary italic">
