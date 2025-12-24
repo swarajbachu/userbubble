@@ -14,6 +14,7 @@
   "dependencies": {
     "@better-auth/expo": "catalog:",
     "@legendapp/list": "^2.0.14",
+    "@react-native-async-storage/async-storage": "^2.1.0",
     "@tanstack/react-query": "catalog:",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",

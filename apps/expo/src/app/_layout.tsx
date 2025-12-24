@@ -15,8 +15,9 @@ export default function RootLayout() {
   return (
     <UserbubbleProvider
       config={{
-        apiKey: "ub_test_key_placeholder", // Replace with actual API key
-        baseUrl: "http://localhost:3000", // Point to your local development server
+        apiKey:
+          "ub_260643bb545e3fb6240da601d03927b64b7b682698e5c3bde8363cd382e01f82", // Replace with actual API key
+        baseUrl: "https://app.host.local", // Point to your local development server
         debug: true,
       }}
     >
