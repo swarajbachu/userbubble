@@ -1,0 +1,81 @@
+---
+title: React Native SDK
+description: Userbubble SDK for React Native and Expo applications
+---
+
+## Overview
+
+The Userbubble React Native SDK enables seamless user identification in your mobile applications. It supports both Expo and bare React Native projects with automatic platform detection.
+
+### Key Features
+
+- **Simple Integration**: Just wrap your app with `<UserbubbleProvider>` and use the `useUserbubble()` hook
+- **Platform Support**: Works with both Expo (expo-secure-store) and bare React Native (@react-native-async-storage/async-storage)
+- **Automatic Storage**: Auto-detects and uses the appropriate storage solution
+- **TypeScript**: Full TypeScript support with complete type definitions
+- **Lightweight**: Minimal dependencies and small bundle size
+- **Secure**: API key-based authentication with secure storage
+
+## Quick Links
+
+<Cards>
+  <Card
+    title="Installation"
+    href="/docs/sdks/react-native/installation"
+    description="Get started by installing the SDK"
+  />
+  <Card
+    title="Quick Start"
+    href="/docs/sdks/react-native/quick-start"
+    description="Integrate in 5 minutes"
+  />
+  <Card
+    title="API Reference"
+    href="/docs/sdks/react-native/api-reference"
+    description="Complete API documentation"
+  />
+  <Card
+    title="Examples"
+    href="/docs/sdks/react-native/examples"
+    description="Code examples and recipes"
+  />
+</Cards>
+
+## Example Usage
+
+```typescript
+import { UserbubbleProvider, useUserbubble } from "@userbubble/react-native";
+
+function App() {
+  return (
+    <UserbubbleProvider config={{ apiKey: "ub_live_xxxxx" }}>
+      <MyApp />
+    </UserbubbleProvider>
+  );
+}
+
+function MyApp() {
+  const { identify, openUserbubble, isIdentified } = useUserbubble();
+
+  const handleLogin = async () => {
+    await identify({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    });
+  };
+
+  return (
+    <>
+      {!isIdentified && <Button title="Login" onPress={handleLogin} />}
+      {isIdentified && (
+        <Button title="Feedback" onPress={() => openUserbubble()} />
+      )}
+    </>
+  );
+}
+```
+
+## Next Steps
+
+Start by [installing the SDK](/docs/sdks/react-native/installation) or jump straight to the [quick start guide](/docs/sdks/react-native/quick-start).

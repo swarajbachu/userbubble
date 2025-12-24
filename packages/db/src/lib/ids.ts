@@ -11,6 +11,7 @@ export const UniqueIdsSchema = z.enum([
   "comment",
   "log",
   "log_link",
+  "apikey",
 ]);
 
 export type UniqueIdsType = z.infer<typeof UniqueIdsSchema>;

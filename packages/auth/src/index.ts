@@ -106,6 +106,14 @@ export function initAuth<
 export type Auth = ReturnType<typeof initAuth>;
 export type Session = Auth["$Infer"]["Session"];
 
+// Export API key utilities for mobile SDK authentication
+export {
+  generateApiKey,
+  getKeyPreview,
+  hashApiKey,
+  isValidApiKeyFormat,
+  verifyApiKey,
+} from "./utils/api-key";
 // Export HMAC utilities for SDK and backend usage
 export {
   createHMACSignature,

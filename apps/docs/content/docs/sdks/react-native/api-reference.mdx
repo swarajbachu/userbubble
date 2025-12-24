@@ -1,0 +1,411 @@
+---
+title: API Reference
+description: Complete API documentation for the Userbubble React Native SDK
+---
+
+## Components
+
+### UserbubbleProvider
+
+The root provider component that manages SDK state and configuration.
+
+```typescript
+import { UserbubbleProvider } from "@userbubble/react-native";
+
+<UserbubbleProvider config={config}>
+  {/* Your app */}
+</UserbubbleProvider>
+```
+
+**Props:**
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `config` | `UserbubbleConfig` | Yes | SDK configuration object |
+| `children` | `ReactNode` | Yes | Your app components |
+
+---
+
+## Hooks
+
+### useUserbubble()
+
+Access Userbubble SDK functionality from any component.
+
+```typescript
+import { useUserbubble } from "@userbubble/react-native";
+
+function MyComponent() {
+  const {
+    user,
+    isInitialized,
+    isIdentified,
+    identify,
+    logout,
+    getUser,
+    openUserbubble,
+  } = useUserbubble();
+}
+```
+
+**Returns:** `UserbubbleContextValue`
+
+<Callout type="warn">
+  This hook must be used within a `UserbubbleProvider`. Using it outside the provider will throw an error.
+</Callout>
+
+---
+
+## Types
+
+### UserbubbleConfig
+
+Configuration object for the SDK.
+
+```typescript
+type UserbubbleConfig = {
+  apiKey: string;
+  baseUrl?: string;
+  debug?: boolean;
+  storageType?: "expo" | "async-storage" | "auto";
+  customStorage?: StorageAdapter;
+};
+```
+
+**Properties:**
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `apiKey` | `string` | *Required* | Your organization's API key from Userbubble |
+| `baseUrl` | `string` | `"https://app.userbubble.com"` | Base URL for Userbubble API |
+| `debug` | `boolean` | `false` | Enable debug logging to console |
+| `storageType` | `"expo" \| "async-storage" \| "auto"` | `"auto"` | Storage type to use (auto-detection recommended) |
+| `customStorage` | `StorageAdapter` | `undefined` | Custom storage implementation |
+
+**Example:**
+
+```typescript
+const config: UserbubbleConfig = {
+  apiKey: "ub_live_xxxxxxxxxxxxx",
+  debug: __DEV__,
+  storageType: "auto", // Recommended: auto-detect platform
+};
+```
+
+---
+
+### UserbubbleUser
+
+User information for identification.
+
+```typescript
+type UserbubbleUser = {
+  id: string;
+  email: string;
+  name?: string;
+  avatar?: string;
+};
+```
+
+**Properties:**
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `id` | `string` | Yes | Your user's unique ID |
+| `email` | `string` | Yes | User's email address |
+| `name` | `string` | No | User's display name |
+| `avatar` | `string` | No | URL to user's avatar image |
+
+**Example:**
+
+```typescript
+const user: UserbubbleUser = {
+  id: "user_123",
+  email: "john@example.com",
+  name: "John Doe",
+  avatar: "https://example.com/avatar.jpg",
+};
+```
+
+---
+
+### UserbubbleContextValue
+
+Return value from `useUserbubble()` hook.
+
+```typescript
+type UserbubbleContextValue = {
+  user: UserbubbleUser | null;
+  isInitialized: boolean;
+  isIdentified: boolean;
+  identify: (user: UserbubbleUser) => Promise<void>;
+  logout: () => Promise<void>;
+  getUser: () => UserbubbleUser | null;
+  openUserbubble: (path?: string) => Promise<void>;
+};
+```
+
+**Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `user` | `UserbubbleUser \| null` | Current identified user, or `null` if not identified |
+| `isInitialized` | `boolean` | Whether SDK has finished initialization |
+| `isIdentified` | `boolean` | Whether a user is currently identified |
+| `identify` | `Function` | Identify a user |
+| `logout` | `Function` | Log out current user |
+| `getUser` | `Function` | Get current user synchronously |
+| `openUserbubble` | `Function` | Open Userbubble in browser |
+
+---
+
+### StorageAdapter
+
+Interface for custom storage implementations.
+
+```typescript
+interface StorageAdapter {
+  getItem(key: string): Promise<string | null>;
+  setItem(key: string, value: string): Promise<void>;
+  removeItem(key: string): Promise<void>;
+  clear(): Promise<void>;
+}
+```
+
+**Example Implementation:**
+
+```typescript
+const customStorage: StorageAdapter = {
+  async getItem(key: string): Promise<string | null> {
+    // Your custom get logic
+    return yourStorage.get(key);
+  },
+  async setItem(key: string, value: string): Promise<void> {
+    // Your custom set logic
+    await yourStorage.set(key, value);
+  },
+  async removeItem(key: string): Promise<void> {
+    // Your custom remove logic
+    await yourStorage.remove(key);
+  },
+  async clear(): Promise<void> {
+    // Your custom clear logic
+    await yourStorage.clearAll();
+  },
+};
+```
+
+---
+
+## Methods
+
+### identify()
+
+Identify a user with Userbubble.
+
+```typescript
+await identify(user: UserbubbleUser): Promise<void>
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `user` | `UserbubbleUser` | User information object |
+
+**Returns:** `Promise<void>`
+
+**Throws:** Error if identification fails
+
+**Example:**
+
+```typescript
+const { identify } = useUserbubble();
+
+await identify({
+  id: "user_123",
+  email: "john@example.com",
+  name: "John Doe",
+});
+```
+
+---
+
+### logout()
+
+Log out the current user and clear stored data.
+
+```typescript
+await logout(): Promise<void>
+```
+
+**Returns:** `Promise<void>`
+
+**Example:**
+
+```typescript
+const { logout } = useUserbubble();
+
+await logout();
+```
+
+---
+
+### getUser()
+
+Get the current user synchronously.
+
+```typescript
+getUser(): UserbubbleUser | null
+```
+
+**Returns:** `UserbubbleUser | null` - Current user or null if not identified
+
+**Example:**
+
+```typescript
+const { getUser } = useUserbubble();
+
+const currentUser = getUser();
+if (currentUser) {
+  console.log("User ID:", currentUser.id);
+}
+```
+
+---
+
+### openUserbubble()
+
+Open Userbubble in the device's browser.
+
+```typescript
+await openUserbubble(path?: string): Promise<void>
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `path` | `string` | `"/"` | Path to open (e.g., `/feedback`, `/changelog`) |
+
+**Returns:** `Promise<void>`
+
+**Throws:** Error if user is not identified or URL cannot be opened
+
+**Example:**
+
+```typescript
+const { openUserbubble } = useUserbubble();
+
+// Open feedback page
+await openUserbubble("/feedback");
+
+// Open changelog
+await openUserbubble("/changelog");
+
+// Open root
+await openUserbubble();
+```
+
+---
+
+## Platform Detection
+
+The SDK automatically detects whether you're using Expo or bare React Native:
+
+**Expo Detection:**
+```typescript
+// Checks for expo-constants package
+import Constants from "expo-constants";
+```
+
+**Storage Selection:**
+- **Expo**: Uses `expo-secure-store` for encrypted storage
+- **Bare RN**: Uses `@react-native-async-storage/async-storage`
+- **Custom**: Use `customStorage` config option
+
+**Override Auto-Detection:**
+
+```typescript
+<UserbubbleProvider
+  config={{
+    apiKey: "ub_live_xxxxx",
+    storageType: "expo", // Force Expo storage
+  }}
+>
+```
+
+---
+
+## Error Handling
+
+The SDK throws errors in these scenarios:
+
+**Hook Usage Error:**
+```typescript
+// ❌ Using hook outside provider
+function MyComponent() {
+  const { identify } = useUserbubble();
+  // Error: useUserbubble must be used within UserbubbleProvider
+}
+```
+
+**Identification Error:**
+```typescript
+try {
+  await identify(user);
+} catch (error) {
+  console.error("Identification failed:", error);
+  // Handle error (show message to user, retry, etc.)
+}
+```
+
+**Opening Userbubble Error:**
+```typescript
+try {
+  await openUserbubble("/feedback");
+} catch (error) {
+  console.error("Could not open Userbubble:", error);
+  // User not identified or URL invalid
+}
+```
+
+---
+
+## Debug Logging
+
+Enable debug logging to see SDK operations:
+
+```typescript
+<UserbubbleProvider
+  config={{
+    apiKey: "ub_live_xxxxx",
+    debug: __DEV__, // Enable in development
+  }}
+>
+```
+
+**Debug logs include:**
+- Storage operations
+- User identification
+- API requests
+- URL generation
+- Error details
+
+**Example output:**
+```
+[userbubble] Initializing SDK...
+[userbubble] Storage type: expo-secure-store
+[userbubble] User restored from storage: user_123
+[userbubble] Identifying user: user_123
+[userbubble] User identified successfully
+[userbubble] Opening Userbubble: /feedback
+```
+
+---
+
+## Next Steps
+
+- Check out [Examples](/docs/sdks/react-native/examples) for complete code samples
+- Return to [Quick Start](/docs/sdks/react-native/quick-start) guide
+- Learn about [Installation](/docs/sdks/react-native/installation) options

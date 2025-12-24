@@ -29,6 +29,10 @@ export * from "./feedback/feedback.sql";
 export * from "./feedback/feedback.validators";
 // Slug utilities
 export * from "./lib/slug";
+// API Key schemas
+export * from "./org/api-key.sql";
+// API Key validators
+export * from "./org/api-key.validators";
 // Organization schemas (Better Auth organization plugin tables)
 export * from "./org/organization.sql";
 // Organization validators

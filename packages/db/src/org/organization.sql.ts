@@ -3,6 +3,7 @@ import { pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createUniqueIds } from "../lib/ids";
 import { identifiedUser } from "../user/identified-user.sql";
 import { user } from "../user/user.sql";
+import { apiKey } from "./api-key.sql";
 
 // PostgreSQL Enums for type safety
 // Const arrays + type extraction for single source of truth
@@ -113,6 +114,7 @@ export const organizationRelations = relations(organization, ({ many }) => ({
   members: many(member),
   invitations: many(invitation),
   identifiedUsers: many(identifiedUser),
+  apiKeys: many(apiKey),
 }));
 
 export const memberRelations = relations(member, ({ one }) => ({
