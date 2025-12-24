@@ -18,10 +18,7 @@ export const AuthButton = ({ className }: { className?: string }) => {
   }
 
   return (
-    <Button
-      className={className}
-      render={<Link href={`${APP_URL}/api/auth/signin`} />}
-    >
+    <Button className={className} render={<Link href={`${APP_URL}/`} />}>
       Get Started Now
     </Button>
   );
