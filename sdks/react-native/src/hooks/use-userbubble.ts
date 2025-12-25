@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { UserbubbleContext } from "../context/UserbubbleProvider";
+import { UserbubbleContext } from "../context/userbubble-provider";
 import type { UserbubbleContextValue } from "../types";
 
 /**

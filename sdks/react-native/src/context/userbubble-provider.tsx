@@ -1,4 +1,5 @@
-// biome-ignore lint/style/useImportType: <explanation>
+/** biome-ignore-all lint/style/useImportType: <explanation> */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
 import * as auth from "../auth/authenticate";
@@ -26,6 +27,7 @@ export function UserbubbleProvider({
 }: UserbubbleProviderProps) {
   const [user, setUser] = useState<UserbubbleUser | null>(null);
   const [organizationSlug, setOrganizationSlug] = useState<string | null>(null);
+  const [externalId, setExternalId] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [storage, setStorage] = useState<StorageManager | null>(null);
 
@@ -39,9 +41,10 @@ export function UserbubbleProvider({
         const storageManager = new StorageManager(adapter);
         setStorage(storageManager);
 
-        // Restore user and organization slug from storage
+        // Restore user, organization slug, and external ID from storage
         const savedUser = await storageManager.getUser();
         const savedSlug = await storageManager.getOrganizationSlug();
+        const savedExternalId = await storageManager.getExternalId();
 
         if (savedUser) {
           setUser(savedUser);
@@ -54,6 +57,11 @@ export function UserbubbleProvider({
         if (savedSlug) {
           setOrganizationSlug(savedSlug);
           log.debug("Organization slug restored:", savedSlug);
+        }
+
+        if (savedExternalId) {
+          setExternalId(savedExternalId);
+          log.debug("External ID restored:", savedExternalId);
         }
 
         setIsInitialized(true);
@@ -87,13 +95,15 @@ export function UserbubbleProvider({
           organizationSlug: response.organizationSlug,
         });
 
-        // Save user and organization slug to storage
+        // Save user, organization slug, and external ID to storage
         await storage.setUser(newUser);
         await storage.setOrganizationSlug(response.organizationSlug);
+        await storage.setExternalId(newUser.id);
 
         // Update state
         setUser(newUser);
         setOrganizationSlug(response.organizationSlug);
+        setExternalId(newUser.id);
       } catch (error) {
         log.error("Identification failed:", error);
         throw error;
@@ -111,8 +121,8 @@ export function UserbubbleProvider({
     try {
       log.debug("Logging out user");
 
-      // Call logout endpoint
-      await auth.logout(config);
+      // Call logout (no API call needed - stateless!)
+      await auth.logout();
 
       // Clear storage
       await storage.clear();
@@ -120,6 +130,7 @@ export function UserbubbleProvider({
       // Clear state
       setUser(null);
       setOrganizationSlug(null);
+      setExternalId(null);
 
       log.debug("User logged out successfully");
     } catch (error) {
@@ -145,8 +156,21 @@ export function UserbubbleProvider({
         );
       }
 
+      if (!externalId) {
+        throw new Error(
+          "[userbubble] External ID not available. Re-identify user."
+        );
+      }
+
       const baseUrl = config.baseUrl ?? "https://app.userbubble.com";
-      const url = generateUserbubbleUrl(baseUrl, organizationSlug, path);
+      let url = generateUserbubbleUrl(baseUrl, organizationSlug, path);
+
+      // Add authentication parameters as query params for external user authentication
+      const params = new URLSearchParams({
+        external_user: externalId,
+        api_key: config.apiKey,
+      });
+      url = `${url}?${params.toString()}`;
 
       log.debug("Opening Userbubble:", url);
 
@@ -157,7 +181,7 @@ export function UserbubbleProvider({
 
       await Linking.openURL(url);
     },
-    [user, organizationSlug, config, log]
+    [user, organizationSlug, externalId, config, log]
   );
 
   const value: UserbubbleContextValue = {

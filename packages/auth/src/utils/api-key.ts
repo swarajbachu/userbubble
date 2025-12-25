@@ -1,13 +1,12 @@
-import { randomBytes } from "node:crypto";
-import { compare, hash } from "bcryptjs";
+import { createHmac, randomBytes } from "node:crypto";
 
 /**
- * API Key utilities for mobile SDK authentication
+ * API Key utilities for platform-agnostic SDK authentication
+ * Works for React Native, Web, Desktop, and any platform!
  */
 
 const API_KEY_PREFIX = "ub_";
 const API_KEY_BYTES = 32; // 32 bytes = 64 hex characters
-const BCRYPT_ROUNDS = 10;
 const HEX_REGEX = /^[\da-f]+$/i;
 
 /**
@@ -23,27 +22,31 @@ export function generateApiKey(): string {
 }
 
 /**
- * Hash API key for secure storage using bcrypt
+ * Hash API key using HMAC-SHA256 with Better Auth secret
+ * Deterministic - same key produces same hash (enables O(1) DB lookup!)
  *
  * @param rawKey - The raw API key to hash
- * @returns Promise resolving to bcrypt hash
+ * @returns HMAC-SHA256 hash as hex string
  */
-export async function hashApiKey(rawKey: string): Promise<string> {
-  return await hash(rawKey, BCRYPT_ROUNDS);
+export function hashApiKey(rawKey: string): string {
+  const secret = process.env.AUTH_SECRET;
+  if (!secret) {
+    throw new Error("AUTH_SECRET not configured");
+  }
+  return createHmac("sha256", secret).update(rawKey).digest("hex");
 }
 
 /**
- * Verify API key against stored hash
+ * Verify API key by comparing hashes
+ * Fast - just string comparison, no bcrypt!
  *
  * @param rawKey - The raw API key to verify
- * @param keyHash - The stored bcrypt hash
- * @returns Promise resolving to true if key matches
+ * @param keyHash - The stored HMAC hash
+ * @returns True if key matches
  */
-export async function verifyApiKey(
-  rawKey: string,
-  keyHash: string
-): Promise<boolean> {
-  return await compare(rawKey, keyHash);
+export function verifyApiKey(rawKey: string, keyHash: string): boolean {
+  const providedHash = hashApiKey(rawKey);
+  return providedHash === keyHash;
 }
 
 /**

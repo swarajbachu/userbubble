@@ -1,4 +1,3 @@
-// @ts-expect-error - Optional peer dependency, will be available at runtime for bare React Native apps
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { StorageAdapter } from "../types";
 
@@ -18,7 +17,7 @@ export class AsyncStorageAdapter implements StorageAdapter {
   async clear(): Promise<void> {
     const keys = await AsyncStorage.getAllKeys();
     const userbubbleKeys = keys.filter((key: string) =>
-      key.startsWith("@userbubble:")
+      key.startsWith("userbubble_")
     );
     await AsyncStorage.multiRemove(userbubbleKeys);
   }

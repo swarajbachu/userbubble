@@ -90,6 +90,18 @@ export const apiKeyQueries = {
   },
 
   /**
+   * Find active API key by hash (EFFICIENT - O(1) lookup!)
+   * Used for platform-agnostic authentication
+   */
+  findByHash: async (keyHash: string) =>
+    db.query.apiKey.findFirst({
+      where: and(eq(apiKey.keyHash, keyHash), eq(apiKey.isActive, true)),
+      with: {
+        organization: true,
+      },
+    }),
+
+  /**
    * Check if key is expired
    */
   isExpired: (key: ApiKey): boolean => {

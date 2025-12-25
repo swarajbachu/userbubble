@@ -28,21 +28,21 @@ export function initAuth<
     }),
     baseURL: options.baseUrl,
     secret: options.secret,
-    advanced: {
-      crossSubDomainCookies: {
-        enabled: true,
-        domain:
-          process.env.NODE_ENV === "production"
-            ? ".userbubble.com"
-            : ".host.local",
-      },
-      useSecureCookies: true,
-      disableCSRFCheck: false,
-      defaultCookieAttributes: {
-        sameSite: "None",
-        secure: true,
-      },
-    },
+    // advanced: {
+    //   crossSubDomainCookies: {
+    //     enabled: true,
+    //     domain:
+    //       process.env.NODE_ENV === "production"
+    //         ? ".userbubble.com"
+    //         : ".host.local",
+    //   },
+    //   useSecureCookies: true,
+    //   disableCSRFCheck: false,
+    //   defaultCookieAttributes: {
+    //     sameSite: "None",
+    //     secure: true,
+    //   },
+    // },
     emailAndPassword: {
       enabled: true,
     },
@@ -106,7 +106,7 @@ export function initAuth<
 export type Auth = ReturnType<typeof initAuth>;
 export type Session = Auth["$Infer"]["Session"];
 
-// Export API key utilities for mobile SDK authentication
+// Export API key utilities for platform-agnostic SDK authentication
 export {
   generateApiKey,
   getKeyPreview,
@@ -122,3 +122,4 @@ export {
   isTimestampValid,
   verifyHMAC,
 } from "./utils/hmac";
+export { validateApiKeyWithOrg } from "./utils/validate-api-key";

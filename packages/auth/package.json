@@ -18,14 +18,12 @@
     "@userbubble/db": "workspace:*",
     "@better-auth/expo": "catalog:",
     "@t3-oss/env-core": "^0.13.8",
-    "bcryptjs": "^2.4.3",
     "better-auth": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@userbubble/tsconfig": "workspace:*",
     "@better-auth/cli": "catalog:",
-    "@types/bcryptjs": "^2.4.6",
     "typescript": "catalog:"
   }
 }

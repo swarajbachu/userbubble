@@ -7,8 +7,9 @@ import type {
 } from "../types";
 
 const STORAGE_KEYS = {
-  USER: "@userbubble:user",
-  ORG_SLUG: "@userbubble:organizationSlug",
+  USER: "userbubble_user",
+  ORG_SLUG: "userbubble_organizationSlug",
+  EXTERNAL_ID: "userbubble_externalId",
 } as const;
 
 /**
@@ -78,6 +79,14 @@ export class StorageManager {
 
   async setOrganizationSlug(slug: string): Promise<void> {
     await this.adapter.setItem(STORAGE_KEYS.ORG_SLUG, slug);
+  }
+
+  async getExternalId(): Promise<string | null> {
+    return await this.adapter.getItem(STORAGE_KEYS.EXTERNAL_ID);
+  }
+
+  async setExternalId(externalId: string): Promise<void> {
+    await this.adapter.setItem(STORAGE_KEYS.EXTERNAL_ID, externalId);
   }
 
   async clear(): Promise<void> {

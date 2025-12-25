@@ -6,8 +6,6 @@ import { useColorScheme } from "react-native";
 
 import { queryClient } from "~/utils/api";
 
-import "../styles.css";
-
 // This is the main layout of the app
 // It wraps your pages with the providers they need
 export default function RootLayout() {
@@ -16,8 +14,8 @@ export default function RootLayout() {
     <UserbubbleProvider
       config={{
         apiKey:
-          "ub_260643bb545e3fb6240da601d03927b64b7b682698e5c3bde8363cd382e01f82", // Replace with actual API key
-        baseUrl: "https://app.host.local", // Point to your local development server
+          "ub_b57fec02c6e1f887b643fed84f0e7908adb62b1106ce12eb11cb1b284fe5a356", // Replace with actual API key
+        baseUrl: "http://192.168.29.106:3000", // Your laptop's local IP
         debug: true,
       }}
     >
