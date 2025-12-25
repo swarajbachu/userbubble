@@ -14,6 +14,7 @@ export default [
     external: [
       "react",
       "react-native",
+      "expo-web-browser",
       "expo-secure-store",
       "@react-native-async-storage/async-storage",
       "expo-constants",
@@ -44,6 +45,7 @@ export default [
     external: [
       "react",
       "react-native",
+      "expo-web-browser",
       "expo-secure-store",
       "@react-native-async-storage/async-storage",
       "expo-constants",

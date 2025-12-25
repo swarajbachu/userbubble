@@ -1,7 +1,8 @@
 /** biome-ignore-all lint/style/useImportType: <explanation> */
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
+
+import * as WebBrowser from "expo-web-browser";
 import React, { createContext, useCallback, useEffect, useState } from "react";
-import { Linking } from "react-native";
 import * as auth from "../auth/authenticate";
 import { createStorageAdapter, StorageManager } from "../storage";
 import type {
@@ -141,7 +142,7 @@ export function UserbubbleProvider({
   // Get current user
   const getUser = useCallback(() => user, [user]);
 
-  // Open Userbubble
+  // Open Userbubble in browser modal
   const openUserbubble = useCallback(
     async (path = "") => {
       if (!user) {
@@ -163,7 +164,12 @@ export function UserbubbleProvider({
       }
 
       const baseUrl = config.baseUrl ?? "https://app.userbubble.com";
-      let url = generateUserbubbleUrl(baseUrl, organizationSlug, path);
+      let url = generateUserbubbleUrl(
+        baseUrl,
+        organizationSlug,
+        path,
+        config.useDirectUrls
+      );
 
       // Add authentication parameters as query params for external user authentication
       const params = new URLSearchParams({
@@ -172,14 +178,13 @@ export function UserbubbleProvider({
       });
       url = `${url}?${params.toString()}`;
 
-      log.debug("Opening Userbubble:", url);
+      log.debug("Opening Userbubble in browser:", url);
 
-      const canOpen = await Linking.canOpenURL(url);
-      if (!canOpen) {
-        throw new Error(`[userbubble] Cannot open URL: ${url}`);
-      }
-
-      await Linking.openURL(url);
+      // Open in-app browser (works with Expo Go!)
+      await WebBrowser.openBrowserAsync(url, {
+        presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
+        controlsColor: "#000000",
+      });
     },
     [user, organizationSlug, externalId, config, log]
   );

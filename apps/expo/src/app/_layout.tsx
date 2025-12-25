@@ -14,8 +14,9 @@ export default function RootLayout() {
     <UserbubbleProvider
       config={{
         apiKey:
-          "ub_b57fec02c6e1f887b643fed84f0e7908adb62b1106ce12eb11cb1b284fe5a356", // Replace with actual API key
-        baseUrl: "http://192.168.29.106:3000", // Your laptop's local IP
+          "ub_b57fec02c6e1f887b643fed84f0e7908adb62b1106ce12eb11cb1b284fe5a356",
+        baseUrl: "http://192.168.0.101:3000", // IP address for mobile access
+        useDirectUrls: true, // Use direct paths instead of subdomains for mobile
         debug: true,
       }}
     >

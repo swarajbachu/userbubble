@@ -43,6 +43,16 @@ export type UserbubbleConfig = {
   baseUrl?: string;
 
   /**
+   * Use direct URLs instead of subdomains
+   * Useful for local development on mobile devices
+   * @default false
+   * @example
+   * false: orgslug.userbubble.com/feedback (subdomain)
+   * true: app.userbubble.com/external/orgslug/feedback (direct path)
+   */
+  useDirectUrls?: boolean;
+
+  /**
    * Enable debug logging
    * @default false
    */
