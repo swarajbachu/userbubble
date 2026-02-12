@@ -1,10 +1,10 @@
 # UserBubble
 
-Free and open-source feedback collection platform for mobile apps. Collect feature requests, bug reports, and user votes directly from your React Native, Swift, and Kotlin apps.
+Free and open-source feedback collection platform for any app. Collect feature requests, bug reports, and user votes directly from your web, mobile, and desktop apps.
 
 ## Features
 
-- **Native SDKs** — React Native (Expo + bare), with Swift and Kotlin coming soon
+- **Universal SDKs** — React, Next.js, React Native (Expo + bare), with Swift and Kotlin coming soon
 - **Feedback board** — Upvoting, categories, statuses, and public/private posts
 - **Roadmap** — Drag-and-drop Kanban board to communicate what's planned, in progress, and done
 - **Changelog** — Publish updates and link them to resolved feedback
@@ -29,7 +29,7 @@ Free and open-source feedback collection platform for mobile apps. Collect featu
 
 ```bash
 # Clone the repo
-git clone https://github.com/userbubble/userbubble.git
+git clone https://github.com/swarajbachu/userbubble.git
 cd userbubble
 
 # Install dependencies
@@ -58,7 +58,7 @@ packages/
   api/           # tRPC router definitions
   auth/          # Better Auth configuration
   db/            # Drizzle schema, queries, and permissions
-  sdk/           # Client SDKs for mobile integration
+  sdk/           # Client SDKs for app integration
   ui/            # Shared UI component library
   validators/    # Shared Zod validators
 ```
