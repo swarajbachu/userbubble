@@ -72,7 +72,7 @@ export const LLMModelSelectorSkeleton = () => {
           src="/logos/frameworks/react.svg"
         />
         <span className="font-medium text-charcoal-700 text-sm dark:text-neutral-200">
-          Mobile SDKs
+          SDKs
         </span>
         <span className="rounded-lg border border-gray-200 bg-gray-50 px-2 py-0.5 text-charcoal-700 text-xs dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200">
           3

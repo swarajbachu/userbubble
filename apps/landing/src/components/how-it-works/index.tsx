@@ -28,7 +28,7 @@ export const HowItWorks = () => {
     {
       title: "Install the SDK",
       description:
-        "Add our SDK with a single command. Starting with React Native (npm install), with native Swift and Kotlin support coming soon. Zero configuration required—works out of the box.",
+        "Add our SDK with a single command. Works with React, Next.js, Remix, React Native, and more. Zero configuration required—works out of the box.",
       icon: FirstIcon,
       id: "install",
       skeleton: <DesignYourWorkflowSkeleton />,
@@ -36,7 +36,7 @@ export const HowItWorks = () => {
     {
       title: "Add the Feedback Widget",
       description:
-        "Import the feedback component and add it to your app. Customizable to match your app's design. Native experience for iOS and Android users.",
+        "Import the feedback component and add it to your app. Customizable to match your app's design. Native experience across all platforms.",
       icon: SecondIcon,
       id: "integrate",
       skeleton: <ConnectYourTooklsSkeleton />,
@@ -73,7 +73,7 @@ export const HowItWorks = () => {
       <div className="flex flex-col items-center pt-16">
         <Badge text="How it works" />
         <SectionHeading className="mt-4">
-          Add feedback to your mobile app in minutes
+          Add feedback to your app in minutes
         </SectionHeading>
 
         <SubHeading as="p" className="mx-auto mt-6 max-w-lg">

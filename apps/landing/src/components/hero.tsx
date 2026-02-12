@@ -14,18 +14,18 @@ export const Hero = () => (
   <Container className="flex flex-col items-center justify-center border-divide border-x px-4 pt-10 pb-10 md:pt-32 md:pb-20">
     <Badge text="Free & Open Source" />
     <Heading className="mt-4">
-      Feedback collection for <span className="text-brand">mobile apps</span>
+      Feedback collection for <span className="text-brand">any app</span>
     </Heading>
 
     <SubHeading className="mx-auto mt-6 max-w-lg">
-      Native SDKs for React Native, Swift, and more coming soon. Lightweight and
-      fast. Collect feedback from users directly in your mobile app.
+      Lightweight SDKs for web, mobile, and desktop. Collect feedback, feature
+      requests, and votes directly from your users.
     </SubHeading>
 
     <div className="mt-6 flex items-center gap-4">
       <AuthButton className="px-4 py-4" />
       <Link
-        href="https://github.com/userbubble/userbubble"
+        href="https://github.com/swarajbachu/userbubble"
         rel="noopener"
         target="_blank"
       >
@@ -53,7 +53,7 @@ export const Hero = () => (
         ))}
       </div>
       <span className="border-gray-500 border-l pl-4 text-[10px] text-gray-600 sm:text-sm">
-        Loved by mobile app developers
+        Loved by developers everywhere
       </span>
       <GartnerLogoText className="size-12 sm:size-16" />
     </div>
