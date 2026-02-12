@@ -12,7 +12,7 @@ import { SubHeading } from "./subheading";
 
 export const Hero = () => (
   <Container className="flex flex-col items-center justify-center border-divide border-x px-4 pt-10 pb-10 md:pt-32 md:pb-20">
-    <Badge text="Built for mobile developers" />
+    <Badge text="Free & Open Source" />
     <Heading className="mt-4">
       Feedback collection for <span className="text-brand">mobile apps</span>
     </Heading>
@@ -24,9 +24,13 @@ export const Hero = () => (
 
     <div className="mt-6 flex items-center gap-4">
       <AuthButton className="px-4 py-4" />
-      <Link href="/pricing">
+      <Link
+        href="https://github.com/userbubble/userbubble"
+        rel="noopener"
+        target="_blank"
+      >
         <Button className="px-4 py-4" size="lg" variant="secondary">
-          View pricing
+          View on GitHub
         </Button>
       </Link>
     </div>

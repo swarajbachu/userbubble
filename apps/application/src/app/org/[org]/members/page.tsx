@@ -1,8 +1,10 @@
-import { invitationQueries, memberQueries } from "@userbubble/db/queries";
-import { notFound, redirect } from "next/navigation";
+import {
+  invitationQueries,
+  memberQueries,
+  permissions,
+} from "@userbubble/db/queries";
 import { Suspense } from "react";
-import { getSession } from "~/auth/server";
-import { getOrganization } from "~/lib/get-organization";
+import { getOrgContext } from "~/lib/get-org-context";
 import { InviteMemberButton } from "./_components/invite-member-button";
 import { MembersTable } from "./_components/members-table";
 
@@ -12,29 +14,14 @@ type MembersPageProps = {
 
 export default async function MembersPage({ params }: MembersPageProps) {
   const { org } = await params;
-  const organization = await getOrganization(org);
-  const session = await getSession();
+  const { organization, session, member } = await getOrgContext(org);
 
-  if (!session) {
-    redirect("/sign-in");
-  }
-
-  const member = await memberQueries.findByUserAndOrg(
-    session.user.id,
-    organization.id
-  );
-
-  if (!member) {
-    notFound();
-  }
-
-  // Fetch members and invitations
   const [members, invitations] = await Promise.all([
     memberQueries.listByOrganization(organization.id),
     invitationQueries.listByOrganization(organization.id),
   ]);
 
-  const canManage = ["owner", "admin"].includes(member.role);
+  const canManage = permissions.canManageMembers(member.role);
 
   return (
     <div className="mx-auto w-full max-w-4xl py-8">

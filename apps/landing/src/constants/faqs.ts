@@ -27,6 +27,16 @@ export const faqs = [
   {
     question: "Can I customize the look and feel of the feedback widget?",
     answer:
-      "Yes! All our SDKs support custom theming. You can customize colors, fonts, and styles to match your brand. The Growth and Enterprise plans also include white-label options for a fully branded experience.",
+      "Yes! All our SDKs support custom theming. You can customize colors, fonts, and styles to match your brand. White-label options are included for free — no paid plans required.",
+  },
+  {
+    question: "Is UserBubble really free?",
+    answer:
+      "Yes! UserBubble is completely free and open source under the MIT license. You can use our hosted version or self-host it on your own infrastructure. There are no paid tiers, usage limits, or hidden fees.",
+  },
+  {
+    question: "Can I self-host UserBubble?",
+    answer:
+      "Absolutely. UserBubble is designed to be self-hostable. Clone the repository, configure your environment variables, and deploy wherever you like — Vercel, Docker, or any Node.js hosting provider. Full instructions are in the README.",
   },
 ];

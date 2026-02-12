@@ -1,7 +1,6 @@
-import { memberQueries } from "@userbubble/db/queries";
-import { notFound, redirect } from "next/navigation";
-import { getSession } from "~/auth/server";
-import { getOrganization } from "~/lib/get-organization";
+import { permissions } from "@userbubble/db/queries";
+import { redirect } from "next/navigation";
+import { getOrgContext } from "~/lib/get-org-context";
 import { ChangelogEditor } from "../_components/changelog-editor";
 
 type CreateChangelogPageProps = {
@@ -12,26 +11,9 @@ export default async function CreateChangelogPage({
   params,
 }: CreateChangelogPageProps) {
   const { org } = await params;
-  const organization = await getOrganization(org);
-  const session = await getSession();
+  const { organization, member } = await getOrgContext(org);
 
-  if (!session) {
-    redirect("/sign-in");
-  }
-
-  const member = await memberQueries.findByUserAndOrg(
-    session.user.id,
-    organization.id
-  );
-
-  if (!member) {
-    notFound();
-  }
-
-  // Only admin/owner can create changelog entries
-  const canManage = ["owner", "admin"].includes(member.role);
-
-  if (!canManage) {
+  if (!permissions.isAdmin(member.role)) {
     redirect(`/org/${org}/changelog`);
   }
 

@@ -75,6 +75,7 @@ export function ChangelogEditor({
     onSubmit: async (values) => {
       if (mode === "edit" && entry) {
         await updateMutation.mutateAsync({
+          organizationId,
           id: entry.id,
           title: values.title,
           description: values.description,
@@ -115,7 +116,7 @@ export function ChangelogEditor({
 
   const handlePublish = async () => {
     if (mode === "edit" && entry) {
-      publishMutation.mutate({ id: entry.id });
+      publishMutation.mutate({ organizationId, id: entry.id });
     } else {
       const values = previewValues;
       await createMutation.mutateAsync({
@@ -136,7 +137,7 @@ export function ChangelogEditor({
 
   const handleDelete = () => {
     if (mode === "edit" && entry) {
-      deleteMutation.mutate({ id: entry.id });
+      deleteMutation.mutate({ organizationId, id: entry.id });
     }
   };
 

@@ -36,7 +36,7 @@ export const CTA = () => (
       <AuthButton className="mt-4" />
     </div>
     <p className="relative z-10 mt-2 text-center text-gray-500 text-xs dark:text-neutral-400">
-      No credit card required • Integrate in 5 minutes
+      Free forever • Open source • Self-hostable
     </p>
   </Container>
 );

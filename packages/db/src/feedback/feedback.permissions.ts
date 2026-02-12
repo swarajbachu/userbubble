@@ -1,11 +1,65 @@
 import { eq } from "drizzle-orm";
 import { db } from "../client";
 import { memberQueries } from "../org/organization.queries";
+import type { Role } from "../org/organization.sql";
 import { organization } from "../org/organization.sql";
 import { feedbackComment, feedbackPost } from "./feedback.sql";
 
+// ---------------------------------------------------------------------------
+// Sync helpers — accept pre-resolved context, no DB queries
+// ---------------------------------------------------------------------------
+
+type PermissionContext = { userId: string; role: Role };
+
 /**
- * Check if user can modify a feedback post
+ * Sync check: can user modify a feedback post?
+ * Rules: Post author OR org admin/owner
+ */
+export const canModifyPostSync = (
+  ctx: PermissionContext,
+  post: { authorId: string | null }
+): boolean =>
+  post.authorId === ctx.userId || ctx.role === "owner" || ctx.role === "admin";
+
+/**
+ * Sync check: can user delete a comment?
+ * Rules: Comment author OR org admin/owner
+ */
+export const canDeleteCommentSync = (
+  ctx: PermissionContext,
+  comment: { authorId: string | null }
+): boolean =>
+  comment.authorId === ctx.userId ||
+  ctx.role === "owner" ||
+  ctx.role === "admin";
+
+/**
+ * Sync check: can user view a feedback post?
+ * Rules: Public posts = everyone, Private posts = author OR team member
+ */
+export const canViewPostSync = (
+  ctx: { userId?: string | null; role?: Role | null },
+  post: { isPublic: boolean; authorId: string | null }
+): boolean => {
+  if (post.isPublic) {
+    return true;
+  }
+  if (!ctx.userId) {
+    return false;
+  }
+  if (post.authorId === ctx.userId) {
+    return true;
+  }
+  // Any org member can view private posts
+  return ctx.role != null;
+};
+
+// ---------------------------------------------------------------------------
+// Async helpers — need DB access (anonymous permission checks, etc.)
+// ---------------------------------------------------------------------------
+
+/**
+ * Check if user can modify a feedback post (async, queries DB)
  * Rules: Post author OR org admin/owner
  */
 export async function canModifyPost(
@@ -21,17 +75,15 @@ export async function canModifyPost(
     return false;
   }
 
-  // Author can always modify
   if (post.authorId === userId) {
     return true;
   }
 
-  // Check if user is admin/owner
   return memberQueries.hasRole(userId, post.organizationId, ["admin", "owner"]);
 }
 
 /**
- * Check if user can delete a feedback post
+ * Check if user can delete a feedback post (async, queries DB)
  * Rules: Same as modify
  */
 export async function canDeletePost(
@@ -42,7 +94,7 @@ export async function canDeletePost(
 }
 
 /**
- * Check if user can delete a comment
+ * Check if user can delete a comment (async, queries DB)
  * Rules: Comment author OR org admin/owner
  */
 export async function canDeleteComment(
@@ -58,12 +110,10 @@ export async function canDeleteComment(
     return false;
   }
 
-  // Comment author can delete
   if (comment.authorId === userId) {
     return true;
   }
 
-  // Get post to find organization
   const post = await db.query.feedbackPost.findFirst({
     where: eq(feedbackPost.id, comment.postId),
     columns: { organizationId: true },
@@ -73,7 +123,6 @@ export async function canDeleteComment(
     return false;
   }
 
-  // Check if user is admin/owner
   return memberQueries.hasRole(userId, post.organizationId, ["admin", "owner"]);
 }
 
@@ -89,19 +138,15 @@ export async function isTeamMember(
 
 /**
  * Check if user (authenticated or anonymous) can create a post
- * For external portal: checks org settings for anonymous permissions
- * For authenticated users: always allowed
  */
 export async function canCreatePost(
   organizationId: string,
   userId?: string | null
 ): Promise<boolean> {
-  // If user is authenticated, they can create posts
   if (userId) {
     return true;
   }
 
-  // Anonymous user - check org settings
   const org = await db.query.organization.findFirst({
     where: eq(organization.id, organizationId),
     columns: { metadata: true },
@@ -111,7 +156,6 @@ export async function canCreatePost(
     return false;
   }
 
-  // Parse settings from metadata
   const { parseOrganizationSettings } = await import(
     "../org/organization-settings"
   );
@@ -136,12 +180,10 @@ export async function canVoteOnPost(
     return false;
   }
 
-  // If user is authenticated, they can vote
   if (userId) {
     return true;
   }
 
-  // Anonymous user - check org settings
   const org = await db.query.organization.findFirst({
     where: eq(organization.id, post.organizationId),
     columns: { metadata: true },
@@ -175,12 +217,10 @@ export async function canCommentOnPost(
     return false;
   }
 
-  // If user is authenticated, they can comment
   if (userId) {
     return true;
   }
 
-  // Anonymous user - check org settings
   const org = await db.query.organization.findFirst({
     where: eq(organization.id, post.organizationId),
     columns: { metadata: true },
@@ -199,8 +239,7 @@ export async function canCommentOnPost(
 }
 
 /**
- * Check if user can view a feedback post
- * Rules: Public posts = everyone, Private posts = author OR team member
+ * Check if user can view a feedback post (async, queries DB)
  */
 export async function canViewPost(
   postId: string,
@@ -219,21 +258,17 @@ export async function canViewPost(
     return false;
   }
 
-  // Public posts are visible to everyone
   if (post.isPublic) {
     return true;
   }
 
-  // Private posts require authentication
   if (!userId) {
     return false;
   }
 
-  // Author can always view their own posts
   if (post.authorId === userId) {
     return true;
   }
 
-  // Check if user is a team member of the organization
   return memberQueries.isMember(userId, post.organizationId);
 }

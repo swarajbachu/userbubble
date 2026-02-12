@@ -17,21 +17,9 @@ import { ModeToggle } from "./mode-toggle";
 
 const items = [
   {
-    title: "Pricing",
-    href: "/pricing",
+    title: "GitHub",
+    href: "https://github.com/userbubble/userbubble",
   },
-  // {
-  //   title: "About",
-  //   href: "/about",
-  // },
-  // {
-  //   title: "Careers",
-  //   href: "/careers",
-  // },
-  // {
-  //   title: "Blog",
-  //   href: "/blog",
-  // },
 ];
 
 export const Navbar = () => (

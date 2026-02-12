@@ -1,12 +1,8 @@
-import { memberQueries } from "../org/organization.queries";
+import type { Role } from "../org/organization.sql";
 
 /**
- * Check if user can manage changelog entries for an organization
- * Rules: Only admin/owner roles can manage changelog
+ * Check if a role can manage changelog entries.
+ * Only admin/owner roles can manage changelog.
  */
-export async function canManageChangelog(
-  userId: string,
-  organizationId: string
-): Promise<boolean> {
-  return memberQueries.hasRole(userId, organizationId, ["admin", "owner"]);
-}
+export const canManageChangelogSync = (role: Role): boolean =>
+  role === "owner" || role === "admin";

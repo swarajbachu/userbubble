@@ -47,11 +47,11 @@ export function ChangelogCard({
   });
 
   const handlePublish = () => {
-    publishMutation.mutate({ id: entry.id });
+    publishMutation.mutate({ organizationId, id: entry.id });
   };
 
   const handleDelete = () => {
-    deleteMutation.mutate({ id: entry.id });
+    deleteMutation.mutate({ organizationId, id: entry.id });
   };
 
   return (
