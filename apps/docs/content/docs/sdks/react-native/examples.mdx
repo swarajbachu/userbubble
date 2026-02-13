@@ -1,0 +1,546 @@
+---
+title: Examples
+description: Complete code examples for common use cases
+---
+
+## Basic Integration
+
+### Expo App
+
+Complete example for Expo projects:
+
+```typescript
+import { StatusBar } from "expo-status-bar";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { UserbubbleProvider, useUserbubble } from "@userbubble/react-native";
+
+export default function App() {
+  return (
+    <UserbubbleProvider
+      config={{
+        apiKey: process.env.EXPO_PUBLIC_USERBUBBLE_API_KEY!,
+        debug: __DEV__,
+      }}
+    >
+      <MainApp />
+      <StatusBar style="auto" />
+    </UserbubbleProvider>
+  );
+}
+
+function MainApp() {
+  const { identify, openUserbubble, isIdentified, logout } = useUserbubble();
+
+  const handleLogin = async () => {
+    try {
+      await identify({
+        id: "user_123",
+        email: "john@example.com",
+        name: "John Doe",
+        avatar: "https://example.com/avatar.jpg",
+      });
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Userbubble SDK Example</Text>
+
+      {!isIdentified ? (
+        <Button title="Login" onPress={handleLogin} />
+      ) : (
+        <View style={styles.actions}>
+          <Button
+            title="Give Feedback"
+            onPress={() => openUserbubble("/feedback")}
+          />
+          <Button
+            title="View Changelog"
+            onPress={() => openUserbubble("/changelog")}
+          />
+          <Button title="Logout" onPress={logout} />
+        </View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  actions: {
+    gap: 10,
+    width: "100%",
+  },
+});
+```
+
+---
+
+### Bare React Native App
+
+Complete example for bare React Native projects:
+
+```typescript
+import React from "react";
+import { Button, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { UserbubbleProvider, useUserbubble } from "@userbubble/react-native";
+
+export default function App() {
+  return (
+    <UserbubbleProvider
+      config={{
+        apiKey: process.env.USERBUBBLE_API_KEY!,
+        debug: __DEV__,
+        storageType: "async-storage",
+      }}
+    >
+      <SafeAreaView style={styles.container}>
+        <MainApp />
+      </SafeAreaView>
+    </UserbubbleProvider>
+  );
+}
+
+function MainApp() {
+  const { identify, openUserbubble, isIdentified, logout, user } = useUserbubble();
+
+  const handleLogin = async () => {
+    try {
+      await identify({
+        id: "user_456",
+        email: "jane@example.com",
+        name: "Jane Smith",
+      });
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  return (
+    <View style={styles.content}>
+      <Text style={styles.title}>Welcome to Userbubble</Text>
+
+      {isIdentified && user && (
+        <Text style={styles.subtitle}>Hello, {user.name}!</Text>
+      )}
+
+      {!isIdentified ? (
+        <Button title="Sign In" onPress={handleLogin} />
+      ) : (
+        <View style={styles.buttons}>
+          <Button title="Feedback" onPress={() => openUserbubble("/feedback")} />
+          <Button title="Sign Out" onPress={logout} />
+        </View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 20,
+  },
+  buttons: {
+    gap: 12,
+    width: "100%",
+  },
+});
+```
+
+---
+
+## Integration with Navigation
+
+### React Navigation Example
+
+Integrate with React Navigation to identify users after login:
+
+```typescript
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { UserbubbleProvider, useUserbubble } from "@userbubble/react-native";
+
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  return (
+    <UserbubbleProvider
+      config={{
+        apiKey: process.env.EXPO_PUBLIC_USERBUBBLE_API_KEY!,
+      }}
+    >
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserbubbleProvider>
+  );
+}
+
+function LoginScreen({ navigation }) {
+  const { identify } = useUserbubble();
+
+  const handleLogin = async () => {
+    try {
+      // Your login logic
+      const user = await authenticateUser();
+
+      // Identify with Userbubble
+      await identify({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      });
+
+      // Navigate to home
+      navigation.replace("Home");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  return (
+    <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
+      <Button title="Login" onPress={handleLogin} />
+    </View>
+  );
+}
+
+function HomeScreen() {
+  const { openUserbubble, logout, user } = useUserbubble();
+
+  return (
+    <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
+      <Text>Welcome, {user?.name}!</Text>
+      <Button
+        title="Give Feedback"
+        onPress={() => openUserbubble("/feedback")}
+      />
+      <Button title="Logout" onPress={logout} />
+    </View>
+  );
+}
+```
+
+---
+
+## Custom Storage Adapter
+
+### Using Custom Storage
+
+Implement a custom storage adapter for special requirements:
+
+```typescript
+import { UserbubbleProvider, type StorageAdapter } from "@userbubble/react-native";
+import { MMKV } from "react-native-mmkv";
+
+// Create MMKV instance
+const storage = new MMKV();
+
+// Implement custom storage adapter
+const mmkvStorage: StorageAdapter = {
+  async getItem(key: string): Promise<string | null> {
+    return storage.getString(key) ?? null;
+  },
+
+  async setItem(key: string, value: string): Promise<void> {
+    storage.set(key, value);
+  },
+
+  async removeItem(key: string): Promise<void> {
+    storage.delete(key);
+  },
+
+  async clear(): Promise<void> {
+    storage.clearAll();
+  },
+};
+
+export default function App() {
+  return (
+    <UserbubbleProvider
+      config={{
+        apiKey: process.env.EXPO_PUBLIC_USERBUBBLE_API_KEY!,
+        customStorage: mmkvStorage,
+      }}
+    >
+      <YourApp />
+    </UserbubbleProvider>
+  );
+}
+```
+
+---
+
+## Advanced Patterns
+
+### Conditional Rendering Based on Auth State
+
+```typescript
+import { useUserbubble } from "@userbubble/react-native";
+
+function MyScreen() {
+  const { isInitialized, isIdentified, user } = useUserbubble();
+
+  // Show loading state while SDK initializes
+  if (!isInitialized) {
+    return <LoadingScreen />;
+  }
+
+  // Show login screen if not identified
+  if (!isIdentified) {
+    return <LoginScreen />;
+  }
+
+  // Show main content for identified users
+  return (
+    <View>
+      <Text>Welcome, {user?.name}!</Text>
+      <YourAppContent />
+    </View>
+  );
+}
+```
+
+---
+
+### Feedback Button Component
+
+Reusable feedback button component:
+
+```typescript
+import { useUserbubble } from "@userbubble/react-native";
+import { Button, type ButtonProps } from "react-native";
+
+interface FeedbackButtonProps extends Omit<ButtonProps, "onPress"> {
+  path?: string;
+}
+
+export function FeedbackButton({ path = "/feedback", ...props }: FeedbackButtonProps) {
+  const { openUserbubble, isIdentified } = useUserbubble();
+
+  if (!isIdentified) {
+    return null;
+  }
+
+  return (
+    <Button
+      {...props}
+      title={props.title || "Give Feedback"}
+      onPress={() => openUserbubble(path)}
+    />
+  );
+}
+
+// Usage
+function MyScreen() {
+  return (
+    <View>
+      <FeedbackButton />
+      <FeedbackButton title="View Updates" path="/changelog" />
+    </View>
+  );
+}
+```
+
+---
+
+### Error Handling
+
+Comprehensive error handling example:
+
+```typescript
+import { useUserbubble } from "@userbubble/react-native";
+import { Alert } from "react-native";
+
+function LoginScreen() {
+  const { identify } = useUserbubble();
+  const [loading, setLoading] = React.useState(false);
+
+  const handleLogin = async () => {
+    setLoading(true);
+
+    try {
+      // Your login logic
+      const credentials = await getCredentials();
+      const user = await authenticateUser(credentials);
+
+      // Identify with Userbubble
+      await identify({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      });
+
+      Alert.alert("Success", "You're logged in!");
+    } catch (error) {
+      console.error("Login error:", error);
+
+      Alert.alert(
+        "Login Failed",
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <View>
+      <Button
+        title={loading ? "Logging in..." : "Login"}
+        onPress={handleLogin}
+        disabled={loading}
+      />
+    </View>
+  );
+}
+```
+
+---
+
+### TypeScript Types
+
+Using TypeScript for type safety:
+
+```typescript
+import type { UserbubbleUser, UserbubbleConfig } from "@userbubble/react-native";
+
+// Type-safe config
+const config: UserbubbleConfig = {
+  apiKey: process.env.EXPO_PUBLIC_USERBUBBLE_API_KEY!,
+  debug: __DEV__,
+  baseUrl: "https://app.userbubble.com",
+};
+
+// Type-safe user identification
+async function identifyUser(userData: UserbubbleUser) {
+  const { identify } = useUserbubble();
+  await identify(userData);
+}
+
+// Custom user type extending Userbubble user
+interface ExtendedUser extends UserbubbleUser {
+  phoneNumber?: string;
+  subscription?: "free" | "pro" | "enterprise";
+}
+
+function handleUserLogin(user: ExtendedUser) {
+  // TypeScript ensures we pass correct fields to identify
+  identify({
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    avatar: user.avatar,
+  });
+}
+```
+
+---
+
+## Testing
+
+### Mocking for Tests
+
+Mock Userbubble for unit tests:
+
+```typescript
+// __mocks__/@userbubble/react-native.ts
+export const useUserbubble = jest.fn(() => ({
+  user: null,
+  isInitialized: true,
+  isIdentified: false,
+  identify: jest.fn(),
+  logout: jest.fn(),
+  getUser: jest.fn(() => null),
+  openUserbubble: jest.fn(),
+}));
+
+export const UserbubbleProvider = ({ children }: { children: React.ReactNode }) => (
+  <>{children}</>
+);
+```
+
+**Test example:**
+
+```typescript
+import { render, fireEvent } from "@testing-library/react-native";
+import { useUserbubble } from "@userbubble/react-native";
+
+jest.mock("@userbubble/react-native");
+
+describe("MyComponent", () => {
+  it("identifies user on login", async () => {
+    const mockIdentify = jest.fn();
+    (useUserbubble as jest.Mock).mockReturnValue({
+      identify: mockIdentify,
+      isIdentified: false,
+    });
+
+    const { getByText } = render(<MyComponent />);
+    fireEvent.press(getByText("Login"));
+
+    expect(mockIdentify).toHaveBeenCalledWith({
+      id: "user_123",
+      email: "test@example.com",
+    });
+  });
+});
+```
+
+---
+
+## Environment-Specific Configuration
+
+### Development vs Production
+
+```typescript
+const config: UserbubbleConfig = {
+  apiKey: __DEV__
+    ? process.env.EXPO_PUBLIC_USERBUBBLE_TEST_API_KEY!
+    : process.env.EXPO_PUBLIC_USERBUBBLE_API_KEY!,
+  debug: __DEV__,
+  baseUrl: __DEV__
+    ? "https://staging.userbubble.com"
+    : "https://app.userbubble.com",
+};
+```
+
+---
+
+## Next Steps
+
+- Review the [API Reference](/docs/sdks/react-native/api-reference) for complete documentation
+- Return to [Quick Start](/docs/sdks/react-native/quick-start) guide
+- Check [Installation](/docs/sdks/react-native/installation) requirements

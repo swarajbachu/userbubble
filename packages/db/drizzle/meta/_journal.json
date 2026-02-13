@@ -36,6 +36,20 @@
       "when": 1765648737390,
       "tag": "0004_open_gladiator",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1766580410345,
+      "tag": "0005_oval_abomination",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1766658126175,
+      "tag": "0006_late_micromacro",
+      "breakpoints": true
     }
   ]
 }

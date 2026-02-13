@@ -3,6 +3,7 @@
 import type { Organization } from "@userbubble/db/schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@userbubble/ui/tabs";
 import { useState } from "react";
+import { ApiKeysTab } from "./tabs/api-keys-tab";
 import { BrandingTab } from "./tabs/branding-tab";
 import { ChangelogTab } from "./tabs/changelog-tab";
 import { DataTab } from "./tabs/data-tab";
@@ -19,10 +20,11 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
 
   return (
     <Tabs onValueChange={setActiveTab} value={activeTab}>
-      <TabsList className="mb-6" variant="line">
+      <TabsList className="mb-6" variant="underline">
         <TabsTrigger value="branding">Branding</TabsTrigger>
         <TabsTrigger value="feedback">Feedback</TabsTrigger>
         <TabsTrigger value="changelog">Changelog</TabsTrigger>
+        <TabsTrigger value="api-keys">API Keys</TabsTrigger>
         {/* <TabsTrigger value="billing">Billing</TabsTrigger> */}
         {/* <TabsTrigger value="domain">Domain</TabsTrigger> */}
         {/* <TabsTrigger value="integrations">Integrations</TabsTrigger> */}
@@ -40,6 +42,10 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
 
       <TabsContent value="changelog">
         <ChangelogTab organization={organization} />
+      </TabsContent>
+
+      <TabsContent value="api-keys">
+        <ApiKeysTab organization={organization} userRole={userRole} />
       </TabsContent>
 
       {/* <TabsContent value="billing">
