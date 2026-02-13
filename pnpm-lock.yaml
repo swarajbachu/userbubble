@@ -8401,9 +8401,12 @@ packages:
   unist-util-visit@5.0.0:
     resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
 
-
   unist-util-visit@5.1.0:
     resolution: {integrity: sha512-m+vIdyeCOpdr/QeQCu2EzxX/ohgS8KbnPDgFni4dQsfSCtpz8UqDyY5GjRru8PDKuYn7Fq19j1CQ+nJSsGKOzg==}
+
+  universalify@0.1.2:
+    resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
+    engines: {node: '>= 4.0.0'}
 
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
@@ -10354,8 +10357,7 @@ snapshots:
       postcss: 8.4.49
       resolve-from: 5.0.0
     optionalDependencies:
-
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -10447,8 +10449,7 @@ snapshots:
       '@expo/json-file': 10.0.8
       '@react-native/normalize-colors': 0.81.5
       debug: 4.4.3
-
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
       resolve-from: 5.0.0
       semver: 7.7.3
       xml2js: 0.6.0
@@ -13286,7 +13287,7 @@ snapshots:
       resolve-from: 5.0.0
     optionalDependencies:
       '@babel/runtime': 7.28.4
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -14255,7 +14256,7 @@ snapshots:
   expo-crypto@15.0.8(expo@54.0.29):
     dependencies:
       base64-js: 1.5.1
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
 
   expo-dev-client@6.0.20(expo@54.0.29):
     dependencies:
@@ -14529,7 +14530,7 @@ snapshots:
 
   expo-secure-store@15.0.8(expo@54.0.29):
     dependencies:
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
 
   expo-server@1.0.5: {}
 
@@ -18928,6 +18929,8 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.1
       unist-util-visit-parents: 6.0.2
+
+  universalify@0.1.2: {}
 
   universalify@2.0.1: {}
 
