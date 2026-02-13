@@ -53,3 +53,7 @@ dist/
 
 # tanstack
 .tanstack.npmrc
+
+# internal docs
+internal-docs/
+temp_settings.json

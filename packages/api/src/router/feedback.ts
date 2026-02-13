@@ -14,7 +14,6 @@ import {
   getFeedbackPost,
   getFeedbackPosts,
   getPostComments,
-  isTeamMember,
   memberQueries,
   removeVote,
   updateFeedbackPost,
@@ -28,7 +27,7 @@ import {
 } from "@userbubble/db/schema";
 import { z } from "zod";
 
-import { protectedProcedure, publicProcedure } from "../trpc";
+import { orgProcedure, protectedProcedure, publicProcedure } from "../trpc";
 
 export const feedbackRouter = {
   // Get all feedback posts for an organization
@@ -46,7 +45,7 @@ export const feedbackRouter = {
         status: input.status,
         category: input.category,
         sortBy: input.sortBy,
-        userId: ctx.session?.user?.id, // Pass userId for vote lookup
+        userId: ctx.session?.user?.id,
       })
     ),
 
@@ -63,7 +62,6 @@ export const feedbackRouter = {
         });
       }
 
-      // Privacy check: return 404 if can't view
       const canView = await canViewPost(input.id, ctx.session?.user?.id);
       if (!canView) {
         throw new TRPCError({
@@ -81,7 +79,6 @@ export const feedbackRouter = {
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user?.id;
 
-      // Permission check - verify user can create posts in this organization
       const canCreate = await canCreatePost(input.organizationId, userId);
       if (!canCreate) {
         throw new TRPCError({
@@ -92,8 +89,7 @@ export const feedbackRouter = {
         });
       }
 
-      // Create post - anonymous users will show as "Anonymous"
-      const post = await createFeedbackPost({
+      return createFeedbackPost({
         organizationId: input.organizationId,
         authorId: userId ?? null,
         title: input.title,
@@ -103,8 +99,6 @@ export const feedbackRouter = {
         voteCount: 0,
         isPublic: true,
       });
-
-      return post;
     }),
 
   // Update a feedback post (author or org admin only)
@@ -113,7 +107,6 @@ export const feedbackRouter = {
     .mutation(async ({ ctx, input }) => {
       const { id, ...updates } = input;
 
-      // PERMISSION CHECK: Only author or org admin can update
       const canModify = await canModifyPost(ctx.session.user.id, id);
       if (!canModify) {
         throw new TRPCError({
@@ -122,14 +115,13 @@ export const feedbackRouter = {
         });
       }
 
-      return await updateFeedbackPost(id, updates);
+      return updateFeedbackPost(id, updates);
     }),
 
   // Delete a feedback post (author or org admin only)
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // PERMISSION CHECK: Only author or org admin can delete
       const canDelete = await canDeletePost(ctx.session.user.id, input.id);
       if (!canDelete) {
         throw new TRPCError({
@@ -148,14 +140,13 @@ export const feedbackRouter = {
       z.object({
         postId: z.string(),
         value: z.number().min(-1).max(1),
-        sessionId: z.string().optional(), // For anonymous users
+        sessionId: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user?.id ?? null;
       const sessionId = userId ? null : (input.sessionId ?? null);
 
-      // Permission check
       const canVote = await canVoteOnPost(input.postId, userId);
       if (!canVote) {
         throw new TRPCError({
@@ -165,10 +156,8 @@ export const feedbackRouter = {
       }
 
       if (input.value === 0) {
-        // Remove vote
         await removeVote(input.postId, userId, sessionId);
       } else {
-        // Add or update vote
         await voteOnPost({
           postId: input.postId,
           userId,
@@ -180,8 +169,8 @@ export const feedbackRouter = {
       return { success: true };
     }),
 
-  // Update post status (for roadmap drag-and-drop)
-  updateStatus: protectedProcedure
+  // Update post status (for roadmap drag-and-drop) — membership guaranteed by middleware
+  updateStatus: orgProcedure
     .input(
       z.object({
         postId: z.string(),
@@ -189,33 +178,16 @@ export const feedbackRouter = {
           (status) => ["planned", "in_progress", "completed"].includes(status),
           { message: "Status must be planned, in_progress, or completed" }
         ),
-        organizationId: z.string(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      // PERMISSION CHECK: Only org team members can update status
-      const isMember = await isTeamMember(
-        ctx.session.user.id,
-        input.organizationId
-      );
-
-      if (!isMember) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You must be a team member to update post status",
-        });
-      }
-
-      return await updateFeedbackPost(input.postId, {
-        status: input.status,
-      });
-    }),
+    .mutation(async ({ input }) =>
+      updateFeedbackPost(input.postId, { status: input.status })
+    ),
 
   // Get comments for a post
   getComments: publicProcedure
     .input(z.object({ postId: z.string() }))
     .query(async ({ input, ctx }) => {
-      // Get post to find organization ID
       const post = await getFeedbackPost(input.postId);
       if (!post) {
         throw new TRPCError({
@@ -224,7 +196,6 @@ export const feedbackRouter = {
         });
       }
 
-      // Privacy check: return 404 if can't view
       const canView = await canViewPost(input.postId, ctx.session?.user?.id);
       if (!canView) {
         throw new TRPCError({
@@ -243,13 +214,12 @@ export const feedbackRouter = {
         postId: z.string(),
         content: z.string().min(1).max(2000),
         parentId: z.string().optional(),
-        authorName: z.string().min(1).max(100).optional(), // For anonymous users
+        authorName: z.string().min(1).max(100).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user?.id ?? null;
 
-      // Permission check
       const canComment = await canCommentOnPost(input.postId, userId);
       if (!canComment) {
         throw new TRPCError({
@@ -258,7 +228,6 @@ export const feedbackRouter = {
         });
       }
 
-      // Get post to find organization
       const post = await getFeedbackPost(input.postId);
       if (!post) {
         throw new TRPCError({
@@ -267,7 +236,6 @@ export const feedbackRouter = {
         });
       }
 
-      // Privacy check: can't comment on posts you can't view
       const canView = await canViewPost(input.postId, userId);
       if (!canView) {
         throw new TRPCError({
@@ -279,7 +247,7 @@ export const feedbackRouter = {
       const newComment = await createComment({
         postId: input.postId,
         authorId: userId,
-        authorName: userId ? null : input.authorName, // Only for anonymous
+        authorName: userId ? null : input.authorName,
         content: input.content,
         parentId: input.parentId,
       });
@@ -291,12 +259,10 @@ export const feedbackRouter = {
         });
       }
 
-      // Check if user is a team member (only for authenticated users)
       const isAuthorTeamMember = userId
         ? await memberQueries.isMember(userId, post.post.organizationId)
         : false;
 
-      // Return comment with author info (matching getComments structure)
       return {
         comment: newComment,
         author:
@@ -310,7 +276,7 @@ export const feedbackRouter = {
                 createdAt: ctx.session.user.createdAt,
                 updatedAt: ctx.session.user.updatedAt,
               }
-            : null, // Anonymous author
+            : null,
         isTeamMember: isAuthorTeamMember,
       };
     }),
@@ -319,7 +285,6 @@ export const feedbackRouter = {
   deleteComment: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // PERMISSION CHECK: Only comment author or org admin can delete
       const canDelete = await canDeleteComment(ctx.session.user.id, input.id);
       if (!canDelete) {
         throw new TRPCError({

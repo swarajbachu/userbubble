@@ -1,9 +1,10 @@
 import {
-  canModifyPost,
+  canModifyPostSync,
   getFeedbackPost,
   getPostComments,
   getUserVote,
   memberQueries,
+  permissions,
 } from "@userbubble/db/queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
 import {
@@ -32,34 +33,36 @@ export default async function FeedbackPostPage({
 }: FeedbackPostPageProps) {
   const { org, postId } = await params;
 
-  // Fetch organization (cached from layout)
   const organization = await getOrganization(org);
 
-  // Fetch post data
   const post = await getFeedbackPost(postId);
   if (!post) {
     notFound();
   }
 
-  // Verify post belongs to this organization
   if (post.post.organizationId !== organization.id) {
     notFound();
   }
 
-  // Fetch comments with team member status
-  const comments = await getPostComments(postId, organization.id);
+  const [comments, session] = await Promise.all([
+    getPostComments(postId, organization.id),
+    getSession(),
+  ]);
 
-  // Get session and check permissions
-  const session = await getSession();
   const userId = session?.user?.id;
 
-  // Check permissions
-  const canModify = userId ? await canModifyPost(userId, postId) : false;
-  const isAdmin = userId
-    ? await memberQueries.hasRole(userId, organization.id, ["admin", "owner"])
-    : false;
+  // Resolve member once for permission checks
+  const member = userId
+    ? await memberQueries.findByUserAndOrg(userId, organization.id)
+    : null;
 
-  // Check if user voted
+  const role = member?.role ?? null;
+  const isAdmin = role ? permissions.isAdmin(role) : false;
+  const canModify =
+    userId && role
+      ? canModifyPostSync({ userId, role }, { authorId: post.post.authorId })
+      : false;
+
   const hasUserVoted = userId ? !!(await getUserVote(postId, userId)) : false;
 
   const config = statusConfig[post.post.status];

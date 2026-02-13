@@ -10,6 +10,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { Auth } from "@userbubble/auth";
 import { db } from "@userbubble/db/client";
+import { memberQueries } from "@userbubble/db/queries";
 import superjson from "superjson";
 import { ZodError, z } from "zod/v4";
 
@@ -127,6 +128,78 @@ export const protectedProcedure = t.procedure
       ctx: {
         // infers the `session` as non-nullable
         session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  });
+
+/**
+ * Organization procedure
+ *
+ * Extends protectedProcedure. Requires `organizationId` in input,
+ * resolves the member record once, and adds `ctx.org` to context.
+ * Throws FORBIDDEN if the user is not a member.
+ */
+export const orgProcedure = protectedProcedure
+  .input(z.object({ organizationId: z.string() }))
+  .use(async ({ ctx, input, next }) => {
+    const member = await memberQueries.findByUserAndOrg(
+      ctx.session.user.id,
+      input.organizationId
+    );
+
+    if (!member) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You are not a member of this organization",
+      });
+    }
+
+    return next({
+      ctx: {
+        org: {
+          id: input.organizationId,
+          memberId: member.id,
+          role: member.role,
+        },
+      },
+    });
+  });
+
+/**
+ * Organization admin procedure
+ *
+ * Same as orgProcedure but also requires admin or owner role.
+ * Throws FORBIDDEN if not admin/owner.
+ */
+export const orgAdminProcedure = protectedProcedure
+  .input(z.object({ organizationId: z.string() }))
+  .use(async ({ ctx, input, next }) => {
+    const member = await memberQueries.findByUserAndOrg(
+      ctx.session.user.id,
+      input.organizationId
+    );
+
+    if (!member) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You are not a member of this organization",
+      });
+    }
+
+    if (member.role !== "owner" && member.role !== "admin") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Only owners and admins can perform this action",
+      });
+    }
+
+    return next({
+      ctx: {
+        org: {
+          id: input.organizationId,
+          memberId: member.id,
+          role: member.role,
+        },
       },
     });
   });

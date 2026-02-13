@@ -28,9 +28,9 @@ import { SubHeading } from "./subheading";
 export const Benefits = () => {
   const benefits = [
     {
-      title: "Built for Mobile",
+      title: "Works Everywhere",
       description:
-        "Native SDKs for mobile platforms. React Native support available now (Expo and bare workflows). Native Swift and Kotlin SDKs coming soon.",
+        "SDKs for web, mobile, and desktop. React, Next.js, React Native, and more. Native Swift and Kotlin SDKs coming soon.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -72,7 +72,7 @@ export const Benefits = () => {
     {
       title: "Comprehensive Documentation",
       description:
-        "Step-by-step guides for mobile development. Code examples for common scenarios. Platform-specific tips for iOS and Android.",
+        "Step-by-step guides for every platform. Code examples for common scenarios. Framework-specific tips and best practices.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -84,9 +84,9 @@ export const Benefits = () => {
       ),
     },
     {
-      title: "Per-Org Pricing",
+      title: "Free & Open Source",
       description:
-        "As your team grows, your bill doesn't explode. Pay per organization, not per seat. Invite everyone on your team without worrying about costs.",
+        "No pricing tiers, no per-seat costs, no hidden fees. Completely free and open source under MIT. Self-host or use our hosted version.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -98,9 +98,9 @@ export const Benefits = () => {
       ),
     },
     {
-      title: "Mobile-First Dashboard",
+      title: "Unified Dashboard",
       description:
-        "View feedback from all your mobile users in one dashboard. Filter by platform (iOS/Android), track votes, and prioritize features that matter most.",
+        "View feedback from all your users in one dashboard. Filter by platform, track votes, and prioritize features that matter most.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -116,14 +116,11 @@ export const Benefits = () => {
     <Container className="relative overflow-hidden border-divide border-x px-4 py-20 md:px-8">
       <div className="relative flex flex-col items-center">
         <Badge text="Benefits" />
-        <SectionHeading className="mt-4">
-          Built for mobile developers
-        </SectionHeading>
+        <SectionHeading className="mt-4">Built for developers</SectionHeading>
 
         <SubHeading as="p" className="mx-auto mt-6 max-w-lg">
           Lightweight SDKs, comprehensive docs, and seamless integration. Get
-          feedback from mobile users without disrupting your development
-          workflow.
+          feedback from your users without disrupting your development workflow.
         </SubHeading>
       </div>
       <div className="mt-20 grid grid-cols-1 gap-4 md:grid-cols-3">

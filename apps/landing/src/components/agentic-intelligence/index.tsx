@@ -24,11 +24,11 @@ export const AgenticIntelligence = () => (
     <div className="flex flex-col items-center py-16">
       <Badge text="Features" />
       <SectionHeading className="mt-4">
-        Everything you need for mobile feedback
+        Everything you need for user feedback
       </SectionHeading>
 
       <SubHeading as="p" className="mx-auto mt-6 max-w-lg px-2">
-        Collect feedback from mobile users, prioritize with votes, and ship
+        Collect feedback from your users, prioritize with votes, and ship
         features faster—all without leaving your existing workflow.
       </SubHeading>
       <div className="mt-16 grid grid-cols-1 divide-y divide-divide border-divide border-y md:grid-cols-2 md:divide-x">
@@ -40,11 +40,11 @@ export const AgenticIntelligence = () => (
               size={24}
               strokeWidth={1.5}
             />
-            <CardTitle>Mobile-First SDKs</CardTitle>
+            <CardTitle>Universal SDKs</CardTitle>
           </div>
           <CardDescription>
-            Native SDKs built for mobile platforms. Starting with React Native
-            for iOS and Android. Native Swift and Kotlin SDKs coming soon.
+            SDKs for every platform. React, Next.js, Remix, React Native, and
+            more. Native Swift and Kotlin SDKs coming soon.
           </CardDescription>
           <LLMModelSelectorSkeleton />
         </Card>
@@ -75,12 +75,12 @@ export const AgenticIntelligence = () => (
               size={24}
               strokeWidth={1.5}
             />
-            <CardTitle>Native Mobile Experience</CardTitle>
+            <CardTitle>Native Experience</CardTitle>
           </div>
           <CardDescription>
-            Feedback widget that feels native to iOS and Android. Follows
-            platform design guidelines. Supports dark mode and accessibility
-            features out of the box.
+            Feedback widget that feels native to every platform. Follows design
+            guidelines. Supports dark mode and accessibility features out of the
+            box.
           </CardDescription>
           <NativeToolsIntegrationSkeleton />
         </Card>
@@ -97,9 +97,9 @@ export const AgenticIntelligence = () => (
             <CardTitle>Developer-Friendly Docs</CardTitle>
           </div>
           <CardDescription>
-            Clear guides for mobile development. Quick-start examples, API
-            references, and troubleshooting tips. Built by mobile developers,
-            for mobile developers.
+            Clear guides for every framework. Quick-start examples, API
+            references, and troubleshooting tips. Built by developers, for
+            developers.
           </CardDescription>
         </Card>
         <Card>

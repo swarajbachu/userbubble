@@ -1,19 +1,20 @@
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import {
-  canManageChangelog,
+  canManageChangelogSync,
   createChangelogEntryWithFeedback,
   deleteChangelogEntry,
   getChangelogEntries,
   getChangelogEntry,
   getLinkedFeedback,
   linkFeedbackToChangelog,
+  memberQueries,
   publishChangelogEntry,
   unlinkFeedbackFromChangelog,
   updateChangelogEntry,
 } from "@userbubble/db/queries";
 import { z } from "zod";
 
-import { protectedProcedure, publicProcedure } from "../trpc";
+import { orgAdminProcedure, publicProcedure } from "../trpc";
 
 export const changelogRouter = {
   // Get all changelog entries for an organization
@@ -35,12 +36,14 @@ export const changelogRouter = {
 
       // If user is not admin, force published filter to true
       if (userId) {
-        const isAdmin = await canManageChangelog(userId, input.organizationId);
-        if (!isAdmin) {
+        const member = await memberQueries.findByUserAndOrg(
+          userId,
+          input.organizationId
+        );
+        if (!(member && canManageChangelogSync(member.role))) {
           published = true;
         }
       } else {
-        // Non-authenticated users only see published entries
         published = true;
       }
 
@@ -103,10 +106,9 @@ export const changelogRouter = {
     }),
 
   // Create a new changelog entry (admin only)
-  create: protectedProcedure
+  create: orgAdminProcedure
     .input(
       z.object({
-        organizationId: z.string(),
         title: z.string().min(1).max(256),
         description: z.string().min(1),
         version: z.string().optional(),
@@ -117,22 +119,8 @@ export const changelogRouter = {
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Permission check
-      const canManage = await canManageChangelog(
-        ctx.session.user.id,
-        input.organizationId
-      );
-
-      if (!canManage) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only admin/owner roles can manage changelog entries",
-        });
-      }
-
-      // Create entry with linked feedback in a transaction
       const entry = await createChangelogEntryWithFeedback({
-        organizationId: input.organizationId,
+        organizationId: ctx.org.id,
         authorId: ctx.session.user.id,
         title: input.title,
         description: input.description,
@@ -148,7 +136,7 @@ export const changelogRouter = {
     }),
 
   // Update an existing changelog entry (admin only)
-  update: protectedProcedure
+  update: orgAdminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -160,7 +148,6 @@ export const changelogRouter = {
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Get entry to check organization
       const existingEntry = await getChangelogEntry(input.id);
 
       if (!existingEntry) {
@@ -170,36 +157,24 @@ export const changelogRouter = {
         });
       }
 
-      // Permission check
-      const canManage = await canManageChangelog(
-        ctx.session.user.id,
-        existingEntry.organizationId
-      );
-
-      if (!canManage) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only admin/owner roles can manage changelog entries",
-        });
+      // Cross-org safety check
+      if (existingEntry.organizationId !== ctx.org.id) {
+        throw new TRPCError({ code: "FORBIDDEN" });
       }
 
-      // Update entry
-      const entry = await updateChangelogEntry(input.id, {
+      return updateChangelogEntry(input.id, {
         title: input.title,
         description: input.description,
         version: input.version,
         coverImageUrl: input.coverImageUrl,
         tags: input.tags,
       });
-
-      return entry;
     }),
 
   // Publish a changelog entry (admin only)
-  publish: protectedProcedure
+  publish: orgAdminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // Get entry to check organization
       const existingEntry = await getChangelogEntry(input.id);
 
       if (!existingEntry) {
@@ -209,30 +184,17 @@ export const changelogRouter = {
         });
       }
 
-      // Permission check
-      const canManage = await canManageChangelog(
-        ctx.session.user.id,
-        existingEntry.organizationId
-      );
-
-      if (!canManage) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only admin/owner roles can publish changelog entries",
-        });
+      if (existingEntry.organizationId !== ctx.org.id) {
+        throw new TRPCError({ code: "FORBIDDEN" });
       }
 
-      // Publish entry
-      const entry = await publishChangelogEntry(input.id);
-
-      return entry;
+      return publishChangelogEntry(input.id);
     }),
 
   // Delete a changelog entry (admin only)
-  delete: protectedProcedure
+  delete: orgAdminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // Get entry to check organization
       const existingEntry = await getChangelogEntry(input.id);
 
       if (!existingEntry) {
@@ -242,27 +204,16 @@ export const changelogRouter = {
         });
       }
 
-      // Permission check
-      const canManage = await canManageChangelog(
-        ctx.session.user.id,
-        existingEntry.organizationId
-      );
-
-      if (!canManage) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only admin/owner roles can delete changelog entries",
-        });
+      if (existingEntry.organizationId !== ctx.org.id) {
+        throw new TRPCError({ code: "FORBIDDEN" });
       }
 
-      // Delete entry
       await deleteChangelogEntry(input.id);
-
       return { success: true };
     }),
 
   // Link feedback posts to a changelog entry (admin only)
-  linkFeedback: protectedProcedure
+  linkFeedback: orgAdminProcedure
     .input(
       z.object({
         entryId: z.string(),
@@ -270,7 +221,6 @@ export const changelogRouter = {
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Get entry to check organization
       const existingEntry = await getChangelogEntry(input.entryId);
 
       if (!existingEntry) {
@@ -280,30 +230,15 @@ export const changelogRouter = {
         });
       }
 
-      // Permission check
-      const canManage = await canManageChangelog(
-        ctx.session.user.id,
-        existingEntry.organizationId
-      );
-
-      if (!canManage) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only admin/owner roles can manage changelog entries",
-        });
+      if (existingEntry.organizationId !== ctx.org.id) {
+        throw new TRPCError({ code: "FORBIDDEN" });
       }
 
-      // Link feedback posts
-      const links = await linkFeedbackToChangelog(
-        input.entryId,
-        input.feedbackPostIds
-      );
-
-      return links;
+      return linkFeedbackToChangelog(input.entryId, input.feedbackPostIds);
     }),
 
   // Unlink feedback posts from a changelog entry (admin only)
-  unlinkFeedback: protectedProcedure
+  unlinkFeedback: orgAdminProcedure
     .input(
       z.object({
         entryId: z.string(),
@@ -311,7 +246,6 @@ export const changelogRouter = {
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Get entry to check organization
       const existingEntry = await getChangelogEntry(input.entryId);
 
       if (!existingEntry) {
@@ -321,22 +255,11 @@ export const changelogRouter = {
         });
       }
 
-      // Permission check
-      const canManage = await canManageChangelog(
-        ctx.session.user.id,
-        existingEntry.organizationId
-      );
-
-      if (!canManage) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only admin/owner roles can manage changelog entries",
-        });
+      if (existingEntry.organizationId !== ctx.org.id) {
+        throw new TRPCError({ code: "FORBIDDEN" });
       }
 
-      // Unlink feedback posts
       await unlinkFeedbackFromChangelog(input.entryId, input.feedbackPostIds);
-
       return { success: true };
     }),
 } satisfies TRPCRouterRecord;

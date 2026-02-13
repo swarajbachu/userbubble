@@ -21,9 +21,9 @@ import { SubHeading } from "./subheading";
 export const UseCases = () => {
   const useCases = [
     {
-      title: "Mobile-First Startups",
+      title: "Startups",
       description:
-        "Building the next big mobile app? Collect feedback directly from users, prioritize with votes, and ship features your users actually want.",
+        "Building the next big thing? Collect feedback directly from users, prioritize with votes, and ship features your users actually want.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -37,7 +37,7 @@ export const UseCases = () => {
     {
       title: "Cross-Platform Apps",
       description:
-        "Building for multiple mobile platforms? Collect feedback from both iOS and Android users in one unified dashboard.",
+        "Building for web, mobile, and desktop? Collect feedback from all your users in one unified dashboard, no matter the platform.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -51,7 +51,7 @@ export const UseCases = () => {
     {
       title: "Developer Tools",
       description:
-        "Building for mobile developers? Our mobile SDKs let your users submit feedback without leaving your app. Native experience, zero friction.",
+        "Building dev tools? Our SDKs let your users submit feedback without leaving your app. Native experience, zero friction.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -77,9 +77,9 @@ export const UseCases = () => {
       ),
     },
     {
-      title: "Mobile Product Teams",
+      title: "SaaS Products",
       description:
-        "Managing a mobile product? Empower your team to collect feedback from users, track feature requests, and share your mobile roadmap.",
+        "Empower your team to collect feedback from users, track feature requests, and share your product roadmap publicly.",
       icon: (
         <HugeiconsIcon
           className="text-brand"
@@ -93,7 +93,7 @@ export const UseCases = () => {
     {
       title: "Consumer Apps",
       description:
-        "Building a consumer mobile app? Lightweight SDK that won't impact your app's performance. Users can vote on features and see your roadmap.",
+        "Building a consumer app? Lightweight SDK that won't impact your app's performance. Users can vote on features and see your roadmap.",
       icon: (
         <HugeiconsIcon
           className="text-brand"

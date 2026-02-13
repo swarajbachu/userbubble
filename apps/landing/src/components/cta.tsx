@@ -27,16 +27,16 @@ export const CTA = () => (
     <CTAOrbit className="-top-120 mask-b-from-30% absolute inset-x-0" />
     <SectionHeading className="relative z-10 text-center lg:text-6xl">
       Start collecting feedback
-      <br /> from mobile users
+      <br /> from your users
     </SectionHeading>
     <p className="relative z-10 mt-4 text-center text-gray-600 dark:text-neutral-300">
-      Join mobile developers building better apps with real user feedback.
+      Join developers building better apps with real user feedback.
     </p>
     <div className="relative z-20">
       <AuthButton className="mt-4" />
     </div>
     <p className="relative z-10 mt-2 text-center text-gray-500 text-xs dark:text-neutral-400">
-      No credit card required • Integrate in 5 minutes
+      Free forever • Open source • Self-hostable
     </p>
   </Container>
 );
@@ -49,17 +49,17 @@ export const CTAOrbit: React.FC<CTAOrbitProps> = ({
   numRings = 3,
 }) => {
   const logos: LogoItem[] = [
-    { src: "/logos/frameworks/react.svg", alt: "React Native", className: "" },
+    { src: "/logos/frameworks/react.svg", alt: "React", className: "" },
+    { src: "/logos/frameworks/nextjs.svg", alt: "Next.js", className: "" },
+    { src: "/logos/frameworks/vue.svg", alt: "Vue", className: "" },
     { src: "/logos/frameworks/swift.svg", alt: "Swift", className: "" },
     { src: "/logos/frameworks/react.svg", alt: "React Native", className: "" },
+    { src: "/logos/frameworks/nextjs.svg", alt: "Next.js", className: "" },
+    { src: "/logos/frameworks/vue.svg", alt: "Vue", className: "" },
     { src: "/logos/frameworks/swift.svg", alt: "Swift", className: "" },
-    { src: "/logos/frameworks/react.svg", alt: "React Native", className: "" },
-    { src: "/logos/frameworks/swift.svg", alt: "Swift", className: "" },
-    { src: "/logos/frameworks/react.svg", alt: "React Native", className: "" },
-    { src: "/logos/frameworks/swift.svg", alt: "Swift", className: "" },
-    { src: "/logos/frameworks/react.svg", alt: "React Native", className: "" },
-    { src: "/logos/frameworks/swift.svg", alt: "Swift", className: "" },
-    { src: "/logos/frameworks/react.svg", alt: "React Native", className: "" },
+    { src: "/logos/frameworks/react.svg", alt: "React", className: "" },
+    { src: "/logos/frameworks/nextjs.svg", alt: "Next.js", className: "" },
+    { src: "/logos/frameworks/vue.svg", alt: "Vue", className: "" },
     { src: "/logos/frameworks/swift.svg", alt: "Swift", className: "" },
     { src: "/logos/frameworks/react.svg", alt: "React Native", className: "" },
   ];

@@ -1,7 +1,7 @@
-import { memberQueries, organizationQueries } from "@userbubble/db/queries";
-import { notFound, redirect } from "next/navigation";
+import { permissions } from "@userbubble/db/queries";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { getSession } from "~/auth/server";
+import { getOrgContextWithMetadata } from "~/lib/get-org-context";
 import { SettingsTabs } from "./_components/settings-tabs";
 
 type SettingsPageProps = {
@@ -10,31 +10,9 @@ type SettingsPageProps = {
 
 export default async function SettingsPage({ params }: SettingsPageProps) {
   const { org } = await params;
-  // Use direct DB query to get full organization with all fields
-  const organization = await organizationQueries.findBySlug(org);
-  const session = await getSession();
+  const { organization, member } = await getOrgContextWithMetadata(org);
 
-  if (!organization) {
-    notFound();
-  }
-
-  if (!session) {
-    redirect("/sign-in");
-  }
-
-  // Check if user is member
-  const member = await memberQueries.findByUserAndOrg(
-    session.user.id,
-    organization.id
-  );
-
-  if (!member) {
-    notFound();
-  }
-
-  // Only owners and admins can access settings
-  const canManage = ["owner", "admin"].includes(member.role);
-  if (!canManage) {
+  if (!permissions.canManageSettings(member.role)) {
     notFound();
   }
 

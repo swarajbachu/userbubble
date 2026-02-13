@@ -1,5 +1,6 @@
-/** biome-ignore-all lint/nursery/noShadow: items param shadows outer items const intentionally */
 "use client";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { GithubIcon } from "@hugeicons-pro/core-duotone-rounded";
 import {
   AnimatePresence,
   motion,
@@ -15,46 +16,50 @@ import { Container } from "./container";
 import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
 
-const items = [
-  {
-    title: "Pricing",
-    href: "/pricing",
-  },
-  // {
-  //   title: "About",
-  //   href: "/about",
-  // },
-  // {
-  //   title: "Careers",
-  //   href: "/careers",
-  // },
-  // {
-  //   title: "Blog",
-  //   href: "/blog",
-  // },
-];
+const GITHUB_URL = "https://github.com/swarajbachu/userbubble";
+
+const GitHubButton = () => (
+  <Link
+    aria-label="View on GitHub"
+    className="relative flex cursor-pointer items-center justify-center rounded-xl p-2 text-neutral-500 hover:shadow-input dark:text-neutral-500"
+    href={GITHUB_URL}
+    rel="noopener"
+    target="_blank"
+  >
+    <HugeiconsIcon
+      className="size-4 text-gray-600 dark:text-gray-300"
+      color="currentColor"
+      icon={GithubIcon}
+      size={16}
+    />
+  </Link>
+);
 
 export const Navbar = () => (
   <Container as="nav" className="">
-    <FloatingNav items={items} />
-    <DesktopNav items={items} />
-    <MobileNav items={items} />
+    <FloatingNav />
+    <DesktopNav />
+    <MobileNav />
   </Container>
 );
 
-const MobileNav = ({ items }: { items: { title: string; href: string }[] }) => {
+const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="relative flex items-center justify-between p-2 md:hidden">
       <Logo />
-      <button
-        aria-label="Toggle menu"
-        className="flex size-6 flex-col items-center justify-center rounded-md shadow-aceternity"
-        onClick={() => setIsOpen(!isOpen)}
-        type="button"
-      >
-        <HamburgerIcon className="size-4 shrink-0 text-gray-600" />
-      </button>
+      <div className="flex items-center gap-1">
+        <GitHubButton />
+        <ModeToggle />
+        <button
+          aria-label="Toggle menu"
+          className="flex size-6 flex-col items-center justify-center rounded-md shadow-aceternity"
+          onClick={() => setIsOpen(!isOpen)}
+          type="button"
+        >
+          <HamburgerIcon className="size-4 shrink-0 text-gray-600" />
+        </button>
+      </div>
 
       <AnimatePresence>
         {isOpen && (
@@ -65,10 +70,6 @@ const MobileNav = ({ items }: { items: { title: string; href: string }[] }) => {
             initial={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="absolute right-4 bottom-4">
-              <ModeToggle />
-            </div>
-
             <div className="flex items-center justify-between p-4">
               <Logo />
               <button
@@ -80,26 +81,8 @@ const MobileNav = ({ items }: { items: { title: string; href: string }[] }) => {
                 <CloseIcon className="size-4 shrink-0 text-gray-600" />
               </button>
             </div>
-            <div className="mt-6 flex flex-col divide-y divide-divide border-divide border-t">
-              {items.map((item, index) => (
-                <Link
-                  className="px-4 py-2 font-medium text-gray-600 transition duration-200 hover:text-neutral-900 dark:text-gray-300 dark:hover:text-neutral-300"
-                  href={item.href}
-                  key={item.title}
-                  onClick={() => setIsOpen(false)}
-                >
-                  <motion.div
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    initial={{ opacity: 0, y: 10 }}
-                    key={item.title}
-                    transition={{ duration: 0.2, delay: index * 0.1 }}
-                  >
-                    {item.title}
-                  </motion.div>
-                </Link>
-              ))}
-              <div className="mt-4 p-4">
+            <div className="mt-6 flex flex-col border-divide border-t">
+              <div className="p-4">
                 <AuthButton className="w-full" />
               </div>
             </div>
@@ -110,36 +93,18 @@ const MobileNav = ({ items }: { items: { title: string; href: string }[] }) => {
   );
 };
 
-const DesktopNav = ({
-  items,
-}: {
-  items: { title: string; href: string }[];
-}) => (
+const DesktopNav = () => (
   <div className="hidden items-center justify-between px-4 py-4 md:flex">
     <Logo />
-    <div className="flex items-center gap-10">
-      {items.map((item) => (
-        <Link
-          className="font-medium text-gray-600 transition duration-200 hover:text-neutral-900 dark:text-gray-300 dark:hover:text-neutral-300"
-          href={item.href}
-          key={item.title}
-        >
-          {item.title}
-        </Link>
-      ))}
-    </div>
     <div className="flex items-center gap-2">
+      <GitHubButton />
       <ModeToggle />
       <AuthButton />
     </div>
   </div>
 );
 
-const FloatingNav = ({
-  items,
-}: {
-  items: { title: string; href: string }[];
-}) => {
+const FloatingNav = () => {
   const { scrollY } = useScroll();
   const springConfig = {
     stiffness: 300,
@@ -155,18 +120,8 @@ const FloatingNav = ({
       style={{ y }}
     >
       <Logo />
-      <div className="flex items-center gap-10">
-        {items.map((item) => (
-          <Link
-            className="font-medium text-gray-600 transition duration-200 hover:text-neutral-900 dark:text-gray-300 dark:hover:text-neutral-300"
-            href={item.href}
-            key={item.title}
-          >
-            {item.title}
-          </Link>
-        ))}
-      </div>
       <div className="flex items-center gap-2">
+        <GitHubButton />
         <ModeToggle />
         <AuthButton />
       </div>
