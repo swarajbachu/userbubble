@@ -3,6 +3,7 @@
 import { Message01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { FeedbackCategory, FeedbackStatus } from "@userbubble/db/schema";
+import { cn } from "@userbubble/ui";
 import { DoubleCard, DoubleCardInner } from "@userbubble/ui/double-card";
 import { Icon } from "@userbubble/ui/icon";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
@@ -13,12 +14,14 @@ type FeedbackBoardProps = {
   org: string;
   organizationId: string;
   isExternal?: boolean;
+  className?: string;
 };
 
 export function FeedbackBoard({
   org,
   organizationId,
   isExternal = false,
+  className,
 }: FeedbackBoardProps) {
   const trpc = useTRPC();
 
@@ -60,7 +63,7 @@ export function FeedbackBoard({
   }
 
   return (
-    <div className="flex flex-col p-2">
+    <div className={cn("flex flex-col p-2", className)}>
       {posts.map((item) => (
         <PostCard
           // biome-ignore lint/style/noNonNullAssertion: author is always present for feedback posts

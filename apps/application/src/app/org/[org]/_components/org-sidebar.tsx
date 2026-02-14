@@ -215,9 +215,9 @@ export function OrgSidebar({ org }: OrgSidebarProps) {
                     className={cn(
                       "h-8 transition-all duration-200",
                       isActive(item.href) && [
-                        "bg-gradient-to-l bg-white from-indigo-500/20 to-transparent text-zinc-900 ring-1 ring-zinc-200",
+                        "bg-linear-to-l bg-white from-indigo-500/20 to-transparent text-zinc-900 ring-1 ring-zinc-200",
                         "shadow-[inset_0_1px_0_0_rgba(255,255,255,1)]",
-                        "dark:bg-gradient-to-l dark:from-indigo-500/30 dark:to-transparent",
+                        "dark:bg-linear-to-l dark:from-indigo-500/30 dark:to-transparent",
                         "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]",
                         "dark:text-white dark:ring-0",
                       ]

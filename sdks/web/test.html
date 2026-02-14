@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Userbubble Web SDK Test</title>
+    <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 600px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+    button {
+      padding: 8px 16px;
+      margin: 4px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #f0f0f0;
+    }
+    .status {
+      margin: 20px 0;
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    code {
+      background: #e5e5e5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Userbubble Web SDK Test</h1>
+    <p>
+      Make sure your local dev server is running at
+      <code>http://localhost:3000</code>
+    </p>
+
+    <div>
+      <button onclick="initSDK()">1. Init SDK</button>
+      <button onclick="identifyUser()">2. Identify User</button>
+      <button onclick="openWidget()">3. Open Widget</button>
+      <button onclick="closeWidget()">Close</button>
+      <button onclick="logoutUser()">Logout</button>
+      <button onclick="destroySDK()">Destroy</button>
+    </div>
+
+    <div class="status" id="status">Status: Not initialized</div>
+
+    <script src="./dist/userbubble.min.js"></script>
+    <script>
+    "use strict";
+    function updateStatus() {
+      document.getElementById("status").textContent =
+        `Status: identified=${Userbubble.isIdentified} | open=${Userbubble.isOpen} | user=${Userbubble.user?.email ?? "none"}`;
+    }
+
+    function _initSDK() {
+      Userbubble.init({
+        apiKey:
+          "ub_7e72c60bd8244f00b25021ae2e366b8a951612abcf8a25cc704228c515528e56",
+        baseUrl: "http://localhost:3000",
+        useDirectUrls: true,
+        debug: true,
+        theme: "auto",
+        position: "bottom-right",
+      });
+      updateStatus();
+    }
+
+    async function _identifyUser() {
+      try {
+        await Userbubble.identify({
+          id: "test_user_1",
+          email: "test@example.com",
+          name: "Test User",
+        });
+        updateStatus();
+      } catch (e) {
+        alert(`Identify failed: ${e.message}`);
+      }
+    }
+
+    function _openWidget() {
+      Userbubble.open();
+      updateStatus();
+    }
+    function _closeWidget() {
+      Userbubble.close();
+      updateStatus();
+    }
+    function _logoutUser() {
+      Userbubble.logout();
+      updateStatus();
+    }
+    function _destroySDK() {
+      Userbubble.destroy();
+      updateStatus();
+    }
+    </script>
+  </body>
+</html>
