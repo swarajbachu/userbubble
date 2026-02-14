@@ -115,7 +115,6 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       flex: 1;
       width: 100%;
       border: none;
-      border-radius: 16px;
       background: var(--ub-bg);
     }
 
@@ -127,9 +126,6 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
         ${panelHorizontal.includes("right") ? "right: 0" : "left: 0"};
         border-radius: 16px 16px 0 0;
         ${isBottom ? "bottom: 0" : "top: 0"};
-      }
-      .ub-iframe {
-        border-radius: 16px 16px 0 0;
       }
     }
   `;

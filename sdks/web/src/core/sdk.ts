@@ -1,5 +1,5 @@
 import { createLogger } from "../utils/logger";
-import { generateUserbubbleUrl } from "../utils/url";
+
 import { WidgetManager } from "../widget/widget";
 import { identify } from "./auth";
 import * as storage from "./storage";
@@ -113,21 +113,13 @@ export class UserbubbleSDK {
     }
 
     const baseUrl = this.config.baseUrl ?? "https://app.userbubble.com";
-    let url = generateUserbubbleUrl(
-      baseUrl,
-      this.state.organizationSlug,
-      path,
-      this.config.useDirectUrls
-    );
-
-    const params = new URLSearchParams({
+    const authParams = new URLSearchParams({
       external_user: this.state.externalId,
       api_key: this.config.apiKey,
       embed: "true",
-    });
-    url = `${url}?${params.toString()}`;
+    }).toString();
 
-    this.widget?.show(url, path);
+    this.widget?.show(baseUrl, this.state.organizationSlug, authParams, path);
     this.setState({ isOpen: true });
   }
 

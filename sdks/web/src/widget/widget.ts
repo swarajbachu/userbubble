@@ -3,9 +3,6 @@ import { createLogger } from "../utils/logger";
 import { bubbleIcon } from "./icons";
 import { getWidgetStyles } from "./styles";
 
-// Matches both old-style (/feedback) and embed-style (/embed/feedback) paths
-const PATH_REGEX = /(?:\/embed)?\/(?:feedback|roadmap|changelog)/;
-
 export class WidgetManager {
   private host: HTMLDivElement | null = null;
   private shadow: ShadowRoot | null = null;
@@ -17,7 +14,9 @@ export class WidgetManager {
   private readonly log: ReturnType<typeof createLogger>;
   private readonly onOpen: () => void;
   private readonly onClose: () => void;
-  private baseIframeUrl = "";
+  private baseUrl = "";
+  private orgSlug = "";
+  private authParams = "";
   private themeQuery: MediaQueryList | null = null;
   private themeHandler: ((e: MediaQueryListEvent) => void) | null = null;
 
@@ -61,7 +60,7 @@ export class WidgetManager {
     this.bubble.addEventListener("click", () => this.onOpen());
     root.appendChild(this.bubble);
 
-    // Panel — iframe fills the full panel, no header/nav
+    // Panel — iframe fills the full panel
     this.panel = document.createElement("div");
     this.panel.className = "ub-panel";
 
@@ -83,12 +82,19 @@ export class WidgetManager {
     this.log.debug("Widget mounted");
   }
 
-  show(url: string, path?: string): void {
+  show(
+    baseUrl: string,
+    orgSlug: string,
+    authParams: string,
+    path?: string
+  ): void {
     if (!(this.panel && this.iframe)) {
       return;
     }
 
-    this.baseIframeUrl = url;
+    this.baseUrl = baseUrl;
+    this.orgSlug = orgSlug;
+    this.authParams = authParams;
     if (path) {
       this.activePath = path;
     }
@@ -128,22 +134,8 @@ export class WidgetManager {
   }
 
   private buildIframeSrc(path: string): string {
-    // baseIframeUrl already has auth params: ?external_user=xxx&api_key=ub_xxx
-    // We need to reconstruct with the correct path under /embed/
-    const urlObj = new URL(this.baseIframeUrl);
-    const params = urlObj.searchParams;
-
-    // Strip any existing path (old-style or embed-style) to get the org base
-    const origin = urlObj.origin;
-    const basePath = urlObj.pathname.replace(PATH_REGEX, "");
     const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-
-    const newUrl = new URL(`${origin}${basePath}/embed${normalizedPath}`);
-    newUrl.searchParams.set("external_user", params.get("external_user") ?? "");
-    newUrl.searchParams.set("api_key", params.get("api_key") ?? "");
-    newUrl.searchParams.set("embed", "true");
-
-    return newUrl.toString();
+    return `${this.baseUrl}/embed/${this.orgSlug}${normalizedPath}?${this.authParams}`;
   }
 
   private getThemeClass(): string {
@@ -161,7 +153,6 @@ export class WidgetManager {
 
     this.themeQuery = window.matchMedia("(prefers-color-scheme: dark)");
     this.themeHandler = () => {
-      // Send theme update to iframe
       if (this.iframe?.contentWindow) {
         const isDark = this.themeQuery?.matches ?? false;
         this.iframe.contentWindow.postMessage(
@@ -181,7 +172,6 @@ export class WidgetManager {
 
     if (data.type === "userbubble:ready") {
       this.log.debug("Iframe ready");
-      // Send initial theme
       if (this.iframe?.contentWindow) {
         const isDark =
           this.config.theme === "dark" ||
