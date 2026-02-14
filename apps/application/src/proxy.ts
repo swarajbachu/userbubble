@@ -16,6 +16,7 @@ const publicPaths = [
   "/api/auth",
   "/api/trpc",
   "/external",
+  "/embed",
   "/api/identify",
   "/_next",
   "/favicon.ico",
@@ -36,7 +37,7 @@ export async function proxy(request: NextRequest) {
   const hostname = request.headers.get("host") || "";
 
   // If already on /external/ or /not-found path, skip subdomain processing (avoid infinite loop)
-  if (pathname.startsWith("/external/") || pathname.startsWith("/not-found")) {
+  if (pathname.startsWith("/external/") || pathname.startsWith("/embed/") || pathname.startsWith("/not-found")) {
     return NextResponse.next();
   }
 
