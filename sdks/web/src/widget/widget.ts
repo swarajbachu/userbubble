@@ -114,6 +114,12 @@ export class WidgetManager {
     this.log.debug("Panel closed");
   }
 
+  postMessage(data: unknown): void {
+    if (this.iframe?.contentWindow) {
+      this.iframe.contentWindow.postMessage(data, "*");
+    }
+  }
+
   destroy(): void {
     window.removeEventListener("message", this.handleMessage);
 

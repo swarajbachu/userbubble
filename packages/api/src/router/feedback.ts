@@ -27,7 +27,12 @@ import {
 } from "@userbubble/db/schema";
 import { z } from "zod";
 
-import { orgProcedure, protectedProcedure, publicProcedure } from "../trpc";
+import {
+  assertOrgAccess,
+  identifiedProcedure,
+  orgProcedure,
+  publicProcedure,
+} from "../trpc";
 
 export const feedbackRouter = {
   // Get all feedback posts for an organization
@@ -79,6 +84,9 @@ export const feedbackRouter = {
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user?.id;
 
+      // Identified user can only create in their own org
+      assertOrgAccess(ctx, input.organizationId);
+
       const canCreate = await canCreatePost(input.organizationId, userId);
       if (!canCreate) {
         throw new TRPCError({
@@ -102,10 +110,21 @@ export const feedbackRouter = {
     }),
 
   // Update a feedback post (author or org admin only)
-  update: protectedProcedure
+  update: identifiedProcedure
     .input(z.object({ id: z.string() }).merge(updateFeedbackValidator))
     .mutation(async ({ ctx, input }) => {
       const { id, ...updates } = input;
+
+      const post = await getFeedbackPost(id);
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Feedback post not found",
+        });
+      }
+
+      // Identified user can only modify posts in their org
+      assertOrgAccess(ctx, post.post.organizationId);
 
       const canModify = await canModifyPost(ctx.session.user.id, id);
       if (!canModify) {
@@ -119,9 +138,20 @@ export const feedbackRouter = {
     }),
 
   // Delete a feedback post (author or org admin only)
-  delete: protectedProcedure
+  delete: identifiedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const post = await getFeedbackPost(input.id);
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Feedback post not found",
+        });
+      }
+
+      // Identified user can only delete posts in their org
+      assertOrgAccess(ctx, post.post.organizationId);
+
       const canDelete = await canDeletePost(ctx.session.user.id, input.id);
       if (!canDelete) {
         throw new TRPCError({
@@ -146,6 +176,12 @@ export const feedbackRouter = {
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user?.id ?? null;
       const sessionId = userId ? null : (input.sessionId ?? null);
+
+      // Identified user can only vote in their own org
+      const post = await getFeedbackPost(input.postId);
+      if (post) {
+        assertOrgAccess(ctx, post.post.organizationId);
+      }
 
       const canVote = await canVoteOnPost(input.postId, userId);
       if (!canVote) {
@@ -220,19 +256,22 @@ export const feedbackRouter = {
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user?.id ?? null;
 
-      const canComment = await canCommentOnPost(input.postId, userId);
-      if (!canComment) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You don't have permission to comment on this post",
-        });
-      }
-
+      // Identified user can only comment in their own org
       const post = await getFeedbackPost(input.postId);
       if (!post) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Feedback post not found",
+        });
+      }
+
+      assertOrgAccess(ctx, post.post.organizationId);
+
+      const canComment = await canCommentOnPost(input.postId, userId);
+      if (!canComment) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to comment on this post",
         });
       }
 
@@ -282,7 +321,7 @@ export const feedbackRouter = {
     }),
 
   // Delete a comment (author or org admin only)
-  deleteComment: protectedProcedure
+  deleteComment: identifiedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const canDelete = await canDeleteComment(ctx.session.user.id, input.id);

@@ -30,6 +30,7 @@ export class UserbubbleSDK {
     user: null,
     organizationSlug: null,
     externalId: null,
+    authToken: null,
   };
   private readonly listeners = new Set<StateListener>();
   private widget: WidgetManager | null = null;
@@ -56,6 +57,7 @@ export class UserbubbleSDK {
     const savedUser = storage.getUser();
     const savedSlug = storage.getOrganizationSlug();
     const savedExternalId = storage.getExternalId();
+    const savedAuthToken = storage.getAuthToken();
 
     if (savedUser && savedSlug && savedExternalId) {
       this.log.debug("Restored user from storage:", savedUser.email);
@@ -63,6 +65,7 @@ export class UserbubbleSDK {
         user: savedUser,
         organizationSlug: savedSlug,
         externalId: savedExternalId,
+        authToken: savedAuthToken,
         isIdentified: true,
       });
     }
@@ -89,11 +92,13 @@ export class UserbubbleSDK {
     storage.setUser(user);
     storage.setOrganizationSlug(response.organizationSlug);
     storage.setExternalId(user.id);
+    storage.setAuthToken(response.token);
 
     this.setState({
       user,
       organizationSlug: response.organizationSlug,
       externalId: user.id,
+      authToken: response.token,
       isIdentified: true,
     });
 
@@ -105,7 +110,7 @@ export class UserbubbleSDK {
       !(
         this.state.isIdentified &&
         this.state.organizationSlug &&
-        this.state.externalId
+        this.state.authToken
       )
     ) {
       this.log.warn("Cannot open: user not identified. Call identify() first.");
@@ -114,8 +119,7 @@ export class UserbubbleSDK {
 
     const baseUrl = this.config.baseUrl ?? "https://app.userbubble.com";
     const authParams = new URLSearchParams({
-      external_user: this.state.externalId,
-      api_key: this.config.apiKey,
+      auth_token: this.state.authToken,
       embed: "true",
     }).toString();
 
@@ -134,9 +138,12 @@ export class UserbubbleSDK {
       user: null,
       organizationSlug: null,
       externalId: null,
+      authToken: null,
       isIdentified: false,
       isOpen: false,
     });
+    // Notify iframe to clear session
+    this.widget?.postMessage({ type: "userbubble:logout" });
     this.widget?.hide();
     this.log.debug("User logged out");
   }
@@ -151,6 +158,7 @@ export class UserbubbleSDK {
       user: null,
       organizationSlug: null,
       externalId: null,
+      authToken: null,
     });
     this.listeners.clear();
     UserbubbleSDK.instance = null;

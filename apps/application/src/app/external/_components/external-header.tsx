@@ -57,8 +57,11 @@ export function ExternalHeader({
   const navRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const { data: session } = authClient.useSession();
-  const user = session?.user;
+  const { data: sessionData } = authClient.useSession();
+  const user = sessionData?.user;
+  const isIdentified =
+    (sessionData?.session as Record<string, unknown> | undefined)
+      ?.sessionType === "identified";
 
   const getInitials = (name: string) =>
     name
@@ -186,28 +189,34 @@ export function ExternalHeader({
                   <span>Create Post</span>
                 </DropdownMenuItem>
 
-                {/* Only show Settings for admin/owner */}
-                {(memberRole === "admin" || memberRole === "owner") && (
+                {/* Only show Settings for admin/owner (not identified users) */}
+                {!isIdentified &&
+                  (memberRole === "admin" || memberRole === "owner") && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        render={
+                          <Link
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/settings`}
+                          >
+                            <Icon icon={Settings01Icon} size={16} />
+                            <span>Settings</span>
+                          </Link>
+                        }
+                      />
+                    </>
+                  )}
+
+                {/* Don't show Logout for identified users — they're managed by the SDK */}
+                {!isIdentified && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      render={
-                        <Link
-                          href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/settings`}
-                        >
-                          <Icon icon={Settings01Icon} size={16} />
-                          <span>Settings</span>
-                        </Link>
-                      }
-                    />
+                    <DropdownMenuItem onClick={() => authClient.signOut()}>
+                      <Icon icon={Logout01Icon} size={16} />
+                      <span>Logout</span>
+                    </DropdownMenuItem>
                   </>
                 )}
-
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => authClient.signOut()}>
-                  <Icon icon={Logout01Icon} size={16} />
-                  <span>Logout</span>
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (

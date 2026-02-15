@@ -6,6 +6,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { organization } from "better-auth/plugins";
 
+import { embedAuth } from "./plugins/embed-auth";
 import { externalLogin } from "./plugins/external-login";
 
 export function initAuth<
@@ -76,6 +77,11 @@ export function initAuth<
         blockAdminAccounts: true,
         maxTimestampAge: 300, // 5 minutes
       }),
+      // Embed auth plugin for SDK identify + encrypted token flow
+      embedAuth({
+        sessionDuration: 7 * 24 * 60 * 60, // 7 days
+        blockAdminAccounts: true,
+      }),
       ...(options.extraPlugins ?? []),
     ],
     socialProviders: {
@@ -114,6 +120,8 @@ export {
   isValidApiKeyFormat,
   verifyApiKey,
 } from "./utils/api-key";
+// Export auth token utilities for embed session exchange
+export { createAuthToken, verifyAuthToken } from "./utils/auth-token";
 // Export HMAC utilities for SDK and backend usage
 export {
   createHMACSignature,

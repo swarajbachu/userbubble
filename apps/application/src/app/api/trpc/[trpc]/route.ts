@@ -3,6 +3,7 @@ import { appRouter, createTRPCContext } from "@userbubble/api";
 import type { NextRequest } from "next/server";
 
 import { auth } from "~/auth/server";
+import { env } from "~/env";
 
 /**
  * Configure CORS headers for cross-domain requests
@@ -44,6 +45,7 @@ const handler = async (req: NextRequest) => {
       createTRPCContext({
         auth,
         headers: req.headers,
+        authSecret: env.AUTH_SECRET,
       }),
     onError({ error, path }) {
       console.error(`>>> tRPC Error on '${path}'`, error);

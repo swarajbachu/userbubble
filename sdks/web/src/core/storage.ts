@@ -58,8 +58,17 @@ export function setExternalId(id: string): void {
   setItem("external_id", id);
 }
 
+export function getAuthToken(): string | null {
+  return getItem("auth_token");
+}
+
+export function setAuthToken(token: string): void {
+  setItem("auth_token", token);
+}
+
 export function clear(): void {
   removeItem("user");
   removeItem("org_slug");
   removeItem("external_id");
+  removeItem("auth_token");
 }

@@ -31,16 +31,18 @@ export type UserbubbleState = {
   user: UserbubbleUser | null;
   organizationSlug: string | null;
   externalId: string | null;
+  authToken: string | null;
 };
 
 export type IdentifyResponse = {
   success: boolean;
+  token: string;
   organizationSlug: string;
   user: {
     id: string;
     email: string;
     name?: string;
-    avatar?: string | null;
+    image?: string | null;
   };
 };
 

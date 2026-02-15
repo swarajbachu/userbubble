@@ -3,10 +3,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@userbubble/ui";
 import { categoryLabels, statusConfig } from "~/components/feedback/config";
+import { getEmbedToken } from "~/lib/embed-auth-store";
 import { useTRPC } from "~/trpc/react";
 
 type EmbedRoadmapListProps = {
   organizationId: string;
+  orgSlug: string;
 };
 
 const statusOrder = ["in_progress", "planned", "completed"] as const;
@@ -20,7 +22,23 @@ const statusMeta: Record<
   completed: { label: "Completed", dotColor: "bg-emerald-500" },
 };
 
-export function EmbedRoadmapList({ organizationId }: EmbedRoadmapListProps) {
+function getPostUrl(orgSlug: string, postId: string): string {
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://app.userbubble.com";
+  // Replace the app subdomain with the org slug (e.g. app.host.local → orgSlug.host.local)
+  const parsed = new URL(appUrl);
+  const hostParts = parsed.host.split(".");
+  hostParts[0] = orgSlug;
+  const orgBaseUrl = `${parsed.protocol}//${hostParts.join(".")}`;
+  const token = getEmbedToken();
+  const url = `${orgBaseUrl}/feedback/${postId}`;
+  return token ? `${url}?auth_token=${encodeURIComponent(token)}` : url;
+}
+
+export function EmbedRoadmapList({
+  organizationId,
+  orgSlug,
+}: EmbedRoadmapListProps) {
   const trpc = useTRPC();
 
   const { data: allPosts, isLoading } = useQuery(
@@ -86,9 +104,12 @@ export function EmbedRoadmapList({ organizationId }: EmbedRoadmapListProps) {
                 ) : (
                   <div className="space-y-1.5">
                     {group.posts.map((item) => (
-                      <div
-                        className="rounded-lg border px-3 py-2.5"
+                      <a
+                        className="block rounded-lg border px-3 py-2.5 transition-colors hover:bg-muted/50"
+                        href={getPostUrl(orgSlug, item.post.id)}
                         key={item.post.id}
+                        rel="noopener"
+                        target="_blank"
                       >
                         <p className="font-medium text-sm leading-snug">
                           {item.post.title}
@@ -114,7 +135,7 @@ export function EmbedRoadmapList({ organizationId }: EmbedRoadmapListProps) {
                             {item.post.voteCount === 1 ? "vote" : "votes"}
                           </span>
                         </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 )}

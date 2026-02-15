@@ -29,7 +29,7 @@ export default async function EmbedRoadmapPage({
         </div>
       }
     >
-      <EmbedRoadmapList organizationId={organization.id} />
+      <EmbedRoadmapList organizationId={organization.id} orgSlug={org} />
     </Suspense>
   );
 }

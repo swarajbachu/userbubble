@@ -4,15 +4,44 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 /**
- * Client component that bridges the iframe embed mode.
+ * Client component that bridges the iframe embed mode and handles auth token exchange.
+ *
  * When embed=true is in the URL:
  * - Hides the external header and applies minimal chrome
  * - Sends postMessage events to parent window
  * - Listens for theme messages from parent
+ *
+ * When auth_token is in the URL (from embed roadmap redirect):
+ * - Exchanges the encrypted token for a session cookie
+ * - Strips the token from the URL to avoid leaking it in browser history
  */
 export function EmbedBridge() {
   const searchParams = useSearchParams();
   const isEmbed = searchParams.get("embed") === "true";
+  const authToken = searchParams.get("auth_token");
+
+  useEffect(() => {
+    // Exchange auth token for session cookie (works for both embed and direct visits)
+    if (authToken) {
+      fetch("/api/auth/embed-auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: authToken }),
+        credentials: "include",
+      })
+        .then(() => {
+          // Strip auth_token from URL to avoid leaking in browser history
+          const url = new URL(window.location.href);
+          url.searchParams.delete("auth_token");
+          window.history.replaceState({}, "", url.toString());
+          // Reload to pick up the new session in server components
+          window.location.reload();
+        })
+        .catch(() => {
+          // Fail silently — continue as anonymous
+        });
+    }
+  }, [authToken]);
 
   useEffect(() => {
     if (!isEmbed) {
