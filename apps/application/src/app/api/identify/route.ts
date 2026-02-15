@@ -4,6 +4,16 @@ import { generateId } from "better-auth";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, X-API-Key",
+} as const;
+
+export function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders });
+}
+
 const identifySchema = z.object({
   id: z.string().min(1, "User ID is required"),
   email: z.string().email("Valid email is required"),
@@ -18,43 +28,35 @@ const identifySchema = z.object({
  * Works for ALL platforms: React Native, Web, Desktop, APIs!
  * Authenticates users using API keys and creates identified user records
  */
+function jsonResponse(data: unknown, status = 200) {
+  return NextResponse.json(data, { status, headers: corsHeaders });
+}
+
 export async function POST(request: NextRequest) {
   try {
     // 1. Extract and validate API key from header
     const apiKeyHeader = request.headers.get("X-API-Key");
-    console.log(apiKeyHeader, "api");
 
     if (!apiKeyHeader) {
-      return NextResponse.json(
-        { error: "Missing X-API-Key header" },
-        { status: 401 }
-      );
+      return jsonResponse({ error: "Missing X-API-Key header" }, 401);
     }
 
     // 2. Validate API key format
     if (!isValidApiKeyFormat(apiKeyHeader)) {
-      return NextResponse.json(
-        { error: "Invalid API key format" },
-        { status: 401 }
-      );
+      return jsonResponse({ error: "Invalid API key format" }, 401);
     }
 
     // 3. Parse request body
     const body = await request.json();
-    console.log("[identify] Request body:", body);
     const validation = identifySchema.safeParse(body);
 
     if (!validation.success) {
-      console.error(
-        "[identify] Validation failed:",
-        validation.error.flatten()
-      );
-      return NextResponse.json(
+      return jsonResponse(
         {
           error: "Invalid request body",
           details: validation.error.flatten().fieldErrors,
         },
-        { status: 400 }
+        400
       );
     }
 
@@ -64,10 +66,7 @@ export async function POST(request: NextRequest) {
     const validated = await validateApiKeyWithOrg(apiKeyHeader);
 
     if (!validated) {
-      return NextResponse.json(
-        { error: "Invalid or expired API key" },
-        { status: 401 }
-      );
+      return jsonResponse({ error: "Invalid or expired API key" }, 401);
     }
 
     // 5. Update lastUsedAt timestamp (async, don't block)
@@ -85,14 +84,14 @@ export async function POST(request: NextRequest) {
     });
 
     if (!identifiedUserRecord) {
-      return NextResponse.json(
+      return jsonResponse(
         { error: "Failed to create identified user record" },
-        { status: 500 }
+        500
       );
     }
 
     // 7. Return success (no sessions, no cookies!)
-    return NextResponse.json({
+    return jsonResponse({
       success: true,
       user: {
         id: identifiedUserRecord.externalId,
@@ -104,9 +103,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("[identify] Error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return jsonResponse({ error: "Internal server error" }, 500);
   }
 }
