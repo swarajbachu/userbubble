@@ -18,6 +18,9 @@ type AuthTokenPayload = {
 
 const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+/** base64url encoding - supported in Node 18.14+ but not always in @types/node */
+const BASE64URL = "base64url" as BufferEncoding;
+
 function deriveKey(secret: string): Uint8Array {
   return new Uint8Array(createHash("sha256").update(secret).digest()); // 32 bytes for AES-256
 }
@@ -42,7 +45,7 @@ export function createAuthToken(
     new Uint8Array(cipher.final()),
   ]);
   const authTag = cipher.getAuthTag();
-  return `${Buffer.from(iv).toString("base64url")}.${encrypted.toString("base64url")}.${authTag.toString("base64url")}`;
+  return `${Buffer.from(iv).toString(BASE64URL)}.${encrypted.toString(BASE64URL)}.${authTag.toString(BASE64URL)}`;
 }
 
 /**
@@ -67,12 +70,12 @@ export function verifyAuthToken(
     const decipher = createDecipheriv(
       "aes-256-gcm",
       key,
-      new Uint8Array(Buffer.from(ivPart, "base64url"))
+      new Uint8Array(Buffer.from(ivPart, BASE64URL))
     );
-    decipher.setAuthTag(new Uint8Array(Buffer.from(tagPart, "base64url")));
+    decipher.setAuthTag(new Uint8Array(Buffer.from(tagPart, BASE64URL)));
     const decrypted = Buffer.concat([
-      decipher.update(Buffer.from(encPart, "base64url")),
-      decipher.final(),
+      new Uint8Array(decipher.update(Buffer.from(encPart, BASE64URL))),
+      new Uint8Array(decipher.final()),
     ]);
     const payload = JSON.parse(decrypted.toString()) as AuthTokenPayload;
     return payload.exp < Date.now() ? null : payload;
