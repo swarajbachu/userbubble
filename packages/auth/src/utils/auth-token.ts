@@ -73,8 +73,9 @@ export function verifyAuthToken(
       new Uint8Array(Buffer.from(ivPart, BASE64URL))
     );
     decipher.setAuthTag(new Uint8Array(Buffer.from(tagPart, BASE64URL)));
+    const encBytes = new Uint8Array(Buffer.from(encPart, BASE64URL));
     const decrypted = Buffer.concat([
-      new Uint8Array(decipher.update(Buffer.from(encPart, BASE64URL))),
+      new Uint8Array(decipher.update(encBytes)),
       new Uint8Array(decipher.final()),
     ]);
     const payload = JSON.parse(decrypted.toString()) as AuthTokenPayload;
