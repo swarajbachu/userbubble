@@ -18,8 +18,8 @@ type AuthTokenPayload = {
 
 const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-function deriveKey(secret: string): Buffer {
-  return createHash("sha256").update(secret).digest(); // 32 bytes for AES-256
+function deriveKey(secret: string): Uint8Array {
+  return new Uint8Array(createHash("sha256").update(secret).digest()); // 32 bytes for AES-256
 }
 
 /**
@@ -35,14 +35,14 @@ export function createAuthToken(
     exp: Date.now() + TOKEN_TTL_MS,
   };
   const key = deriveKey(secret);
-  const iv = randomBytes(12);
+  const iv = new Uint8Array(randomBytes(12));
   const cipher = createCipheriv("aes-256-gcm", key, iv);
   const encrypted = Buffer.concat([
-    cipher.update(JSON.stringify(full), "utf8"),
-    cipher.final(),
+    new Uint8Array(cipher.update(JSON.stringify(full), "utf8")),
+    new Uint8Array(cipher.final()),
   ]);
   const authTag = cipher.getAuthTag();
-  return `${iv.toString("base64url")}.${encrypted.toString("base64url")}.${authTag.toString("base64url")}`;
+  return `${Buffer.from(iv).toString("base64url")}.${encrypted.toString("base64url")}.${authTag.toString("base64url")}`;
 }
 
 /**
@@ -67,9 +67,9 @@ export function verifyAuthToken(
     const decipher = createDecipheriv(
       "aes-256-gcm",
       key,
-      Buffer.from(ivPart, "base64url")
+      new Uint8Array(Buffer.from(ivPart, "base64url"))
     );
-    decipher.setAuthTag(Buffer.from(tagPart, "base64url"));
+    decipher.setAuthTag(new Uint8Array(Buffer.from(tagPart, "base64url")));
     const decrypted = Buffer.concat([
       decipher.update(Buffer.from(encPart, "base64url")),
       decipher.final(),
