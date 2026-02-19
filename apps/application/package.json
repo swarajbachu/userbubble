@@ -34,7 +34,7 @@
     "date-fns": "^4.1.0",
     "lucide-react": "^0.552.0",
     "motion": "^12.23.26",
-    "next": "^16.0.7",
+    "next": "16.0.10",
     "nuqs": "^2.8.1",
     "react": "catalog:react19",
     "react-day-picker": "^9.12.0",
