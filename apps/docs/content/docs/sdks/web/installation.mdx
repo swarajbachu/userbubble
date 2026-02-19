@@ -1,0 +1,108 @@
+---
+title: Installation
+description: Install the Userbubble Web SDK
+---
+
+## Choose Your Method
+
+<Tabs items={['Script Tag', 'npm', 'React']}>
+  <Tab value="Script Tag">
+    ### Script Tag (any website)
+
+    Add this snippet before the closing `</body>` tag:
+
+    ```html
+    <script src="https://cdn.userbubble.com/userbubble.min.js"></script>
+    <script>
+      Userbubble.init({ apiKey: 'ub_live_xxxxxxxxxxxxx' });
+    </script>
+    ```
+
+    That's it — the widget will appear on your page immediately.
+  </Tab>
+  <Tab value="npm">
+    ### npm / pnpm / yarn
+
+    ```bash
+    npm install @userbubble/web
+    ```
+
+    ```bash
+    pnpm add @userbubble/web
+    ```
+
+    ```bash
+    yarn add @userbubble/web
+    ```
+
+    Then import and initialize:
+
+    ```typescript
+    import { Userbubble } from "@userbubble/web";
+
+    Userbubble.init({ apiKey: "ub_live_xxxxxxxxxxxxx" });
+    ```
+  </Tab>
+  <Tab value="React">
+    ### React
+
+    Install the package:
+
+    ```bash
+    npm install @userbubble/web
+    ```
+
+    Import from the `/react` subpath:
+
+    ```tsx
+    import {
+      UserbubbleProvider,
+      UserbubbleWidget,
+    } from "@userbubble/web/react";
+
+    function App() {
+      return (
+        <UserbubbleProvider config={{ apiKey: "ub_live_xxxxxxxxxxxxx" }}>
+          <MyApp />
+          <UserbubbleWidget />
+        </UserbubbleProvider>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Get Your API Key
+
+Before using the SDK, you'll need an API key:
+
+1. Go to your organization settings in Userbubble
+2. Navigate to "API Keys"
+3. Click "Generate New Key"
+4. Copy the API key (it starts with `ub_live_` or `ub_test_`)
+
+<Callout type="info">
+  Store your API key securely in environment variables. Never commit it to your repository.
+</Callout>
+
+### Environment Variables
+
+**For Next.js / Vite / any bundler:**
+
+Add to your `.env` file:
+
+```bash
+NEXT_PUBLIC_USERBUBBLE_API_KEY=ub_live_xxxxxxxxxxxxx
+```
+
+Then reference it in code:
+
+```typescript
+Userbubble.init({
+  apiKey: process.env.NEXT_PUBLIC_USERBUBBLE_API_KEY!,
+});
+```
+
+## Next Steps
+
+Continue to the [Quick Start](/docs/sdks/web/quick-start) guide to identify users and open the widget.

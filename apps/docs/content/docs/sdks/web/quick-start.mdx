@@ -1,0 +1,113 @@
+---
+title: Quick Start
+description: Get Userbubble running in your web app in 5 minutes
+---
+
+## Vanilla JavaScript
+
+### 1. Initialize the SDK
+
+```typescript
+import { Userbubble } from "@userbubble/web";
+
+Userbubble.init({
+  apiKey: "ub_live_xxxxxxxxxxxxx",
+  position: "bottom-right",
+  theme: "auto",
+});
+```
+
+### 2. Identify the user
+
+Call `identify()` after the user logs in:
+
+```typescript
+await Userbubble.identify({
+  id: "user_123",
+  email: "jane@example.com",
+  name: "Jane Doe",
+});
+```
+
+### 3. Open the widget
+
+The floating bubble button is shown automatically. You can also open it programmatically:
+
+```typescript
+Userbubble.open(); // Opens the feedback panel
+Userbubble.open("/roadmap"); // Opens the roadmap tab
+```
+
+### 4. Log out
+
+When the user logs out, clear their identity:
+
+```typescript
+Userbubble.logout();
+```
+
+---
+
+## React
+
+### 1. Wrap your app
+
+```tsx
+import {
+  UserbubbleProvider,
+  UserbubbleWidget,
+} from "@userbubble/web/react";
+
+function App() {
+  return (
+    <UserbubbleProvider config={{ apiKey: "ub_live_xxxxxxxxxxxxx" }}>
+      <MyApp />
+      <UserbubbleWidget />
+    </UserbubbleProvider>
+  );
+}
+```
+
+### 2. Identify the user
+
+Use the `useUserbubble` hook inside any child component:
+
+```tsx
+import { useUserbubble } from "@userbubble/web/react";
+
+function MyApp() {
+  const { identify, open, isIdentified } = useUserbubble();
+
+  const handleLogin = async () => {
+    await identify({
+      id: "user_123",
+      email: "jane@example.com",
+      name: "Jane Doe",
+    });
+  };
+
+  return (
+    <div>
+      <button onClick={handleLogin}>Login</button>
+      {isIdentified && (
+        <button onClick={() => open()}>Open Feedback</button>
+      )}
+    </div>
+  );
+}
+```
+
+### 3. Log out
+
+```tsx
+const { logout } = useUserbubble();
+
+const handleLogout = () => {
+  logout();
+};
+```
+
+## Next Steps
+
+- See the full [API Reference](/docs/sdks/web/api-reference) for all methods and options
+- Browse [Examples](/docs/sdks/web/examples) for common integration patterns

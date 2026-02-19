@@ -1,0 +1,176 @@
+---
+title: Examples
+description: Code examples and common integration patterns for the Userbubble Web SDK
+---
+
+## Script Tag Embed
+
+Add Userbubble to any website with two lines of HTML:
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>My Website</title>
+  </head>
+  <body>
+    <h1>Welcome</h1>
+
+    <script src="https://cdn.userbubble.com/userbubble.min.js"></script>
+    <script>
+      Userbubble.init({ apiKey: "ub_live_xxxxxxxxxxxxx" });
+
+      // Identify the user after login
+      Userbubble.identify({
+        id: "user_123",
+        email: "jane@example.com",
+        name: "Jane Doe",
+      });
+    </script>
+  </body>
+</html>
+```
+
+---
+
+## Single-Page Application (SPA)
+
+For SPAs built with vanilla JS or any framework, initialize once and identify after authentication:
+
+```typescript
+import { Userbubble } from "@userbubble/web";
+
+// Initialize on app load
+Userbubble.init({
+  apiKey: process.env.USERBUBBLE_API_KEY!,
+  position: "bottom-right",
+  theme: "auto",
+});
+
+// After user logs in
+async function onLogin(user: { id: string; email: string; name: string }) {
+  await Userbubble.identify({
+    id: user.id,
+    email: user.email,
+    name: user.name,
+  });
+}
+
+// On logout
+function onLogout() {
+  Userbubble.logout();
+}
+```
+
+---
+
+## React / Next.js
+
+### Basic Setup
+
+```tsx
+import {
+  UserbubbleProvider,
+  UserbubbleWidget,
+  useUserbubble,
+} from "@userbubble/web/react";
+
+function App() {
+  return (
+    <UserbubbleProvider
+      config={{
+        apiKey: process.env.NEXT_PUBLIC_USERBUBBLE_API_KEY!,
+        position: "bottom-right",
+        theme: "auto",
+      }}
+    >
+      <MainContent />
+      <UserbubbleWidget />
+    </UserbubbleProvider>
+  );
+}
+
+function MainContent() {
+  const { identify, isIdentified } = useUserbubble();
+
+  // Identify after your auth flow completes
+  const handleAuth = async (user: {
+    id: string;
+    email: string;
+    name: string;
+  }) => {
+    await identify({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    });
+  };
+
+  return <div>{/* Your app content */}</div>;
+}
+```
+
+---
+
+## Programmatic Control
+
+Hide the default bubble button and trigger the widget from your own UI:
+
+```typescript
+import { Userbubble } from "@userbubble/web";
+
+Userbubble.init({
+  apiKey: "ub_live_xxxxxxxxxxxxx",
+  hideWidget: true, // Hide the floating button
+});
+
+// Open from your own button
+document.getElementById("feedback-btn")?.addEventListener("click", () => {
+  Userbubble.open("/feedback");
+});
+
+// Navigate to specific tabs
+document.getElementById("roadmap-btn")?.addEventListener("click", () => {
+  Userbubble.open("/roadmap");
+});
+```
+
+React equivalent:
+
+```tsx
+function FeedbackButton() {
+  const { open } = useUserbubble();
+
+  return <button onClick={() => open("/feedback")}>Give Feedback</button>;
+}
+```
+
+---
+
+## Custom Theming
+
+Customize the widget appearance to match your brand:
+
+```typescript
+Userbubble.init({
+  apiKey: "ub_live_xxxxxxxxxxxxx",
+  theme: "dark",
+  accentColor: "#10b981", // Emerald green bubble button
+  position: "bottom-left",
+});
+```
+
+---
+
+## Local Development
+
+Point the SDK at your local Userbubble server:
+
+```typescript
+Userbubble.init({
+  apiKey: "ub_test_xxxxxxxxxxxxx",
+  baseUrl: "http://localhost:3000",
+  useDirectUrls: true,
+  debug: true, // Logs SDK activity to console
+});
+```

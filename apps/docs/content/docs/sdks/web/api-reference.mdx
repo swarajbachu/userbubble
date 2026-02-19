@@ -1,0 +1,177 @@
+---
+title: API Reference
+description: Complete API documentation for the Userbubble Web SDK
+---
+
+## Vanilla JavaScript API
+
+### `Userbubble.init(config)`
+
+Initialize the SDK and mount the widget to the page.
+
+```typescript
+Userbubble.init({
+  apiKey: "ub_live_xxxxx",
+  position: "bottom-right",
+  theme: "auto",
+});
+```
+
+### `Userbubble.identify(user)`
+
+Identify a user. Calls `POST /api/identify` with your API key and stores the session in localStorage.
+
+Returns a `Promise` that resolves when the user is identified.
+
+```typescript
+await Userbubble.identify({
+  id: "user_123",
+  email: "jane@example.com",
+  name: "Jane Doe",
+  avatar: "https://example.com/avatar.jpg",
+});
+```
+
+### `Userbubble.open(path?)`
+
+Open the slide-out panel. Optionally pass a path to navigate to a specific tab.
+
+```typescript
+Userbubble.open();            // Default: /feedback
+Userbubble.open("/feedback"); // Feedback tab
+Userbubble.open("/roadmap");  // Roadmap tab
+Userbubble.open("/changelog"); // Updates tab
+```
+
+### `Userbubble.close()`
+
+Close the slide-out panel.
+
+### `Userbubble.logout()`
+
+Clear the current user identity and stored session.
+
+### `Userbubble.destroy()`
+
+Remove the widget from the DOM entirely. Call `init()` again to re-mount.
+
+### Read-only Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `Userbubble.isIdentified` | `boolean` | Whether a user is currently identified |
+| `Userbubble.isOpen` | `boolean` | Whether the panel is open |
+| `Userbubble.user` | `UserbubbleUser \| null` | The current user, or null |
+
+---
+
+## React Components
+
+### `<UserbubbleProvider>`
+
+Context provider that initializes the SDK. Wrap your app with this component.
+
+```tsx
+import { UserbubbleProvider } from "@userbubble/web/react";
+
+<UserbubbleProvider config={{ apiKey: "ub_live_xxxxx" }}>
+  <App />
+</UserbubbleProvider>
+```
+
+**Props:**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `config` | `UserbubbleWebConfig` | SDK configuration (see [Configuration](#configuration)) |
+| `children` | `ReactNode` | Child components |
+
+### `<UserbubbleWidget />`
+
+Renders the floating bubble button and slide-out panel. Place it inside `<UserbubbleProvider>`.
+
+```tsx
+import { UserbubbleWidget } from "@userbubble/web/react";
+
+<UserbubbleWidget />
+```
+
+### `useUserbubble()`
+
+React hook providing all SDK methods and state.
+
+```typescript
+const {
+  identify,      // (user: UserbubbleUser) => Promise<void>
+  open,          // (path?: string) => void
+  close,         // () => void
+  logout,        // () => void
+  isIdentified,  // boolean
+  isOpen,        // boolean
+  isInitialized, // boolean
+  user,          // UserbubbleUser | null
+} = useUserbubble();
+```
+
+---
+
+## Types
+
+### `UserbubbleUser`
+
+```typescript
+type UserbubbleUser = {
+  id: string;
+  email: string;
+  name?: string;
+  avatar?: string;
+};
+```
+
+### `UserbubbleWebConfig`
+
+```typescript
+type UserbubbleWebConfig = {
+  apiKey: string;
+  baseUrl?: string;
+  useDirectUrls?: boolean;
+  debug?: boolean;
+  position?: WidgetPosition;
+  theme?: WidgetTheme;
+  accentColor?: string;
+  hideWidget?: boolean;
+};
+```
+
+### `WidgetPosition`
+
+```typescript
+type WidgetPosition =
+  | "bottom-right"
+  | "bottom-left"
+  | "top-right"
+  | "top-left";
+```
+
+### `WidgetTheme`
+
+```typescript
+type WidgetTheme = "light" | "dark" | "auto";
+```
+
+---
+
+## Configuration
+
+All options can be passed to `Userbubble.init()` or `<UserbubbleProvider config={...}>`:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `apiKey` | `string` | **required** | Your organization API key (`ub_live_xxx`) |
+| `baseUrl` | `string` | `https://app.userbubble.com` | Userbubble server URL |
+| `position` | `WidgetPosition` | `'bottom-right'` | Widget button position |
+| `theme` | `WidgetTheme` | `'auto'` | Color theme. `auto` follows system preference |
+| `accentColor` | `string` | `'#6366f1'` | Bubble button background color |
+| `hideWidget` | `boolean` | `false` | Hide the floating button (use `open()` programmatically) |
+| `useDirectUrls` | `boolean` | `false` | Use `/external/org/` paths instead of subdomains |
+| `debug` | `boolean` | `false` | Enable console logging |
