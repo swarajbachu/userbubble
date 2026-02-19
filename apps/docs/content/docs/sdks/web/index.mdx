@@ -1,0 +1,64 @@
+---
+title: Web SDK
+description: Userbubble feedback widget for any website or React app
+---
+
+## Overview
+
+The Userbubble Web SDK renders a floating bubble button that opens a slide-out panel with your feedback portal — all inside an isolated Shadow DOM. It works with any website via a script tag, as an npm package, or with React bindings.
+
+### Key Features
+
+- **Shadow DOM Isolation**: Widget styles never conflict with your page
+- **Multiple Integration Options**: Script tag (CDN), npm package, or React components
+- **Automatic Theme Detection**: Follows system light/dark preference with `theme: 'auto'`
+- **Configurable Positioning**: Place the bubble in any corner of the screen
+- **User Identity Persistence**: Remembers identified users across page reloads via localStorage
+- **TypeScript**: Full type definitions included
+
+## Quick Links
+
+<Cards>
+  <Card
+    title="Installation"
+    href="/docs/sdks/web/installation"
+    description="Script tag, npm, or React setup"
+  />
+  <Card
+    title="Quick Start"
+    href="/docs/sdks/web/quick-start"
+    description="Integrate in 5 minutes"
+  />
+  <Card
+    title="API Reference"
+    href="/docs/sdks/web/api-reference"
+    description="Complete API documentation"
+  />
+  <Card
+    title="Examples"
+    href="/docs/sdks/web/examples"
+    description="Code examples and recipes"
+  />
+</Cards>
+
+## Example Usage
+
+```typescript
+import { Userbubble } from "@userbubble/web";
+
+Userbubble.init({
+  apiKey: "ub_live_xxxxx",
+  position: "bottom-right",
+  theme: "auto",
+});
+
+await Userbubble.identify({
+  id: "user_123",
+  email: "jane@example.com",
+  name: "Jane Doe",
+});
+```
+
+## Next Steps
+
+Start by [installing the SDK](/docs/sdks/web/installation) or jump straight to the [quick start guide](/docs/sdks/web/quick-start).
