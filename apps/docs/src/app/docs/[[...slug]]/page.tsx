@@ -7,7 +7,7 @@ import {
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CopyPageButton } from "@/components/copy-markdown-button";
+import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -19,16 +19,18 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   }
 
   const MDX = page.data.body;
-  const markdown = await page.data.getText("processed");
-  const slug = (params.slug ?? []).join("/");
 
   return (
     <DocsPage full={page.data.full} toc={page.data.toc}>
-      <div className="flex items-start justify-between gap-4">
-        <DocsTitle>{page.data.title}</DocsTitle>
-        <CopyPageButton markdown={markdown} slug={slug} />
-      </div>
+      <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
+      <div className="flex flex-row items-center gap-2 border-b pt-2 pb-6">
+        <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
+        <ViewOptions
+          githubUrl={`https://github.com/swarajbachu/userbubble/blob/main/apps/docs/content/docs/${page.slugs.join("/")}.mdx`}
+          markdownUrl={`${page.url}.mdx`}
+        />
+      </div>
       <DocsBody>
         <MDX
           components={getMDXComponents({

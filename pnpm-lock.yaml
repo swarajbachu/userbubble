@@ -221,6 +221,12 @@ importers:
 
   apps/docs:
     dependencies:
+      '@radix-ui/react-popover':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
       fumadocs-core:
         specifier: 16.0.8
         version: 16.0.8(@types/react@19.2.7)(lucide-react@0.552.0(react@19.2.3))(next@16.0.10(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -242,6 +248,9 @@ importers:
       react-dom:
         specifier: ^19.2.0
         version: 19.2.3(react@19.2.3)
+      tailwind-merge:
+        specifier: ^3.4.1
+        version: 3.5.0
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4.1.16
@@ -8226,6 +8235,9 @@ packages:
   tailwind-merge@3.4.0:
     resolution: {integrity: sha512-uSaO4gnW+b3Y2aWoWfFpX62vn2sR3skfhbjsEnaBI81WD1wBLlHZe5sWf0AqjksNdYTbGBEd0UasQMT3SNV15g==}
 
+  tailwind-merge@3.5.0:
+    resolution: {integrity: sha512-I8K9wewnVDkL1NTGoqWmVEIlUcB9gFriAEkXkfCjX5ib8ezGxtR3xD7iZIxrfArjEsH7F1CHD4RFUtxefdqV/A==}
+
   tailwindcss-safe-area@1.2.0:
     resolution: {integrity: sha512-rcHvvNy3QygnPCiPUKOgeoXu2UxstIaGEYN8chf3VVM3CsoeTNbi+vCAyXhF/R/xwxgZaaKabslICfy+EGVBsw==}
     engines: {node: '>=22'}
@@ -10637,7 +10649,7 @@ snapshots:
       postcss: 8.4.49
       resolve-from: 5.0.0
     optionalDependencies:
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.16.0(react-native@0.75.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@19.2.0)(react@19.2.0)(typescript@5.9.3))(react@19.2.0))(react-native@0.75.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@19.2.0)(react@19.2.0)(typescript@5.9.3))(react@19.2.0)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -10729,7 +10741,7 @@ snapshots:
       '@expo/json-file': 10.0.8
       '@react-native/normalize-colors': 0.81.5
       debug: 4.4.3
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.16.0(react-native@0.75.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@19.2.0)(react@19.2.0)(typescript@5.9.3))(react@19.2.0))(react-native@0.75.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@19.2.0)(react@19.2.0)(typescript@5.9.3))(react@19.2.0)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
       resolve-from: 5.0.0
       semver: 7.7.3
       xml2js: 0.6.0
@@ -13561,7 +13573,7 @@ snapshots:
       resolve-from: 5.0.0
     optionalDependencies:
       '@babel/runtime': 7.28.4
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.16.0(react-native@0.75.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@19.2.0)(react@19.2.0)(typescript@5.9.3))(react@19.2.0))(react-native@0.75.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@19.2.0)(react@19.2.0)(typescript@5.9.3))(react@19.2.0)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -14545,7 +14557,7 @@ snapshots:
   expo-crypto@15.0.8(expo@54.0.29):
     dependencies:
       base64-js: 1.5.1
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.16.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.7)(react@19.2.3))(react@19.2.3))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.7)(react@19.2.3))(react@19.2.3)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
 
   expo-dev-client@6.0.20(expo@54.0.29):
     dependencies:
@@ -14819,7 +14831,7 @@ snapshots:
 
   expo-secure-store@15.0.8(expo@54.0.29):
     dependencies:
-      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.16.0(react-native@0.75.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@19.2.0)(react@19.2.0)(typescript@5.9.3))(react@19.2.0))(react-native@0.75.5(@babel/core@7.28.5)(@babel/preset-env@7.28.5(@babel/core@7.28.5))(@types/react@19.2.0)(react@19.2.0)(typescript@5.9.3))(react@19.2.0)
+      expo: 54.0.29(@babel/core@7.28.5)(@expo/metro-runtime@6.1.2)(expo-router@6.0.19)(react-native-webview@13.15.0(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0))(react-native@0.81.5(@babel/core@7.28.5)(@react-native-community/cli@14.1.0(typescript@5.9.3))(@types/react@19.2.0)(react@19.2.0))(react@19.2.0)
 
   expo-server@1.0.5: {}
 
@@ -15187,7 +15199,7 @@ snapshots:
       react-dom: 19.2.3(react@19.2.3)
       react-medium-image-zoom: 5.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       scroll-into-view-if-needed: 3.1.0
-      tailwind-merge: 3.4.0
+      tailwind-merge: 3.5.0
     optionalDependencies:
       '@types/react': 19.2.7
       next: 16.0.10(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -18985,6 +18997,8 @@ snapshots:
   tabbable@6.3.0: {}
 
   tailwind-merge@3.4.0: {}
+
+  tailwind-merge@3.5.0: {}
 
   tailwindcss-safe-area@1.2.0(tailwindcss@4.1.18):
     dependencies:

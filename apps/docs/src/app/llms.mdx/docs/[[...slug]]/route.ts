@@ -5,7 +5,7 @@ export const revalidate = false;
 
 export async function GET(
   _req: Request,
-  props: { params: Promise<{ slug: string[] }> }
+  props: { params: Promise<{ slug?: string[] }> }
 ) {
   const { slug } = await props.params;
   const page = source.getPage(slug);
@@ -13,9 +13,13 @@ export async function GET(
     notFound();
   }
 
-  const text = await getLLMText(page);
-
-  return new Response(text, {
-    headers: { "Content-Type": "text/plain; charset=utf-8" },
+  return new Response(await getLLMText(page), {
+    headers: {
+      "Content-Type": "text/markdown",
+    },
   });
+}
+
+export function generateStaticParams() {
+  return source.generateParams();
 }
