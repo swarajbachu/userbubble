@@ -27,6 +27,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
         env:
           HUGEICONS_TOKEN: ${{ secrets.HUGEICONS_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
