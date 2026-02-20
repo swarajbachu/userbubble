@@ -7,6 +7,7 @@ import {
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CopyPageButton } from "@/components/copy-markdown-button";
 import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -18,10 +19,15 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   }
 
   const MDX = page.data.body;
+  const markdown = await page.data.getText("processed");
+  const slug = (params.slug ?? []).join("/");
 
   return (
     <DocsPage full={page.data.full} toc={page.data.toc}>
-      <DocsTitle>{page.data.title}</DocsTitle>
+      <div className="flex items-start justify-between gap-4">
+        <DocsTitle>{page.data.title}</DocsTitle>
+        <CopyPageButton markdown={markdown} slug={slug} />
+      </div>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
         <MDX
