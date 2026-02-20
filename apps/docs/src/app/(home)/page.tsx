@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="container flex max-w-4xl flex-col gap-16 py-16 md:py-24">
+    <main className="container mx-auto flex max-w-4xl flex-col gap-16 py-16 md:py-24">
       <div className="flex flex-col gap-4">
         <h1 className="font-bold text-3xl md:text-4xl">
           Userbubble Documentation

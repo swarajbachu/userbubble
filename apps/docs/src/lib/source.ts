@@ -1,6 +1,6 @@
 import { type InferPageType, loader } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
-import { docs } from "@/.source";
+import { docs } from "@/.source/server";
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
