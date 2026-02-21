@@ -8,6 +8,7 @@ import { ChangelogTab } from "./tabs/changelog-tab";
 import { DataTab } from "./tabs/data-tab";
 // import { DomainTab } from "./tabs/domain-tab";
 import { FeedbackTab } from "./tabs/feedback-tab";
+import { IntegrationsTab } from "./tabs/integrations-tab";
 
 type SettingsTabsProps = {
   organization: Organization;
@@ -25,7 +26,7 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
         <TabsTrigger value="changelog">Changelog</TabsTrigger>
         {/* <TabsTrigger value="billing">Billing</TabsTrigger> */}
         {/* <TabsTrigger value="domain">Domain</TabsTrigger> */}
-        {/* <TabsTrigger value="integrations">Integrations</TabsTrigger> */}
+        <TabsTrigger value="integrations">Integrations</TabsTrigger>
         {/* <TabsTrigger value="sso">SSO</TabsTrigger> */}
         <TabsTrigger value="data">Data</TabsTrigger>
       </TabsList>
@@ -53,12 +54,9 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
         <DomainTab organization={organization} />
       </TabsContent> */}
 
-      {/* <TabsContent value="integrations">
-        <PlaceholderTab
-          description="Connect third-party services and tools."
-          title="Integrations"
-        />
-      </TabsContent> */}
+      <TabsContent value="integrations">
+        <IntegrationsTab organization={organization} />
+      </TabsContent>
 
       {/* <TabsContent value="sso">
         <PlaceholderTab

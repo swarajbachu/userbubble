@@ -22,6 +22,10 @@ export const CreatePostSchema = createInsertSchema(Post, {
   updatedAt: true,
 });
 
+// Automation schemas (API keys, GitHub config, PR generation jobs)
+export * from "./automation/automation.sql";
+// Automation validators
+export * from "./automation/automation.validators";
 // Changelog schemas (entries, feedback links)
 export * from "./changelog/changelog.sql";
 // Feedback schemas (posts, votes, comments)

@@ -20,6 +20,7 @@ import { getOrganization } from "~/lib/get-organization";
 import { BackButton } from "./_components/back-button";
 import { CategoryEditor } from "./_components/category-editor";
 import { CommentsSection } from "./_components/comments-section";
+import { GeneratePrSection } from "./_components/generate-pr-section";
 import { PostActions } from "./_components/post-actions";
 import { PostMainContent } from "./_components/post-main-content";
 import { StatusEditor } from "./_components/status-editor";
@@ -179,6 +180,21 @@ export default async function FeedbackPostPage({
                 </div>
               </DoubleCardInner>
             </DoubleCard>
+
+            {isAdmin && (
+              <DoubleCard>
+                <DoubleCardInner className="p-4">
+                  <GeneratePrSection
+                    isAdmin={isAdmin}
+                    organizationId={organization.id}
+                    orgSlug={org}
+                    postDescription={post.post.description}
+                    postId={postId}
+                    postTitle={post.post.title}
+                  />
+                </DoubleCardInner>
+              </DoubleCard>
+            )}
           </div>
         </div>
       </div>

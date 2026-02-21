@@ -16,6 +16,9 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.url(),
+    ENCRYPTION_KEY: z.string().min(64).max(64).optional(),
+    MODAL_WEBHOOK_URL: z.url().optional(),
+    MODAL_WEBHOOK_SECRET: z.string().min(1).optional(),
   },
 
   /**
