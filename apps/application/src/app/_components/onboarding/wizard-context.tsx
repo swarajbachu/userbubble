@@ -10,6 +10,7 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { authClient } from "~/auth/client";
+import { initializeOnboarding } from "~/lib/onboarding-actions";
 
 type WizardState = {
   currentStep: number;
@@ -17,7 +18,6 @@ type WizardState = {
   organizationName: string;
   slug: string;
   isCreating: boolean;
-  showChecklist: boolean;
   validationError: string | null;
 };
 
@@ -29,10 +29,8 @@ type WizardActions = {
   setOrganizationName: (name: string) => void;
   setSlug: (slug: string) => void;
   createOrganization: () => Promise<void>;
-  openChecklist: () => void;
-  closeChecklist: () => void;
   setValidationError: (error: string | null) => void;
-  handleStepNext: () => Promise<boolean>; // New generic handler
+  handleStepNext: () => Promise<boolean>;
 };
 
 type WizardContextType = WizardState & WizardActions;
@@ -46,12 +44,11 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   const [organizationName, setOrganizationName] = useState("");
   const [slug, setSlug] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-  const [showChecklist, setShowChecklist] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const nextStep = useCallback(() => {
     if (validationError) {
-      return; // Prevent next if error
+      return;
     }
     if (currentStep < 4) {
       setCurrentStep((prev) => prev + 1);
@@ -80,7 +77,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   const createOrganization = useCallback(async () => {
     if (validationError) {
-      return; // Prevent create if error
+      return;
     }
     setIsCreating(true);
     try {
@@ -96,13 +93,9 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       }
 
       if (data) {
+        await initializeOnboarding(data.id);
         toast.success("Organization created successfully!");
-        setShowChecklist(true);
-
-        // Redirect after a short delay to show the checklist
-        setTimeout(() => {
-          router.push(`/org/${data.slug}/feedback`);
-        }, 2000);
+        router.push(`/org/${data.slug}/getting-started`);
       }
     } catch (_err) {
       toast.error("Failed to create organization");
@@ -111,21 +104,12 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     }
   }, [organizationName, slug, website, router, validationError]);
 
-  const openChecklist = useCallback(() => {
-    setShowChecklist(true);
-  }, []);
-
-  const closeChecklist = useCallback(() => {
-    setShowChecklist(false);
-  }, []);
-
   const value: WizardContextType = {
     currentStep,
     website,
     organizationName,
     slug,
     isCreating,
-    showChecklist,
     validationError,
     nextStep,
     prevStep,
@@ -134,8 +118,6 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     setOrganizationName,
     setSlug,
     createOrganization,
-    openChecklist,
-    closeChecklist,
     setValidationError,
     handleStepNext,
   };
