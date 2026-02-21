@@ -1,395 +1,9 @@
 {
-  "id": "81b53d4d-9f72-48c9-8a2b-bb6364d09ea9",
+  "id": "b2181cde-7955-4f11-a3a8-59c8177389c4",
   "prevId": "f93ca9be-cf63-4c29-a1c6-d06c4972e117",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.organization_api_key": {
-      "name": "organization_api_key",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(256)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "organization_id": {
-          "name": "organization_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "provider": {
-          "name": "provider",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "encrypted_key": {
-          "name": "encrypted_key",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "key_hint": {
-          "name": "key_hint",
-          "type": "varchar(6)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "organization_api_key_organization_id_organization_id_fk": {
-          "name": "organization_api_key_organization_id_organization_id_fk",
-          "tableFrom": "organization_api_key",
-          "tableTo": "organization",
-          "columnsFrom": ["organization_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "organization_api_key_organization_id_provider_unique": {
-          "name": "organization_api_key_organization_id_provider_unique",
-          "nullsNotDistinct": false,
-          "columns": ["organization_id", "provider"]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.organization_github_config": {
-      "name": "organization_github_config",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(256)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "organization_id": {
-          "name": "organization_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "repo_full_name": {
-          "name": "repo_full_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "default_branch": {
-          "name": "default_branch",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'main'"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "organization_github_config_organization_id_organization_id_fk": {
-          "name": "organization_github_config_organization_id_organization_id_fk",
-          "tableFrom": "organization_github_config",
-          "tableTo": "organization",
-          "columnsFrom": ["organization_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "organization_github_config_organization_id_unique": {
-          "name": "organization_github_config_organization_id_unique",
-          "nullsNotDistinct": false,
-          "columns": ["organization_id"]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.organization_oauth_connection": {
-      "name": "organization_oauth_connection",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(256)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "organization_id": {
-          "name": "organization_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "provider": {
-          "name": "provider",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
-        },
-        "device_auth_id": {
-          "name": "device_auth_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "user_code": {
-          "name": "user_code",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "verification_uri": {
-          "name": "verification_uri",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "device_auth_expires_at": {
-          "name": "device_auth_expires_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "encrypted_access_token": {
-          "name": "encrypted_access_token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "encrypted_refresh_token": {
-          "name": "encrypted_refresh_token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "token_expires_at": {
-          "name": "token_expires_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "account_id": {
-          "name": "account_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "organization_oauth_connection_organization_id_organization_id_fk": {
-          "name": "organization_oauth_connection_organization_id_organization_id_fk",
-          "tableFrom": "organization_oauth_connection",
-          "tableTo": "organization",
-          "columnsFrom": ["organization_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "organization_oauth_connection_organization_id_provider_unique": {
-          "name": "organization_oauth_connection_organization_id_provider_unique",
-          "nullsNotDistinct": false,
-          "columns": ["organization_id", "provider"]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.pr_generation_job": {
-      "name": "pr_generation_job",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(256)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "organization_id": {
-          "name": "organization_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "feedback_post_id": {
-          "name": "feedback_post_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "triggered_by_id": {
-          "name": "triggered_by_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "pr_job_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
-        },
-        "ai_provider": {
-          "name": "ai_provider",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "additional_context": {
-          "name": "additional_context",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "progress_log": {
-          "name": "progress_log",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "pr_url": {
-          "name": "pr_url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "branch_name": {
-          "name": "branch_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "error_message": {
-          "name": "error_message",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "completed_at": {
-          "name": "completed_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "pr_generation_job_organization_id_organization_id_fk": {
-          "name": "pr_generation_job_organization_id_organization_id_fk",
-          "tableFrom": "pr_generation_job",
-          "tableTo": "organization",
-          "columnsFrom": ["organization_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "pr_generation_job_feedback_post_id_feedback_post_id_fk": {
-          "name": "pr_generation_job_feedback_post_id_feedback_post_id_fk",
-          "tableFrom": "pr_generation_job",
-          "tableTo": "feedback_post",
-          "columnsFrom": ["feedback_post_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "pr_generation_job_triggered_by_id_user_id_fk": {
-          "name": "pr_generation_job_triggered_by_id_user_id_fk",
-          "tableFrom": "pr_generation_job",
-          "tableTo": "user",
-          "columnsFrom": ["triggered_by_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.changelog_entry": {
       "name": "changelog_entry",
       "schema": "",
@@ -840,6 +454,114 @@
           "columns": ["post_id", "session_id"]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.api_key": {
+      "name": "api_key",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(256)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "key_hash": {
+          "name": "key_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_preview": {
+          "name": "key_preview",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_used_at": {
+          "name": "last_used_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "api_key_org_id_idx": {
+          "name": "api_key_org_id_idx",
+          "columns": [
+            {
+              "expression": "organization_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "api_key_organization_id_organization_id_fk": {
+          "name": "api_key_organization_id_organization_id_fk",
+          "tableFrom": "api_key",
+          "tableTo": "organization",
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1485,20 +1207,6 @@
     }
   },
   "enums": {
-    "public.pr_job_status": {
-      "name": "pr_job_status",
-      "schema": "public",
-      "values": [
-        "pending",
-        "cloning",
-        "analyzing",
-        "implementing",
-        "creating_pr",
-        "completed",
-        "failed",
-        "cancelled"
-      ]
-    },
     "public.feedback_category": {
       "name": "feedback_category",
       "schema": "public",

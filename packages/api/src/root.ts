@@ -1,3 +1,4 @@
+import { apiKeyRouter } from "./router/api-key";
 import { authRouter } from "./router/auth";
 import { automationRouter } from "./router/automation";
 import { changelogRouter } from "./router/changelog";
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   feedback: feedbackRouter,
   changelog: changelogRouter,
   settings: settingsRouter,
+  apiKey: apiKeyRouter,
 });
 
 // export type definition of API

@@ -21,10 +21,8 @@ export const identifiedUser = pgTable(
   {
     id: text("id").primaryKey(),
 
-    // userbubble user ID
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+    // userbubble user ID (nullable - identified users may not be linked to real users)
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
 
     // Organization that identified this user
     organizationId: text("organization_id")
@@ -33,6 +31,11 @@ export const identifiedUser = pgTable(
 
     // External ID from customer's system (e.g., "customer_user_12345")
     externalId: text("external_id").notNull(),
+
+    // User info from identify() call (stored directly, not requiring real user)
+    email: text("email").notNull(),
+    name: text("name"),
+    avatar: text("avatar"),
 
     // Track last activity
     lastSeenAt: timestamp("last_seen_at").notNull().defaultNow(),

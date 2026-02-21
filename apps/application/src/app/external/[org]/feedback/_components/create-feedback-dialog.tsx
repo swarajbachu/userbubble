@@ -97,7 +97,7 @@ export function CreateFeedbackDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogPopup className="pt-4 sm:max-w-[600px]">
+      <DialogPopup className="h-[80vh] pt-4 sm:h-auto sm:max-w-[600px]">
         <form
           className="contents"
           onSubmit={(e) => {

@@ -1,6 +1,9 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite/core", "ultracite/next"],
+  "files": {
+    "includes": ["**", "!**/*.html", "!**/umd.ts", "!**/*.umd.*"]
+  },
   "linter": {
     "rules": {
       "complexity": {

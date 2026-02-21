@@ -46,10 +46,10 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
       <DropdownMenuTrigger
         render={
           <Button
-            className="h-auto w-full justify-start gap-3 px-3 py-2"
+            className="h-auto w-full justify-start gap-3 px-1 py-2"
             variant="ghost"
           >
-            <Avatar size="sm">
+            <Avatar>
               {user.image && <AvatarImage alt={user.name} src={user.image} />}
               <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
             </Avatar>

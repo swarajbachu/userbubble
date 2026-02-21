@@ -14,17 +14,34 @@ import {
   FilterHorizontalIcon,
   Search01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
+import { useQuery } from "@tanstack/react-query";
+import type { FeedbackCategory, FeedbackStatus } from "@userbubble/db/schema";
 import { cn } from "@userbubble/ui";
 import { Button } from "@userbubble/ui/button";
 import { Checkbox } from "@userbubble/ui/checkbox";
+import {
+  Dialog,
+  DialogClose,
+  DialogPopup,
+  DialogTitle,
+} from "@userbubble/ui/dialog";
 import { Icon } from "@userbubble/ui/icon";
 import { Input } from "@userbubble/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@userbubble/ui/input-group";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@userbubble/ui/popover";
+import Link from "next/link";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import { type ReactNode, useState } from "react";
+import { statusConfig } from "~/components/feedback/config";
+import { useTRPC } from "~/trpc/react";
 
 const STATUS_FILTERS = [
   { label: "Open", value: "open", color: "text-blue-500", icon: CircleIcon },
@@ -60,7 +77,13 @@ const STATUS_FILTERS = [
   },
 ] as const;
 
-export function FeedbackFilters() {
+type FeedbackFiltersProps = {
+  organizationId: string;
+};
+
+export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
+  const trpc = useTRPC();
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [search, setSearch] = useQueryState("q", parseAsString.withDefault(""));
   const [sort, setSort] = useQueryState(
     "sort",
@@ -71,6 +94,7 @@ export function FeedbackFilters() {
     "status",
     parseAsArrayOf(parseAsString).withDefault([])
   );
+  const [category] = useQueryState("category", parseAsString);
 
   const isStatusActive = (value: string) => statusFilter.includes(value);
 
@@ -83,6 +107,80 @@ export function FeedbackFilters() {
     }
   };
 
+  const sortLabel = sort === "recent" ? "Newest" : "Top Voted";
+  const searchValue = search.trim().toLowerCase();
+
+  const { data: posts = [] } = useQuery(
+    trpc.feedback.getAll.queryOptions({
+      organizationId,
+      status:
+        statusFilter.length > 0
+          ? (statusFilter as FeedbackStatus[])
+          : undefined,
+      category: (category as FeedbackCategory | null) ?? undefined,
+      sortBy: (sort as "votes" | "recent") ?? "recent",
+    })
+  );
+
+  const searchResults = searchValue
+    ? posts.filter((item) => {
+        const title = item.post.title.toLowerCase();
+        const description = (item.post.description ?? "").toLowerCase();
+        return title.includes(searchValue) || description.includes(searchValue);
+      })
+    : [];
+
+  let mobileSearchContent: ReactNode;
+  if (searchValue) {
+    if (searchResults.length > 0) {
+      mobileSearchContent = (
+        <div className="space-y-1">
+          {searchResults.map((item) => {
+            const config = statusConfig[item.post.status];
+            return (
+              <Link
+                className="block rounded-lg p-2 transition-colors hover:bg-accent/50"
+                href={`/feedback/${item.post.id}`}
+                key={item.post.id}
+                onClick={() => setMobileSearchOpen(false)}
+              >
+                <div className="flex items-start gap-2">
+                  <Icon
+                    className={cn("mt-1 size-4 shrink-0", config.color)}
+                    icon={config.icon}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="line-clamp-1 font-medium text-base">
+                      {item.post.title}
+                    </p>
+                    <p className="line-clamp-1 text-muted-foreground text-sm">
+                      {item.post.description}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-muted-foreground text-sm">
+                    {item.post.voteCount}
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      );
+    } else {
+      mobileSearchContent = (
+        <p className="text-muted-foreground text-sm">
+          No results for "{search}".
+        </p>
+      );
+    }
+  } else {
+    mobileSearchContent = (
+      <p className="text-muted-foreground text-sm">
+        Start typing to search feedback posts.
+      </p>
+    );
+  }
+
   return (
     <div className="flex items-center gap-2">
       <Popover>
@@ -90,19 +188,19 @@ export function FeedbackFilters() {
           render={(props) => (
             <Button
               {...props}
-              className="h-9 gap-2"
+              className="h-10 w-10 rounded-full p-0 md:h-9 md:w-auto md:gap-2 md:rounded-md md:px-3"
               size="sm"
               variant="outline"
             >
               <HugeiconsIcon icon={FilterHorizontalIcon} size={16} />
-              Filter
+              <span className="hidden md:inline">Filter</span>
               {statusFilter.length > 0 && (
                 <span className="rounded-full bg-primary px-1.5 py-0.5 font-medium text-primary-foreground text-xs">
                   {statusFilter.length}
                 </span>
               )}
               <HugeiconsIcon
-                className="ml-auto opacity-50"
+                className="ml-auto hidden opacity-50 md:inline"
                 icon={ArrowDown01Icon}
                 size={16}
               />
@@ -159,20 +257,22 @@ export function FeedbackFilters() {
           render={(props) => (
             <Button
               {...props}
-              className="h-9 gap-2"
+              className="h-10 rounded-full px-3 md:h-9 md:rounded-md"
               size="sm"
               variant="outline"
             >
-              {sort === "recent" ? "Newest" : "Top Voted"}
+              <span className="font-medium text-xs md:text-sm">
+                {sortLabel}
+              </span>
               <HugeiconsIcon
-                className="ml-auto opacity-50"
+                className="ml-1 text-muted-foreground md:ml-auto md:opacity-50"
                 icon={ArrowDown01Icon}
-                size={16}
+                size={14}
               />
             </Button>
           )}
         />
-        <PopoverContent align="start" className="w-40 p-1">
+        <PopoverContent align="end" className="w-40 p-1">
           <Button
             className={cn(
               "w-full justify-start",
@@ -198,7 +298,7 @@ export function FeedbackFilters() {
         </PopoverContent>
       </Popover>
 
-      <div className="relative">
+      <div className="relative hidden md:block">
         <HugeiconsIcon
           className="-translate-y-1/2 absolute top-1/2 left-2.5 text-muted-foreground"
           icon={Search01Icon}
@@ -211,6 +311,53 @@ export function FeedbackFilters() {
           value={search}
         />
       </div>
+
+      <Button
+        className="h-10 w-10 rounded-full p-0 md:hidden"
+        onClick={() => setMobileSearchOpen(true)}
+        size="sm"
+        variant="outline"
+      >
+        <HugeiconsIcon icon={Search01Icon} size={16} />
+      </Button>
+
+      <Dialog onOpenChange={setMobileSearchOpen} open={mobileSearchOpen}>
+        <DialogPopup className="h-dvh max-w-none md:hidden">
+          <div className="flex h-full flex-col bg-background">
+            <div className="flex items-center justify-between border-b p-4">
+              <DialogTitle className="sr-only">Search Feedback</DialogTitle>
+              <DialogClose render={<Button size="sm" variant="ghost" />}>
+                Close
+              </DialogClose>
+            </div>
+
+            <div className="border-b p-4 pt-2">
+              <InputGroup>
+                <InputGroupInput
+                  aria-label="Search"
+                  autoFocus
+                  className="h-12 rounded-xl text-base"
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search feedback..."
+                  type="search"
+                  value={search}
+                />
+                <InputGroupAddon>
+                  <HugeiconsIcon
+                    aria-hidden="true"
+                    icon={Search01Icon}
+                    size={18}
+                  />
+                </InputGroupAddon>
+              </InputGroup>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto p-4">
+              {mobileSearchContent}
+            </div>
+          </div>
+        </DialogPopup>
+      </Dialog>
     </div>
   );
 }

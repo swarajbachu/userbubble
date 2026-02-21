@@ -1,10 +1,9 @@
-import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowDown01Icon } from "@hugeicons-pro/core-duotone-rounded";
 import { parseOrganizationSettings } from "@userbubble/db/schema";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { FeedbackBoard } from "~/components/feedback/feedback-board";
 import { getPublicOrganization } from "~/lib/get-organization";
+import { CreateFeedbackButton } from "./_components/create-feedback-button";
 import { FeedbackFilters } from "./_components/feedback-filters";
 import { FeedbackSidebar } from "./_components/feedback-sidebar";
 
@@ -95,8 +94,8 @@ export default async function ExternalFeedbackPage({
   const color = getBoardColor(category);
 
   return (
-    <div className="flex flex-col gap-8 md:flex-row">
-      <aside className="w-full shrink-0 md:w-72">
+    <div className="flex flex-col gap-5 md:flex-row md:gap-8">
+      <aside className="hidden w-full shrink-0 md:block md:w-72">
         <FeedbackSidebar
           allowAnonymous={settings.publicAccess.allowAnonymousSubmissions}
           org={org}
@@ -105,19 +104,32 @@ export default async function ExternalFeedbackPage({
       </aside>
 
       <div className="min-w-0 flex-1">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-4 flex items-start justify-between gap-3 md:mb-6 md:items-center">
           <div className="flex items-center gap-3">
-            <div className={`h-3 w-3 rounded-full ${color}`} />
-            <h1 className="flex items-center gap-2 font-bold text-2xl">
-              {title}
-              <HugeiconsIcon
-                className="text-muted-foreground"
-                icon={ArrowDown01Icon}
-                size={20}
+            <div className={`hidden h-3 w-3 rounded-full md:block ${color}`} />
+            <div className="hidden md:block">
+              <h1 className="font-bold text-2xl">{title}</h1>
+            </div>
+            <div className="md:hidden">
+              <FeedbackSidebar
+                allowAnonymous={settings.publicAccess.allowAnonymousSubmissions}
+                mode="selector"
+                org={org}
+                organizationId={organization.id}
               />
-            </h1>
+            </div>
           </div>
-          <FeedbackFilters />
+          <FeedbackFilters organizationId={organization.id} />
+        </div>
+
+        <div className="mb-4 md:hidden">
+          <CreateFeedbackButton
+            allowAnonymous={settings.publicAccess.allowAnonymousSubmissions}
+            className="w-full justify-between px-5 text-left text-sm"
+            organizationId={organization.id}
+          >
+            Give Feedback
+          </CreateFeedbackButton>
         </div>
 
         <Suspense
@@ -133,6 +145,7 @@ export default async function ExternalFeedbackPage({
           }
         >
           <FeedbackBoard
+            className="p-0 md:p-2"
             isExternal={true}
             org={org}
             organizationId={organization.id}

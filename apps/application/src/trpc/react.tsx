@@ -13,6 +13,7 @@ import { useState } from "react";
 import SuperJSON from "superjson";
 
 import { env } from "~/env";
+import { getEmbedToken } from "~/lib/embed-auth-store";
 import { createQueryClient } from "./query-client";
 
 let clientQueryClientSingleton: QueryClient | undefined;
@@ -45,6 +46,10 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
           headers() {
             const headers = new Headers();
             headers.set("x-trpc-source", "nextjs-react");
+            const token = getEmbedToken();
+            if (token) {
+              headers.set("Authorization", `Bearer ${token}`);
+            }
             return headers;
           },
           fetch: async (url, options) => {

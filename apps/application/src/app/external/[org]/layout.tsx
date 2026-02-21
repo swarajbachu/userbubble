@@ -1,8 +1,10 @@
 import { parseOrganizationSettings } from "@userbubble/db/org/organization-settings";
 import { memberQueries } from "@userbubble/db/queries";
+import { Suspense } from "react";
 import { getSession } from "~/auth/server";
 import { getPublicOrganization } from "~/lib/get-organization";
 import { BrandingProvider } from "../_components/branding-provider";
+import { EmbedBridge } from "../_components/embed-bridge";
 import { ExternalHeader } from "../_components/external-header";
 
 type ExternalLayoutProps = {
@@ -37,6 +39,9 @@ export default async function ExternalLayout({
 
   return (
     <BrandingProvider branding={settings.branding}>
+      <Suspense>
+        <EmbedBridge />
+      </Suspense>
       <div className="flex min-h-screen flex-col bg-background text-foreground">
         <ExternalHeader
           allowAnonymous={settings.publicAccess.allowAnonymousSubmissions}
@@ -47,7 +52,7 @@ export default async function ExternalLayout({
           organizationName={organization.name}
           orgSlug={org}
         />
-        <main className="container mx-auto max-w-7xl flex-1 px-4 py-8">
+        <main className="container mx-auto max-w-7xl flex-1 px-3 py-4 sm:px-4 sm:py-6 md:py-8">
           {children}
         </main>
       </div>

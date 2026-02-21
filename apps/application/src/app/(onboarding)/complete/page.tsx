@@ -61,7 +61,7 @@ export default function CompleteProfilePage() {
   }
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex h-screen items-center justify-center">
       <DoubleCard className="w-full max-w-md">
         <DoubleCardInner>
           <CardHeader>

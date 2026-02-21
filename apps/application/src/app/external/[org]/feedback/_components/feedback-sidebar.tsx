@@ -1,8 +1,18 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Idea01Icon, Task01Icon } from "@hugeicons-pro/core-duotone-rounded";
+import {
+  ArrowDown01Icon,
+  Idea01Icon,
+  Task01Icon,
+} from "@hugeicons-pro/core-duotone-rounded";
 import { cn } from "@userbubble/ui";
+import { Button } from "@userbubble/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@userbubble/ui/popover";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CreateFeedbackButton } from "./create-feedback-button";
@@ -11,35 +21,99 @@ type FeedbackSidebarProps = {
   org: string;
   organizationId: string;
   allowAnonymous: boolean;
+  mode?: "sidebar" | "selector";
 };
 
+const boards = [
+  {
+    name: "All Feedback",
+    count: null,
+    category: null,
+    color: "bg-gray-500",
+  },
+  {
+    name: "Features",
+    count: null,
+    category: "feature_request",
+    color: "bg-green-500",
+  },
+  {
+    name: "Bugs",
+    count: null,
+    category: "bug",
+    color: "bg-red-500",
+  },
+] as const;
+
 export function FeedbackSidebar({
+  org,
   organizationId,
   allowAnonymous,
+  mode = "sidebar",
 }: FeedbackSidebarProps) {
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category");
 
-  const boards = [
-    {
-      name: "All Feedback",
-      count: null,
-      category: null,
-      color: "bg-gray-500",
-    },
-    {
-      name: "Features",
-      count: null,
-      category: "feature_request",
-      color: "bg-green-500",
-    },
-    {
-      name: "Bugs",
-      count: null,
-      category: "bug",
-      color: "bg-red-500",
-    },
-  ];
+  if (mode === "selector") {
+    const activeBoard =
+      boards.find((board) => board.category === currentCategory) ?? boards[0];
+
+    return (
+      <Popover>
+        <PopoverTrigger
+          render={(props) => (
+            <Button
+              {...props}
+              className="h-10 gap-2 rounded-full px-3 text-left"
+              size="sm"
+              variant="ghost"
+            >
+              <span
+                className={cn("h-2.5 w-2.5 rounded-full", activeBoard.color)}
+              />
+              <span className="font-bold text-2xl tracking-tight">
+                {activeBoard.name}
+              </span>
+              <HugeiconsIcon
+                className="ml-1 shrink-0 text-muted-foreground"
+                icon={ArrowDown01Icon}
+                size={18}
+              />
+            </Button>
+          )}
+        />
+        <PopoverContent align="start" className="w-56 p-1.5">
+          {boards.map((board) => {
+            const isActive =
+              currentCategory === board.category ||
+              (!currentCategory && board.category === null);
+
+            return (
+              <Button
+                className={cn(
+                  "h-9 w-full justify-start gap-2.5 rounded-md px-2.5",
+                  isActive && "bg-accent"
+                )}
+                key={board.name}
+                render={
+                  <Link
+                    href={`/external/${org}/feedback${
+                      board.category ? `?category=${board.category}` : ""
+                    }`}
+                  />
+                }
+                size="sm"
+                variant="ghost"
+              >
+                <span className={cn("h-2 w-2 rounded-full", board.color)} />
+                <span>{board.name}</span>
+              </Button>
+            );
+          })}
+        </PopoverContent>
+      </Popover>
+    );
+  }
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-6 md:w-64">

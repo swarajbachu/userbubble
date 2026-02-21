@@ -6,6 +6,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { organization } from "better-auth/plugins";
 
+import { embedAuth } from "./plugins/embed-auth";
 import { externalLogin } from "./plugins/external-login";
 
 export function initAuth<
@@ -65,6 +66,11 @@ export function initAuth<
                 input: true,
                 required: false,
               },
+              onboarding: {
+                type: "string",
+                input: true,
+                required: false,
+              },
             },
           },
         },
@@ -75,6 +81,11 @@ export function initAuth<
         requireTimestamp: true,
         blockAdminAccounts: true,
         maxTimestampAge: 300, // 5 minutes
+      }),
+      // Embed auth plugin for SDK identify + encrypted token flow
+      embedAuth({
+        sessionDuration: 7 * 24 * 60 * 60, // 7 days
+        blockAdminAccounts: true,
       }),
       ...(options.extraPlugins ?? []),
     ],
@@ -106,6 +117,16 @@ export function initAuth<
 export type Auth = ReturnType<typeof initAuth>;
 export type Session = Auth["$Infer"]["Session"];
 
+// Export API key utilities for platform-agnostic SDK authentication
+export {
+  generateApiKey,
+  getKeyPreview,
+  hashApiKey,
+  isValidApiKeyFormat,
+  verifyApiKey,
+} from "./utils/api-key";
+// Export auth token utilities for embed session exchange
+export { createAuthToken, verifyAuthToken } from "./utils/auth-token";
 // Export HMAC utilities for SDK and backend usage
 export {
   createHMACSignature,
@@ -114,3 +135,4 @@ export {
   isTimestampValid,
   verifyHMAC,
 } from "./utils/hmac";
+export { validateApiKeyWithOrg } from "./utils/validate-api-key";

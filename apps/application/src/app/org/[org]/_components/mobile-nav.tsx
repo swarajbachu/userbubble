@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import type { OnboardingState } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import { Icon } from "@userbubble/ui/icon";
 import { Sheet, SheetContent, SheetTrigger } from "@userbubble/ui/sheet";
@@ -9,9 +10,10 @@ import { OrgSidebar } from "./org-sidebar";
 
 type MobileNavProps = {
   org: string;
+  onboarding: OnboardingState | null;
 };
 
-export function MobileNav({ org }: MobileNavProps) {
+export function MobileNav({ org, onboarding }: MobileNavProps) {
   return (
     <Sheet>
       <SheetTrigger>
@@ -21,7 +23,7 @@ export function MobileNav({ org }: MobileNavProps) {
       </SheetTrigger>
       <SheetContent className="w-[280px] p-0" side="left">
         <SidebarProvider>
-          <OrgSidebar org={org} />
+          <OrgSidebar onboarding={onboarding} org={org} />
         </SidebarProvider>
       </SheetContent>
     </Sheet>

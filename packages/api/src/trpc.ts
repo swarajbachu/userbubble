@@ -9,8 +9,9 @@
 
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { Auth } from "@userbubble/auth";
+import { verifyAuthToken } from "@userbubble/auth";
 import { db } from "@userbubble/db/client";
-import { memberQueries } from "@userbubble/db/queries";
+import { memberQueries, userQueries } from "@userbubble/db/queries";
 import superjson from "superjson";
 import { ZodError, z } from "zod/v4";
 
@@ -30,18 +31,65 @@ import { ZodError, z } from "zod/v4";
 export const createTRPCContext = async (opts: {
   headers: Headers;
   auth: Auth;
+  authSecret?: string;
 }): Promise<{
   authApi: Auth["api"];
   session: Awaited<ReturnType<Auth["api"]["getSession"]>>;
+  identifiedOrgId: string | null;
+  isIdentified: boolean;
   db: typeof db;
 }> => {
   const authApi = opts.auth.api;
-  const session = await authApi.getSession({
-    headers: opts.headers,
-  });
+
+  // 1. If Bearer token present → ONLY use token auth (no cookie fallback)
+  const authHeader = opts.headers.get("Authorization");
+  if (authHeader?.startsWith("Bearer ") && opts.authSecret) {
+    const token = authHeader.slice(7);
+    const payload = verifyAuthToken(token, opts.authSecret);
+    if (payload) {
+      const user = await userQueries.findById(payload.sub);
+      if (user) {
+        return {
+          authApi,
+          session: {
+            user,
+            session: {
+              id: `embed-${payload.sub}`,
+              userId: payload.sub,
+              token: "",
+              expiresAt: new Date(payload.exp),
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              ipAddress: null,
+              userAgent: null,
+              sessionType: "identified" as const,
+              authMethod: "external" as const,
+              activeOrganizationId: payload.oid,
+            },
+          } as Awaited<ReturnType<Auth["api"]["getSession"]>>,
+          identifiedOrgId: payload.oid,
+          isIdentified: true,
+          db,
+        };
+      }
+    }
+    // Bearer present but invalid → return null session (do NOT fall back to cookies)
+    return {
+      authApi,
+      session: null,
+      identifiedOrgId: null,
+      isIdentified: false,
+      db,
+    };
+  }
+
+  // 2. No Bearer → cookie-based session (dashboard, external portal)
+  const session = await authApi.getSession({ headers: opts.headers });
   return {
     authApi,
     session,
+    identifiedOrgId: null,
+    isIdentified: false,
     db,
   };
 };
@@ -131,6 +179,41 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+/**
+ * Identified procedure — works for both "identified" (embed) and "authenticated" (regular) sessions.
+ * Guarantees ctx.session.user exists. Provides typed isIdentified and identifiedOrgId in context.
+ */
+export const identifiedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session?.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+      ctx: {
+        session: { ...ctx.session, user: ctx.session.user },
+        isIdentified: ctx.isIdentified,
+        identifiedOrgId: ctx.identifiedOrgId,
+      },
+    });
+  });
+
+/**
+ * Throws FORBIDDEN if an identified user's org doesn't match the content's org.
+ * Dashboard users (isIdentified: false) are not restricted by this check.
+ */
+export function assertOrgAccess(
+  ctx: { isIdentified: boolean; identifiedOrgId: string | null },
+  contentOrgId: string
+): void {
+  if (ctx.isIdentified && ctx.identifiedOrgId !== contentOrgId) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Not authorized for this organization",
+    });
+  }
+}
 
 /**
  * Organization procedure

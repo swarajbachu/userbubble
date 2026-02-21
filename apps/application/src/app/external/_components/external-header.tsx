@@ -57,8 +57,11 @@ export function ExternalHeader({
   const navRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const { data: session } = authClient.useSession();
-  const user = session?.user;
+  const { data: sessionData } = authClient.useSession();
+  const user = sessionData?.user;
+  const isIdentified =
+    (sessionData?.session as Record<string, unknown> | undefined)
+      ?.sessionType === "identified";
 
   const getInitials = (name: string) =>
     name
@@ -104,23 +107,25 @@ export function ExternalHeader({
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-3">
+      <div className="container mx-auto flex h-14 max-w-7xl items-center justify-between px-3 sm:h-16 sm:px-4">
+        <div className="flex min-w-0 items-center gap-8">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
             {logoUrl ? (
               <Image
                 alt={`${organizationName} logo`}
                 className="rounded-lg"
-                height={32}
+                height={28}
                 src={logoUrl}
-                width={32}
+                width={28}
               />
             ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 font-bold text-primary">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 font-bold text-primary sm:h-8 sm:w-8">
                 {organizationName.charAt(0)}
               </div>
             )}
-            <h1 className="font-semibold text-lg">{organizationName}</h1>
+            <h1 className="truncate font-semibold text-base sm:text-lg">
+              {organizationName}
+            </h1>
           </div>
 
           <nav className="relative hidden items-center md:flex">
@@ -154,21 +159,27 @@ export function ExternalHeader({
           </nav>
         </div>
 
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
 
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
-                  <Button className="gap-2" size="sm" variant="ghost">
-                    <Avatar size="sm">
+                  <Button
+                    className="gap-1.5 sm:gap-2"
+                    size="sm"
+                    variant="ghost"
+                  >
+                    <Avatar>
                       {user.image && (
                         <AvatarImage alt={user.name} src={user.image} />
                       )}
                       <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                     </Avatar>
-                    <span className="hidden sm:inline">{user.name}</span>
+                    <span className="hidden md:inline">{user.name}</span>
                   </Button>
                 }
               />
@@ -178,28 +189,34 @@ export function ExternalHeader({
                   <span>Create Post</span>
                 </DropdownMenuItem>
 
-                {/* Only show Settings for admin/owner */}
-                {(memberRole === "admin" || memberRole === "owner") && (
+                {/* Only show Settings for admin/owner (not identified users) */}
+                {!isIdentified &&
+                  (memberRole === "admin" || memberRole === "owner") && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        render={
+                          <Link
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/settings`}
+                          >
+                            <Icon icon={Settings01Icon} size={16} />
+                            <span>Settings</span>
+                          </Link>
+                        }
+                      />
+                    </>
+                  )}
+
+                {/* Don't show Logout for identified users — they're managed by the SDK */}
+                {!isIdentified && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      render={
-                        <Link
-                          href={`${process.env.NEXT_PUBLIC_APP_URL}/org/${orgSlug}/settings`}
-                        >
-                          <Icon icon={Settings01Icon} size={16} />
-                          <span>Settings</span>
-                        </Link>
-                      }
-                    />
+                    <DropdownMenuItem onClick={() => authClient.signOut()}>
+                      <Icon icon={Logout01Icon} size={16} />
+                      <span>Logout</span>
+                    </DropdownMenuItem>
                   </>
                 )}
-
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => authClient.signOut()}>
-                  <Icon icon={Logout01Icon} size={16} />
-                  <span>Logout</span>
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (

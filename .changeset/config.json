@@ -1,0 +1,28 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.2/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "swarajbachu/userbubble" }
+  ],
+  "commit": false,
+  "fixed": [],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [
+    "create-t3-turbo",
+    "@userbubble/application",
+    "@userbubble/docs",
+    "@userbubble/expo",
+    "@userbubble/landing",
+    "@userbubble/api",
+    "@userbubble/auth",
+    "@userbubble/db",
+    "@userbubble/sdk",
+    "@userbubble/ui",
+    "@userbubble/validators",
+    "@userbubble/tailwind-config",
+    "@userbubble/tsconfig"
+  ]
+}

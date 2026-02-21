@@ -2,7 +2,11 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import { AlertCircleIcon } from "@hugeicons-pro/core-bulk-rounded";
-import { Input } from "@userbubble/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@userbubble/ui/input-group";
 import { useState } from "react";
 import { z } from "zod";
 import { useWizard } from "./wizard-context";
@@ -61,18 +65,18 @@ export function StepWebsite() {
         </p>
       </div>
 
-      <div className="relative">
-        <div className="relative">
-          <Input
-            className={`h-12 pr-12 text-lg ${error ? "border-destructive focus-visible:ring-destructive" : ""}`}
+      <div className="space-y-2">
+        <InputGroup className="text-lg">
+          <InputGroupInput
+            aria-invalid={!!error}
             onBlur={handleBlur}
             onChange={(e) => handleChange(e.target.value)}
             placeholder="mywebsite.com"
             value={website}
           />
-          <div className="absolute inset-y-0 right-3 flex items-center">
+          <InputGroupAddon align="inline-end">
             {domain && !error && (
-              // biome-ignore lint/performance/noImgElement: <explanation>
+              // biome-ignore lint/performance/noImgElement: favicon from external URL
               <img
                 alt="Favicon"
                 className="h-6 w-6 rounded-sm"
@@ -88,9 +92,9 @@ export function StepWebsite() {
                 size={20}
               />
             )}
-          </div>
-        </div>
-        {error && <p className="mt-2 text-destructive text-sm">{error}</p>}
+          </InputGroupAddon>
+        </InputGroup>
+        {error && <p className="text-destructive text-sm">{error}</p>}
       </div>
     </div>
   );

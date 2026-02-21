@@ -53,10 +53,41 @@ function buildCorsResponse(
   });
 }
 
+// The embed-auth/identify endpoint is called from customer domains (any origin)
+// It uses API key auth, not cookies, so credentials are not needed
+const EMBED_AUTH_IDENTIFY_PATH = "/api/auth/embed-auth/identify";
+
+const embedAuthCorsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, X-API-Key",
+};
+
+function isEmbedAuthIdentify(req: Request): boolean {
+  const url = new URL(req.url);
+  return url.pathname === EMBED_AUTH_IDENTIFY_PATH;
+}
+
 function withCors(handler: (req: Request) => Promise<Response>) {
   return async (req: Request): Promise<Response> => {
+    // Embed-auth identify endpoint allows any origin (SDK runs on customer domains)
+    if (isEmbedAuthIdentify(req)) {
+      if (req.method === "OPTIONS") {
+        return new Response(null, {
+          status: 204,
+          headers: embedAuthCorsHeaders,
+        });
+      }
+
+      const res = await handler(req);
+      const response = new Response(res.body, res);
+      for (const [key, value] of Object.entries(embedAuthCorsHeaders)) {
+        response.headers.set(key, value);
+      }
+      return response;
+    }
+
     const origin = req.headers.get("origin") ?? "";
-    console.log("origin", origin);
 
     // Only validate origin for cross-origin requests
     // Same-origin requests don't have an Origin header
@@ -86,3 +117,4 @@ function withCors(handler: (req: Request) => Promise<Response>) {
 
 export const GET = withCors(baseGet);
 export const POST = withCors(basePost);
+export const OPTIONS = withCors(baseGet);
