@@ -73,7 +73,7 @@ export function StepName() {
       <div className="relative">
         <div className="relative">
           <Input
-            className={`h-12 pr-12 text-lg ${error ? "border-destructive focus-visible:ring-destructive" : ""}`}
+            className={`pr-12 text-lg ${error ? "border-destructive focus-visible:ring-destructive" : ""}`}
             onBlur={handleBlur}
             onChange={(e) => handleChange(e.target.value)}
             placeholder="My Workspace"

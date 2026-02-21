@@ -101,7 +101,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
         // Redirect after a short delay to show the checklist
         setTimeout(() => {
-          router.push(`/${data.slug}/feedback`);
+          router.push(`/org/${data.slug}/feedback`);
         }, 2000);
       }
     } catch (_err) {

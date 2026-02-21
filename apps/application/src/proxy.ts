@@ -65,6 +65,16 @@ export async function proxy(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  // Block reserved subdomains that aren't "app" from accessing the main app
+  // e.g. cdn.userbubble.com, admin.userbubble.com should not serve the dashboard
+  const baseDomain = process.env.NEXT_PUBLIC_BASE_DOMAIN;
+  if (baseDomain) {
+    const host = hostname.split(":")[0];
+    if (host?.endsWith(`.${baseDomain}`) && !host.startsWith("app.")) {
+      return NextResponse.redirect(new URL("/not-found", request.url));
+    }
+  }
+
   if (isPublicPath(pathname) && !isAuthPath(pathname)) {
     return NextResponse.next();
   }
@@ -89,6 +99,12 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(signInUrl);
     }
 
+    // Identified/temp users should not access the main app — redirect to sign-in
+    if (session.session.sessionType === "identified") {
+      const signInUrl = new URL("/sign-in", request.url);
+      return NextResponse.redirect(signInUrl);
+    }
+
     if (session.user.name === "User" && !pathname.match("/complete")) {
       const completeUrl = new URL("/complete", request.url);
       completeUrl.searchParams.set("callbackUrl", pathname);
@@ -101,7 +117,7 @@ export async function proxy(request: NextRequest) {
     const userOrgs = await getCachedUserOrganizations(session.user.id);
 
     // Skip org check for onboarding pages
-    if (pathname === "/") {
+    if (pathname === "/" || pathname.startsWith("/complete")) {
       if (userOrgs.length > 0 && userOrgs[0]) {
         // User has orgs, don't let them access onboarding
         return NextResponse.redirect(

@@ -22,7 +22,7 @@ export default async function HomePage() {
   if (userOrgs && userOrgs.length > 0) {
     const firstOrg = userOrgs[0];
     if (firstOrg?.slug) {
-      redirect(`/${firstOrg.slug}/feedback`);
+      redirect(`/org/${firstOrg.slug}/feedback`);
     }
   }
 

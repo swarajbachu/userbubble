@@ -113,7 +113,7 @@ export function RoadmapCard({
       {/* Card content - wrap in link for title only */}
       <a
         className="font-medium text-sm leading-normal transition-colors hover:text-primary"
-        href={`/${org}/feedback/${post.id}`}
+        href={`/org/${org}/feedback/${post.id}`}
       >
         {post.title}
       </a>
