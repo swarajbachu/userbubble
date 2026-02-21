@@ -16,7 +16,7 @@ Add Userbubble to any website with two lines of HTML:
   <body>
     <h1>Welcome</h1>
 
-    <script src="https://cdn.userbubble.com/userbubble.min.js"></script>
+    <script src="https://unpkg.com/@userbubble/web/dist/userbubble.min.js"></script>
     <script>
       Userbubble.init({ apiKey: "ub_live_xxxxxxxxxxxxx" });
 
@@ -160,17 +160,3 @@ Userbubble.init({
 });
 ```
 
----
-
-## Local Development
-
-Point the SDK at your local Userbubble server:
-
-```typescript
-Userbubble.init({
-  apiKey: "ub_test_xxxxxxxxxxxxx",
-  baseUrl: "http://localhost:3000",
-  useDirectUrls: true,
-  debug: true, // Logs SDK activity to console
-});
-```

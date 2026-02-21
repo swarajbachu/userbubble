@@ -65,7 +65,6 @@ Configuration object for the SDK.
 ```typescript
 type UserbubbleConfig = {
   apiKey: string;
-  baseUrl?: string;
   debug?: boolean;
   storageType?: "expo" | "async-storage" | "auto";
   customStorage?: StorageAdapter;
@@ -77,7 +76,6 @@ type UserbubbleConfig = {
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `apiKey` | `string` | *Required* | Your organization's API key from Userbubble |
-| `baseUrl` | `string` | `"https://app.userbubble.com"` | Base URL for Userbubble API |
 | `debug` | `boolean` | `false` | Enable debug logging to console |
 | `storageType` | `"expo" \| "async-storage" \| "auto"` | `"auto"` | Storage type to use (auto-detection recommended) |
 | `customStorage` | `StorageAdapter` | `undefined` | Custom storage implementation |

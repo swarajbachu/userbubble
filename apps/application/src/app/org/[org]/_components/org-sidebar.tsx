@@ -1,5 +1,6 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Cancel01Icon,
   CheckmarkBadge01Icon,
@@ -13,7 +14,9 @@ import {
   Settings01Icon,
   UserMultiple02Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
+import { ArrowRight01Icon } from "@hugeicons-pro/core-duotone-rounded";
 import { useQuery } from "@tanstack/react-query";
+import type { OnboardingState } from "@userbubble/db/schema";
 import { cn } from "@userbubble/ui";
 import { Checkbox } from "@userbubble/ui/checkbox";
 import { Icon } from "@userbubble/ui/icon";
@@ -40,6 +43,7 @@ import { UserProfileMenu } from "./user-profile-menu";
 
 type OrgSidebarProps = {
   org: string;
+  onboarding: OnboardingState | null;
 };
 
 const MAIN_NAV_ITEMS = [
@@ -108,7 +112,15 @@ const STATUS_FILTERS = [
   },
 ] as const;
 
-export function OrgSidebar({ org }: OrgSidebarProps) {
+const ONBOARDING_KEYS: (keyof OnboardingState)[] = [
+  "createApiKey",
+  "installWidget",
+  "anonymousSubmissions",
+  "customizeBranding",
+  "shareBoard",
+];
+
+export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
   const pathname = usePathname();
   const [status, setStatus] = useQueryState(
     "status",
@@ -346,6 +358,41 @@ export function OrgSidebar({ org }: OrgSidebarProps) {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+
+        {/* Onboarding Banner */}
+        {onboarding &&
+          (() => {
+            const completed = ONBOARDING_KEYS.filter(
+              (k) => onboarding[k]
+            ).length;
+            const total = ONBOARDING_KEYS.length;
+            if (completed === total) {
+              return null;
+            }
+            return (
+              <Link
+                className="group flex flex-col gap-2 rounded-lg border bg-muted/50 p-3 transition-colors hover:bg-muted"
+                href={`/org/${org}/getting-started`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-xs">Getting Started</span>
+                  <span className="text-muted-foreground text-xs">
+                    {completed}/{total}
+                  </span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-muted-foreground/20">
+                  <div
+                    className="h-full rounded-full bg-green-500 transition-all duration-300"
+                    style={{ width: `${(completed / total) * 100}%` }}
+                  />
+                </div>
+                <div className="flex items-center gap-1 text-muted-foreground text-xs group-hover:text-foreground">
+                  <span>Continue setup</span>
+                  <HugeiconsIcon icon={ArrowRight01Icon} size={12} />
+                </div>
+              </Link>
+            );
+          })()}
 
         {/* Profile Row */}
         {session?.user && (

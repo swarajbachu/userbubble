@@ -1,3 +1,4 @@
+import type { OnboardingState } from "@userbubble/db/schema";
 import { SidebarInset, SidebarProvider } from "@userbubble/ui/sidebar";
 import { headers } from "next/headers";
 import { auth } from "~/auth/server";
@@ -22,9 +23,12 @@ export default async function OrgLayout({ children, params }: OrgLayoutProps) {
     },
   });
 
+  const onboarding = (organization.onboarding ??
+    null) as OnboardingState | null;
+
   return (
     <SidebarProvider>
-      <OrgSidebar org={org} />
+      <OrgSidebar onboarding={onboarding} org={org} />
       {/* Main Content */}
       <SidebarInset>
         <main className="container mx-auto">{children}</main>

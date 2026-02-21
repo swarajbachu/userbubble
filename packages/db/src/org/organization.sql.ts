@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import {
+  jsonb,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { createUniqueIds } from "../lib/ids";
 import { identifiedUser } from "../user/identified-user.sql";
 import { user } from "../user/user.sql";
@@ -25,6 +32,26 @@ export const invitationStatusEnum = pgEnum(
 );
 
 /**
+ * Onboarding state tracks which getting-started steps have been completed.
+ * Null means org predates the feature (don't show banner).
+ */
+export type OnboardingState = {
+  createApiKey: boolean;
+  installWidget: boolean;
+  anonymousSubmissions: boolean;
+  customizeBranding: boolean;
+  shareBoard: boolean;
+};
+
+export const defaultOnboardingState: OnboardingState = {
+  createApiKey: false,
+  installWidget: false,
+  anonymousSubmissions: false,
+  customizeBranding: false,
+  shareBoard: false,
+};
+
+/**
  * Organization table
  * Represents a multi-tenant organization in userbubble
  */
@@ -43,6 +70,9 @@ export const organization = pgTable("organization", {
 
   // Metadata for organization-specific settings
   metadata: text("metadata"),
+
+  // Onboarding checklist state (null = predates feature)
+  onboarding: jsonb("onboarding").$type<OnboardingState>(),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")

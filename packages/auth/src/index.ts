@@ -66,6 +66,11 @@ export function initAuth<
                 input: true,
                 required: false,
               },
+              onboarding: {
+                type: "string",
+                input: true,
+                required: false,
+              },
             },
           },
         },

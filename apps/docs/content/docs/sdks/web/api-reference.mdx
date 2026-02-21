@@ -133,8 +133,6 @@ type UserbubbleUser = {
 ```typescript
 type UserbubbleWebConfig = {
   apiKey: string;
-  baseUrl?: string;
-  useDirectUrls?: boolean;
   debug?: boolean;
   position?: WidgetPosition;
   theme?: WidgetTheme;
@@ -168,10 +166,8 @@ All options can be passed to `Userbubble.init()` or `<UserbubbleProvider config=
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `apiKey` | `string` | **required** | Your organization API key (`ub_live_xxx`) |
-| `baseUrl` | `string` | `https://app.userbubble.com` | Userbubble server URL |
 | `position` | `WidgetPosition` | `'bottom-right'` | Widget button position |
 | `theme` | `WidgetTheme` | `'auto'` | Color theme. `auto` follows system preference |
 | `accentColor` | `string` | `'#6366f1'` | Bubble button background color |
 | `hideWidget` | `boolean` | `false` | Hide the floating button (use `open()` programmatically) |
-| `useDirectUrls` | `boolean` | `false` | Use `/external/org/` paths instead of subdomains |
 | `debug` | `boolean` | `false` | Enable console logging |

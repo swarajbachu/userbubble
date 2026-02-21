@@ -50,6 +50,13 @@
       "when": 1766658126175,
       "tag": "0006_late_micromacro",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1771673231167,
+      "tag": "0007_majestic_klaw",
+      "breakpoints": true
     }
   ]
 }
