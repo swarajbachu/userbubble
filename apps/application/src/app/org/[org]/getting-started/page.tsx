@@ -1,5 +1,5 @@
 import type { OnboardingState } from "@userbubble/db/schema";
-import { getOrganization } from "~/lib/get-organization";
+import { getOrgContextWithMetadata } from "~/lib/get-org-context";
 import { GettingStartedView } from "./_components/getting-started-view";
 
 type GettingStartedPageProps = {
@@ -10,7 +10,7 @@ export default async function GettingStartedPage({
   params,
 }: GettingStartedPageProps) {
   const { org } = await params;
-  const organization = await getOrganization(org);
+  const { organization } = await getOrgContextWithMetadata(org);
 
   const onboarding = (organization.onboarding ??
     null) as OnboardingState | null;
@@ -18,8 +18,7 @@ export default async function GettingStartedPage({
   return (
     <GettingStartedView
       onboarding={onboarding}
-      orgId={organization.id}
-      orgName={organization.name}
+      organization={organization}
       orgSlug={org}
     />
   );

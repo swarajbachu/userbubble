@@ -20,11 +20,11 @@ export async function toggleOnboardingStep(
   value: boolean
 ) {
   const org = await organizationQueries.findById(orgId);
-  if (!org?.onboarding) {
+  if (!org) {
     return;
   }
 
-  const current = org.onboarding as OnboardingState;
+  const current = (org.onboarding as OnboardingState) ?? defaultOnboardingState;
   await organizationQueries.update(orgId, {
     onboarding: { ...current, [key]: value },
   });

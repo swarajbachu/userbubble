@@ -79,13 +79,20 @@ export function CodeBlock({
   );
 }
 
-export function CopyButton({ value }: { value: string }) {
+export function CopyButton({
+  value,
+  onCopy,
+}: {
+  value: string;
+  onCopy?: () => void;
+}) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(value);
     setCopied(true);
     toast.success("Copied to clipboard");
+    onCopy?.();
     setTimeout(() => setCopied(false), 2000);
   };
 

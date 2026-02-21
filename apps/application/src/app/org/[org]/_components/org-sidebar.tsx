@@ -113,11 +113,9 @@ const STATUS_FILTERS = [
 ] as const;
 
 const ONBOARDING_KEYS: (keyof OnboardingState)[] = [
-  "setupDomain",
+  "createApiKey",
   "installWidget",
-  "autoLogin",
-  "guestSubmissions",
-  "inviteTeam",
+  "anonymousSubmissions",
   "customizeBranding",
   "shareBoard",
 ];

@@ -36,21 +36,17 @@ export const invitationStatusEnum = pgEnum(
  * Null means org predates the feature (don't show banner).
  */
 export type OnboardingState = {
-  setupDomain: boolean;
+  createApiKey: boolean;
   installWidget: boolean;
-  autoLogin: boolean;
-  guestSubmissions: boolean;
-  inviteTeam: boolean;
+  anonymousSubmissions: boolean;
   customizeBranding: boolean;
   shareBoard: boolean;
 };
 
 export const defaultOnboardingState: OnboardingState = {
-  setupDomain: false,
+  createApiKey: false,
   installWidget: false,
-  autoLogin: false,
-  guestSubmissions: false,
-  inviteTeam: false,
+  anonymousSubmissions: false,
   customizeBranding: false,
   shareBoard: false,
 };
