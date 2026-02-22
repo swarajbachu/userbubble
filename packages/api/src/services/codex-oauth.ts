@@ -1,147 +1,105 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
+/** biome-ignore-all lint/suspicious/noEmptyBlockStatements: <explanation> */
+import { loginOpenAICodex } from "@mariozechner/pi-ai";
 import { encrypt } from "@userbubble/db/lib/encryption";
 import { oauthConnectionQueries } from "@userbubble/db/queries";
 
-const DEVICE_CODE_URL = "https://auth.openai.com/oauth/device/code";
-const TOKEN_URL = "https://auth.openai.com/oauth/token";
-const CLIENT_ID =
-  process.env.OPENAI_CODEX_CLIENT_ID ?? "app_EMnvsRxmvRMOITOHZMqhLONH";
-
-type DeviceFlowResponse = {
-  device_code: string;
-  user_code: string;
-  verification_uri: string;
-  expires_in: number;
-  interval: number;
-};
-
-type TokenResponse = {
-  access_token: string;
-  refresh_token?: string;
-  id_token?: string;
-  expires_in?: number;
-  token_type: string;
-};
-
-type TokenErrorResponse = {
-  error: string;
-  error_description?: string;
-};
+/**
+ * In-memory map of pending OAuth flows (orgId → pending state).
+ * The loginOpenAICodex call stays alive between the initiate and complete API calls.
+ */
+const pendingFlows = new Map<
+  string,
+  {
+    resolveManualCode: (url: string) => void;
+    flowPromise: Promise<{
+      refresh: string;
+      access: string;
+      expires: number;
+      [key: string]: unknown;
+    }>;
+  }
+>();
 
 /**
- * Initiate OAuth device flow for Codex
+ * Step 1: Start PKCE OAuth flow via pi-ai.
+ * Returns the auth URL for the user to open in their browser.
  */
-export async function initiateCodexDeviceFlow(organizationId: string) {
-  const response = await fetch(DEVICE_CODE_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: CLIENT_ID,
-      scope: "openid profile email offline_access",
-    }),
+export async function initiateCodexOAuth(organizationId: string) {
+  // Clean up any stale flow for this org
+  pendingFlows.delete(organizationId);
+
+  let resolveAuthUrl: (url: string) => void;
+  const authUrlPromise = new Promise<string>((resolve) => {
+    resolveAuthUrl = resolve;
   });
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Device flow initiation failed: ${text}`);
-  }
+  let resolveManualCode: (url: string) => void;
+  const manualCodePromise = new Promise<string>((resolve) => {
+    resolveManualCode = resolve;
+  });
 
-  const data = (await response.json()) as DeviceFlowResponse;
-  const expiresAt = new Date(Date.now() + data.expires_in * 1000);
+  // loginOpenAICodex starts a localhost:1455 server (won't receive callbacks on our
+  // server, but that's fine — onManualCodeInput races against it and will always win).
+  const flowPromise = loginOpenAICodex({
+    onAuth: ({ url }) => {
+      resolveAuthUrl!(url);
+    },
+    onManualCodeInput: () => manualCodePromise,
+    onPrompt: async () => manualCodePromise,
+    onProgress: () => {},
+  });
+
+  // Wait for onAuth to fire (happens after async PKCE generation)
+  const authUrl = await Promise.race([
+    authUrlPromise,
+    new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error("Timeout waiting for OAuth URL generation")),
+        10_000
+      )
+    ),
+  ]);
+
+  pendingFlows.set(organizationId, {
+    resolveManualCode: resolveManualCode!,
+    flowPromise,
+  });
 
   await oauthConnectionQueries.upsertPending(organizationId, "codex", {
-    deviceAuthId: data.device_code,
-    userCode: data.user_code,
-    verificationUri: data.verification_uri,
-    deviceAuthExpiresAt: expiresAt,
+    verificationUri: authUrl,
+    deviceAuthExpiresAt: new Date(Date.now() + 15 * 60 * 1000),
   });
 
-  return {
-    userCode: data.user_code,
-    verificationUri: data.verification_uri,
-    expiresAt,
-  };
+  return { authUrl };
 }
 
 /**
- * Poll for device auth completion
+ * Step 2: User pastes the redirect URL from their browser.
+ * Resolves the pending flow — pi-ai exchanges the code for tokens via PKCE.
  */
-export async function pollCodexDeviceAuth(organizationId: string) {
-  const conn = await oauthConnectionQueries.getStatus(organizationId, "codex");
-
-  if (!conn) {
-    return { status: "not_connected" as const };
+export async function completeCodexOAuth(
+  organizationId: string,
+  callbackUrl: string
+) {
+  const pending = pendingFlows.get(organizationId);
+  if (!pending) {
+    throw new Error("No pending OAuth flow found. Please initiate again.");
   }
 
-  if (conn.status === "active") {
-    return { status: "active" as const };
-  }
+  // Unblock the pi-ai flow — it will extract the code and exchange for tokens
+  pending.resolveManualCode(callbackUrl);
 
-  if (
-    conn.deviceAuthExpiresAt &&
-    conn.deviceAuthExpiresAt.getTime() < Date.now()
-  ) {
-    return { status: "expired" as const };
-  }
+  const creds = await pending.flowPromise;
+  pendingFlows.delete(organizationId);
 
-  if (!conn.deviceAuthId) {
-    return { status: "not_connected" as const };
-  }
+  const encryptedAccessToken = encrypt(creds.access);
+  const encryptedRefreshToken = encrypt(creds.refresh);
+  const tokenExpiresAt = new Date(creds.expires);
 
-  const response = await fetch(TOKEN_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: CLIENT_ID,
-      device_code: conn.deviceAuthId,
-      grant_type: "urn:ietf:params:oauth:grant-type:device_code",
-    }),
-  });
-
-  if (!response.ok) {
-    const errorData = (await response.json()) as TokenErrorResponse;
-
-    if (
-      errorData.error === "authorization_pending" ||
-      errorData.error === "slow_down"
-    ) {
-      return { status: "pending" as const };
-    }
-
-    if (errorData.error === "expired_token") {
-      return { status: "expired" as const };
-    }
-
-    if (errorData.error === "access_denied") {
-      return { status: "denied" as const };
-    }
-
-    throw new Error(
-      `Token poll failed: ${errorData.error_description ?? errorData.error}`
-    );
-  }
-
-  const tokenData = (await response.json()) as TokenResponse;
-
-  // Extract account ID from id_token JWT (base64url decode the payload)
-  let accountId: string | null = null;
-  if (tokenData.id_token) {
-    const payload = tokenData.id_token.split(".")[1];
-    if (payload) {
-      const decoded = JSON.parse(
-        Buffer.from(payload, "base64url").toString("utf-8")
-      ) as { sub?: string };
-      accountId = decoded.sub ?? null;
-    }
-  }
-
-  // Encrypt tokens and activate
-  const encryptedAccessToken = encrypt(tokenData.access_token);
-  const encryptedRefreshToken = tokenData.refresh_token
-    ? encrypt(tokenData.refresh_token)
-    : null;
-  const tokenExpiresAt = tokenData.expires_in
-    ? new Date(Date.now() + tokenData.expires_in * 1000)
-    : null;
+  // pi-ai attaches accountId to the credentials for Codex
+  const accountId =
+    typeof creds.accountId === "string" ? creds.accountId : null;
 
   await oauthConnectionQueries.activate(organizationId, "codex", {
     encryptedAccessToken,
@@ -154,8 +112,9 @@ export async function pollCodexDeviceAuth(organizationId: string) {
 }
 
 /**
- * Disconnect Codex OAuth
+ * Disconnect Codex OAuth and clean up any pending flow.
  */
 export async function disconnectCodex(organizationId: string) {
+  pendingFlows.delete(organizationId);
   await oauthConnectionQueries.delete(organizationId, "codex");
 }

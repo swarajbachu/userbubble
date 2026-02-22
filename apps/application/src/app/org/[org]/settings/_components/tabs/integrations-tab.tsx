@@ -54,25 +54,34 @@ export function IntegrationsTab({ organization }: IntegrationsTabProps) {
 function CodexOAuthSection({ organizationId }: { organizationId: string }) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const [authUrl, setAuthUrl] = useState<string | null>(null);
+  const [callbackUrl, setCallbackUrl] = useState("");
 
-  const { data: oauthStatus } = useQuery({
-    ...trpc.automation.getOAuthConnectionStatus.queryOptions({
+  const { data: oauthStatus } = useQuery(
+    trpc.automation.getOAuthConnectionStatus.queryOptions({
       organizationId,
       provider: "codex",
-    }),
-    refetchInterval: (query) => {
-      const status = query.state.data?.status;
-      // Poll every 5s while pending
-      if (status === "pending") {
-        return 5000;
-      }
-      return false;
-    },
-  });
+    })
+  );
 
   const initiateMutation = useMutation(
     trpc.automation.initiateOAuthConnection.mutationOptions({
+      onSuccess: (data) => {
+        setAuthUrl(data.authUrl);
+        queryClient.invalidateQueries();
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+
+  const completeMutation = useMutation(
+    trpc.automation.completeOAuthConnection.mutationOptions({
       onSuccess: () => {
+        toast.success("OpenAI connected successfully");
+        setAuthUrl(null);
+        setCallbackUrl("");
         queryClient.invalidateQueries();
       },
       onError: (error) => {
@@ -85,6 +94,8 @@ function CodexOAuthSection({ organizationId }: { organizationId: string }) {
     trpc.automation.disconnectOAuth.mutationOptions({
       onSuccess: () => {
         toast.success("OpenAI disconnected");
+        setAuthUrl(null);
+        setCallbackUrl("");
         queryClient.invalidateQueries();
       },
       onError: (error) => {
@@ -94,13 +105,14 @@ function CodexOAuthSection({ organizationId }: { organizationId: string }) {
   );
 
   const status = oauthStatus?.status;
+  const showAuthFlow = authUrl && status !== "active";
 
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <h4 className="font-medium text-sm">Or connect with OpenAI (Codex)</h4>
         {status === "active" && <Badge variant="outline">Connected</Badge>}
-        {status === "pending" && <Badge variant="secondary">Pending</Badge>}
+        {showAuthFlow && <Badge variant="secondary">Pending</Badge>}
       </div>
       <p className="text-muted-foreground text-xs">
         Use your ChatGPT Pro/Plus subscription instead of an Anthropic API key.
@@ -129,60 +141,68 @@ function CodexOAuthSection({ organizationId }: { organizationId: string }) {
         </div>
       )}
 
-      {status === "pending" && oauthStatus && (
-        <div className="space-y-2">
-          {"userCode" in oauthStatus && oauthStatus.userCode && (
-            <div className="rounded-md border bg-muted/50 p-4">
-              <p className="mb-1 text-muted-foreground text-xs">
-                Enter this code at the link below:
-              </p>
-              <p className="font-mono text-2xl tracking-widest">
-                {oauthStatus.userCode}
-              </p>
-            </div>
-          )}
-          {"verificationUri" in oauthStatus && oauthStatus.verificationUri && (
+      {showAuthFlow && (
+        <div className="space-y-3">
+          <div className="space-y-2 rounded-md border bg-muted/50 p-4">
+            <p className="font-medium text-sm">Step 1: Sign in at OpenAI</p>
             <a
-              className="text-blue-500 text-sm hover:underline"
-              href={oauthStatus.verificationUri}
+              className="break-all text-blue-500 text-sm hover:underline"
+              href={authUrl}
               rel="noopener noreferrer"
               target="_blank"
             >
               Open authorization page
             </a>
-          )}
-          <p className="animate-pulse text-muted-foreground text-xs">
-            Waiting for authorization...
-          </p>
+          </div>
+
+          <div className="space-y-2 rounded-md border bg-muted/50 p-4">
+            <p className="font-medium text-sm">
+              Step 2: Paste the redirect URL
+            </p>
+            <p className="text-muted-foreground text-xs">
+              After signing in, your browser will redirect to a localhost URL
+              that won't load — that's expected. Copy the full URL from your
+              browser's address bar and paste it here.
+            </p>
+            <div className="flex items-center gap-2">
+              <Input
+                className="flex-1 font-mono text-xs"
+                onChange={(e) => setCallbackUrl(e.target.value)}
+                placeholder="http://localhost:1455/auth/callback?code=..."
+                value={callbackUrl}
+              />
+              <Button
+                disabled={!callbackUrl || completeMutation.isPending}
+                onClick={() =>
+                  completeMutation.mutate({
+                    organizationId,
+                    provider: "codex",
+                    callbackUrl,
+                  })
+                }
+                size="sm"
+              >
+                {completeMutation.isPending ? "Connecting..." : "Complete"}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
-      {(status === "not_connected" ||
-        status === "expired" ||
-        status === "denied" ||
-        !status) && (
-        <div className="space-y-2">
-          {(status === "expired" || status === "denied") && (
-            <p className="text-destructive text-xs">
-              {status === "expired"
-                ? "Authorization expired. Please try again."
-                : "Authorization was denied. Please try again."}
-            </p>
-          )}
-          <Button
-            disabled={initiateMutation.isPending}
-            onClick={() =>
-              initiateMutation.mutate({
-                organizationId,
-                provider: "codex",
-              })
-            }
-            size="sm"
-            variant="outline"
-          >
-            {initiateMutation.isPending ? "Connecting..." : "Connect OpenAI"}
-          </Button>
-        </div>
+      {!showAuthFlow && status !== "active" && (
+        <Button
+          disabled={initiateMutation.isPending}
+          onClick={() =>
+            initiateMutation.mutate({
+              organizationId,
+              provider: "codex",
+            })
+          }
+          size="sm"
+          variant="outline"
+        >
+          {initiateMutation.isPending ? "Connecting..." : "Connect OpenAI"}
+        </Button>
       )}
     </div>
   );

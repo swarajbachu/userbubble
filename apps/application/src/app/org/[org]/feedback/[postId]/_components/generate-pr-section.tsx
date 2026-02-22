@@ -96,10 +96,8 @@ export function GeneratePrSection({
       {isConfigured ? (
         <div className="space-y-3">
           <Dialog onOpenChange={setOpen} open={open}>
-            <DialogTrigger asChild>
-              <Button className="w-full" size="sm">
-                Generate PR with AI
-              </Button>
+            <DialogTrigger render={<Button className="w-full" size="sm" />}>
+              Generate PR with AI
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>

@@ -2,7 +2,7 @@ import { execSync } from "node:child_process";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import {
-  apiKeyQueries,
+  automationApiKeyQueries,
   getFeedbackPost,
   githubConfigQueries,
   oauthConnectionQueries,
@@ -49,7 +49,7 @@ export async function executeJob(jobId: string): Promise<void> {
     }
 
     // Get GitHub token (always needed)
-    const githubToken = await apiKeyQueries.getDecrypted(
+    const githubToken = await automationApiKeyQueries.getDecrypted(
       job.organizationId,
       "github"
     );
@@ -285,7 +285,10 @@ async function resolveModel(
   providerId: string
 ): Promise<LanguageModelV1> {
   if (provider.authType === "api_key") {
-    const apiKey = await apiKeyQueries.getDecrypted(organizationId, providerId);
+    const apiKey = await automationApiKeyQueries.getDecrypted(
+      organizationId,
+      providerId
+    );
     if (!apiKey) {
       throw new Error(`API key for "${providerId}" not configured`);
     }

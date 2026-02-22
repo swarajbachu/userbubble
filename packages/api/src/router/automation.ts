@@ -1,6 +1,6 @@
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import {
-  apiKeyQueries,
+  automationApiKeyQueries,
   githubConfigQueries,
   oauthConnectionQueries,
   prJobQueries,
@@ -14,8 +14,9 @@ import {
 import { z } from "zod";
 
 import {
-  initiateCodexDeviceFlow,
-  pollCodexDeviceAuth,
+  completeCodexOAuth,
+  disconnectCodex,
+  initiateCodexOAuth,
 } from "../services/codex-oauth";
 import { orgAdminProcedure, orgProcedure } from "../trpc";
 
@@ -25,7 +26,7 @@ const MAX_DAILY_JOBS = 10;
 export const automationRouter = {
   // Get API key status (which providers are configured + hints)
   getApiKeyStatus: orgAdminProcedure.query(async ({ ctx }) => {
-    const keys = await apiKeyQueries.getStatus(ctx.org.id);
+    const keys = await automationApiKeyQueries.getStatus(ctx.org.id);
     return keys;
   }),
 
@@ -38,7 +39,7 @@ export const automationRouter = {
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await apiKeyQueries.save(ctx.org.id, input.provider, input.key);
+      await automationApiKeyQueries.save(ctx.org.id, input.provider, input.key);
       return { success: true };
     }),
 
@@ -50,7 +51,7 @@ export const automationRouter = {
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await apiKeyQueries.delete(ctx.org.id, input.provider);
+      await automationApiKeyQueries.delete(ctx.org.id, input.provider);
       return { success: true };
     }),
 
@@ -80,7 +81,7 @@ export const automationRouter = {
   // Validate GitHub token has access to the configured repo
   validateGithubAccess: orgAdminProcedure.mutation(async ({ ctx }) => {
     const [token, config] = await Promise.all([
-      apiKeyQueries.getDecrypted(ctx.org.id, "github"),
+      automationApiKeyQueries.getDecrypted(ctx.org.id, "github"),
       githubConfigQueries.get(ctx.org.id),
     ]);
 
@@ -129,7 +130,7 @@ export const automationRouter = {
     }
   }),
 
-  // Initiate OAuth device flow
+  // Initiate OAuth PKCE flow — returns auth URL for user to open
   initiateOAuthConnection: orgAdminProcedure
     .input(z.object({ provider: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
@@ -139,10 +140,28 @@ export const automationRouter = {
           message: `Unsupported OAuth provider: ${input.provider}`,
         });
       }
-      return initiateCodexDeviceFlow(ctx.org.id);
+      return initiateCodexOAuth(ctx.org.id);
     }),
 
-  // Get OAuth connection status (frontend polls while pending)
+  // Complete OAuth — user pastes the redirect URL from their browser
+  completeOAuthConnection: orgAdminProcedure
+    .input(
+      z.object({
+        provider: z.string().min(1),
+        callbackUrl: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (input.provider !== "codex") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Unsupported OAuth provider: ${input.provider}`,
+        });
+      }
+      return completeCodexOAuth(ctx.org.id, input.callbackUrl);
+    }),
+
+  // Get OAuth connection status
   getOAuthConnectionStatus: orgAdminProcedure
     .input(z.object({ provider: z.string().min(1) }))
     .query(async ({ ctx, input }) => {
@@ -162,23 +181,9 @@ export const automationRouter = {
         };
       }
 
-      // Still pending — do a server-side poll attempt
-      if (input.provider === "codex") {
-        const result = await pollCodexDeviceAuth(ctx.org.id);
-        if (result.status === "active") {
-          return { status: "active" as const };
-        }
-        return {
-          ...result,
-          userCode: conn.userCode,
-          verificationUri: conn.verificationUri,
-        };
-      }
-
       return {
-        status: conn.status,
-        userCode: conn.userCode,
-        verificationUri: conn.verificationUri,
+        status: "pending" as const,
+        authUrl: conn.verificationUri,
       };
     }),
 
@@ -186,7 +191,13 @@ export const automationRouter = {
   disconnectOAuth: orgAdminProcedure
     .input(z.object({ provider: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      await oauthConnectionQueries.delete(ctx.org.id, input.provider);
+      if (input.provider !== "codex") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Unsupported OAuth provider: ${input.provider}`,
+        });
+      }
+      await disconnectCodex(ctx.org.id);
       return { success: true };
     }),
 
@@ -219,7 +230,7 @@ export const automationRouter = {
 
       // Check what AI providers are available
       const [apiKeys, oauthConns, config] = await Promise.all([
-        apiKeyQueries.getStatus(ctx.org.id),
+        automationApiKeyQueries.getStatus(ctx.org.id),
         oauthConnectionQueries.listActive(ctx.org.id),
         githubConfigQueries.get(ctx.org.id),
       ]);
@@ -272,6 +283,13 @@ export const automationRouter = {
         additionalContext: input.additionalContext,
         progressLog: [{ ts: new Date().toISOString(), message: "Job created" }],
       });
+
+      if (!job) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create job",
+        });
+      }
 
       // Trigger Modal webhook
       const webhookSecret = process.env.MODAL_WEBHOOK_SECRET;

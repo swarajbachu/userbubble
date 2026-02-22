@@ -2,7 +2,7 @@ import { organizationQueries } from "@userbubble/db/queries";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { cache } from "react";
-import { getSession } from "~/auth/server";
+import { auth } from "~/auth/server";
 import { getSubdomain } from "~/lib/subdomain";
 
 // Cache org queries within single request
@@ -80,9 +80,15 @@ export async function proxy(request: NextRequest) {
   }
 
   try {
-    // Use cached getSession instead of direct auth.api.getSession
-    const session = await getSession();
-    console.log("session", session);
+    // Use request.headers directly — headers() from next/headers may not work in proxy context
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
+    console.log(
+      "[proxy]",
+      pathname,
+      session ? `authenticated as "${session.user.name}"` : "no session"
+    );
 
     const isAuthenticated = !!session?.user;
 
@@ -100,10 +106,10 @@ export async function proxy(request: NextRequest) {
     }
 
     // Identified/temp users should not access the main app — redirect to sign-in
-    if (session.session.sessionType === "identified") {
-      const signInUrl = new URL("/sign-in", request.url);
-      return NextResponse.redirect(signInUrl);
-    }
+    // if (session.session.authMethod === "external") {
+    //   const signInUrl = new URL("/sign-in", request.url);
+    //   return NextResponse.redirect(signInUrl);
+    // }
 
     if (session.user.name === "User" && !pathname.match("/complete")) {
       const completeUrl = new URL("/complete", request.url);
@@ -118,8 +124,13 @@ export async function proxy(request: NextRequest) {
 
     // Skip org check for onboarding pages
     if (pathname === "/" || pathname.startsWith("/complete")) {
+      // If user still needs to complete their profile, let them through
+      if (session.user.name === "User") {
+        return NextResponse.next();
+      }
+
       if (userOrgs.length > 0 && userOrgs[0]) {
-        // User has orgs, don't let them access onboarding
+        // User has orgs and completed profile, don't let them access onboarding
         return NextResponse.redirect(
           new URL(`/org/${userOrgs[0].organization.slug}/feedback`, request.url)
         );
@@ -137,7 +148,8 @@ export async function proxy(request: NextRequest) {
     // ========== End Organization Check ==========
 
     return NextResponse.next();
-  } catch {
+  } catch (error) {
+    console.error("[proxy] error on", pathname, error);
     if (!isAuthPath(pathname)) {
       const signInUrl = new URL("/sign-in", request.url);
       signInUrl.searchParams.set("callbackUrl", pathname);

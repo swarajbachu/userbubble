@@ -14,7 +14,7 @@ import {
 /**
  * API Key Queries
  */
-export const apiKeyQueries = {
+export const automationApiKeyQueries = {
   /**
    * Get status of configured API keys for an org (provider + hint, no decryption)
    */
@@ -158,43 +158,40 @@ export const oauthConnectionQueries = {
       ),
 
   /**
-   * Upsert a pending device flow connection
+   * Upsert a pending OAuth connection
    */
   upsertPending: async (
     organizationId: string,
     provider: string,
     data: {
-      deviceAuthId: string;
-      userCode: string;
       verificationUri: string;
       deviceAuthExpiresAt: Date;
     }
   ) => {
+    const pending = {
+      status: "pending" as const,
+      verificationUri: data.verificationUri,
+      deviceAuthExpiresAt: data.deviceAuthExpiresAt,
+      deviceAuthId: null,
+      userCode: null,
+      encryptedAccessToken: null,
+      encryptedRefreshToken: null,
+      tokenExpiresAt: null,
+      accountId: null,
+    };
     const [result] = await db
       .insert(organizationOAuthConnection)
       .values({
         organizationId,
         provider,
-        status: "pending",
-        ...data,
-        encryptedAccessToken: null,
-        encryptedRefreshToken: null,
-        tokenExpiresAt: null,
-        accountId: null,
+        ...pending,
       })
       .onConflictDoUpdate({
         target: [
           organizationOAuthConnection.organizationId,
           organizationOAuthConnection.provider,
         ],
-        set: {
-          status: "pending",
-          ...data,
-          encryptedAccessToken: null,
-          encryptedRefreshToken: null,
-          tokenExpiresAt: null,
-          accountId: null,
-        },
+        set: pending,
       })
       .returning();
     return result;
