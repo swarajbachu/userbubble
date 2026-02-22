@@ -1,72 +1,69 @@
+/** biome-ignore-all lint/performance/useTopLevelRegex: <explanation> */
 /** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
-/** biome-ignore-all lint/suspicious/noEmptyBlockStatements: <explanation> */
-import { loginOpenAICodex } from "@mariozechner/pi-ai";
+import { randomBytes, subtle } from "node:crypto";
 import { encrypt } from "@userbubble/db/lib/encryption";
 import { oauthConnectionQueries } from "@userbubble/db/queries";
 
-/**
- * In-memory map of pending OAuth flows (orgId → pending state).
- * The loginOpenAICodex call stays alive between the initiate and complete API calls.
- */
-const pendingFlows = new Map<
-  string,
-  {
-    resolveManualCode: (url: string) => void;
-    flowPromise: Promise<{
-      refresh: string;
-      access: string;
-      expires: number;
-      [key: string]: unknown;
-    }>;
+const CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann";
+const AUTHORIZE_URL = "https://auth.openai.com/oauth/authorize";
+const TOKEN_URL = "https://auth.openai.com/oauth/token";
+const REDIRECT_URI = "http://localhost:1455/auth/callback";
+const SCOPE = "openid profile email offline_access";
+const JWT_CLAIM_PATH = "https://api.openai.com/auth";
+
+function base64url(buffer: ArrayBuffer): string {
+  return Buffer.from(buffer)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+async function generatePKCE() {
+  const verifier = base64url(randomBytes(32));
+  const digest = await subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(verifier)
+  );
+  return { verifier, challenge: base64url(digest) };
+}
+
+function decodeJwt(token: string): Record<string, unknown> | null {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      return null;
+    }
+    return JSON.parse(atob(parts[1]!)) as Record<string, unknown>;
+  } catch {
+    return null;
   }
->();
+}
 
 /**
- * Step 1: Start PKCE OAuth flow via pi-ai.
- * Returns the auth URL for the user to open in their browser.
+ * Step 1: Generate PKCE params, build auth URL, store verifier in DB.
  */
 export async function initiateCodexOAuth(organizationId: string) {
-  // Clean up any stale flow for this org
-  pendingFlows.delete(organizationId);
+  const { verifier, challenge } = await generatePKCE();
+  const state = randomBytes(16).toString("hex");
 
-  let resolveAuthUrl: (url: string) => void;
-  const authUrlPromise = new Promise<string>((resolve) => {
-    resolveAuthUrl = resolve;
-  });
+  const url = new URL(AUTHORIZE_URL);
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("client_id", CLIENT_ID);
+  url.searchParams.set("redirect_uri", REDIRECT_URI);
+  url.searchParams.set("scope", SCOPE);
+  url.searchParams.set("code_challenge", challenge);
+  url.searchParams.set("code_challenge_method", "S256");
+  url.searchParams.set("state", state);
+  url.searchParams.set("id_token_add_organizations", "true");
+  url.searchParams.set("codex_cli_simplified_flow", "true");
+  url.searchParams.set("originator", "userbubble");
 
-  let resolveManualCode: (url: string) => void;
-  const manualCodePromise = new Promise<string>((resolve) => {
-    resolveManualCode = resolve;
-  });
-
-  // loginOpenAICodex starts a localhost:1455 server (won't receive callbacks on our
-  // server, but that's fine — onManualCodeInput races against it and will always win).
-  const flowPromise = loginOpenAICodex({
-    onAuth: ({ url }) => {
-      resolveAuthUrl!(url);
-    },
-    onManualCodeInput: () => manualCodePromise,
-    onPrompt: async () => manualCodePromise,
-    onProgress: () => {},
-  });
-
-  // Wait for onAuth to fire (happens after async PKCE generation)
-  const authUrl = await Promise.race([
-    authUrlPromise,
-    new Promise<never>((_, reject) =>
-      setTimeout(
-        () => reject(new Error("Timeout waiting for OAuth URL generation")),
-        10_000
-      )
-    ),
-  ]);
-
-  pendingFlows.set(organizationId, {
-    resolveManualCode: resolveManualCode!,
-    flowPromise,
-  });
+  const authUrl = url.toString();
 
   await oauthConnectionQueries.upsertPending(organizationId, "codex", {
+    codeVerifier: verifier,
+    codeState: state,
     verificationUri: authUrl,
     deviceAuthExpiresAt: new Date(Date.now() + 15 * 60 * 1000),
   });
@@ -75,31 +72,82 @@ export async function initiateCodexOAuth(organizationId: string) {
 }
 
 /**
- * Step 2: User pastes the redirect URL from their browser.
- * Resolves the pending flow — pi-ai exchanges the code for tokens via PKCE.
+ * Step 2: User pastes redirect URL. We extract code, load verifier from DB, exchange for tokens.
  */
 export async function completeCodexOAuth(
   organizationId: string,
   callbackUrl: string
 ) {
-  const pending = pendingFlows.get(organizationId);
-  if (!pending) {
+  const conn = await oauthConnectionQueries.getStatus(organizationId, "codex");
+
+  if (!conn || conn.status !== "pending" || !conn.deviceAuthId) {
     throw new Error("No pending OAuth flow found. Please initiate again.");
   }
 
-  // Unblock the pi-ai flow — it will extract the code and exchange for tokens
-  pending.resolveManualCode(callbackUrl);
+  if (
+    conn.deviceAuthExpiresAt &&
+    conn.deviceAuthExpiresAt.getTime() < Date.now()
+  ) {
+    throw new Error("OAuth flow expired. Please initiate again.");
+  }
 
-  const creds = await pending.flowPromise;
-  pendingFlows.delete(organizationId);
+  // Extract code from pasted URL
+  const parsed = new URL(callbackUrl);
+  const code = parsed.searchParams.get("code");
+  if (!code) {
+    throw new Error("No authorization code found in the URL.");
+  }
 
-  const encryptedAccessToken = encrypt(creds.access);
-  const encryptedRefreshToken = encrypt(creds.refresh);
-  const tokenExpiresAt = new Date(creds.expires);
+  // Verify state if present
+  const state = parsed.searchParams.get("state");
+  if (state && state !== conn.userCode) {
+    throw new Error("State mismatch. Please initiate again.");
+  }
 
-  // pi-ai attaches accountId to the credentials for Codex
+  // Exchange code for tokens using PKCE verifier from DB
+  const response = await fetch(TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "authorization_code",
+      client_id: CLIENT_ID,
+      code,
+      code_verifier: conn.deviceAuthId,
+      redirect_uri: REDIRECT_URI,
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(
+      `Token exchange failed (${response.status}): ${text.slice(0, 200)}`
+    );
+  }
+
+  const tokens = (await response.json()) as {
+    access_token?: string;
+    refresh_token?: string;
+    expires_in?: number;
+  };
+
+  if (
+    !(tokens.access_token && tokens.refresh_token) ||
+    typeof tokens.expires_in !== "number"
+  ) {
+    throw new Error("Token response missing required fields");
+  }
+
+  const encryptedAccessToken = encrypt(tokens.access_token);
+  const encryptedRefreshToken = encrypt(tokens.refresh_token);
+  const tokenExpiresAt = new Date(Date.now() + tokens.expires_in * 1000);
+
+  // Extract accountId from JWT
+  const payload = decodeJwt(tokens.access_token);
+  const auth = payload?.[JWT_CLAIM_PATH] as Record<string, unknown> | undefined;
   const accountId =
-    typeof creds.accountId === "string" ? creds.accountId : null;
+    typeof auth?.chatgpt_account_id === "string"
+      ? auth.chatgpt_account_id
+      : null;
 
   await oauthConnectionQueries.activate(organizationId, "codex", {
     encryptedAccessToken,
@@ -112,9 +160,8 @@ export async function completeCodexOAuth(
 }
 
 /**
- * Disconnect Codex OAuth and clean up any pending flow.
+ * Disconnect Codex OAuth.
  */
 export async function disconnectCodex(organizationId: string) {
-  pendingFlows.delete(organizationId);
   await oauthConnectionQueries.delete(organizationId, "codex");
 }

@@ -19,7 +19,6 @@
     "@userbubble/auth": "workspace:*",
     "@userbubble/db": "workspace:*",
     "@userbubble/validators": "workspace:*",
-    "@mariozechner/pi-ai": "^0.54.0",
     "@trpc/server": "catalog:",
     "superjson": "2.2.3",
     "zod": "catalog:"

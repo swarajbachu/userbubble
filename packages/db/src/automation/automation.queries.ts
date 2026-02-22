@@ -158,22 +158,25 @@ export const oauthConnectionQueries = {
       ),
 
   /**
-   * Upsert a pending OAuth connection
+   * Upsert a pending OAuth connection.
+   * codeVerifier/codeState are stored in deviceAuthId/userCode columns.
    */
   upsertPending: async (
     organizationId: string,
     provider: string,
     data: {
+      codeVerifier: string;
+      codeState: string;
       verificationUri: string;
       deviceAuthExpiresAt: Date;
     }
   ) => {
     const pending = {
       status: "pending" as const,
+      deviceAuthId: data.codeVerifier,
+      userCode: data.codeState,
       verificationUri: data.verificationUri,
       deviceAuthExpiresAt: data.deviceAuthExpiresAt,
-      deviceAuthId: null,
-      userCode: null,
       encryptedAccessToken: null,
       encryptedRefreshToken: null,
       tokenExpiresAt: null,
