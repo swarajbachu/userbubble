@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/suspicious/noEvolvingTypes: <explanation> */
+/** biome-ignore-all lint/suspicious/noImplicitAnyLet: <explanation> */
 import { execSync } from "node:child_process";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
@@ -59,9 +61,14 @@ export async function executeJob(jobId: string): Promise<void> {
 
     // Resolve AI provider via plugin registry
     const providerId = job.aiProvider ?? "anthropic";
+    await prJobQueries.appendProgress(
+      jobId,
+      `Using AI provider: ${providerId}`
+    );
     const provider = getProvider(providerId);
 
     const model = await resolveModel(provider, job.organizationId, providerId);
+    await prJobQueries.appendProgress(jobId, "Model resolved successfully");
 
     // Get GitHub config
     const githubConfig = await githubConfigQueries.get(job.organizationId);
@@ -109,29 +116,48 @@ export async function executeJob(jobId: string): Promise<void> {
     );
 
     // Run AI agent with tool loop
-    const result = await generateText({
-      model,
-      system: SYSTEM_PROMPT,
-      prompt,
-      tools: createTools(workDir),
-      maxSteps: 50,
-      onStepFinish: async ({ toolCalls }) => {
-        // Update progress in DB after each step
-        if (toolCalls) {
-          for (const tc of toolCalls) {
-            await prJobQueries.appendProgress(
-              jobId,
-              `Used tool: ${tc.toolName}`
-            );
+    await prJobQueries.appendProgress(jobId, "Calling AI model...");
+    let result;
+    try {
+      result = await generateText({
+        model,
+        system: SYSTEM_PROMPT,
+        prompt,
+        tools: createTools(workDir),
+        maxSteps: 50,
+        onStepFinish: async ({ toolCalls }) => {
+          if (toolCalls) {
+            for (const tc of toolCalls) {
+              await prJobQueries.appendProgress(
+                jobId,
+                `Used tool: ${tc.toolName}`
+              );
+            }
           }
-        }
-        // Check for cancellation
-        const currentJob = await prJobQueries.getById(jobId);
-        if (currentJob?.status === "cancelled") {
-          throw new Error("Job cancelled");
-        }
-      },
-    });
+          const currentJob = await prJobQueries.getById(jobId);
+          if (currentJob?.status === "cancelled") {
+            throw new Error("Job cancelled");
+          }
+        },
+      });
+    } catch (aiError) {
+      const msg = aiError instanceof Error ? aiError.message : String(aiError);
+      const statusCode =
+        aiError && typeof aiError === "object" && "statusCode" in aiError
+          ? (aiError as { statusCode: number }).statusCode
+          : undefined;
+      const responseBody =
+        aiError && typeof aiError === "object" && "responseBody" in aiError
+          ? JSON.stringify(
+              (aiError as { responseBody: unknown }).responseBody
+            ).slice(0, 500)
+          : undefined;
+      await prJobQueries.appendProgress(
+        jobId,
+        `AI call failed: ${msg}${statusCode ? ` (status: ${statusCode})` : ""}${responseBody ? ` body: ${responseBody}` : ""}`
+      );
+      throw aiError;
+    }
 
     await prJobQueries.appendProgress(
       jobId,

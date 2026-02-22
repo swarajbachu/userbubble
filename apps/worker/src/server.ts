@@ -28,13 +28,14 @@ app.post("/generate-pr", async (req, res) => {
     return;
   }
 
-  // Return immediately, process async
+  console.log(`[worker] Received job ${jobId}`);
   res.json({ status: "accepted", jobId });
 
-  // Execute job in background
-  executeJob(jobId).catch((error) => {
-    console.error(`Job ${jobId} failed:`, error);
-  });
+  executeJob(jobId)
+    .then(() => console.log(`[worker] Job ${jobId} completed`))
+    .catch((error) => {
+      console.error(`[worker] Job ${jobId} failed:`, error);
+    });
 });
 
 app.listen(PORT, () => {

@@ -5,6 +5,9 @@ export const codexProvider: OAuthProvider = {
   id: "codex",
   authType: "oauth",
   createModel(credentials) {
+    console.log(
+      `[codex] Creating model with accountId=${credentials.accountId?.slice(0, 8)}... tokenExpires=${credentials.tokenExpiresAt?.toISOString()}`
+    );
     return createOpenAI({
       baseURL: "https://chatgpt.com/backend-api/codex",
       apiKey: "unused",
@@ -15,8 +18,19 @@ export const codexProvider: OAuthProvider = {
         if (credentials.accountId) {
           headers.set("ChatGPT-Account-Id", credentials.accountId);
         }
-        return fetch(url, { ...init, headers });
+        console.log(`[codex] ${init?.method ?? "GET"} ${url}`);
+        const res = await fetch(url, { ...init, headers });
+        if (!res.ok) {
+          const body = await res
+            .clone()
+            .text()
+            .catch(() => "");
+          console.error(
+            `[codex] Response ${res.status}: ${body.slice(0, 500)}`
+          );
+        }
+        return res;
       },
-    })("codex-mini-latest");
+    })("gpt-5.3-codex");
   },
 };

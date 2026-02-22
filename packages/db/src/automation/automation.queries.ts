@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { db } from "../client";
 import { decrypt, encrypt, getKeyHint } from "../lib/encryption";
 import {
@@ -458,7 +458,7 @@ export const prJobQueries = {
       .where(
         and(
           eq(prGenerationJob.organizationId, organizationId),
-          sql`${prGenerationJob.status} = ANY(${activeStatuses})`
+          inArray(prGenerationJob.status, activeStatuses)
         )
       )
       .limit(1);
