@@ -10,7 +10,7 @@ import {
   oauthConnectionQueries,
   prJobQueries,
 } from "@userbubble/db/queries";
-import { generateText, type LanguageModelV1 } from "ai";
+import { type LanguageModelV1, streamText } from "ai";
 import { getProvider } from "./providers/registry.js";
 import type { AiProvider } from "./providers/types.js";
 import { createTools } from "./tools.js";
@@ -115,19 +115,25 @@ export async function executeJob(jobId: string): Promise<void> {
       job.additionalContext
     );
 
-    // Run AI agent with tool loop
+    // Run AI agent with tool loop (streamText handles SSE from Codex backend)
     await prJobQueries.appendProgress(jobId, "Calling AI model...");
     let result;
     try {
-      result = await generateText({
+      console.log("[agent] Starting streamText...");
+      result = streamText({
         model,
         system: SYSTEM_PROMPT,
         prompt,
         tools: createTools(workDir),
         maxSteps: 50,
-        onStepFinish: async ({ toolCalls }) => {
+        // biome-ignore lint/nursery/noShadow: <its all right man>
+        onStepFinish: async ({ toolCalls, text, finishReason }) => {
+          console.log(
+            `[agent] Step finished: reason=${finishReason} toolCalls=${toolCalls?.length ?? 0} textLen=${text?.length ?? 0}`
+          );
           if (toolCalls) {
             for (const tc of toolCalls) {
+              console.log(`[agent] Tool call: ${tc.toolName}`);
               await prJobQueries.appendProgress(
                 jobId,
                 `Used tool: ${tc.toolName}`
@@ -139,7 +145,49 @@ export async function executeJob(jobId: string): Promise<void> {
             throw new Error("Job cancelled");
           }
         },
+        onChunk: ({ chunk }) => {
+          if (chunk.type === "text-delta") {
+            process.stdout.write(".");
+          }
+        },
       });
+
+      console.log("[agent] streamText created, consuming stream...");
+
+      // Race the stream against a timeout to detect hangs
+      const textPromise = result.text;
+      const timeoutPromise = new Promise<string>((_, reject) => {
+        setTimeout(
+          () => reject(new Error("streamText hung for 120s")),
+          120_000
+        );
+      });
+
+      // Also log partial stream consumption
+      result.textStream
+        .pipeTo(
+          new WritableStream({
+            write(_chunk) {
+              process.stdout.write(".");
+            },
+            close() {
+              console.log("\n[agent] textStream closed");
+            },
+            abort(err) {
+              console.error(`[agent] textStream aborted: ${err}`);
+            },
+          })
+        )
+        .catch((err) => {
+          console.error(`[agent] textStream pipe error: ${err}`);
+        });
+
+      const finalText = await Promise.race([textPromise, timeoutPromise]);
+      console.log(
+        `[agent] Stream consumed. Final text length: ${finalText.length}`
+      );
+      const finishReason = await result.finishReason;
+      console.log(`[agent] Finish reason: ${finishReason}`);
     } catch (aiError) {
       const msg = aiError instanceof Error ? aiError.message : String(aiError);
       const statusCode =
@@ -159,10 +207,15 @@ export async function executeJob(jobId: string): Promise<void> {
       throw aiError;
     }
 
+    const steps = await result.steps;
+    const finalText = await result.text;
     await prJobQueries.appendProgress(
       jobId,
-      `Agent completed in ${result.steps.length} steps`
+      `Agent completed in ${steps.length} steps`
     );
+    if (finalText.trim()) {
+      await prJobQueries.appendProgress(jobId, `AI: ${finalText.trim()}`);
+    }
 
     // Check if the job was cancelled while running
     const currentJob = await prJobQueries.getById(jobId);

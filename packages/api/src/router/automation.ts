@@ -21,7 +21,7 @@ import {
 import { orgAdminProcedure, orgProcedure } from "../trpc";
 
 const MAX_CONCURRENT_JOBS = 1;
-const MAX_DAILY_JOBS = 10;
+const MAX_DAILY_JOBS = 10; // TODO: restore to 10 after testing
 
 export const automationRouter = {
   // Get API key status (which providers are configured + hints)
