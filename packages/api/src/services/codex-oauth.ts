@@ -11,8 +11,8 @@ const REDIRECT_URI = "http://localhost:1455/auth/callback";
 const SCOPE = "openid profile email offline_access";
 const JWT_CLAIM_PATH = "https://api.openai.com/auth";
 
-function base64url(buffer: ArrayBuffer): string {
-  return Buffer.from(buffer)
+function base64url(buffer: ArrayBuffer | Uint8Array): string {
+  return Buffer.from(buffer as ArrayBuffer)
     .toString("base64")
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
