@@ -73,6 +73,8 @@ Contributions are welcome! Please open an issue or pull request.
 4. Commit and push
 5. Open a pull request
 
+> Note: Test/demo change — this repository is configured and ready for pull requests.
+
 ## License
 
 MIT — see [LICENSE](./LICENSE) for details.
