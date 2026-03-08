@@ -16,9 +16,6 @@ const config = {
     "@userbubble/validators",
   ],
 
-  /** Bundle pg instead of externalizing — pnpm strict mode can't resolve it from the app dir */
-  serverExternalPackages: [],
-
   /** We already do linting and typechecking as separate tasks in CI */
   typescript: { ignoreBuildErrors: true },
   // allowedDevOrigins: ["https://*.userbubble.com", "https://*.host.local"],
