@@ -40,9 +40,11 @@ export function EmbedBridge() {
       .then(async (res) => {
         const url = new URL(window.location.href);
         url.searchParams.delete("auth_token");
-        if (res.ok) {
+        if (res.ok && !isEmbed) {
+          // Full reload only for non-embed (regular browser) to pick up SSR session
           window.location.replace(url.toString());
         } else {
+          // Embed: just strip token, tRPC Bearer auth handles the rest
           window.history.replaceState({}, "", url.toString());
         }
       })
@@ -51,7 +53,7 @@ export function EmbedBridge() {
         url.searchParams.delete("auth_token");
         window.history.replaceState({}, "", url.toString());
       });
-  }, [authToken]);
+  }, [authToken, isEmbed]);
 
   useEffect(() => {
     if (!isEmbed) {
@@ -62,7 +64,7 @@ export function EmbedBridge() {
     style.id = "userbubble-embed-styles";
     style.textContent = `
       header.sticky { display: none !important; }
-      main.container { padding: 0 !important; max-width: 100% !important; }
+      main.container { padding-top: 0 !important; max-width: 100% !important; }
       .flex.min-h-screen { min-height: auto; }
     `;
     document.head.appendChild(style);

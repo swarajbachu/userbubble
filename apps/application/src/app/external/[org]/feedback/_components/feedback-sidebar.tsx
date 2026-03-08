@@ -71,7 +71,7 @@ export function FeedbackSidebar({
               <span
                 className={cn("h-2.5 w-2.5 rounded-full", activeBoard.color)}
               />
-              <span className="font-bold text-2xl tracking-tight">
+              <span className="font-bold text-lg tracking-tight">
                 {activeBoard.name}
               </span>
               <HugeiconsIcon
@@ -82,7 +82,7 @@ export function FeedbackSidebar({
             </Button>
           )}
         />
-        <PopoverContent align="start" className="w-56 p-1.5">
+        <PopoverContent align="start" className="w-42 p-0">
           {boards.map((board) => {
             const isActive =
               currentCategory === board.category ||

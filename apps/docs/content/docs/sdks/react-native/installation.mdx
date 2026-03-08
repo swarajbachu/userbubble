@@ -3,20 +3,16 @@ title: Installation
 description: Install the Userbubble React Native SDK
 ---
 
-<Callout type="warn">
-  The React Native SDK is not yet published to npm. It's coming soon. The documentation below is a preview of the upcoming API.
-</Callout>
-
 ## Choose Your Platform
 
 <Tabs items={['Expo', 'Bare React Native']}>
   <Tab value="Expo">
     ### Expo Projects
 
-    For Expo projects, install the SDK along with expo-secure-store:
+    For Expo projects, install the SDK along with its peer dependencies:
 
     ```bash
-    npx expo install @userbubble/react-native expo-secure-store
+    npx expo install @userbubble/react-native expo-secure-store react-native-webview
     ```
 
     The SDK will automatically detect Expo and use `expo-secure-store` for secure data storage.
@@ -24,21 +20,25 @@ description: Install the Userbubble React Native SDK
   <Tab value="Bare React Native">
     ### Bare React Native Projects
 
-    For bare React Native projects, install the SDK with AsyncStorage:
+    For bare React Native projects, install the SDK with AsyncStorage and WebView:
 
     ```bash
-    npm install @userbubble/react-native @react-native-async-storage/async-storage
+    npm install @userbubble/react-native @react-native-async-storage/async-storage react-native-webview
     ```
 
     Or with yarn:
 
     ```bash
-    yarn add @userbubble/react-native @react-native-async-storage/async-storage
+    yarn add @userbubble/react-native @react-native-async-storage/async-storage react-native-webview
     ```
 
     The SDK will automatically detect bare React Native and use AsyncStorage.
   </Tab>
 </Tabs>
+
+<Callout type="info">
+  `react-native-webview` is required for embedding the feedback portal directly in your app. If you only plan to use `openUserbubble()` (opens in the device browser), you can skip it.
+</Callout>
 
 ## Get Your API Key
 
@@ -61,6 +61,8 @@ Add to your `.env` file:
 
 ```bash
 EXPO_PUBLIC_USERBUBBLE_API_KEY=ub_live_xxxxxxxxxxxxx
+# Optional: override the default base URL (https://app.userbubble.com)
+# EXPO_PUBLIC_USERBUBBLE_BASE_URL=https://your-custom-domain.com
 ```
 
 **For bare React Native:**
@@ -69,6 +71,8 @@ Add to your `.env` file and use a package like `react-native-dotenv`:
 
 ```bash
 USERBUBBLE_API_KEY=ub_live_xxxxxxxxxxxxx
+# Optional: override the default base URL
+# USERBUBBLE_BASE_URL=https://your-custom-domain.com
 ```
 
 ## Next Steps

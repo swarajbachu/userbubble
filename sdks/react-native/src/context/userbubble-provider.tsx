@@ -145,24 +145,34 @@ export function UserbubbleProvider({
         return null;
       }
       const baseUrl = config.baseUrl ?? DEFAULT_BASE_URL;
-      return generatePortalUrl({
+      const url = generatePortalUrl({
         baseUrl,
         orgSlug: organizationSlug,
         path: path ?? "/feedback",
         authToken,
       });
+      // Append embed=true so EmbedBridge hides the header
+      const sep = url.includes("?") ? "&" : "?";
+      return `${url}${sep}embed=true`;
     },
     [organizationSlug, authToken, config.baseUrl]
   );
 
   const openUserbubble = useCallback(
     async (path = "/feedback") => {
-      const url = getEmbedUrl(path);
-      if (!url) {
+      if (!(organizationSlug && authToken)) {
         throw new Error(
           "[userbubble] User not identified. Call identify() first."
         );
       }
+
+      const baseUrl = config.baseUrl ?? DEFAULT_BASE_URL;
+      const url = generatePortalUrl({
+        baseUrl,
+        orgSlug: organizationSlug,
+        path,
+        authToken,
+      });
 
       log.debug("Opening Userbubble:", url);
 
@@ -171,7 +181,7 @@ export function UserbubbleProvider({
         controlsColor: "#000000",
       });
     },
-    [getEmbedUrl, log]
+    [organizationSlug, authToken, config.baseUrl, log]
   );
 
   const value: UserbubbleContextValue = {

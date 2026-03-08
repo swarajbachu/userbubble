@@ -3,22 +3,18 @@ title: React Native SDK
 description: Userbubble SDK for React Native and Expo applications
 ---
 
-<Callout type="warn">
-  The React Native SDK is not yet published to npm. It's coming soon. The documentation below is a preview of the upcoming API.
-</Callout>
-
 ## Overview
 
-The Userbubble React Native SDK enables seamless user identification in your mobile applications. It supports both Expo and bare React Native projects with automatic platform detection.
+The Userbubble React Native SDK lets you embed your feedback portal directly inside your mobile app using a WebView. Users stay in your app while interacting with feedback, roadmap, and changelog — no browser redirect needed.
 
 ### Key Features
 
-- **Simple Integration**: Just wrap your app with `<UserbubbleProvider>` and use the `useUserbubble()` hook
-- **Platform Support**: Works with both Expo (expo-secure-store) and bare React Native (@react-native-async-storage/async-storage)
-- **Automatic Storage**: Auto-detects and uses the appropriate storage solution
+- **Embedded WebView**: Show your full feedback portal inside your app with `getEmbedUrl()` + `<WebView>`
+- **In-App Browser**: Alternatively open Userbubble in the device browser with `openUserbubble()`
+- **Platform Support**: Works with both Expo and bare React Native projects
+- **Automatic Storage**: Auto-detects and uses the appropriate secure storage solution
 - **TypeScript**: Full TypeScript support with complete type definitions
 - **Lightweight**: Minimal dependencies and small bundle size
-- **Secure**: API key-based authentication with secure storage
 
 ## Quick Links
 
@@ -49,6 +45,8 @@ The Userbubble React Native SDK enables seamless user identification in your mob
 
 ```typescript
 import { UserbubbleProvider, useUserbubble } from "@userbubble/react-native";
+import { Modal, View } from "react-native";
+import { WebView } from "react-native-webview";
 
 function App() {
   return (
@@ -59,22 +57,24 @@ function App() {
 }
 
 function MyApp() {
-  const { identify, openUserbubble, isIdentified } = useUserbubble();
-
-  const handleLogin = async () => {
-    await identify({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-    });
-  };
+  const { identify, getEmbedUrl, isIdentified } = useUserbubble();
+  const [showFeedback, setShowFeedback] = useState(false);
+  const url = getEmbedUrl("/feedback");
 
   return (
     <>
-      {!isIdentified && <Button title="Login" onPress={handleLogin} />}
-      {isIdentified && (
-        <Button title="Feedback" onPress={() => openUserbubble()} />
-      )}
+      <Button title="Give Feedback" onPress={() => setShowFeedback(true)} />
+
+      {url ? (
+        <Modal
+          visible={showFeedback}
+          presentationStyle="formSheet"
+          animationType="slide"
+          onRequestClose={() => setShowFeedback(false)}
+        >
+          <WebView source={{ uri: url }} style={{ flex: 1 }} />
+        </Modal>
+      ) : null}
     </>
   );
 }

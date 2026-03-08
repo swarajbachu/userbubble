@@ -3,16 +3,255 @@ title: Examples
 description: Complete code examples for common use cases
 ---
 
+## Embedded WebView
+
+The recommended integration pattern. Use `getEmbedUrl()` to get an authenticated URL and display it in a WebView. The embed view includes tab navigation (Feedback, Roadmap, Updates) and user info — you just render a WebView.
+
+### Form Sheet / Modal (Recommended)
+
+The best mobile UX — open the portal as a form sheet that slides up from the bottom. This is how most iOS/Android apps present secondary screens.
+
+**Expo Router setup:**
+
+```typescript
+// app/_layout.tsx
+import { Stack } from "expo-router";
+
+export default function Layout() {
+  return (
+    <Stack>
+      <Stack.Screen name="index" />
+      <Stack.Screen
+        name="feedback"
+        options={{
+          presentation: "formSheet",
+          headerShown: false,
+          sheetGrabberVisible: true,
+          sheetCornerRadius: 16,
+        }}
+      />
+    </Stack>
+  );
+}
+```
+
+```typescript
+// app/feedback.tsx
+import { useUserbubble } from "@userbubble/react-native";
+import { Stack } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
+import { WebView } from "react-native-webview";
+
+function LoadingIndicator() {
+  return (
+    <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+}
+
+export default function FeedbackModal() {
+  const { getEmbedUrl, isIdentified } = useUserbubble();
+  const url = getEmbedUrl("/feedback");
+
+  if (!isIdentified || !url) {
+    return null;
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Stack.Screen
+        options={{
+          presentation: "formSheet",
+          headerShown: false,
+        }}
+      />
+      <WebView
+        source={{ uri: url }}
+        style={{ flex: 1 }}
+        javaScriptEnabled
+        domStorageEnabled
+        startInLoadingState
+        renderLoading={() => <LoadingIndicator />}
+      />
+    </View>
+  );
+}
+```
+
+```typescript
+// app/index.tsx — open it from anywhere
+import { router } from "expo-router";
+import { Pressable, Text } from "react-native";
+
+function FeedbackButton() {
+  return (
+    <Pressable onPress={() => router.push("/feedback")}>
+      <Text>Give Feedback</Text>
+    </Pressable>
+  );
+}
+```
+
+### React Native Modal
+
+If you're not using Expo Router, use a plain `Modal` component:
+
+```typescript
+import { ActivityIndicator, Modal, SafeAreaView, Pressable, Text, View } from "react-native";
+import { useUserbubble } from "@userbubble/react-native";
+import { WebView } from "react-native-webview";
+import { useState } from "react";
+
+function LoadingIndicator() {
+  return (
+    <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+}
+
+function FeedbackModal() {
+  const { getEmbedUrl, isIdentified } = useUserbubble();
+  const [visible, setVisible] = useState(false);
+  const url = getEmbedUrl("/feedback");
+
+  if (!isIdentified || !url) {
+    return null;
+  }
+
+  return (
+    <>
+      <Pressable onPress={() => setVisible(true)}>
+        <Text>Give Feedback</Text>
+      </Pressable>
+
+      <Modal
+        visible={visible}
+        animationType="slide"
+        presentationStyle="formSheet"
+        onRequestClose={() => setVisible(false)}
+      >
+        <SafeAreaView style={{ flex: 1 }}>
+          <WebView
+            source={{ uri: url }}
+            style={{ flex: 1, minHeight: 0 }}
+            javaScriptEnabled
+            domStorageEnabled
+            startInLoadingState
+            renderLoading={() => <LoadingIndicator />}
+          />
+        </SafeAreaView>
+      </Modal>
+    </>
+  );
+}
+```
+
+### Full-Screen WebView
+
+Show the portal as a full-screen view (e.g. as a dedicated tab):
+
+```typescript
+import { ActivityIndicator, View, Text } from "react-native";
+import { useUserbubble } from "@userbubble/react-native";
+import { WebView } from "react-native-webview";
+
+function LoadingIndicator() {
+  return (
+    <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+}
+
+function FeedbackScreen() {
+  const { getEmbedUrl, isIdentified } = useUserbubble();
+  const url = getEmbedUrl("/feedback");
+
+  if (!isIdentified || !url) {
+    return <Text>Please log in first</Text>;
+  }
+
+  return (
+    <WebView
+      source={{ uri: url }}
+      style={{ flex: 1 }}
+      javaScriptEnabled
+      domStorageEnabled
+      startInLoadingState
+      renderLoading={() => <LoadingIndicator />}
+    />
+  );
+}
+```
+
+### In a Tab Screen (Expo Router)
+
+Add the portal as a tab in your Expo Router app:
+
+```typescript
+// app/(tabs)/feedback.tsx
+import { ActivityIndicator, View } from "react-native";
+import { useUserbubble } from "@userbubble/react-native";
+import { WebView } from "react-native-webview";
+
+function LoadingIndicator() {
+  return (
+    <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+}
+
+export default function FeedbackTab() {
+  const { getEmbedUrl, isIdentified } = useUserbubble();
+  const url = getEmbedUrl("/feedback");
+
+  if (!isIdentified || !url) {
+    return null;
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <WebView
+        source={{ uri: url }}
+        style={{ flex: 1 }}
+        javaScriptEnabled
+        domStorageEnabled
+        startInLoadingState
+        renderLoading={() => <LoadingIndicator />}
+      />
+    </View>
+  );
+}
+```
+
+<Callout type="info">
+  The embed view has its own tab bar at the bottom (Feedback, Roadmap, Updates) and user info at the top. You don't need to build native navigation — it's all handled by the web page.
+</Callout>
+
+---
+
 ## Basic Integration
 
 ### Expo App
 
-Complete example for Expo projects:
+Complete example for Expo projects with form sheet modal:
 
 ```typescript
-import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Modal, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import { UserbubbleProvider, useUserbubble } from "@userbubble/react-native";
+import { WebView } from "react-native-webview";
+import { useState } from "react";
+
+function LoadingIndicator() {
+  return (
+    <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+}
 
 export default function App() {
   return (
@@ -23,46 +262,92 @@ export default function App() {
       }}
     >
       <MainApp />
-      <StatusBar style="auto" />
     </UserbubbleProvider>
   );
 }
 
 function MainApp() {
-  const { identify, openUserbubble, isIdentified, logout } = useUserbubble();
+  const { identify, getEmbedUrl, isIdentified, logout, user } = useUserbubble();
+  const [showFeedback, setShowFeedback] = useState(false);
+  const url = getEmbedUrl("/feedback");
 
-  const handleLogin = async () => {
+  if (!isIdentified) {
+    return <IdentifyForm identify={identify} />;
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Welcome, {user?.name || user?.email}</Text>
+
+      <Pressable onPress={() => setShowFeedback(true)} style={styles.button}>
+        <Text style={styles.buttonText}>Give Feedback</Text>
+      </Pressable>
+
+      <Pressable onPress={logout} style={styles.logoutButton}>
+        <Text style={styles.logoutText}>Logout</Text>
+      </Pressable>
+
+      {url ? (
+        <Modal
+          visible={showFeedback}
+          animationType="slide"
+          presentationStyle="formSheet"
+          onRequestClose={() => setShowFeedback(false)}
+        >
+          <SafeAreaView style={{ flex: 1 }}>
+            <WebView
+              source={{ uri: url }}
+              style={{ flex: 1, minHeight: 0 }}
+              javaScriptEnabled
+              domStorageEnabled
+              startInLoadingState
+              renderLoading={() => <LoadingIndicator />}
+            />
+          </SafeAreaView>
+        </Modal>
+      ) : null}
+    </View>
+  );
+}
+
+function IdentifyForm({
+  identify,
+}: {
+  identify: (user: { id: string; email: string; name?: string }) => Promise<void>;
+}) {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+
+  const handleIdentify = async () => {
     try {
       await identify({
         id: "user_123",
-        email: "john@example.com",
-        name: "John Doe",
-        avatar: "https://example.com/avatar.jpg",
+        email: email || "user@example.com",
+        name: name || "Test User",
       });
     } catch (error) {
-      console.error("Login failed:", error);
+      Alert.alert("Error", `Failed to identify: ${error}`);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Userbubble SDK Example</Text>
-
-      {!isIdentified ? (
-        <Button title="Login" onPress={handleLogin} />
-      ) : (
-        <View style={styles.actions}>
-          <Button
-            title="Give Feedback"
-            onPress={() => openUserbubble("/feedback")}
-          />
-          <Button
-            title="View Changelog"
-            onPress={() => openUserbubble("/changelog")}
-          />
-          <Button title="Logout" onPress={logout} />
-        </View>
-      )}
+    <View style={styles.form}>
+      <Text style={styles.formTitle}>Sign in to leave feedback</Text>
+      <TextInput
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
+        style={styles.input}
+      />
+      <Pressable onPress={handleIdentify} style={styles.button}>
+        <Text style={styles.buttonText}>Continue</Text>
+      </Pressable>
     </View>
   );
 }
@@ -70,19 +355,54 @@ function MainApp() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    padding: 24,
+    gap: 12,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    textAlign: "center",
+    marginBottom: 8,
   },
-  actions: {
-    gap: 10,
-    width: "100%",
+  button: {
+    backgroundColor: "#3b82f6",
+    borderRadius: 8,
+    padding: 14,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  logoutButton: {
+    borderRadius: 8,
+    padding: 14,
+    alignItems: "center",
+  },
+  logoutText: {
+    color: "#888",
+    fontSize: 14,
+  },
+  form: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 24,
+  },
+  formTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#d4d4d4",
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 12,
   },
 });
 ```
@@ -94,9 +414,18 @@ const styles = StyleSheet.create({
 Complete example for bare React Native projects:
 
 ```typescript
-import React from "react";
-import { Button, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { ActivityIndicator, Button, Modal, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { UserbubbleProvider, useUserbubble } from "@userbubble/react-native";
+import { WebView } from "react-native-webview";
+
+function LoadingIndicator() {
+  return (
+    <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+}
 
 export default function App() {
   return (
@@ -115,64 +444,58 @@ export default function App() {
 }
 
 function MainApp() {
-  const { identify, openUserbubble, isIdentified, logout, user } = useUserbubble();
+  const { identify, getEmbedUrl, isIdentified, logout } = useUserbubble();
+  const [showFeedback, setShowFeedback] = useState(false);
+  const url = getEmbedUrl("/feedback");
 
-  const handleLogin = async () => {
-    try {
-      await identify({
-        id: "user_456",
-        email: "jane@example.com",
-        name: "Jane Smith",
-      });
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-  };
+  if (!isIdentified) {
+    return (
+      <View style={styles.content}>
+        <Text style={styles.title}>Welcome to Userbubble</Text>
+        <Button
+          title="Sign In"
+          onPress={() =>
+            identify({
+              id: "user_456",
+              email: "jane@example.com",
+              name: "Jane Smith",
+            })
+          }
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.content}>
-      <Text style={styles.title}>Welcome to Userbubble</Text>
+      <Button title="Give Feedback" onPress={() => setShowFeedback(true)} />
+      <Button title="Sign Out" onPress={logout} />
 
-      {isIdentified && user && (
-        <Text style={styles.subtitle}>Hello, {user.name}!</Text>
-      )}
-
-      {!isIdentified ? (
-        <Button title="Sign In" onPress={handleLogin} />
-      ) : (
-        <View style={styles.buttons}>
-          <Button title="Feedback" onPress={() => openUserbubble("/feedback")} />
-          <Button title="Sign Out" onPress={logout} />
-        </View>
-      )}
+      {url ? (
+        <Modal
+          visible={showFeedback}
+          animationType="slide"
+          presentationStyle="formSheet"
+          onRequestClose={() => setShowFeedback(false)}
+        >
+          <WebView
+            source={{ uri: url }}
+            style={{ flex: 1 }}
+            javaScriptEnabled
+            domStorageEnabled
+            startInLoadingState
+            renderLoading={() => <LoadingIndicator />}
+          />
+        </Modal>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 20,
-  },
-  buttons: {
-    gap: 12,
-    width: "100%",
-  },
+  container: { flex: 1 },
+  content: { flex: 1, padding: 20, justifyContent: "center", gap: 12 },
+  title: { fontSize: 24, fontWeight: "600", marginBottom: 8, textAlign: "center" },
 });
 ```
 
@@ -188,6 +511,7 @@ Integrate with React Navigation to identify users after login:
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserbubbleProvider, useUserbubble } from "@userbubble/react-native";
+import { WebView } from "react-native-webview";
 
 const Stack = createNativeStackNavigator();
 
@@ -202,6 +526,14 @@ export default function App() {
         <Stack.Navigator>
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen
+            name="Feedback"
+            component={FeedbackScreen}
+            options={{
+              presentation: "formSheet",
+              headerShown: false,
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </UserbubbleProvider>
@@ -213,20 +545,17 @@ function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      // Your login logic
       const user = await authenticateUser();
 
-      // Identify with Userbubble
       await identify({
         id: user.id,
         email: user.email,
         name: user.name,
       });
 
-      // Navigate to home
       navigation.replace("Home");
     } catch (error) {
-      console.error("Login failed:", error);
+      Alert.alert("Login Failed", error.message);
     }
   };
 
@@ -237,18 +566,39 @@ function LoginScreen({ navigation }) {
   );
 }
 
-function HomeScreen() {
-  const { openUserbubble, logout, user } = useUserbubble();
+function HomeScreen({ navigation }) {
+  const { user, logout } = useUserbubble();
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
+    <View style={{ flex: 1, justifyContent: "center", padding: 20, gap: 12 }}>
       <Text>Welcome, {user?.name}!</Text>
-      <Button
-        title="Give Feedback"
-        onPress={() => openUserbubble("/feedback")}
-      />
+      <Button title="Give Feedback" onPress={() => navigation.push("Feedback")} />
       <Button title="Logout" onPress={logout} />
     </View>
+  );
+}
+
+function FeedbackScreen() {
+  const { getEmbedUrl } = useUserbubble();
+  const url = getEmbedUrl("/feedback");
+
+  if (!url) {
+    return null;
+  }
+
+  return (
+    <WebView
+      source={{ uri: url }}
+      style={{ flex: 1 }}
+      javaScriptEnabled
+      domStorageEnabled
+      startInLoadingState
+      renderLoading={() => (
+        <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
+    />
   );
 }
 ```
@@ -257,7 +607,7 @@ function HomeScreen() {
 
 ## Custom Storage Adapter
 
-### Using Custom Storage
+### Using MMKV Storage
 
 Implement a custom storage adapter for special requirements:
 
@@ -265,23 +615,18 @@ Implement a custom storage adapter for special requirements:
 import { UserbubbleProvider, type StorageAdapter } from "@userbubble/react-native";
 import { MMKV } from "react-native-mmkv";
 
-// Create MMKV instance
 const storage = new MMKV();
 
-// Implement custom storage adapter
 const mmkvStorage: StorageAdapter = {
   async getItem(key: string): Promise<string | null> {
     return storage.getString(key) ?? null;
   },
-
   async setItem(key: string, value: string): Promise<void> {
     storage.set(key, value);
   },
-
   async removeItem(key: string): Promise<void> {
     storage.delete(key);
   },
-
   async clear(): Promise<void> {
     storage.clearAll();
   },
@@ -313,17 +658,14 @@ import { useUserbubble } from "@userbubble/react-native";
 function MyScreen() {
   const { isInitialized, isIdentified, user } = useUserbubble();
 
-  // Show loading state while SDK initializes
   if (!isInitialized) {
     return <LoadingScreen />;
   }
 
-  // Show login screen if not identified
   if (!isIdentified) {
     return <LoginScreen />;
   }
 
-  // Show main content for identified users
   return (
     <View>
       <Text>Welcome, {user?.name}!</Text>
@@ -335,9 +677,9 @@ function MyScreen() {
 
 ---
 
-### Feedback Button Component
+### Reusable Feedback Button
 
-Reusable feedback button component:
+Opens Userbubble in the device browser:
 
 ```typescript
 import { useUserbubble } from "@userbubble/react-native";
@@ -362,108 +704,6 @@ export function FeedbackButton({ path = "/feedback", ...props }: FeedbackButtonP
     />
   );
 }
-
-// Usage
-function MyScreen() {
-  return (
-    <View>
-      <FeedbackButton />
-      <FeedbackButton title="View Updates" path="/changelog" />
-    </View>
-  );
-}
-```
-
----
-
-### Error Handling
-
-Comprehensive error handling example:
-
-```typescript
-import { useUserbubble } from "@userbubble/react-native";
-import { Alert } from "react-native";
-
-function LoginScreen() {
-  const { identify } = useUserbubble();
-  const [loading, setLoading] = React.useState(false);
-
-  const handleLogin = async () => {
-    setLoading(true);
-
-    try {
-      // Your login logic
-      const credentials = await getCredentials();
-      const user = await authenticateUser(credentials);
-
-      // Identify with Userbubble
-      await identify({
-        id: user.id,
-        email: user.email,
-        name: user.name,
-      });
-
-      Alert.alert("Success", "You're logged in!");
-    } catch (error) {
-      console.error("Login error:", error);
-
-      Alert.alert(
-        "Login Failed",
-        error instanceof Error ? error.message : "Unknown error occurred"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <View>
-      <Button
-        title={loading ? "Logging in..." : "Login"}
-        onPress={handleLogin}
-        disabled={loading}
-      />
-    </View>
-  );
-}
-```
-
----
-
-### TypeScript Types
-
-Using TypeScript for type safety:
-
-```typescript
-import type { UserbubbleUser, UserbubbleConfig } from "@userbubble/react-native";
-
-// Type-safe config
-const config: UserbubbleConfig = {
-  apiKey: process.env.EXPO_PUBLIC_USERBUBBLE_API_KEY!,
-  debug: __DEV__,
-};
-
-// Type-safe user identification
-async function identifyUser(userData: UserbubbleUser) {
-  const { identify } = useUserbubble();
-  await identify(userData);
-}
-
-// Custom user type extending Userbubble user
-interface ExtendedUser extends UserbubbleUser {
-  phoneNumber?: string;
-  subscription?: "free" | "pro" | "enterprise";
-}
-
-function handleUserLogin(user: ExtendedUser) {
-  // TypeScript ensures we pass correct fields to identify
-  identify({
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    avatar: user.avatar,
-  });
-}
 ```
 
 ---
@@ -480,10 +720,13 @@ export const useUserbubble = jest.fn(() => ({
   user: null,
   isInitialized: true,
   isIdentified: false,
+  authToken: null,
+  organizationSlug: null,
   identify: jest.fn(),
   logout: jest.fn(),
   getUser: jest.fn(() => null),
   openUserbubble: jest.fn(),
+  getEmbedUrl: jest.fn(() => null),
 }));
 
 export const UserbubbleProvider = ({ children }: { children: React.ReactNode }) => (
@@ -505,6 +748,7 @@ describe("MyComponent", () => {
     (useUserbubble as jest.Mock).mockReturnValue({
       identify: mockIdentify,
       isIdentified: false,
+      getEmbedUrl: jest.fn(() => null),
     });
 
     const { getByText } = render(<MyComponent />);
