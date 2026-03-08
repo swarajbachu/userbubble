@@ -13,7 +13,7 @@ function getBaseUrl(): string {
   if (env.VERCEL_ENV === "preview") {
     return `https://${env.VERCEL_URL}`;
   }
-  return "http://localhost:3000";
+  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 }
 
 const baseUrl = getBaseUrl();

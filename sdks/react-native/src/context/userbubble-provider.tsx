@@ -1,24 +1,28 @@
-/** biome-ignore-all lint/style/useImportType: <explanation> */
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
-
+import type { UserbubbleUser } from "@userbubble/core";
+import {
+  createLogger,
+  DEFAULT_BASE_URL,
+  generatePortalUrl,
+  identify,
+} from "@userbubble/core";
 import * as WebBrowser from "expo-web-browser";
-import React, { createContext, useCallback, useEffect, useState } from "react";
-import * as auth from "../auth/authenticate";
+// biome-ignore lint/style/useImportType: React must be in scope for JSX with "jsx": "react"
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { createStorageAdapter, StorageManager } from "../storage";
-import type {
-  UserbubbleConfig,
-  UserbubbleContextValue,
-  UserbubbleUser,
-} from "../types";
-import { logger } from "../utils/logger";
-import { generateUserbubbleUrl } from "../utils/url";
+import type { UserbubbleContextValue, UserbubbleRNConfig } from "../types";
 
 export const UserbubbleContext = createContext<UserbubbleContextValue | null>(
   null
 );
 
 export type UserbubbleProviderProps = {
-  config: UserbubbleConfig;
+  config: UserbubbleRNConfig;
   children: React.ReactNode;
 };
 
@@ -28,175 +32,159 @@ export function UserbubbleProvider({
 }: UserbubbleProviderProps) {
   const [user, setUser] = useState<UserbubbleUser | null>(null);
   const [organizationSlug, setOrganizationSlug] = useState<string | null>(null);
-  const [externalId, setExternalId] = useState<string | null>(null);
+  const [_externalId, setExternalId] = useState<string | null>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [storage, setStorage] = useState<StorageManager | null>(null);
 
-  const log = logger(config);
+  const log = useMemo(
+    () => createLogger(config.debug ?? false),
+    [config.debug]
+  );
 
   // Initialize storage and restore user
   useEffect(() => {
+    let cancelled = false;
+
     async function init() {
       try {
         const adapter = await createStorageAdapter(config);
         const storageManager = new StorageManager(adapter);
-        setStorage(storageManager);
 
-        // Restore user, organization slug, and external ID from storage
-        const savedUser = await storageManager.getUser();
-        const savedSlug = await storageManager.getOrganizationSlug();
-        const savedExternalId = await storageManager.getExternalId();
+        const [savedUser, savedSlug, savedExternalId, savedToken] =
+          await Promise.all([
+            storageManager.getUser(),
+            storageManager.getOrganizationSlug(),
+            storageManager.getExternalId(),
+            storageManager.getAuthToken(),
+          ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        setStorage(storageManager);
 
         if (savedUser) {
           setUser(savedUser);
-          log.debug("User restored from storage:", {
-            id: savedUser.id,
-            email: savedUser.email,
-          });
+          log.debug("User restored from storage:", savedUser.email);
         }
-
         if (savedSlug) {
           setOrganizationSlug(savedSlug);
-          log.debug("Organization slug restored:", savedSlug);
         }
-
         if (savedExternalId) {
           setExternalId(savedExternalId);
-          log.debug("External ID restored:", savedExternalId);
+        }
+        if (savedToken) {
+          setAuthToken(savedToken);
         }
 
         setIsInitialized(true);
       } catch (error) {
-        console.error("[userbubble] Initialization failed:", error);
-        setIsInitialized(true); // Still mark as initialized to prevent blocking
+        log.error("Initialization failed:", error);
+        if (!cancelled) {
+          setIsInitialized(true);
+        }
       }
     }
 
     init();
-  }, [config, log.debug]);
+    return () => {
+      cancelled = true;
+    };
+  }, [config, log]);
 
-  // Identify user
   const identifyUser = useCallback(
     async (newUser: UserbubbleUser) => {
       if (!storage) {
         throw new Error("[userbubble] Storage not initialized");
       }
 
-      try {
-        log.debug("Identifying user:", {
-          id: newUser.id,
-          email: newUser.email,
-        });
+      log.debug("Identifying user:", newUser.email);
 
-        // Call backend to identify user
-        const response = await auth.identify(newUser, config);
+      const response = await identify(newUser, config);
 
-        log.debug("User identified successfully:", {
-          userId: response.user.id,
-          organizationSlug: response.organizationSlug,
-        });
+      log.debug("User identified:", response.organizationSlug);
 
-        // Save user, organization slug, and external ID to storage
-        await storage.setUser(newUser);
-        await storage.setOrganizationSlug(response.organizationSlug);
-        await storage.setExternalId(newUser.id);
+      await Promise.all([
+        storage.setUser(newUser),
+        storage.setOrganizationSlug(response.organizationSlug),
+        storage.setExternalId(newUser.id),
+        storage.setAuthToken(response.token),
+      ]);
 
-        // Update state
-        setUser(newUser);
-        setOrganizationSlug(response.organizationSlug);
-        setExternalId(newUser.id);
-      } catch (error) {
-        log.error("Identification failed:", error);
-        throw error;
-      }
+      setUser(newUser);
+      setOrganizationSlug(response.organizationSlug);
+      setExternalId(newUser.id);
+      setAuthToken(response.token);
     },
     [storage, config, log]
   );
 
-  // Logout user
   const logoutUser = useCallback(async () => {
     if (!storage) {
       return;
     }
 
-    try {
-      log.debug("Logging out user");
+    log.debug("Logging out user");
+    await storage.clear();
 
-      // Call logout (no API call needed - stateless!)
-      await auth.logout();
+    setUser(null);
+    setOrganizationSlug(null);
+    setExternalId(null);
+    setAuthToken(null);
 
-      // Clear storage
-      await storage.clear();
+    log.debug("User logged out");
+  }, [storage, log]);
 
-      // Clear state
-      setUser(null);
-      setOrganizationSlug(null);
-      setExternalId(null);
-
-      log.debug("User logged out successfully");
-    } catch (error) {
-      log.error("Logout failed:", error);
-    }
-  }, [storage, config, log]);
-
-  // Get current user
   const getUser = useCallback(() => user, [user]);
 
-  // Open Userbubble in browser modal
+  const getEmbedUrl = useCallback(
+    (path?: string): string | null => {
+      if (!(organizationSlug && authToken)) {
+        return null;
+      }
+      const baseUrl = config.baseUrl ?? DEFAULT_BASE_URL;
+      return generatePortalUrl({
+        baseUrl,
+        orgSlug: organizationSlug,
+        path: path ?? "/feedback",
+        authToken,
+      });
+    },
+    [organizationSlug, authToken, config.baseUrl]
+  );
+
   const openUserbubble = useCallback(
-    async (path = "") => {
-      if (!user) {
+    async (path = "/feedback") => {
+      const url = getEmbedUrl(path);
+      if (!url) {
         throw new Error(
           "[userbubble] User not identified. Call identify() first."
         );
       }
 
-      if (!organizationSlug) {
-        throw new Error(
-          "[userbubble] Organization slug not available. Re-identify user."
-        );
-      }
+      log.debug("Opening Userbubble:", url);
 
-      if (!externalId) {
-        throw new Error(
-          "[userbubble] External ID not available. Re-identify user."
-        );
-      }
-
-      const baseUrl = config.baseUrl ?? "https://app.userbubble.com";
-      let url = generateUserbubbleUrl(
-        baseUrl,
-        organizationSlug,
-        path,
-        config.useDirectUrls
-      );
-
-      // Add authentication parameters as query params for external user authentication
-      const params = new URLSearchParams({
-        external_user: externalId,
-        api_key: config.apiKey,
-      });
-      url = `${url}?${params.toString()}`;
-
-      log.debug("Opening Userbubble in browser:", url);
-
-      // Open in-app browser (works with Expo Go!)
       await WebBrowser.openBrowserAsync(url, {
         presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
         controlsColor: "#000000",
       });
     },
-    [user, organizationSlug, externalId, config, log]
+    [getEmbedUrl, log]
   );
 
   const value: UserbubbleContextValue = {
     user,
     isInitialized,
-    isIdentified: user !== null,
+    isIdentified: user !== null && authToken !== null,
+    authToken,
+    organizationSlug,
     identify: identifyUser,
     logout: logoutUser,
     getUser,
     openUserbubble,
+    getEmbedUrl,
   };
 
   return (

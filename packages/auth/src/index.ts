@@ -35,10 +35,12 @@ export function initAuth<
         domain:
           process.env.NODE_ENV === "production"
             ? ".userbubble.com"
-            : ".host.local",
+            : `.${process.env.NEXT_PUBLIC_BASE_DOMAIN ?? "gesturs.com"}`,
+      },
+      ipAddress: {
+        ipAddressHeaders: ["cf-connecting-ip"],
       },
       useSecureCookies: true,
-      disableCSRFCheck: false,
       defaultCookieAttributes: {
         sameSite: "None",
         secure: true,
@@ -101,12 +103,13 @@ export function initAuth<
       "http://localhost:3000",
       options.baseUrl,
       "https://*.userbubble.com",
-      "https://*.host.local",
-      "https://delulusocial.host.local",
+      "https://*.gesturs.com",
+      "userbubble://",
     ],
     onAPIError: {
-      onError(error, ctx) {
-        console.error("BETTER AUTH API ERROR", error, ctx);
+      onError(error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error("BETTER AUTH API ERROR:", message);
       },
     },
   } satisfies BetterAuthOptions;

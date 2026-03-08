@@ -74,10 +74,12 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 }
 
 const getBaseUrl = () => {
-  // Server-side: use NEXT_PUBLIC_APP_URL or fallback
+  if (typeof window !== "undefined") {
+    // Browser/WebView: use relative URL so requests go to the current origin
+    return "";
+  }
   if (process.env.NEXT_PUBLIC_APP_URL) {
     return process.env.NEXT_PUBLIC_APP_URL;
   }
-  // eslint-disable-next-line no-restricted-properties
   return `http://localhost:${process.env.PORT ?? 3000}`;
 };

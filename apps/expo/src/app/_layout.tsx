@@ -14,9 +14,8 @@ export default function RootLayout() {
     <UserbubbleProvider
       config={{
         apiKey:
-          "ub_b57fec02c6e1f887b643fed84f0e7908adb62b1106ce12eb11cb1b284fe5a356",
-        baseUrl: "http://192.168.0.101:3000", // IP address for mobile access
-        useDirectUrls: true, // Use direct paths instead of subdomains for mobile
+          "ub_1a713a7ae1e5acc234840545ec2ebf7885a0da9488276b784e51cb9340f3db2a",
+        baseUrl: "https://app.gesturs.com",
         debug: true,
       }}
     >

@@ -48,6 +48,7 @@
     }
   },
   "dependencies": {
+    "@userbubble/core": "workspace:*",
     "@userbubble/tsconfig": "workspace:*"
   },
   "devDependencies": {

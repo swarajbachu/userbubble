@@ -9,20 +9,10 @@ export default [
       file: "dist/index.esm.js",
       format: "esm",
       sourcemap: true,
-      inlineDynamicImports: true,
     },
-    external: [
-      "react",
-      "react-native",
-      "expo-web-browser",
-      "expo-secure-store",
-      "@react-native-async-storage/async-storage",
-      "expo-constants",
-      "@userbubble/core",
-    ],
     plugins: [
       nodeResolve({
-        extensions: [".ts", ".tsx"],
+        extensions: [".ts"],
       }),
       typescript({
         tsconfig: "./tsconfig.json",
@@ -41,20 +31,10 @@ export default [
       format: "cjs",
       sourcemap: true,
       exports: "named",
-      inlineDynamicImports: true,
     },
-    external: [
-      "react",
-      "react-native",
-      "expo-web-browser",
-      "expo-secure-store",
-      "@react-native-async-storage/async-storage",
-      "expo-constants",
-      "@userbubble/core",
-    ],
     plugins: [
       nodeResolve({
-        extensions: [".ts", ".tsx"],
+        extensions: [".ts"],
       }),
       typescript({
         tsconfig: "./tsconfig.json",
