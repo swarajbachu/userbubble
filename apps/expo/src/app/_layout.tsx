@@ -33,7 +33,18 @@ export default function RootLayout() {
               backgroundColor: colorScheme === "dark" ? "#09090B" : "#FFFFFF",
             },
           }}
-        />
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen
+            name="feedback"
+            options={{
+              presentation: "formSheet",
+              headerShown: false,
+              sheetGrabberVisible: true,
+              sheetCornerRadius: 16,
+            }}
+          />
+        </Stack>
         <StatusBar />
       </QueryClientProvider>
     </UserbubbleProvider>
