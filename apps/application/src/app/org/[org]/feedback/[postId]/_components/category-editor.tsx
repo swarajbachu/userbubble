@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FeedbackCategory } from "@userbubble/db/schema";
-import { Icon } from "@userbubble/ui/icon";
+import { cn } from "@userbubble/ui";
 import {
   Select,
   SelectContent,
@@ -12,7 +12,7 @@ import {
 } from "@userbubble/ui/select";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { categoryConfig, categoryLabels } from "~/components/feedback/config";
+import { categories, getCategory } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
 
 type CategoryEditorProps = {
@@ -43,6 +43,8 @@ export function CategoryEditor({
     })
   );
 
+  const current = getCategory(currentCategory);
+
   return (
     <Select
       disabled={updateCategory.isPending}
@@ -54,20 +56,39 @@ export function CategoryEditor({
       }
       value={currentCategory}
     >
-      <SelectTrigger className="w-54">
+      <SelectTrigger
+        className={cn(
+          "h-7 w-auto gap-1.5 border-none px-2.5 font-medium text-xs shadow-none",
+          current?.color.replace("text-", "bg-").replace("-500", "-500/15"),
+          current?.color
+        )}
+      >
         <SelectValue>
-          <div className="flex items-center gap-2">
-            <Icon icon={categoryConfig[currentCategory].icon} size={16} />
-            <span className="capitalize">
-              {currentCategory.replace("_", " ")}
-            </span>
-          </div>
+          {current && (
+            <div className="flex items-center gap-1.5">
+              <span
+                className={cn(
+                  "h-2 w-2 rounded-full",
+                  current.color.replace("text-", "bg-")
+                )}
+              />
+              <span>{current.label}</span>
+            </div>
+          )}
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {Object.entries(categoryLabels).map(([category, label]) => (
-          <SelectItem key={category} value={category}>
-            {label}
+        {categories.map((c) => (
+          <SelectItem key={c.value} value={c.value}>
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  "h-2 w-2 rounded-full",
+                  c.color.replace("text-", "bg-")
+                )}
+              />
+              <span>{c.label}</span>
+            </div>
           </SelectItem>
         ))}
       </SelectContent>

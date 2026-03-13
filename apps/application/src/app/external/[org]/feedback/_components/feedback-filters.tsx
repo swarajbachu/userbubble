@@ -1,14 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Cancel01Icon,
-  CheckmarkBadge01Icon,
-  CircleIcon,
-  Clock01Icon,
-  EyeIcon,
-  HourglassIcon,
-} from "@hugeicons-pro/core-bulk-rounded";
+import { CheckmarkBadge01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import {
   ArrowDown01Icon,
   FilterHorizontalIcon,
@@ -29,42 +22,8 @@ import {
 import Link from "next/link";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { type ReactNode, useState } from "react";
-import { statusConfig } from "~/components/feedback/config";
+import { getStatus, statuses } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
-
-const STATUS_FILTERS = [
-  { label: "Open", value: "open", color: "text-blue-500", icon: CircleIcon },
-  {
-    label: "Under Review",
-    value: "under_review",
-    color: "text-yellow-500",
-    icon: EyeIcon,
-  },
-  {
-    label: "Planned",
-    value: "planned",
-    color: "text-purple-500",
-    icon: Clock01Icon,
-  },
-  {
-    label: "In Progress",
-    value: "in_progress",
-    color: "text-orange-500",
-    icon: HourglassIcon,
-  },
-  {
-    label: "Completed",
-    value: "completed",
-    color: "text-green-500",
-    icon: CheckmarkBadge01Icon,
-  },
-  {
-    label: "Closed",
-    value: "closed",
-    color: "text-slate-500",
-    icon: Cancel01Icon,
-  },
-] as const;
 
 type FeedbackFiltersProps = {
   organizationId: string;
@@ -125,7 +84,7 @@ export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
       mobileSearchContent = (
         <div className="space-y-1">
           {searchResults.map((item) => {
-            const config = statusConfig[item.post.status];
+            const config = getStatus(item.post.status);
             return (
               <Link
                 className="block rounded-lg p-2 transition-colors hover:bg-accent/50"
@@ -134,10 +93,12 @@ export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
                 onClick={() => setMobileSearchOpen(false)}
               >
                 <div className="flex items-start gap-2">
-                  <Icon
-                    className={cn("mt-1 size-4 shrink-0", config.color)}
-                    icon={config.icon}
-                  />
+                  {config && (
+                    <Icon
+                      className={cn("mt-1 size-4 shrink-0", config.color)}
+                      icon={config.icon}
+                    />
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="line-clamp-1 font-medium text-base">
                       {item.post.title}
@@ -214,7 +175,7 @@ export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
           <div className="px-2 py-1.5 font-medium text-muted-foreground text-xs">
             Filter by status
           </div>
-          {STATUS_FILTERS.map((filter) => (
+          {statuses.map((filter) => (
             <button
               className={cn(
                 "flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-accent",

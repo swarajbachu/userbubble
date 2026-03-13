@@ -7,6 +7,7 @@ import type { FeedbackPost } from "@userbubble/db/schema";
 import { cn } from "@userbubble/ui";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { getCategory } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
 import { VoteButton } from "../../feedback/_components/vote-button";
 
@@ -89,14 +90,6 @@ export function RoadmapCard({
     });
   };
 
-  const categoryLabels = {
-    feature_request: "Feature",
-    bug: "Bug",
-    improvement: "Improvement",
-    question: "Question",
-    other: "Other",
-  };
-
   return (
     <div
       className={cn(
@@ -121,7 +114,7 @@ export function RoadmapCard({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
           <span className="flex items-center gap-1.5 rounded-full bg-secondary px-2 py-0.5 font-medium text-secondary-foreground">
-            {categoryLabels[post.category]}
+            {getCategory(post.category)?.label ?? post.category}
           </span>
           <span>
             {new Date(post.createdAt).toLocaleDateString(undefined, {

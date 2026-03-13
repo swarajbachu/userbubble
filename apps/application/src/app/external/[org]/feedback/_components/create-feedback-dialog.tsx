@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@userbubble/ui/select";
 import { toast } from "sonner";
-import { categoryConfig } from "~/components/feedback/config";
+import { categories, getCategory } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
@@ -201,7 +201,10 @@ export function CreateFeedbackDialog({
                         <SelectValue>
                           <div className="flex items-center gap-2">
                             <Icon
-                              icon={categoryConfig[field.state.value].icon}
+                              icon={
+                                getCategory(field.state.value)?.icon ??
+                                categories[0].icon
+                              }
                               size={16}
                             />
                             <span className="capitalize">
@@ -211,13 +214,11 @@ export function CreateFeedbackDialog({
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="feature_request">
-                          Feature Request
-                        </SelectItem>
-                        <SelectItem value="bug">Bug Report</SelectItem>
-                        <SelectItem value="improvement">Improvement</SelectItem>
-                        <SelectItem value="question">Question</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        {categories.map((c) => (
+                          <SelectItem key={c.value} value={c.value}>
+                            {c.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     {isInvalid && (

@@ -8,7 +8,7 @@ import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
 import { memo, useState, useTransition } from "react";
 import { useTRPC } from "~/trpc/react";
-import { statusConfig } from "./config";
+import { getStatus } from "./config";
 import { VoteButton } from "./vote-button";
 
 type PostCardProps = {
@@ -72,7 +72,7 @@ export const PostCard = memo(function PostCard({
     });
   };
 
-  const config = statusConfig[post.status];
+  const config = getStatus(post.status);
 
   return (
     <div className="group flex items-center gap-4 border-x border-b p-3 first:rounded-t-2xl first:border-t last:rounded-b-2xl">
@@ -101,11 +101,15 @@ export const PostCard = memo(function PostCard({
       </div>
 
       <div className="flex flex-none items-center gap-3 text-muted-foreground text-xs">
-        <Icon
-          className={cn("size-4", config.color)}
-          icon={config.icon}
-          {...("strokeWidth" in config && { strokeWidth: config.strokeWidth })}
-        />
+        {config && (
+          <Icon
+            className={cn("size-4", config.color)}
+            icon={config.icon}
+            {...("strokeWidth" in config && {
+              strokeWidth: config.strokeWidth,
+            })}
+          />
+        )}
 
         <span className="hidden sm:inline">
           {new Date(post.createdAt).toLocaleDateString(undefined, {

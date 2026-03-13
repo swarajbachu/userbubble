@@ -29,7 +29,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { authClient } from "~/auth/client";
-import { statusAllConfig, statusConfig } from "~/components/feedback/config";
+import { allStatus, statuses } from "~/components/feedback/config";
 import { OrgSwitcher } from "./org-switcher";
 import { UserProfileMenu } from "./user-profile-menu";
 
@@ -72,21 +72,19 @@ const SECONDARY_NAV_ITEMS = [
   },
 ] as const;
 
-const STATUS_LABELS: Record<string, string> = {
-  all: "All",
-  open: "Pending",
-  under_review: "Under Review",
-  planned: "Planned",
-  in_progress: "In Progress",
-  completed: "Completed",
-  closed: "Closed",
-};
-
 const STATUS_FILTERS = [
-  { value: "all", ...statusAllConfig },
-  ...Object.entries(statusConfig).map(([value, config]) => ({
-    value,
-    ...config,
+  {
+    value: "all" as const,
+    icon: allStatus.icon,
+    color: allStatus.color,
+    label: allStatus.label,
+  },
+  ...statuses.map((s) => ({
+    value: s.value,
+    icon: s.icon,
+    color: s.color,
+    label: s.label,
+    ...("strokeWidth" in s ? { strokeWidth: s.strokeWidth } : {}),
   })),
 ];
 
@@ -236,9 +234,7 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
                             strokeWidth: filter.strokeWidth,
                           })}
                         />
-                        <span className="text-sm">
-                          {STATUS_LABELS[filter.value]}
-                        </span>
+                        <span className="text-sm">{filter.label}</span>
                       </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

@@ -12,7 +12,7 @@ import { notFound } from "next/navigation";
 import { CommentsSection } from "~/app/org/[org]/feedback/[postId]/_components/comments-section";
 import { PostMainContent } from "~/app/org/[org]/feedback/[postId]/_components/post-main-content";
 import { getSession } from "~/auth/server";
-import { categoryLabels, statusConfig } from "~/components/feedback/config";
+import { getCategory, getStatus } from "~/components/feedback/config";
 import { getPublicOrganization } from "~/lib/get-organization";
 
 type ExternalFeedbackPostPageProps = {
@@ -101,7 +101,8 @@ export default async function ExternalFeedbackPostPage({
   // Check if user voted
   const hasUserVoted = userId ? !!(await getUserVote(postId, userId)) : false;
 
-  const config = statusConfig[post.post.status];
+  const statusConfig = getStatus(post.post.status);
+  const categoryConfig = getCategory(post.post.category);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -199,14 +200,14 @@ export default async function ExternalFeedbackPostPage({
                       Status
                     </span>
                     <div className="flex items-center gap-2 font-medium text-sm">
-                      <Icon
-                        className={config.color}
-                        icon={config.icon}
-                        size={16}
-                      />
-                      <span className="capitalize">
-                        {post.post.status.replace("_", " ")}
-                      </span>
+                      {statusConfig && (
+                        <Icon
+                          className={statusConfig.color}
+                          icon={statusConfig.icon}
+                          size={16}
+                        />
+                      )}
+                      <span>{statusConfig?.label ?? post.post.status}</span>
                     </div>
                   </div>
 
@@ -216,7 +217,7 @@ export default async function ExternalFeedbackPostPage({
                       Category
                     </span>
                     <div className="font-medium text-sm">
-                      {categoryLabels[post.post.category]}
+                      {categoryConfig?.label ?? post.post.category}
                     </div>
                   </div>
 

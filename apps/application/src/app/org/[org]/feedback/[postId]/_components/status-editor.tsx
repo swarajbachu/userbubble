@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FeedbackStatus } from "@userbubble/db/schema";
-import { Icon } from "@userbubble/ui/icon";
+import { cn } from "@userbubble/ui";
 import {
   Select,
   SelectContent,
@@ -12,7 +12,7 @@ import {
 } from "@userbubble/ui/select";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { statusConfig } from "~/components/feedback/config";
+import { getStatus, statuses } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
 
 type StatusEditorProps = {
@@ -40,6 +40,8 @@ export function StatusEditor({ postId, currentStatus }: StatusEditorProps) {
     })
   );
 
+  const current = getStatus(currentStatus);
+
   return (
     <Select
       disabled={updateStatus.isPending}
@@ -51,26 +53,41 @@ export function StatusEditor({ postId, currentStatus }: StatusEditorProps) {
       }
       value={currentStatus}
     >
-      <SelectTrigger className="w-54">
+      <SelectTrigger
+        className={cn(
+          "h-7 w-auto gap-1.5 border-none px-2.5 font-medium text-xs shadow-none",
+          current?.color
+            .replace("text-", "bg-")
+            .replace("-500", "-500/15")
+            .replace("-400", "-400/15"),
+          current?.color
+        )}
+      >
         <SelectValue>
-          <div className="flex items-center gap-2">
-            <Icon
-              className={statusConfig[currentStatus].color}
-              icon={statusConfig[currentStatus].icon}
-              size={16}
-            />
-            <span className="capitalize">
-              {currentStatus.replace("_", " ")}
-            </span>
-          </div>
+          {current && (
+            <div className="flex items-center gap-1.5">
+              <span
+                className={cn(
+                  "h-2 w-2 rounded-full",
+                  current.color.replace("text-", "bg-")
+                )}
+              />
+              <span>{current.label}</span>
+            </div>
+          )}
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {Object.entries(statusConfig).map(([status, cfg]) => (
-          <SelectItem key={status} value={status}>
+        {statuses.map((s) => (
+          <SelectItem key={s.value} value={s.value}>
             <div className="flex items-center gap-2">
-              <Icon className={cfg.color} icon={cfg.icon} size={16} />
-              <span className="capitalize">{status.replace("_", " ")}</span>
+              <span
+                className={cn(
+                  "h-2 w-2 rounded-full",
+                  s.color.replace("text-", "bg-")
+                )}
+              />
+              <span>{s.label}</span>
             </div>
           </SelectItem>
         ))}

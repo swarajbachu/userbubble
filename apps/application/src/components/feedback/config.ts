@@ -13,32 +13,77 @@ import {
   Rocket01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
 
-export const statusConfig = {
-  open: { color: "text-orange-500", icon: Clock02Icon, strokeWidth: 1 },
-  under_review: { color: "text-amber-500", icon: ClockAlertIcon },
-  planned: { color: "text-violet-500", icon: Clock01Icon },
-  in_progress: { color: "text-indigo-500", icon: Progress02Icon },
-  completed: { color: "text-emerald-500", icon: CheckmarkCircle01Icon },
-  closed: { color: "text-red-400", icon: CancelCircleIcon, strokeWidth: 1 },
-} as const;
+export const statuses = [
+  {
+    value: "open",
+    label: "Pending",
+    icon: Clock02Icon,
+    color: "text-orange-500",
+    strokeWidth: 1,
+  },
+  {
+    value: "under_review",
+    label: "Under Review",
+    icon: ClockAlertIcon,
+    color: "text-amber-500",
+  },
+  {
+    value: "planned",
+    label: "Planned",
+    icon: Clock01Icon,
+    color: "text-violet-500",
+  },
+  {
+    value: "in_progress",
+    label: "In Progress",
+    icon: Progress02Icon,
+    color: "text-indigo-500",
+  },
+  {
+    value: "completed",
+    label: "Completed",
+    icon: CheckmarkCircle01Icon,
+    color: "text-emerald-500",
+  },
+  {
+    value: "closed",
+    label: "Closed",
+    icon: CancelCircleIcon,
+    color: "text-red-400",
+    strokeWidth: 1,
+  },
+] as const;
 
-export const statusAllConfig = {
-  color: "text-zinc-400",
+export const allStatus = {
+  label: "All",
   icon: AllBookmarkIcon,
+  color: "text-zinc-400",
 } as const;
 
-export const categoryConfig = {
-  feature_request: { color: "text-purple-500", icon: Rocket01Icon },
-  bug: { color: "text-red-500", icon: AlertCircleIcon },
-  improvement: { color: "text-blue-500", icon: ArrowUp01Icon },
-  question: { color: "text-yellow-500", icon: HelpCircleIcon },
-  other: { color: "text-slate-500", icon: Menu01Icon },
-} as const;
+export const categories = [
+  {
+    value: "feature_request",
+    label: "Feature",
+    icon: Rocket01Icon,
+    color: "text-purple-500",
+  },
+  { value: "bug", label: "Bug", icon: AlertCircleIcon, color: "text-red-500" },
+  {
+    value: "improvement",
+    label: "Improvement",
+    icon: ArrowUp01Icon,
+    color: "text-blue-500",
+  },
+  {
+    value: "question",
+    label: "Question",
+    icon: HelpCircleIcon,
+    color: "text-yellow-500",
+  },
+  { value: "other", label: "Other", icon: Menu01Icon, color: "text-slate-500" },
+] as const;
 
-export const categoryLabels = {
-  feature_request: "Feature",
-  bug: "Bug",
-  improvement: "Improvement",
-  question: "Question",
-  other: "Other",
-} as const;
+export const getStatus = (value: string) =>
+  statuses.find((s) => s.value === value);
+export const getCategory = (value: string) =>
+  categories.find((c) => c.value === value);
