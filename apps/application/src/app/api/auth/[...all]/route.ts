@@ -12,6 +12,7 @@ const allowedOrigins = new Set([
 // Regex patterns for wildcard domain matching
 const USERBUBBLE_SUBDOMAIN_PATTERN =
   /^https:\/\/[a-zA-Z0-9-]+\.userbubble\.com$/;
+const GESTURS_SUBDOMAIN_PATTERN = /^https:\/\/[a-zA-Z0-9-]+\.gesturs\.com$/;
 const HOST_LOCAL_SUBDOMAIN_PATTERN = /^https:\/\/[a-zA-Z0-9-]+\.host\.local$/;
 const LOCALHOST_PATTERN = /^http:\/\/localhost:\d+$/;
 
@@ -30,6 +31,7 @@ function isOriginAllowed(origin: string): boolean {
   // Check wildcard patterns
   if (
     origin.match(USERBUBBLE_SUBDOMAIN_PATTERN) ||
+    origin.match(GESTURS_SUBDOMAIN_PATTERN) ||
     origin.match(HOST_LOCAL_SUBDOMAIN_PATTERN) ||
     origin.match(LOCALHOST_PATTERN)
   ) {

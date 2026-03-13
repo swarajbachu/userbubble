@@ -23,54 +23,75 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       box-sizing: border-box;
     }
 
-    /* Light theme (default) */
+    /* Light theme (default) — COSS UI color system */
     .ub-root {
       --ub-accent: ${accent};
       --ub-accent-hover: color-mix(in srgb, ${accent} 85%, black);
       --ub-accent-text: #fff;
       --ub-bg: #ffffff;
-      --ub-bg-secondary: #f7f7f8;
-      --ub-bg-tertiary: #f0f0f2;
-      --ub-text: #111113;
-      --ub-text-secondary: #60646c;
-      --ub-text-muted: #8b8d98;
-      --ub-border: #e8e8ec;
-      --ub-border-light: #f0f0f2;
-      --ub-shadow: 0 16px 70px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+      --ub-bg-secondary: rgba(0,0,0,0.04);
+      --ub-bg-tertiary: rgba(0,0,0,0.06);
+      --ub-text: #262626;
+      --ub-text-secondary: #525252;
+      --ub-text-muted: color-mix(in srgb, #737373 90%, #000);
+      --ub-border: rgba(0,0,0,0.08);
+      --ub-border-light: rgba(0,0,0,0.06);
+      --ub-input-border: rgba(0,0,0,0.10);
+      --ub-ring: #a3a3a3;
+      --ub-shadow: 0 16px 70px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.08);
       --ub-btn-shadow: 0 4px 16px rgba(0,0,0,0.16);
-      --ub-success: #22c55e;
-      --ub-radius: 12px;
+      --ub-success: #10b981;
+      --ub-success-fg: #047857;
+      --ub-destructive: #ef4444;
+      --ub-destructive-fg: #b91c1c;
+      --ub-info: #3b82f6;
+      --ub-warning: #f59e0b;
+      --ub-radius: 0.625rem;
     }
 
-    /* Dark theme */
+    /* Dark theme — COSS UI */
     .ub-root.ub-dark {
-      --ub-bg: #141416;
-      --ub-bg-secondary: #1c1c1f;
-      --ub-bg-tertiary: #232326;
-      --ub-text: #ededef;
-      --ub-text-secondary: #9f9fa9;
-      --ub-text-muted: #6e6e7a;
-      --ub-border: #2c2c30;
-      --ub-border-light: #232326;
+      --ub-bg: color-mix(in srgb, #0a0a0a 95%, #fff);
+      --ub-bg-secondary: rgba(255,255,255,0.04);
+      --ub-bg-tertiary: rgba(255,255,255,0.06);
+      --ub-text: #f5f5f5;
+      --ub-text-secondary: #d4d4d4;
+      --ub-text-muted: color-mix(in srgb, #737373 90%, #fff);
+      --ub-border: rgba(255,255,255,0.06);
+      --ub-border-light: rgba(255,255,255,0.05);
+      --ub-input-border: rgba(255,255,255,0.08);
+      --ub-ring: #737373;
       --ub-shadow: 0 16px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
       --ub-btn-shadow: 0 4px 16px rgba(0,0,0,0.4);
-      --ub-success: #4ade80;
+      --ub-success: #10b981;
+      --ub-success-fg: #34d399;
+      --ub-destructive: color-mix(in srgb, #ef4444 90%, #fff);
+      --ub-destructive-fg: #f87171;
+      --ub-info: #3b82f6;
+      --ub-warning: #f59e0b;
     }
 
     /* Auto theme via prefers-color-scheme */
     @media (prefers-color-scheme: dark) {
       .ub-root.ub-auto {
-        --ub-bg: #141416;
-        --ub-bg-secondary: #1c1c1f;
-        --ub-bg-tertiary: #232326;
-        --ub-text: #ededef;
-        --ub-text-secondary: #9f9fa9;
-        --ub-text-muted: #6e6e7a;
-        --ub-border: #2c2c30;
-        --ub-border-light: #232326;
+        --ub-bg: color-mix(in srgb, #0a0a0a 95%, #fff);
+        --ub-bg-secondary: rgba(255,255,255,0.04);
+        --ub-bg-tertiary: rgba(255,255,255,0.06);
+        --ub-text: #f5f5f5;
+        --ub-text-secondary: #d4d4d4;
+        --ub-text-muted: color-mix(in srgb, #737373 90%, #fff);
+        --ub-border: rgba(255,255,255,0.06);
+        --ub-border-light: rgba(255,255,255,0.05);
+        --ub-input-border: rgba(255,255,255,0.08);
+        --ub-ring: #737373;
         --ub-shadow: 0 16px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
         --ub-btn-shadow: 0 4px 16px rgba(0,0,0,0.4);
-        --ub-success: #4ade80;
+        --ub-success: #10b981;
+        --ub-success-fg: #34d399;
+        --ub-destructive: color-mix(in srgb, #ef4444 90%, #fff);
+        --ub-destructive-fg: #f87171;
+        --ub-info: #3b82f6;
+        --ub-warning: #f59e0b;
       }
     }
 
@@ -232,7 +253,7 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       width: 100%;
       padding: 10px 0;
       border: none;
-      border-bottom: 1px solid var(--ub-border-light);
+      border-bottom: 1px solid var(--ub-input-border);
       border-radius: 0;
       background: transparent;
       color: var(--ub-text);
@@ -274,8 +295,8 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
     }
     .ub-select {
       padding: 7px 28px 7px 10px;
-      border: 1px solid var(--ub-border);
-      border-radius: 8px;
+      border: 1px solid var(--ub-input-border);
+      border-radius: var(--ub-radius);
       background: var(--ub-bg);
       color: var(--ub-text-secondary);
       font-size: 13px;
@@ -300,7 +321,7 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
     .ub-btn-submit {
       padding: 7px 20px;
       border: none;
-      border-radius: 8px;
+      border-radius: var(--ub-radius);
       background: var(--ub-accent);
       color: var(--ub-accent-text);
       font-size: 13px;
@@ -356,18 +377,12 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
     /* ── Error ── */
     .ub-error {
       padding: 10px 12px;
-      border-radius: 8px;
-      background: #fef2f2;
-      color: #dc2626;
+      border-radius: var(--ub-radius);
+      background: rgba(239,68,68,0.08);
+      color: var(--ub-destructive-fg);
       font-size: 13px;
       margin-bottom: 8px;
-    }
-    @media (prefers-color-scheme: dark) {
-      .ub-root.ub-auto .ub-error,
-      .ub-root.ub-dark .ub-error {
-        background: #451a1a;
-        color: #fca5a5;
-      }
+      border: 1px solid rgba(239,68,68,0.12);
     }
 
     /* ── Empty state ── */
@@ -416,8 +431,10 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       align-items: center;
       gap: 10px;
       padding: 8px 10px;
-      border-radius: 10px;
+      border-radius: var(--ub-radius);
       background: var(--ub-bg-secondary);
+      border: 1px solid var(--ub-border);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
       cursor: pointer;
       transition: background 0.15s;
     }
@@ -452,8 +469,8 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       align-items: center;
       gap: 1px;
       padding: 6px 8px;
-      border: 1px solid var(--ub-border);
-      border-radius: 8px;
+      border: 1px solid var(--ub-input-border);
+      border-radius: var(--ub-radius);
       background: var(--ub-bg);
       color: var(--ub-text-muted);
       cursor: pointer;
@@ -461,6 +478,7 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       font-weight: 600;
       font-family: inherit;
       flex-shrink: 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
       transition: all 0.15s;
     }
     .ub-vote-btn:hover {
