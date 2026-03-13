@@ -101,7 +101,7 @@ export default async function ChangelogPage({ params }: ChangelogPageProps) {
         type="application/ld+json"
       />
       <div className="w-full">
-        <div className="flex flex-col gap-2 py-6">
+        <div className="mb-6 flex flex-col gap-2">
           <h1 className="font-bold text-2xl">Changelog</h1>
           <p className="text-muted-foreground text-sm">
             Product updates and release notes

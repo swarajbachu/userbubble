@@ -210,10 +210,7 @@ export const feedbackRouter = {
     .input(
       z.object({
         postId: z.string(),
-        status: feedbackStatusValidator.refine(
-          (status) => ["planned", "in_progress", "completed"].includes(status),
-          { message: "Status must be planned, in_progress, or completed" }
-        ),
+        status: feedbackStatusValidator,
       })
     )
     .mutation(async ({ input }) =>
