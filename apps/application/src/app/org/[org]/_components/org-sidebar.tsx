@@ -2,15 +2,9 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Cancel01Icon,
-  CheckmarkBadge01Icon,
-  CircleIcon,
-  Clock01Icon,
-  EyeIcon,
-  HourglassIcon,
-  MarketingIcon,
-  Message01Icon,
-  Route01Icon,
+  Agreement03Icon,
+  Bookmark01Icon,
+  Road01Icon,
   Settings01Icon,
   UserMultiple02Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
@@ -18,7 +12,6 @@ import { ArrowRight01Icon } from "@hugeicons-pro/core-duotone-rounded";
 import { useQuery } from "@tanstack/react-query";
 import type { OnboardingState } from "@userbubble/db/schema";
 import { cn } from "@userbubble/ui";
-import { Checkbox } from "@userbubble/ui/checkbox";
 import { Icon } from "@userbubble/ui/icon";
 import {
   Sidebar,
@@ -32,12 +25,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@userbubble/ui/sidebar";
-import { ThemeToggle } from "@userbubble/ui/theme";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { authClient } from "~/auth/client";
-// import { CreateOrgDialog } from "./create-org-dialog";
+import { statusAllConfig, statusConfig } from "~/components/feedback/config";
 import { OrgSwitcher } from "./org-switcher";
 import { UserProfileMenu } from "./user-profile-menu";
 
@@ -50,67 +42,53 @@ const MAIN_NAV_ITEMS = [
   {
     title: "Requests",
     href: "/feedback",
-    icon: Message01Icon,
+    icon: Bookmark01Icon,
     badge: undefined,
   },
   {
     title: "Roadmap",
     href: "/roadmap",
-    icon: Route01Icon,
+    icon: Road01Icon,
     badge: undefined,
   },
   {
     title: "Changelog",
     href: "/changelog",
-    icon: MarketingIcon,
+    icon: Agreement03Icon,
     badge: undefined,
   },
 ] as const;
 
-const STATUS_FILTERS = [
+const SECONDARY_NAV_ITEMS = [
   {
-    label: "All",
-    value: "all",
-    color: "text-primary",
-    icon: CircleIcon,
+    title: "Settings",
+    href: "/settings",
+    icon: Settings01Icon,
   },
   {
-    label: "Open",
-    value: "open",
-    color: "text-blue-500",
-    icon: CircleIcon,
-  },
-  {
-    label: "Under Review",
-    value: "under_review",
-    color: "text-yellow-500",
-    icon: EyeIcon,
-  },
-  {
-    label: "Planned",
-    value: "planned",
-    color: "text-purple-500",
-    icon: Clock01Icon,
-  },
-  {
-    label: "In Progress",
-    value: "in_progress",
-    color: "text-orange-500",
-    icon: HourglassIcon,
-  },
-  {
-    label: "Completed",
-    value: "completed",
-    color: "text-green-500",
-    icon: CheckmarkBadge01Icon,
-  },
-  {
-    label: "Closed",
-    value: "closed",
-    color: "text-slate-500",
-    icon: Cancel01Icon,
+    title: "Members",
+    href: "/members",
+    icon: UserMultiple02Icon,
   },
 ] as const;
+
+const STATUS_LABELS: Record<string, string> = {
+  all: "All",
+  open: "Pending",
+  under_review: "Under Review",
+  planned: "Planned",
+  in_progress: "In Progress",
+  completed: "Completed",
+  closed: "Closed",
+};
+
+const STATUS_FILTERS = [
+  { value: "all", ...statusAllConfig },
+  ...Object.entries(statusConfig).map(([value, config]) => ({
+    value,
+    ...config,
+  })),
+];
 
 const ONBOARDING_KEYS: (keyof OnboardingState)[] = [
   "createApiKey",
@@ -120,6 +98,14 @@ const ONBOARDING_KEYS: (keyof OnboardingState)[] = [
   "shareBoard",
 ];
 
+const ACTIVE_STYLES = [
+  "relative bg-[#F9F9FA]",
+  "shadow-[0px_11px_4px_rgba(7,7,8,0.01),0px_6px_4px_rgba(7,7,8,0.02),0px_3px_3px_rgba(7,7,8,0.04),0px_1px_1px_rgba(7,7,8,0.05)]",
+  "before:absolute before:inset-0 before:rounded-md before:border before:border-white/5 before:content-['']",
+  "after:absolute after:inset-0 after:rounded-md after:bg-[radial-gradient(at_top,rgba(255,255,255,0.05)_5%,rgba(255,255,255,0)_100%)] after:shadow-[inset_0px_-2px_0px_0px_rgba(7,7,8,0.06)] after:content-['']",
+  "dark:bg-[#2A2A2A] dark:shadow-md dark:after:shadow-[inset_0px_-2px_0px_0px_rgba(7,7,8,0.3)]",
+];
+
 export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
   const pathname = usePathname();
   const [status, setStatus] = useQueryState(
@@ -127,7 +113,6 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
     parseAsArrayOf(parseAsString).withDefault([])
   );
 
-  // Fetch user session
   const { data: session } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
@@ -136,7 +121,6 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
     },
   });
 
-  // Fetch user's organizations
   const { data: organizations } = useQuery({
     queryKey: ["organizations"],
     queryFn: async () => {
@@ -147,22 +131,6 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
 
   const isActive = (href: string) => pathname.includes(href);
   const isOnFeedbackPage = pathname.includes("/feedback");
-
-  // Plan checking logic (using metadata for now)
-  // const currentOrgData = organizations?.find((o) => o.slug === org);
-  // const orgPlan = currentOrgData?.metadata
-  //   ? (JSON.parse(currentOrgData.metadata) as { plan?: string }).plan || "free"
-  //   : "free";
-
-  // Determine max organizations based on plan
-  // let maxOrgs = 1; // free plan
-  // if (orgPlan === "pro") {
-  //   maxOrgs = 5;
-  // } else if (orgPlan === "enterprise") {
-  //   maxOrgs = 999;
-  // }
-
-  // const canCreateOrg = (organizations?.length || 0) < maxOrgs;
 
   const isStatusActive = (value: string) => {
     if (value === "all") {
@@ -185,10 +153,9 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
     }
   };
 
-  // Loading state
   if (!(session && organizations)) {
     return (
-      <Sidebar variant="floating">
+      <Sidebar variant="inset">
         <SidebarHeader>
           <div className="h-10 animate-pulse rounded bg-muted" />
         </SidebarHeader>
@@ -206,13 +173,9 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
   }
 
   return (
-    <Sidebar variant="floating">
+    <Sidebar variant="inset">
       <SidebarHeader>
-        <div className="flex items-center justify-between">
-          <OrgSwitcher currentOrg={org} organizations={organizations || []} />
-          <ThemeToggle />
-        </div>
-        {/* <CreateOrgDialog canCreateOrg={canCreateOrg} maxOrgs={maxOrgs} /> */}
+        <OrgSwitcher currentOrg={org} organizations={organizations || []} />
       </SidebarHeader>
 
       <SidebarContent>
@@ -226,31 +189,22 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
                   <SidebarMenuButton
                     className={cn(
                       "h-8 transition-all duration-200",
-                      isActive(item.href) && [
-                        "bg-linear-to-l bg-white from-indigo-500/20 to-transparent text-zinc-900 ring-1 ring-zinc-200",
-                        "shadow-[inset_0_1px_0_0_rgba(255,255,255,1)]",
-                        "dark:bg-linear-to-l dark:from-indigo-500/30 dark:to-transparent",
-                        "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]",
-                        "dark:text-white dark:ring-0",
-                      ]
+                      isActive(item.href) && ACTIVE_STYLES
                     )}
                     isActive={isActive(item.href)}
                   >
                     <Link
-                      className="relative flex w-full flex-row items-center justify-between gap-4"
+                      className="relative z-10 flex w-full flex-row items-center justify-between gap-4"
                       href={`/org/${org}${item.href}`}
                     >
                       <div className="flex items-center gap-2">
-                        <Icon icon={item.icon} size={20} />
+                        <Icon icon={item.icon} size={20} strokeWidth={0} />
                         <span>{item.title}</span>
                       </div>
                       {item.badge && (
                         <span className="ml-auto text-muted-foreground text-xs">
                           {item.badge}
                         </span>
-                      )}
-                      {isActive(item.href) && (
-                        <div className="-translate-y-1/2 absolute top-1/2 right-0 h-5 w-1 rounded-full bg-indigo-500 shadow-[0_0_12px_#6366f1]" />
                       )}
                     </Link>
                   </SidebarMenuButton>
@@ -275,20 +229,17 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
                       size="sm"
                     >
                       <div className="flex items-center gap-2">
-                        <Checkbox
-                          checked={isStatusActive(filter.value)}
-                          className="data-[state=checked]:bg-transparent data-[state=checked]:text-primary"
+                        <Icon
+                          className={cn("size-4", filter.color)}
+                          icon={filter.icon}
+                          {...("strokeWidth" in filter && {
+                            strokeWidth: filter.strokeWidth,
+                          })}
                         />
-                        <span className="text-sm">{filter.label}</span>
+                        <span className="text-sm">
+                          {STATUS_LABELS[filter.value]}
+                        </span>
                       </div>
-                      <Icon
-                        className={cn(
-                          "size-4 opacity-0 transition-opacity group-hover:opacity-100",
-                          isStatusActive(filter.value) && "opacity-100",
-                          filter.color
-                        )}
-                        icon={filter.icon}
-                      />
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -296,69 +247,36 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
+
+        {/* Secondary Navigation */}
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {SECONDARY_NAV_ITEMS.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    className={cn(
+                      "transition-all duration-200",
+                      isActive(item.href) && ACTIVE_STYLES
+                    )}
+                    isActive={isActive(item.href)}
+                  >
+                    <Link
+                      className="relative z-10 flex w-full flex-row items-center gap-2"
+                      href={`/org/${org}${item.href}`}
+                    >
+                      <Icon icon={item.icon} size={20} strokeWidth={0} />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>
-        {/* Settings Row */}
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              className={cn(
-                "transition-all duration-200",
-                pathname.includes("/settings") && [
-                  "bg-gradient-to-l bg-white from-indigo-500/20 to-transparent text-zinc-900 ring-1 ring-zinc-200",
-                  "shadow-[inset_0_1px_0_0_rgba(255,255,255,1)]",
-                  "dark:bg-gradient-to-l dark:from-indigo-500/30 dark:to-transparent",
-                  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]",
-                  "dark:text-white dark:ring-0",
-                ]
-              )}
-              isActive={pathname.includes("/settings")}
-            >
-              <Link
-                className="relative flex w-full flex-row items-center gap-2"
-                href={`/org/${org}/settings`}
-              >
-                <Icon icon={Settings01Icon} size={20} />
-                <span>Settings</span>
-                {pathname.includes("/settings") && (
-                  <div className="-translate-y-1/2 absolute top-1/2 right-0 h-5 w-1 rounded-full bg-indigo-500 shadow-[0_0_12px_#6366f1]" />
-                )}
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-
-        {/* Members Row */}
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              className={cn(
-                "transition-all duration-200",
-                pathname.includes("/members") && [
-                  "bg-gradient-to-l bg-white from-indigo-500/20 to-transparent text-zinc-900 ring-1 ring-zinc-200",
-                  "shadow-[inset_0_1px_0_0_rgba(255,255,255,1)]",
-                  "dark:bg-gradient-to-l dark:from-indigo-500/30 dark:to-transparent",
-                  "dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]",
-                  "dark:text-white dark:ring-0",
-                ]
-              )}
-              isActive={pathname.includes("/members")}
-            >
-              <Link
-                className="relative flex w-full flex-row items-center gap-2"
-                href={`/org/${org}/members`}
-              >
-                <Icon icon={UserMultiple02Icon} size={20} />
-                <span>Members</span>
-                {pathname.includes("/members") && (
-                  <div className="-translate-y-1/2 absolute top-1/2 right-0 h-5 w-1 rounded-full bg-indigo-500 shadow-[0_0_12px_#6366f1]" />
-                )}
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-
         {/* Onboarding Banner */}
         {onboarding &&
           (() => {
@@ -394,7 +312,7 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
             );
           })()}
 
-        {/* Profile Row */}
+        {/* User Menu */}
         {session?.user && (
           <SidebarMenu>
             <SidebarMenuItem>

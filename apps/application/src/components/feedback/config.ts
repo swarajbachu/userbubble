@@ -1,24 +1,30 @@
 import {
   AlertCircleIcon,
+  AllBookmarkIcon,
   ArrowUp01Icon,
-  Cancel01Icon,
-  CheckmarkBadge01Icon,
-  CircleIcon,
+  CancelCircleIcon,
+  CheckmarkCircle01Icon,
   Clock01Icon,
-  EyeIcon,
+  Clock02Icon,
+  ClockAlertIcon,
   HelpCircleIcon,
-  HourglassIcon,
   Menu01Icon,
+  Progress02Icon,
   Rocket01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
 
 export const statusConfig = {
-  open: { color: "text-blue-500", icon: CircleIcon },
-  under_review: { color: "text-yellow-500", icon: EyeIcon },
-  planned: { color: "text-purple-500", icon: Clock01Icon },
-  in_progress: { color: "text-orange-500", icon: HourglassIcon },
-  completed: { color: "text-green-500", icon: CheckmarkBadge01Icon },
-  closed: { color: "text-slate-500", icon: Cancel01Icon },
+  open: { color: "text-orange-500", icon: Clock02Icon, strokeWidth: 1 },
+  under_review: { color: "text-amber-500", icon: ClockAlertIcon },
+  planned: { color: "text-violet-500", icon: Clock01Icon },
+  in_progress: { color: "text-indigo-500", icon: Progress02Icon },
+  completed: { color: "text-emerald-500", icon: CheckmarkCircle01Icon },
+  closed: { color: "text-red-400", icon: CancelCircleIcon, strokeWidth: 1 },
+} as const;
+
+export const statusAllConfig = {
+  color: "text-zinc-400",
+  icon: AllBookmarkIcon,
 } as const;
 
 export const categoryConfig = {

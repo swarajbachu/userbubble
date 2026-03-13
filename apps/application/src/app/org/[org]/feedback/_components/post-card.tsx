@@ -7,7 +7,7 @@ import { cn } from "@userbubble/ui";
 import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
 import { memo, useState, useTransition } from "react";
-import { categoryLabels, statusConfig } from "~/components/feedback/config";
+import { statusConfig } from "~/components/feedback/config";
 import { VoteButton } from "~/components/feedback/vote-button";
 import { useTRPC } from "~/trpc/react";
 
@@ -94,32 +94,19 @@ export const PostCard = memo(function PostCard({
         </Link>
       </div>
 
-      <div className="flex flex-none items-center gap-4 text-muted-foreground text-xs">
-        <div className="hidden items-center gap-1.5 sm:flex">
-          <span
-            className={cn(
-              "h-1.5 w-1.5 rounded-full",
-              config.color.replace("text-", "bg-")
-            )}
-          />
-          <span>{categoryLabels[post.category]}</span>
-        </div>
+      <div className="flex flex-none items-center gap-3 text-muted-foreground text-xs">
+        <Icon
+          className={cn("size-4", config.color)}
+          icon={config.icon}
+          {...("strokeWidth" in config && { strokeWidth: config.strokeWidth })}
+        />
 
-        <div className="flex items-center gap-1.5">
-          <Icon className={cn("size-3.5", config.color)} icon={config.icon} />
-          <span className="capitalize">{post.status.replace("_", " ")}</span>
-        </div>
-
-        <div className="hidden w-24 justify-end sm:flex">
+        <span className="hidden sm:inline">
           {new Date(post.createdAt).toLocaleDateString(undefined, {
             month: "short",
             day: "numeric",
           })}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="size-5 rounded-full bg-linear-to-br from-primary/20 to-primary/10" />
-        </div>
+        </span>
       </div>
     </div>
   );
