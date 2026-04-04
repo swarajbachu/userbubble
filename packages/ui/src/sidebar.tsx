@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/nursery/noShadow: <explanation> */
+/** biome-ignore-all lint/nursery/noShadow: expected */
 "use client";
 
 import { mergeProps } from "@base-ui/react/merge-props";

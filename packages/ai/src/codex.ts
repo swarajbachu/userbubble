@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/nursery/noIncrementDecrement: expected */
 import { createOpenAI } from "@ai-sdk/openai";
-import type { OAuthProvider } from "./types.js";
+import type { OAuthProvider } from "./types";
 
 const CODEX_RESPONSES_URL = "https://chatgpt.com/backend-api/codex/responses";
 

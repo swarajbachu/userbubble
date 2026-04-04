@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/security/noDangerouslySetInnerHtml: <explanation> */
-/** biome-ignore-all lint/nursery/noShadow: <explanation> */
+/** biome-ignore-all lint/security/noDangerouslySetInnerHtml: expected */
+/** biome-ignore-all lint/nursery/noShadow: expected */
 "use client";
 
 import { cn } from "@userbubble/ui";

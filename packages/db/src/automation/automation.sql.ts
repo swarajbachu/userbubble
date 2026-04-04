@@ -86,6 +86,16 @@ export const organizationGithubConfig = pgTable("organization_github_config", {
     .notNull()
     .default("main"),
 
+  // AI-generated project context (repo analysis summary)
+  projectContext: text("project_context"),
+  projectContextUpdatedAt: timestamp("project_context_updated_at"),
+
+  // Repo analysis status
+  analysisStatus: text("analysis_status").$type<
+    "pending" | "analyzing" | "completed" | "failed"
+  >(),
+  analysisError: text("analysis_error"),
+
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
@@ -145,10 +155,10 @@ export const prGenerationJob = pgTable("pr_generation_job", {
     .notNull()
     .references(() => feedbackPost.id, { onDelete: "cascade" }),
 
-  // Who triggered the generation
-  triggeredById: text("triggered_by_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  // Who triggered the generation (null for system-initiated jobs)
+  triggeredById: text("triggered_by_id").references(() => user.id, {
+    onDelete: "set null",
+  }),
 
   // Job status
   status: prJobStatusEnum("status").notNull().default("pending"),

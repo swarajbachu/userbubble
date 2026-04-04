@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/performance/useTopLevelRegex: <explanation> */
-/** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
+/** biome-ignore-all lint/performance/useTopLevelRegex: expected */
+/** biome-ignore-all lint/style/noNonNullAssertion: expected */
 import { randomBytes, subtle } from "node:crypto";
 import { encrypt } from "@userbubble/db/lib/encryption";
 import { oauthConnectionQueries } from "@userbubble/db/queries";

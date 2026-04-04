@@ -1,6 +1,9 @@
+name: userbubble
+
 services:
   db:
     image: postgres:16-alpine
+    container_name: userbubble-postgres
     restart: unless-stopped
     ports:
       - "5432:5432"
@@ -13,3 +16,4 @@ services:
 
 volumes:
   pgdata:
+    name: userbubble-pgdata

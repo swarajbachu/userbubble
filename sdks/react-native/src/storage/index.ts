@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/style/noParameterProperties: <explanation> */
-/** biome-ignore-all lint/style/useReadonlyClassProperties: <explanation> */
+/** biome-ignore-all lint/style/noParameterProperties: expected */
+/** biome-ignore-all lint/style/useReadonlyClassProperties: expected */
 import type {
   StorageAdapter,
   UserbubbleConfig,

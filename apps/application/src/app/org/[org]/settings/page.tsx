@@ -1,4 +1,5 @@
 import { permissions } from "@userbubble/db/queries";
+import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { getOrgContextWithMetadata } from "~/lib/get-org-context";
@@ -16,6 +17,8 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
     notFound();
   }
 
+  const settings = parseOrganizationSettings(organization.metadata);
+
   return (
     <div className="mx-auto w-full max-w-4xl py-8">
       <div className="mb-8">
@@ -26,7 +29,11 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
       </div>
 
       <Suspense fallback={<div>Loading...</div>}>
-        <SettingsTabs organization={organization} userRole={member.role} />
+        <SettingsTabs
+          organization={organization}
+          settings={settings}
+          userRole={member.role}
+        />
       </Suspense>
     </div>
   );

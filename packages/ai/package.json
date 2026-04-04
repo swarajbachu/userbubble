@@ -1,0 +1,22 @@
+{
+  "name": "@userbubble/ai",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^1.0.0",
+    "@ai-sdk/openai": "^1.0.0",
+    "@userbubble/db": "workspace:*",
+    "ai": "^4.0.0"
+  },
+  "devDependencies": {
+    "@userbubble/tsconfig": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

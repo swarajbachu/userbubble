@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/a11y/noNoninteractiveElementInteractions: <explanation> */
-/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
+/** biome-ignore-all lint/a11y/noNoninteractiveElementInteractions: expected */
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: expected */
 "use client";
 
 import { cn } from "@userbubble/ui";

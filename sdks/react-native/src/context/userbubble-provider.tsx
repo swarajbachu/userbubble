@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/style/useImportType: <explanation> */
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
+/** biome-ignore-all lint/style/useImportType: expected */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: expected */
 
 import * as WebBrowser from "expo-web-browser";
 import React, { createContext, useCallback, useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: expected */
 "use client";
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";

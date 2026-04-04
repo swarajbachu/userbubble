@@ -80,6 +80,29 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+function CardFrame({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "rounded-2xl bg-secondary p-1 shadow-sm dark:bg-muted/10",
+        className
+      )}
+      data-slot="card-frame"
+      {...props}
+    />
+  );
+}
+
+function CardFrameFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("px-4 py-3", className)}
+      data-slot="card-frame-footer"
+      {...props}
+    />
+  );
+}
+
 export {
   Card,
   CardHeader,
@@ -89,4 +112,6 @@ export {
   CardDescription,
   CardPanel,
   CardPanel as CardContent,
+  CardFrame,
+  CardFrameFooter,
 };

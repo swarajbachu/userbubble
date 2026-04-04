@@ -27,6 +27,7 @@ import {
 } from "@userbubble/db/schema";
 import { z } from "zod";
 
+import { triggerAsyncTriage } from "../services/ai-triage";
 import {
   assertOrgAccess,
   identifiedProcedure,
@@ -97,7 +98,7 @@ export const feedbackRouter = {
         });
       }
 
-      return createFeedbackPost({
+      const post = await createFeedbackPost({
         organizationId: input.organizationId,
         authorId: userId ?? null,
         title: input.title,
@@ -107,6 +108,20 @@ export const feedbackRouter = {
         voteCount: 0,
         isPublic: true,
       });
+
+      if (!post) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create feedback post",
+        });
+      }
+
+      // Fire-and-forget AI triage
+      triggerAsyncTriage(post.id, input.organizationId).catch((err) =>
+        console.error("[triage]", err)
+      );
+
+      return post;
     }),
 
   // Update a feedback post (author or org admin only)
@@ -301,6 +316,13 @@ export const feedbackRouter = {
       const isAuthorTeamMember = userId
         ? await memberQueries.isMember(userId, post.post.organizationId)
         : false;
+
+      // Re-trigger triage if AI previously asked for more info
+      if (post.post.aiTriageStatus === "asked_more") {
+        triggerAsyncTriage(input.postId, post.post.organizationId).catch(
+          (err) => console.error("[triage-retrigger]", err)
+        );
+      }
 
       return {
         comment: newComment,

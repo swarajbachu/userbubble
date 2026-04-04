@@ -9,8 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^1.0.0",
-    "@ai-sdk/openai": "^1.0.0",
+    "@userbubble/ai": "workspace:*",
     "@userbubble/db": "workspace:*",
     "ai": "^4.0.0",
     "dotenv": "^16.4.7",

@@ -55,7 +55,7 @@ export function FeedbackBoard({ org, organizationId }: FeedbackBoardProps) {
     <div className="flex flex-col">
       {posts.map((item) => (
         <PostCard
-          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          // biome-ignore lint/style/noNonNullAssertion: expected
           author={item.author!}
           hasUserVoted={item.hasUserVoted}
           key={item.post.id}

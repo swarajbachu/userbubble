@@ -72,6 +72,7 @@ export function CommentsSection({
                   author={item.author}
                   canDelete={userId === item.comment.authorId}
                   comment={item.comment}
+                  isAiGenerated={item.comment.isAiGenerated}
                   isTeamMember={item.isTeamMember}
                   onDeleted={() => {
                     // Remove from list

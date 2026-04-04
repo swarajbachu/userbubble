@@ -25,6 +25,25 @@ import { PostActions } from "./_components/post-actions";
 import { PostMainContent } from "./_components/post-main-content";
 import { StatusEditor } from "./_components/status-editor";
 
+const triageStatusLabels: Record<string, { label: string; color: string }> = {
+  pending: { label: "Analyzing...", color: "text-yellow-600" },
+  asked_more: { label: "Awaiting reply", color: "text-blue-600" },
+  implementing: { label: "Implementing", color: "text-green-600" },
+  skipped: { label: "Skipped", color: "text-muted-foreground" },
+};
+
+function TriageStatusBadge({ status }: { status: string }) {
+  const config = triageStatusLabels[status];
+  if (!config) {
+    return null;
+  }
+  return (
+    <span className={`font-medium text-sm ${config.color}`}>
+      {config.label}
+    </span>
+  );
+}
+
 type FeedbackPostPageProps = {
   params: Promise<{ org: string; postId: string }>;
 };
@@ -180,6 +199,17 @@ export default async function FeedbackPostPage({
                 </div>
               </DoubleCardInner>
             </DoubleCard>
+
+            {post.post.aiTriageStatus && (
+              <DoubleCard>
+                <DoubleCardHeader className="py-1">
+                  <span className="font-semibold text-sm">AI Triage</span>
+                </DoubleCardHeader>
+                <DoubleCardInner className="p-4">
+                  <TriageStatusBadge status={post.post.aiTriageStatus} />
+                </DoubleCardInner>
+              </DoubleCard>
+            )}
 
             {isAdmin && (
               <DoubleCard>

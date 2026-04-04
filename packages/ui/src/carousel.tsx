@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/nursery/noShadow: <explanation> */
-/** biome-ignore-all lint/a11y/useSemanticElements: <explanation> */
+/** biome-ignore-all lint/nursery/noShadow: expected */
+/** biome-ignore-all lint/a11y/useSemanticElements: expected */
 "use client";
 
 import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";

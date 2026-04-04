@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { executeJob } from "./agent.js";
+import { executeRepoAnalysis } from "./analyze-repo.js";
 
 const app = express();
 app.use(express.json());
@@ -35,6 +36,35 @@ app.post("/generate-pr", async (req, res) => {
     .then(() => console.log(`[worker] Job ${jobId} completed`))
     .catch((error) => {
       console.error(`[worker] Job ${jobId} failed:`, error);
+    });
+});
+
+// Webhook endpoint for repo analysis
+app.post("/analyze-repo", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!WEBHOOK_SECRET || authHeader !== `Bearer ${WEBHOOK_SECRET}`) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  const { organizationId } = req.body as { organizationId?: string };
+  if (!organizationId) {
+    res.status(400).json({ error: "organizationId is required" });
+    return;
+  }
+
+  console.log(`[worker] Received repo analysis for org ${organizationId}`);
+  res.json({ status: "accepted", organizationId });
+
+  executeRepoAnalysis(organizationId)
+    .then(() =>
+      console.log(`[worker] Repo analysis completed for org ${organizationId}`)
+    )
+    .catch((error) => {
+      console.error(
+        `[worker] Repo analysis failed for org ${organizationId}:`,
+        error
+      );
     });
 });
 

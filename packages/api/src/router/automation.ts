@@ -201,6 +201,84 @@ export const automationRouter = {
       return { success: true };
     }),
 
+  // Get repo analysis status + project context
+  getRepoAnalysisStatus: orgAdminProcedure.query(async ({ ctx }) => {
+    const config = await githubConfigQueries.get(ctx.org.id);
+    if (!config) {
+      return null;
+    }
+    return {
+      analysisStatus: config.analysisStatus,
+      analysisError: config.analysisError,
+      projectContext: config.projectContext,
+      projectContextUpdatedAt: config.projectContextUpdatedAt,
+    };
+  }),
+
+  // Trigger repo analysis on the worker
+  analyzeRepo: orgAdminProcedure.mutation(async ({ ctx }) => {
+    const config = await githubConfigQueries.get(ctx.org.id);
+    if (!config) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "GitHub repository must be configured first",
+      });
+    }
+
+    const [apiKeys, oauthConns] = await Promise.all([
+      automationApiKeyQueries.getStatus(ctx.org.id),
+      oauthConnectionQueries.listActive(ctx.org.id),
+    ]);
+
+    const hasGithub = apiKeys.some((k) => k.provider === "github");
+    if (!hasGithub) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "GitHub token must be configured",
+      });
+    }
+
+    const hasAnthropic = apiKeys.some((k) => k.provider === "anthropic");
+    const hasCodex = oauthConns.some((c) => c.provider === "codex");
+
+    if (!(hasAnthropic || hasCodex)) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "An AI provider (Anthropic key or Codex) must be configured for repo analysis",
+      });
+    }
+
+    // Set status to pending
+    await githubConfigQueries.updateAnalysisStatus(ctx.org.id, "pending");
+
+    // Trigger worker
+    const webhookSecret = process.env.MODAL_WEBHOOK_SECRET;
+    const webhookUrl = process.env.MODAL_WEBHOOK_URL;
+
+    if (webhookUrl && webhookSecret) {
+      const analyzeUrl = webhookUrl.replace("/generate-pr", "/analyze-repo");
+      try {
+        await fetch(analyzeUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${webhookSecret}`,
+          },
+          body: JSON.stringify({ organizationId: ctx.org.id }),
+        });
+      } catch {
+        await githubConfigQueries.updateAnalysisStatus(
+          ctx.org.id,
+          "failed",
+          "Failed to reach worker"
+        );
+      }
+    }
+
+    return { success: true };
+  }),
+
   // Trigger PR generation for a feedback post
   triggerPrGeneration: orgAdminProcedure
     .input(

@@ -1,18 +1,20 @@
-/** biome-ignore-all lint/suspicious/noEvolvingTypes: <explanation> */
-/** biome-ignore-all lint/suspicious/noImplicitAnyLet: <explanation> */
+/** biome-ignore-all lint/suspicious/noEvolvingTypes: expected */
+/** biome-ignore-all lint/suspicious/noImplicitAnyLet: expected */
+/** biome-ignore-all lint/nursery/noIncrementDecrement: expected */
+/** biome-ignore-all lint/nursery/noShadow: expected */
+/** biome-ignore-all lint/nursery/useMaxParams: expected */
 import { execSync } from "node:child_process";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
+import { resolveModel } from "@userbubble/ai";
 import {
   automationApiKeyQueries,
   getFeedbackPost,
+  getPostComments,
   githubConfigQueries,
-  oauthConnectionQueries,
   prJobQueries,
 } from "@userbubble/db/queries";
-import { type LanguageModelV1, streamText } from "ai";
-import { getProvider } from "./providers/registry.js";
-import type { AiProvider } from "./providers/types.js";
+import { generateText, streamText } from "ai";
 import { createTools } from "./tools.js";
 
 const SYSTEM_PROMPT = [
@@ -23,7 +25,22 @@ const SYSTEM_PROMPT = [
   "Write clean, well-structured code.",
   "After implementing, stage and commit your changes with a clear commit message.",
   "Do NOT push to the remote - that will be handled separately.",
+  "",
+  "CRITICAL: You MUST use the provided tools (write, edit, bash) to make actual file changes.",
+  "Do NOT just describe what you would change — actually use the tools to modify files.",
+  "Every implementation must result in real file modifications detected by git.",
 ].join("\n");
+
+const MAX_AGENT_TURNS = 6;
+const MAX_AGENT_STEPS = 50;
+const IDLE_TIMEOUT_MS = 120_000;
+const RETRY_INITIAL_DELAY_MS = 2000;
+const RETRY_MAX_DELAY_MS = 30_000;
+
+type AgentMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
 
 /**
  * Execute a PR generation job.
@@ -65,16 +82,29 @@ export async function executeJob(jobId: string): Promise<void> {
       jobId,
       `Using AI provider: ${providerId}`
     );
-    const provider = getProvider(providerId);
 
-    const model = await resolveModel(provider, job.organizationId, providerId);
+    const model = await resolveModel(job.organizationId, providerId);
     await prJobQueries.appendProgress(jobId, "Model resolved successfully");
 
-    // Get GitHub config
+    // Get GitHub config (includes project context)
     const githubConfig = await githubConfigQueries.get(job.organizationId);
     if (!githubConfig) {
       throw new Error("GitHub repository not configured");
     }
+
+    // Fetch comments for conversation context
+    const comments = await getPostComments(
+      job.feedbackPostId,
+      job.organizationId
+    );
+    const conversationContext = comments
+      .map((c) => {
+        const author = c.comment.isAiGenerated
+          ? "AI Assistant"
+          : (c.author?.name ?? c.comment.authorName ?? "User");
+        return `${author}: ${c.comment.content}`;
+      })
+      .join("\n\n");
 
     // --- Step 1: Clone ---
     await prJobQueries.updateStatus(jobId, "cloning");
@@ -112,103 +142,19 @@ export async function executeJob(jobId: string): Promise<void> {
     const prompt = buildPrompt(
       post.post.title,
       post.post.description,
-      job.additionalContext
+      job.additionalContext,
+      githubConfig.projectContext,
+      conversationContext || undefined
     );
 
     // Run AI agent with tool loop (streamText handles SSE from Codex backend)
     await prJobQueries.appendProgress(jobId, "Calling AI model...");
-    let result;
-    try {
-      console.log("[agent] Starting streamText...");
-      result = streamText({
-        model,
-        system: SYSTEM_PROMPT,
-        prompt,
-        tools: createTools(workDir),
-        maxSteps: 50,
-        // biome-ignore lint/nursery/noShadow: <its all right man>
-        onStepFinish: async ({ toolCalls, text, finishReason }) => {
-          console.log(
-            `[agent] Step finished: reason=${finishReason} toolCalls=${toolCalls?.length ?? 0} textLen=${text?.length ?? 0}`
-          );
-          if (toolCalls) {
-            for (const tc of toolCalls) {
-              console.log(`[agent] Tool call: ${tc.toolName}`);
-              await prJobQueries.appendProgress(
-                jobId,
-                `Used tool: ${tc.toolName}`
-              );
-            }
-          }
-          const currentJob = await prJobQueries.getById(jobId);
-          if (currentJob?.status === "cancelled") {
-            throw new Error("Job cancelled");
-          }
-        },
-        onChunk: ({ chunk }) => {
-          if (chunk.type === "text-delta") {
-            process.stdout.write(".");
-          }
-        },
-      });
-
-      console.log("[agent] streamText created, consuming stream...");
-
-      // Race the stream against a timeout to detect hangs
-      const textPromise = result.text;
-      const timeoutPromise = new Promise<string>((_, reject) => {
-        setTimeout(
-          () => reject(new Error("streamText hung for 120s")),
-          120_000
-        );
-      });
-
-      // Also log partial stream consumption
-      result.textStream
-        .pipeTo(
-          new WritableStream({
-            write(_chunk) {
-              process.stdout.write(".");
-            },
-            close() {
-              console.log("\n[agent] textStream closed");
-            },
-            abort(err) {
-              console.error(`[agent] textStream aborted: ${err}`);
-            },
-          })
-        )
-        .catch((err) => {
-          console.error(`[agent] textStream pipe error: ${err}`);
-        });
-
-      const finalText = await Promise.race([textPromise, timeoutPromise]);
-      console.log(
-        `[agent] Stream consumed. Final text length: ${finalText.length}`
-      );
-      const finishReason = await result.finishReason;
-      console.log(`[agent] Finish reason: ${finishReason}`);
-    } catch (aiError) {
-      const msg = aiError instanceof Error ? aiError.message : String(aiError);
-      const statusCode =
-        aiError && typeof aiError === "object" && "statusCode" in aiError
-          ? (aiError as { statusCode: number }).statusCode
-          : undefined;
-      const responseBody =
-        aiError && typeof aiError === "object" && "responseBody" in aiError
-          ? JSON.stringify(
-              (aiError as { responseBody: unknown }).responseBody
-            ).slice(0, 500)
-          : undefined;
-      await prJobQueries.appendProgress(
-        jobId,
-        `AI call failed: ${msg}${statusCode ? ` (status: ${statusCode})` : ""}${responseBody ? ` body: ${responseBody}` : ""}`
-      );
-      throw aiError;
-    }
-
-    const steps = await result.steps;
-    const finalText = await result.text;
+    const { steps, finalText } = await runAgentUntilComplete({
+      jobId,
+      model,
+      prompt,
+      workDir,
+    });
     await prJobQueries.appendProgress(
       jobId,
       `Agent completed in ${steps.length} steps`
@@ -236,9 +182,67 @@ export async function executeJob(jobId: string): Promise<void> {
     execSync('git config user.email "ai@userbubble.com"', { cwd: workDir });
 
     // Check if there are changes to commit
-    const status = execSync("git status --porcelain", { cwd: workDir })
+    let status = execSync("git status --porcelain", { cwd: workDir })
       .toString()
       .trim();
+    let diffFromMain = status
+      ? ""
+      : execSync(`git diff ${githubConfig.defaultBranch}..HEAD --stat`, {
+          cwd: workDir,
+        })
+          .toString()
+          .trim();
+
+    // Retry: model may have described changes without using tools
+    if (!(status || diffFromMain)) {
+      await prJobQueries.appendProgress(
+        jobId,
+        "No file changes detected — retrying with corrective prompt..."
+      );
+
+      const retryResult = await generateText({
+        model,
+        system: SYSTEM_PROMPT,
+        messages: [
+          { role: "user", content: prompt },
+          { role: "assistant", content: finalText },
+          {
+            role: "user",
+            content:
+              "IMPORTANT: git status shows ZERO file changes. You described changes in text but never actually used the tools to modify files. You MUST use the write, edit, or bash tools NOW to implement the feature. Do not describe — do it.",
+          },
+        ],
+        tools: createTools(workDir),
+        maxSteps: 50,
+        onStepFinish: async ({ toolCalls }) => {
+          if (toolCalls) {
+            for (const tc of toolCalls) {
+              await prJobQueries.appendProgress(
+                jobId,
+                `Retry tool: ${tc.toolName}`
+              );
+            }
+          }
+        },
+      });
+
+      await prJobQueries.appendProgress(
+        jobId,
+        `Retry completed in ${retryResult.steps.length} steps`
+      );
+
+      // Re-check
+      status = execSync("git status --porcelain", { cwd: workDir })
+        .toString()
+        .trim();
+      diffFromMain = status
+        ? ""
+        : execSync(`git diff ${githubConfig.defaultBranch}..HEAD --stat`, {
+            cwd: workDir,
+          })
+            .toString()
+            .trim();
+    }
 
     if (status) {
       // Stage and commit any remaining changes
@@ -247,18 +251,8 @@ export async function executeJob(jobId: string): Promise<void> {
         `git commit -m "feat: ${post.post.title}\n\nImplemented via AI from UserBubble feedback."`,
         { cwd: workDir }
       );
-    } else {
-      // Agent may have already committed
-      const diffFromMain = execSync(
-        `git diff ${githubConfig.defaultBranch}..HEAD --stat`,
-        { cwd: workDir }
-      )
-        .toString()
-        .trim();
-
-      if (!diffFromMain) {
-        throw new Error("No changes were made by the AI agent");
-      }
+    } else if (!diffFromMain) {
+      throw new Error("No changes were made by the AI agent");
     }
 
     // Push branch
@@ -327,18 +321,270 @@ export async function executeJob(jobId: string): Promise<void> {
   }
 }
 
+async function runAgentUntilComplete(input: {
+  jobId: string;
+  model: Awaited<ReturnType<typeof resolveModel>>;
+  prompt: string;
+  workDir: string;
+}) {
+  const messages: AgentMessage[] = [{ role: "user", content: input.prompt }];
+  let turn = 0;
+  let allSteps: Array<{ [key: string]: unknown }> = [];
+  let lastText = "";
+
+  while (turn < MAX_AGENT_TURNS) {
+    turn++;
+    await prJobQueries.appendProgress(
+      input.jobId,
+      `Starting agent turn ${turn}/${MAX_AGENT_TURNS}...`
+    );
+
+    const { finishReason, steps, text } = await runAgentTurn({
+      jobId: input.jobId,
+      model: input.model,
+      messages,
+      workDir: input.workDir,
+      turn,
+    });
+
+    allSteps = [...allSteps, ...steps];
+    lastText = text.trim();
+
+    if (lastText) {
+      await prJobQueries.appendProgress(input.jobId, `AI: ${lastText}`);
+    }
+
+    messages.push({ role: "assistant", content: text });
+
+    if (isTerminalFinishReason(finishReason)) {
+      return { steps: allSteps, finalText: text };
+    }
+
+    await prJobQueries.appendProgress(
+      input.jobId,
+      `Agent paused with finish reason "${finishReason}". Continuing from current repo state...`
+    );
+    messages.push({
+      role: "user",
+      content: [
+        "Continue from the current repository state and finish the task.",
+        "Do not restart the analysis from scratch.",
+        "If implementation is complete, verify the result, commit any remaining changes, and give a brief summary.",
+      ].join(" "),
+    });
+  }
+
+  throw new Error(
+    `Agent did not reach a terminal finish reason after ${MAX_AGENT_TURNS} turns`
+  );
+}
+
+async function runAgentTurn(input: {
+  jobId: string;
+  model: Awaited<ReturnType<typeof resolveModel>>;
+  messages: AgentMessage[];
+  workDir: string;
+  turn: number;
+}) {
+  let attempt = 0;
+
+  while (true) {
+    attempt++;
+    let lastActivityAt = Date.now();
+    let idleTimer: ReturnType<typeof setInterval> | undefined;
+    const controller = new AbortController();
+
+    try {
+      console.log(
+        `[agent] Starting streamText turn=${input.turn} attempt=${attempt}...`
+      );
+      const result = streamText({
+        model: input.model,
+        system: SYSTEM_PROMPT,
+        messages: input.messages,
+        tools: createTools(input.workDir),
+        maxSteps: MAX_AGENT_STEPS,
+        abortSignal: controller.signal,
+        onStepFinish: async ({ toolCalls, text, finishReason }) => {
+          lastActivityAt = Date.now();
+          console.log(
+            `[agent] Step finished: reason=${finishReason} toolCalls=${toolCalls?.length ?? 0} textLen=${text?.length ?? 0}`
+          );
+          if (toolCalls) {
+            for (const tc of toolCalls) {
+              console.log(`[agent] Tool call: ${tc.toolName}`);
+              await prJobQueries.appendProgress(
+                input.jobId,
+                `Used tool: ${tc.toolName}`
+              );
+            }
+          }
+          const currentJob = await prJobQueries.getById(input.jobId);
+          if (currentJob?.status === "cancelled") {
+            controller.abort("Job cancelled");
+            throw new Error("Job cancelled");
+          }
+        },
+        onChunk: ({ chunk }) => {
+          lastActivityAt = Date.now();
+          if (chunk.type === "text-delta") {
+            process.stdout.write(".");
+          }
+        },
+      });
+
+      idleTimer = setInterval(() => {
+        if (Date.now() - lastActivityAt > IDLE_TIMEOUT_MS) {
+          console.error(
+            `[agent] turn=${input.turn} attempt=${attempt} idle for ${IDLE_TIMEOUT_MS}ms, aborting`
+          );
+          controller.abort(`Agent idle for ${IDLE_TIMEOUT_MS}ms`);
+        }
+      }, 5000);
+
+      const [text, steps, finishReason] = await Promise.all([
+        result.text,
+        result.steps,
+        result.finishReason,
+      ]);
+
+      console.log(
+        `[agent] Stream consumed. turn=${input.turn} attempt=${attempt} finishReason=${finishReason} textLen=${text.length}`
+      );
+      return {
+        text,
+        steps: steps as Array<{ [key: string]: unknown }>,
+        finishReason,
+      };
+    } catch (aiError) {
+      const errorDetails = formatAiError(aiError);
+      await prJobQueries.appendProgress(
+        input.jobId,
+        `AI turn ${input.turn} attempt ${attempt} failed: ${errorDetails}`
+      );
+
+      if (!isRetryableAiError(aiError) || attempt >= 4) {
+        throw aiError;
+      }
+
+      const delayMs = getRetryDelayMs(attempt, aiError);
+      await prJobQueries.appendProgress(
+        input.jobId,
+        `Retrying AI turn ${input.turn} in ${Math.ceil(delayMs / 1000)}s...`
+      );
+      await sleep(delayMs);
+    } finally {
+      if (idleTimer) {
+        clearInterval(idleTimer);
+      }
+    }
+  }
+}
+
+function isTerminalFinishReason(finishReason: string | undefined) {
+  return Boolean(
+    finishReason && !["tool-calls", "unknown", "length"].includes(finishReason)
+  );
+}
+
+function isRetryableAiError(error: unknown) {
+  const statusCode =
+    error && typeof error === "object" && "statusCode" in error
+      ? (error as { statusCode?: number }).statusCode
+      : undefined;
+  if (statusCode === 408 || statusCode === 409 || statusCode === 429) {
+    return true;
+  }
+  if (typeof statusCode === "number" && statusCode >= 500) {
+    return true;
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes("rate limit") ||
+    normalized.includes("overloaded") ||
+    normalized.includes("temporarily unavailable") ||
+    normalized.includes("timed out") ||
+    normalized.includes("timeout") ||
+    normalized.includes("econnreset") ||
+    normalized.includes("socket hang up") ||
+    normalized.includes("agent idle")
+  );
+}
+
+function getRetryDelayMs(attempt: number, error: unknown) {
+  const retryAfter =
+    error && typeof error === "object" && "responseHeaders" in error
+      ? (error as { responseHeaders?: Record<string, string> }).responseHeaders
+      : undefined;
+
+  const retryAfterMs = retryAfter?.["retry-after-ms"];
+  if (retryAfterMs) {
+    const parsed = Number.parseFloat(retryAfterMs);
+    if (!Number.isNaN(parsed)) {
+      return parsed;
+    }
+  }
+
+  const retryAfterSeconds = retryAfter?.["retry-after"];
+  if (retryAfterSeconds) {
+    const parsed = Number.parseFloat(retryAfterSeconds);
+    if (!Number.isNaN(parsed)) {
+      return Math.ceil(parsed * 1000);
+    }
+  }
+
+  return Math.min(
+    RETRY_INITIAL_DELAY_MS * 2 ** (attempt - 1),
+    RETRY_MAX_DELAY_MS
+  );
+}
+
+function formatAiError(error: unknown) {
+  const msg = error instanceof Error ? error.message : String(error);
+  const statusCode =
+    error && typeof error === "object" && "statusCode" in error
+      ? (error as { statusCode?: number }).statusCode
+      : undefined;
+  const responseBody =
+    error && typeof error === "object" && "responseBody" in error
+      ? JSON.stringify(
+          (error as { responseBody?: unknown }).responseBody
+        ).slice(0, 500)
+      : undefined;
+
+  return `${msg}${statusCode ? ` (status: ${statusCode})` : ""}${responseBody ? ` body: ${responseBody}` : ""}`;
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function buildPrompt(
   title: string,
   description: string,
-  additionalContext?: string | null
+  additionalContext?: string | null,
+  projectContext?: string | null,
+  conversationContext?: string
 ): string {
-  const parts = [
+  const parts: string[] = [];
+
+  if (projectContext) {
+    parts.push("## Project Context", "", projectContext, "");
+  }
+
+  parts.push(
     "Implement the following feature request:",
     "",
     `## ${title}`,
     "",
-    description,
-  ];
+    description
+  );
+
+  if (conversationContext) {
+    parts.push("", "## Discussion", "", conversationContext);
+  }
 
   if (additionalContext) {
     parts.push("", "## Additional Context", "", additionalContext);
@@ -356,30 +602,4 @@ function buildPrompt(
   );
 
   return parts.join("\n");
-}
-
-async function resolveModel(
-  provider: AiProvider,
-  organizationId: string,
-  providerId: string
-): Promise<LanguageModelV1> {
-  if (provider.authType === "api_key") {
-    const apiKey = await automationApiKeyQueries.getDecrypted(
-      organizationId,
-      providerId
-    );
-    if (!apiKey) {
-      throw new Error(`API key for "${providerId}" not configured`);
-    }
-    return provider.createModel(apiKey);
-  }
-
-  const creds = await oauthConnectionQueries.getDecryptedTokens(
-    organizationId,
-    providerId
-  );
-  if (!creds) {
-    throw new Error(`OAuth credentials for "${providerId}" not found`);
-  }
-  return provider.createModel(creds);
 }

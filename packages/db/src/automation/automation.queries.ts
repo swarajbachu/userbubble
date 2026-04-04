@@ -347,6 +347,38 @@ export const githubConfigQueries = {
       .delete(organizationGithubConfig)
       .where(eq(organizationGithubConfig.organizationId, organizationId));
   },
+
+  /**
+   * Update project context from repo analysis
+   */
+  updateProjectContext: async (organizationId: string, context: string) => {
+    await db
+      .update(organizationGithubConfig)
+      .set({
+        projectContext: context,
+        projectContextUpdatedAt: new Date(),
+        analysisStatus: "completed",
+        analysisError: null,
+      })
+      .where(eq(organizationGithubConfig.organizationId, organizationId));
+  },
+
+  /**
+   * Update repo analysis status
+   */
+  updateAnalysisStatus: async (
+    organizationId: string,
+    status: "pending" | "analyzing" | "completed" | "failed",
+    error?: string
+  ) => {
+    await db
+      .update(organizationGithubConfig)
+      .set({
+        analysisStatus: status,
+        analysisError: error ?? null,
+      })
+      .where(eq(organizationGithubConfig.organizationId, organizationId));
+  },
 };
 
 /**
