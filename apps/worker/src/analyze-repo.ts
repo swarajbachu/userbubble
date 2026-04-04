@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { existsSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { resolveAnyModelOrThrow } from "@userbubble/ai";
@@ -94,7 +94,7 @@ export async function executeRepoAnalysis(
 
     // Shallow clone
     const cloneUrl = `https://x-access-token:${githubToken}@github.com/${config.repoFullName}.git`;
-    execSync(`git clone --depth 1 ${cloneUrl} ${workDir}`, {
+    execFileSync("git", ["clone", "--depth", "1", cloneUrl, workDir], {
       timeout: 120_000,
     });
 

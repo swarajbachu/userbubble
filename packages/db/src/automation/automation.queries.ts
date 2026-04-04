@@ -463,13 +463,18 @@ export const prJobQueries = {
   },
 
   /**
-   * List jobs for a feedback post
+   * List jobs for a feedback post (scoped to org)
    */
-  listForPost: async (feedbackPostId: string) =>
+  listForPost: async (feedbackPostId: string, organizationId: string) =>
     db
       .select()
       .from(prGenerationJob)
-      .where(eq(prGenerationJob.feedbackPostId, feedbackPostId))
+      .where(
+        and(
+          eq(prGenerationJob.feedbackPostId, feedbackPostId),
+          eq(prGenerationJob.organizationId, organizationId)
+        )
+      )
       .orderBy(desc(prGenerationJob.createdAt)),
 
   /**

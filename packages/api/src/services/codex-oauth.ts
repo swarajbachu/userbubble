@@ -98,9 +98,9 @@ export async function completeCodexOAuth(
     throw new Error("No authorization code found in the URL.");
   }
 
-  // Verify state if present
+  // Verify state (required for CSRF protection)
   const state = parsed.searchParams.get("state");
-  if (state && state !== conn.userCode) {
+  if (!state || state !== conn.userCode) {
     throw new Error("State mismatch. Please initiate again.");
   }
 

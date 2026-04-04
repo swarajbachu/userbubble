@@ -1,8 +1,10 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { tool } from "ai";
 import { z } from "zod";
+
+const SAFE_PATTERN_RE = /^[a-zA-Z0-9*?./[\]_{}-]+$/;
 
 function safePath(workDir: string, filePath: string): string {
   const resolved = resolve(workDir, filePath);
@@ -10,6 +12,13 @@ function safePath(workDir: string, filePath: string): string {
     throw new Error(`Path traversal detected: ${filePath}`);
   }
   return resolved;
+}
+
+function safePattern(pattern: string): string {
+  if (!SAFE_PATTERN_RE.test(pattern)) {
+    throw new Error(`Unsafe pattern rejected: ${pattern}`);
+  }
+  return pattern;
 }
 
 export function createTools(workDir: string) {
@@ -133,35 +142,39 @@ export function createTools(workDir: string) {
       }),
       execute: async ({ pattern, path }) => {
         const searchDir = path ? safePath(workDir, path) : workDir;
-        // Use find + shell glob as a portable fallback
-        const _cmd = `find ${searchDir} -path '*/node_modules' -prune -o -path '*/.git' -prune -o -name '${pattern.includes("/") ? pattern.split("/").pop() : pattern}' -print 2>/dev/null | head -200`;
+        const validatedPattern = safePattern(pattern);
+        const namePattern = validatedPattern.replace(/\*\*\//g, "");
 
-        // Prefer using the glob pattern directly via shell
-        const globCmd = `cd ${searchDir} && ls -d ${pattern} 2>/dev/null | head -200`;
         try {
-          const output = execSync(globCmd, {
-            cwd: searchDir,
-            encoding: "utf-8",
-            timeout: 30_000,
-            stdio: ["pipe", "pipe", "pipe"],
-          });
-          return output.trim() || "No matching files found";
+          const output = execFileSync(
+            "find",
+            [
+              ".",
+              "-path",
+              "*/node_modules",
+              "-prune",
+              "-o",
+              "-path",
+              "*/.git",
+              "-prune",
+              "-o",
+              "-type",
+              "f",
+              "-name",
+              namePattern,
+              "-print",
+            ],
+            {
+              cwd: searchDir,
+              encoding: "utf-8",
+              timeout: 30_000,
+              stdio: ["pipe", "pipe", "pipe"],
+            }
+          );
+          const lines = output.trim().split("\n").filter(Boolean).slice(0, 200);
+          return lines.join("\n") || "No matching files found";
         } catch {
-          // Fallback: use find for recursive patterns
-          try {
-            const output = execSync(
-              `find . -path '*/node_modules' -prune -o -path '*/.git' -prune -o -type f -name '${pattern.replace(/\*\*\//g, "")}' -print 2>/dev/null | head -200`,
-              {
-                cwd: searchDir,
-                encoding: "utf-8",
-                timeout: 30_000,
-                stdio: ["pipe", "pipe", "pipe"],
-              }
-            );
-            return output.trim() || "No matching files found";
-          } catch {
-            return "No matching files found";
-          }
+          return "No matching files found";
         }
       },
     }),
@@ -182,25 +195,29 @@ export function createTools(workDir: string) {
       }),
       execute: async ({ pattern, path, include }) => {
         const searchPath = path ? safePath(workDir, path) : workDir;
-        const parts = ["grep", "-rn", "--color=never"];
-        parts.push("--exclude-dir=node_modules");
-        parts.push("--exclude-dir=.git");
-        parts.push("--exclude-dir=dist");
+        const args = [
+          "-rn",
+          "--color=never",
+          "--exclude-dir=node_modules",
+          "--exclude-dir=.git",
+          "--exclude-dir=dist",
+        ];
         if (include) {
-          parts.push(`--include='${include}'`);
+          safePattern(include);
+          args.push(`--include=${include}`);
         }
-        parts.push(`'${pattern.replace(/'/g, "'\\''")}'`);
-        parts.push(searchPath);
-        parts.push("| head -100");
+        args.push(pattern, searchPath);
 
         try {
-          const output = execSync(parts.join(" "), {
+          const output = execFileSync("grep", args, {
             cwd: workDir,
             encoding: "utf-8",
             timeout: 30_000,
+            maxBuffer: 1024 * 1024,
             stdio: ["pipe", "pipe", "pipe"],
           });
-          return output.trim() || "No matches found";
+          const lines = output.trim().split("\n").slice(0, 100);
+          return lines.join("\n") || "No matches found";
         } catch {
           return "No matches found";
         }

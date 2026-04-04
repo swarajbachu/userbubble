@@ -3,7 +3,7 @@
 /** biome-ignore-all lint/nursery/noIncrementDecrement: expected */
 /** biome-ignore-all lint/nursery/noShadow: expected */
 /** biome-ignore-all lint/nursery/useMaxParams: expected */
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { resolveModel } from "@userbubble/ai";
@@ -111,7 +111,7 @@ export async function executeJob(jobId: string): Promise<void> {
     await prJobQueries.appendProgress(jobId, "Cloning repository...");
 
     const cloneUrl = `https://x-access-token:${githubToken}@github.com/${githubConfig.repoFullName}.git`;
-    execSync(`git clone --depth 50 ${cloneUrl} ${workDir}`, {
+    execFileSync("git", ["clone", "--depth", "50", cloneUrl, workDir], {
       timeout: 120_000,
     });
 
@@ -123,7 +123,7 @@ export async function executeJob(jobId: string): Promise<void> {
       .slice(0, 40);
     const branchName = `ai/${slugifiedTitle}`;
 
-    execSync(`git checkout -b ${branchName}`, { cwd: workDir });
+    execFileSync("git", ["checkout", "-b", branchName], { cwd: workDir });
     await prJobQueries.updateStatus(jobId, "cloning", { branchName });
     await prJobQueries.appendProgress(jobId, `Created branch: ${branchName}`);
 
@@ -178,20 +178,28 @@ export async function executeJob(jobId: string): Promise<void> {
     );
 
     // Configure git for pushing
-    execSync('git config user.name "UserBubble AI"', { cwd: workDir });
-    execSync('git config user.email "ai@userbubble.com"', { cwd: workDir });
+    execFileSync("git", ["config", "user.name", "UserBubble AI"], {
+      cwd: workDir,
+    });
+    execFileSync("git", ["config", "user.email", "ai@userbubble.com"], {
+      cwd: workDir,
+    });
 
     // Check if there are changes to commit
-    let status = execSync("git status --porcelain", { cwd: workDir })
-      .toString()
-      .trim();
+    let status = execFileSync("git", ["status", "--porcelain"], {
+      cwd: workDir,
+      encoding: "utf-8",
+    }).trim();
     let diffFromMain = status
       ? ""
-      : execSync(`git diff ${githubConfig.defaultBranch}..HEAD --stat`, {
-          cwd: workDir,
-        })
-          .toString()
-          .trim();
+      : execFileSync(
+          "git",
+          ["diff", `${githubConfig.defaultBranch}..HEAD`, "--stat"],
+          {
+            cwd: workDir,
+            encoding: "utf-8",
+          }
+        ).trim();
 
     // Retry: model may have described changes without using tools
     if (!(status || diffFromMain)) {
@@ -232,23 +240,32 @@ export async function executeJob(jobId: string): Promise<void> {
       );
 
       // Re-check
-      status = execSync("git status --porcelain", { cwd: workDir })
-        .toString()
-        .trim();
+      status = execFileSync("git", ["status", "--porcelain"], {
+        cwd: workDir,
+        encoding: "utf-8",
+      }).trim();
       diffFromMain = status
         ? ""
-        : execSync(`git diff ${githubConfig.defaultBranch}..HEAD --stat`, {
-            cwd: workDir,
-          })
-            .toString()
-            .trim();
+        : execFileSync(
+            "git",
+            ["diff", `${githubConfig.defaultBranch}..HEAD`, "--stat"],
+            {
+              cwd: workDir,
+              encoding: "utf-8",
+            }
+          ).trim();
     }
 
     if (status) {
       // Stage and commit any remaining changes
-      execSync("git add -A", { cwd: workDir });
-      execSync(
-        `git commit -m "feat: ${post.post.title}\n\nImplemented via AI from UserBubble feedback."`,
+      execFileSync("git", ["add", "-A"], { cwd: workDir });
+      execFileSync(
+        "git",
+        [
+          "commit",
+          "-m",
+          `feat: ${post.post.title}\n\nImplemented via AI from UserBubble feedback.`,
+        ],
         { cwd: workDir }
       );
     } else if (!diffFromMain) {
@@ -256,7 +273,7 @@ export async function executeJob(jobId: string): Promise<void> {
     }
 
     // Push branch
-    execSync(`git push origin ${branchName}`, { cwd: workDir });
+    execFileSync("git", ["push", "origin", branchName], { cwd: workDir });
 
     // Create PR via GitHub API
     const prBody = [

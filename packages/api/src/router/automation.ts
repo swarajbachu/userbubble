@@ -397,9 +397,9 @@ export const automationRouter = {
   // Get job status (for polling)
   getJobStatus: orgProcedure
     .input(z.object({ jobId: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
       const job = await prJobQueries.getById(input.jobId);
-      if (!job) {
+      if (!job || job.organizationId !== ctx.org.id) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Job not found",
@@ -411,14 +411,16 @@ export const automationRouter = {
   // List all jobs for a feedback post
   listJobsForPost: orgProcedure
     .input(z.object({ feedbackPostId: z.string() }))
-    .query(async ({ input }) => prJobQueries.listForPost(input.feedbackPostId)),
+    .query(async ({ ctx, input }) =>
+      prJobQueries.listForPost(input.feedbackPostId, ctx.org.id)
+    ),
 
   // Cancel a running job
   cancelJob: orgAdminProcedure
     .input(z.object({ jobId: z.string() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const job = await prJobQueries.getById(input.jobId);
-      if (!job) {
+      if (!job || job.organizationId !== ctx.org.id) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Job not found",
