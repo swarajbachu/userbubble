@@ -412,6 +412,7 @@ export const prJobQueries = {
       prUrl?: string;
       branchName?: string;
       errorMessage?: string;
+      sessionUrl?: string;
     }
   ) => {
     const updates: Record<string, unknown> = { status };
@@ -427,6 +428,9 @@ export const prJobQueries = {
     }
     if (extra?.errorMessage) {
       updates.errorMessage = extra.errorMessage;
+    }
+    if (extra?.sessionUrl) {
+      updates.sessionUrl = extra.sessionUrl;
     }
     if (status === "completed" || status === "failed") {
       updates.completedAt = new Date();

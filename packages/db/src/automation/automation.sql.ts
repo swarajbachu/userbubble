@@ -179,6 +179,9 @@ export const prGenerationJob = pgTable("pr_generation_job", {
   // Branch name created
   branchName: text("branch_name"),
 
+  // Claude Code Routine session URL
+  sessionUrl: text("session_url"),
+
   // Error message on failure
   errorMessage: text("error_message"),
 

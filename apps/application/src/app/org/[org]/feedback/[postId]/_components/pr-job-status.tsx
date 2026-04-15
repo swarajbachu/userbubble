@@ -10,10 +10,7 @@ import { useTRPC } from "~/trpc/react";
 
 const STATUS_STEPS: { key: PrJobStatus; label: string }[] = [
   { key: "pending", label: "Queued" },
-  { key: "cloning", label: "Cloning repo" },
-  { key: "analyzing", label: "Analyzing codebase" },
-  { key: "implementing", label: "Implementing" },
-  { key: "creating_pr", label: "Creating PR" },
+  { key: "implementing", label: "Running" },
   { key: "completed", label: "Complete" },
 ];
 
@@ -26,8 +23,13 @@ const ACTIVE_STATUSES: PrJobStatus[] = [
 ];
 
 function getStepIndex(status: PrJobStatus): number {
-  const idx = STATUS_STEPS.findIndex((s) => s.key === status);
-  return idx >= 0 ? idx : 0;
+  if (status === "completed") {
+    return 2;
+  }
+  if (ACTIVE_STATUSES.includes(status) && status !== "pending") {
+    return 1;
+  }
+  return 0;
 }
 
 type PrJobStatusProps = {
@@ -151,6 +153,18 @@ export function PrJobStatusView({
 
       {job.status === "cancelled" && (
         <Badge variant="secondary">Cancelled</Badge>
+      )}
+
+      {/* Session URL link */}
+      {isActive && job.sessionUrl && (
+        <a
+          className="block text-blue-500 text-xs hover:underline"
+          href={job.sessionUrl}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          View live session
+        </a>
       )}
 
       {/* Progress log */}

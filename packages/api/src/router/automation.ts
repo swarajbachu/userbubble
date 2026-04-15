@@ -18,6 +18,7 @@ import {
   disconnectCodex,
   initiateCodexOAuth,
 } from "../services/codex-oauth";
+import { fireRoutine } from "../services/fire-routine";
 import { orgAdminProcedure, orgProcedure } from "../trpc";
 
 const MAX_CONCURRENT_JOBS = 1;
@@ -389,6 +390,103 @@ export const automationRouter = {
             "Warning: Failed to notify worker, job will be picked up by polling"
           );
         }
+      }
+
+      return { jobId: job.id };
+    }),
+
+  // Trigger PR generation via Claude Code Routine
+  triggerRoutinePrGeneration: orgAdminProcedure
+    .input(
+      z.object({
+        feedbackPostId: z.string().min(1),
+        additionalContext: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const hasRunning = await prJobQueries.hasRunningJob(ctx.org.id);
+      if (hasRunning) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: `Only ${MAX_CONCURRENT_JOBS} concurrent job(s) allowed per organization`,
+        });
+      }
+
+      const todayCount = await prJobQueries.countTodayJobs(ctx.org.id);
+      if (todayCount >= MAX_DAILY_JOBS) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: `Daily limit of ${MAX_DAILY_JOBS} jobs reached`,
+        });
+      }
+
+      const [apiKeys, config] = await Promise.all([
+        automationApiKeyQueries.getStatus(ctx.org.id),
+        githubConfigQueries.get(ctx.org.id),
+      ]);
+
+      const hasRoutineUrl = apiKeys.some((k) => k.provider === "routine_url");
+      const hasRoutineToken = apiKeys.some(
+        (k) => k.provider === "routine_token"
+      );
+
+      if (!(hasRoutineUrl && hasRoutineToken)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Claude Code Routine must be configured (API URL and token required)",
+        });
+      }
+
+      if (!config) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "GitHub repository must be configured",
+        });
+      }
+
+      const job = await prJobQueries.create({
+        organizationId: ctx.org.id,
+        feedbackPostId: input.feedbackPostId,
+        triggeredById: ctx.session.user.id,
+        status: "pending",
+        aiProvider: "claude_routine",
+        additionalContext: input.additionalContext,
+        progressLog: [{ ts: new Date().toISOString(), message: "Job created" }],
+      });
+
+      if (!job) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create job",
+        });
+      }
+
+      try {
+        const result = await fireRoutine({
+          organizationId: ctx.org.id,
+          feedbackPostId: input.feedbackPostId,
+          additionalContext: input.additionalContext,
+          jobId: job.id,
+        });
+
+        await prJobQueries.updateStatus(job.id, "implementing", {
+          sessionUrl: result.sessionUrl,
+        });
+        await prJobQueries.appendProgress(
+          job.id,
+          `Routine fired — session: ${result.sessionUrl}`
+        );
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
+        await prJobQueries.updateStatus(job.id, "failed", {
+          errorMessage: `Failed to fire routine: ${message}`,
+        });
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Failed to fire routine: ${message}`,
+        });
       }
 
       return { jobId: job.id };

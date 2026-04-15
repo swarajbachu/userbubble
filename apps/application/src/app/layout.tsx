@@ -3,7 +3,6 @@ import { ThemeProvider } from "@userbubble/ui/theme";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
 import { env } from "~/env";
@@ -53,7 +52,7 @@ const geistMono = Geist_Mono({
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
+      {/* <head>
         {process.env.NODE_ENV === "development" && (
           <>
             <Script
@@ -66,7 +65,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             />
           </>
         )}
-      </head>
+      </head> */}
       <body
         className={cn(
           "min-h-screen bg-background font-sans text-foreground antialiased",

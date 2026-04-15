@@ -47,12 +47,6 @@ export function GeneratePrSection({
   const { data: githubConfig } = useQuery(
     trpc.automation.getGithubConfig.queryOptions({ organizationId })
   );
-  const { data: oauthStatus } = useQuery(
-    trpc.automation.getOAuthConnectionStatus.queryOptions({
-      organizationId,
-      provider: "codex",
-    })
-  );
 
   // List existing jobs for this post
   const { data: jobs } = useQuery(
@@ -63,7 +57,7 @@ export function GeneratePrSection({
   );
 
   const triggerMutation = useMutation(
-    trpc.automation.triggerPrGeneration.mutationOptions({
+    trpc.automation.triggerRoutinePrGeneration.mutationOptions({
       onSuccess: () => {
         toast.success("PR generation started");
         setOpen(false);
@@ -76,11 +70,10 @@ export function GeneratePrSection({
     })
   );
 
-  const hasAnthropic = apiKeys?.some((k) => k.provider === "anthropic");
-  const hasCodex = oauthStatus?.status === "active";
-  const hasGithub = apiKeys?.some((k) => k.provider === "github");
-  const hasAiProvider = hasAnthropic || hasCodex;
-  const isConfigured = hasAiProvider && hasGithub && githubConfig;
+  const hasRoutineUrl = apiKeys?.some((k) => k.provider === "routine_url");
+  const hasRoutineToken = apiKeys?.some((k) => k.provider === "routine_token");
+  const hasRoutine = hasRoutineUrl && hasRoutineToken;
+  const isConfigured = hasRoutine && githubConfig;
 
   // Show the most recent job if exists
   const latestJob = jobs?.[0];
@@ -178,13 +171,10 @@ export function GeneratePrSection({
             Configure integrations to enable AI-powered PR generation.
           </p>
           <div className="space-y-1 text-xs">
-            {!hasAiProvider && (
+            {!hasRoutine && (
               <p className="text-muted-foreground">
-                - AI provider required (Anthropic key or OpenAI Codex)
+                - Claude Code Routine required (API URL and token)
               </p>
-            )}
-            {!hasGithub && (
-              <p className="text-muted-foreground">- GitHub token required</p>
             )}
             {!githubConfig && (
               <p className="text-muted-foreground">

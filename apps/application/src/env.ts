@@ -19,6 +19,7 @@ export const env = createEnv({
     ENCRYPTION_KEY: z.string().min(64).max(64).optional(),
     MODAL_WEBHOOK_URL: z.url().optional(),
     MODAL_WEBHOOK_SECRET: z.string().min(1).optional(),
+    ROUTINE_CALLBACK_SECRET: z.string().min(1).optional(),
   },
 
   /**
