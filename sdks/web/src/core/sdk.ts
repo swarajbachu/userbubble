@@ -118,12 +118,14 @@ export class UserbubbleSDK {
     }
 
     const baseUrl = this.config.baseUrl ?? "https://app.userbubble.com";
-    const authParams = new URLSearchParams({
-      auth_token: this.state.authToken,
-      embed: "true",
-    }).toString();
 
-    this.widget?.show(baseUrl, this.state.organizationSlug, authParams, path);
+    this.widget?.show({
+      baseUrl,
+      apiKey: this.config.apiKey,
+      authToken: this.state.authToken,
+      path,
+      organizationSlug: this.state.organizationSlug ?? undefined,
+    });
     this.setState({ isOpen: true });
   }
 
@@ -142,8 +144,6 @@ export class UserbubbleSDK {
       isIdentified: false,
       isOpen: false,
     });
-    // Notify iframe to clear session
-    this.widget?.postMessage({ type: "userbubble:logout" });
     this.widget?.hide();
     this.log.debug("User logged out");
   }

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";
-import { categoryLabels } from "../feedback/config";
+import { getCategory } from "../feedback/config";
 import { VoteButton } from "../feedback/vote-button";
 
 type RoadmapCardProps = {
@@ -94,7 +94,7 @@ export function RoadmapCard({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
           <span className="flex items-center gap-1.5 rounded-full bg-secondary px-2 py-0.5 font-medium text-secondary-foreground">
-            {categoryLabels[post.category]}
+            {getCategory(post.category)?.label ?? post.category}
           </span>
           <span>
             {new Date(post.createdAt).toLocaleDateString(undefined, {

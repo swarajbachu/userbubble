@@ -75,7 +75,7 @@ export function ChangelogFilters() {
           render={(props) => (
             <Button {...props} size="sm" variant="outline">
               <Icon icon={FilterIcon} size={16} />
-              Tags
+              Categories
               {tags.length > 0 && (
                 <Badge className="ml-1 h-5 min-w-5 px-1" variant="secondary">
                   {tags.length}
@@ -86,7 +86,7 @@ export function ChangelogFilters() {
         />
         <PopoverContent align="start" className="w-[280px] p-3">
           <div className="space-y-2">
-            <p className="font-medium text-sm">Filter by tags</p>
+            <p className="font-medium text-sm">Filter by category</p>
             <div className="space-y-1.5">
               {Object.entries(tagConfig).map(([key, config]) => (
                 <label

@@ -108,7 +108,7 @@ export default async function ExternalFeedbackPage({
           <div className="flex items-center gap-3">
             <div className={`hidden h-3 w-3 rounded-full md:block ${color}`} />
             <div className="hidden md:block">
-              <h1 className="font-bold text-2xl">{title}</h1>
+              <h1 className="font-bold text-xl">{title}</h1>
             </div>
             <div className="md:hidden">
               <FeedbackSidebar

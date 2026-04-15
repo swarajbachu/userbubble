@@ -5,11 +5,11 @@ import { useEffect } from "react";
 import { setEmbedToken } from "~/lib/embed-auth-store";
 
 /**
- * Client component that bridges the iframe embed mode.
+ * Client component that bridges the embed mode (WebView or iframe).
  * When embed=true is in the URL:
  * - Stores the encrypted auth token in a module-level variable
  * - Token is sent as Bearer header in every tRPC call
- * - Sends postMessage events to parent window
+ * - Sends ready event to parent (iframe postMessage or RN WebView)
  * - Listens for theme + logout messages from parent
  */
 export function EmbedBridge() {
@@ -27,9 +27,16 @@ export function EmbedBridge() {
       return;
     }
 
-    // Notify parent that iframe is ready
+    // Notify parent that embed is ready (iframe or WebView)
     if (window.self !== window.top) {
       window.parent.postMessage({ type: "userbubble:ready" }, "*");
+    }
+    if ((window as unknown as Record<string, unknown>).ReactNativeWebView) {
+      (
+        (window as unknown as Record<string, unknown>).ReactNativeWebView as {
+          postMessage: (msg: string) => void;
+        }
+      ).postMessage(JSON.stringify({ type: "userbubble:ready" }));
     }
 
     // Listen for theme + logout messages from parent

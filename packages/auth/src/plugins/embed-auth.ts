@@ -1,9 +1,5 @@
-import type {
-  IdentifiedUser,
-  Member,
-  Session,
-  User,
-} from "@userbubble/db/schema";
+import { identifiedUserQueries } from "@userbubble/db/queries";
+import type { Member, Session, User } from "@userbubble/db/schema";
 import type { BetterAuthPlugin } from "better-auth";
 import { APIError, generateId } from "better-auth";
 import { createAuthEndpoint } from "better-auth/api";
@@ -106,6 +102,7 @@ export const embedAuth = (options: EmbedAuthOptions = {}): BetterAuthPlugin => {
           }
 
           const org = validated.organization;
+          console.log("[embed-auth] org:", org.id, org.slug);
 
           // 3. If HMAC provided, verify signature
           if (body.hmac && body.timestamp) {
@@ -143,6 +140,7 @@ export const embedAuth = (options: EmbedAuthOptions = {}): BetterAuthPlugin => {
           }
 
           // 4. Find or create user
+          console.log("[embed-auth] looking up user by email:", body.email);
           let user = await ctx.context.adapter.findOne<User>({
             model: "user",
             where: [
@@ -157,9 +155,10 @@ export const embedAuth = (options: EmbedAuthOptions = {}): BetterAuthPlugin => {
           let userId: string;
 
           if (user) {
+            console.log("[embed-auth] user FOUND:", user.id, user.email);
             // Block admin accounts
             if (blockAdminAccounts) {
-              const isAdmin = await ctx.context.adapter.findOne<Member>({
+              const adminMember = await ctx.context.adapter.findOne<Member>({
                 model: "member",
                 where: [
                   {
@@ -167,10 +166,22 @@ export const embedAuth = (options: EmbedAuthOptions = {}): BetterAuthPlugin => {
                     operator: "eq",
                     value: user.id,
                   },
+                  {
+                    field: "role",
+                    operator: "in",
+                    value: ["admin", "owner"],
+                  },
                 ],
               });
 
-              if (isAdmin) {
+              console.log(
+                "[embed-auth] admin check result:",
+                adminMember
+                  ? `BLOCKED (role=${adminMember.role}, orgId=${adminMember.organizationId})`
+                  : "PASSED"
+              );
+
+              if (adminMember) {
                 throw new APIError("FORBIDDEN", {
                   message:
                     "Admin accounts cannot use embed auth. Please login directly.",
@@ -191,6 +202,10 @@ export const embedAuth = (options: EmbedAuthOptions = {}): BetterAuthPlugin => {
             userId = user.id;
           } else {
             // Create new user (no password)
+            console.log(
+              "[embed-auth] user NOT FOUND, creating new user for:",
+              body.email
+            );
             const newUser = await ctx.context.adapter.create<User>({
               model: "user",
               data: {
@@ -209,48 +224,16 @@ export const embedAuth = (options: EmbedAuthOptions = {}): BetterAuthPlugin => {
             user = newUser;
           }
 
-          // 5. Upsert identifiedUser link
-          const existingLink =
-            await ctx.context.adapter.findOne<IdentifiedUser>({
-              model: "identifiedUser",
-              where: [
-                {
-                  field: "organizationId",
-                  operator: "eq",
-                  value: org.id,
-                },
-                {
-                  field: "externalId",
-                  operator: "eq",
-                  value: body.id,
-                },
-              ],
-            });
-
-          if (existingLink) {
-            await ctx.context.adapter.update({
-              model: "identifiedUser",
-              where: [{ field: "id", operator: "eq", value: existingLink.id }],
-              update: {
-                userId,
-                lastSeenAt: new Date(),
-                updatedAt: new Date(),
-              },
-            });
-          } else {
-            await ctx.context.adapter.create({
-              model: "identifiedUser",
-              data: {
-                id: generateId(),
-                userId,
-                organizationId: org.id,
-                externalId: body.id,
-                lastSeenAt: new Date(),
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              },
-            });
-          }
+          // 5. Upsert identifiedUser link (bypass Better Auth adapter — it strips custom fields)
+          await identifiedUserQueries.upsert({
+            id: generateId(),
+            userId,
+            organizationId: org.id,
+            externalId: body.id,
+            email: body.email,
+            name: body.name ?? null,
+            avatar: body.avatar ?? null,
+          });
 
           // 6. Generate encrypted auth token (7-day TTL, AES-256-GCM)
           const secret = ctx.context.secret;
@@ -264,6 +247,12 @@ export const embedAuth = (options: EmbedAuthOptions = {}): BetterAuthPlugin => {
           );
 
           // 7. Return token + user info (NO session, NO cookie)
+          console.log(
+            "[embed-auth] SUCCESS - returning token for userId:",
+            userId,
+            "orgSlug:",
+            org.slug
+          );
           return ctx.json({
             success: true,
             token,

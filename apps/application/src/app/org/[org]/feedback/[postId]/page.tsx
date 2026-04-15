@@ -6,23 +6,14 @@ import {
   memberQueries,
   permissions,
 } from "@userbubble/db/queries";
-import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
-import {
-  DoubleCard,
-  DoubleCardHeader,
-  DoubleCardInner,
-} from "@userbubble/ui/double-card";
-import { Icon } from "@userbubble/ui/icon";
 import { notFound } from "next/navigation";
 import { getSession } from "~/auth/server";
-import { categoryLabels, statusConfig } from "~/components/feedback/config";
 import { getOrganization } from "~/lib/get-organization";
 import { BackButton } from "./_components/back-button";
-import { CategoryEditor } from "./_components/category-editor";
 import { CommentsSection } from "./_components/comments-section";
-import { PostActions } from "./_components/post-actions";
+import { PostActionBar } from "./_components/post-action-bar";
 import { PostMainContent } from "./_components/post-main-content";
-import { StatusEditor } from "./_components/status-editor";
+import { PostSidebar } from "./_components/post-sidebar";
 
 type FeedbackPostPageProps = {
   params: Promise<{ org: string; postId: string }>;
@@ -65,10 +56,8 @@ export default async function FeedbackPostPage({
 
   const hasUserVoted = userId ? !!(await getUserVote(postId, userId)) : false;
 
-  const config = statusConfig[post.post.status];
-
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl">
       <div className="mb-8">
         <BackButton org={org} />
       </div>
@@ -96,92 +85,24 @@ export default async function FeedbackPostPage({
         </div>
 
         {/* Sidebar - Right Column */}
-        <div className="space-y-6 lg:col-span-4">
-          <div className="sticky top-8 space-y-6">
-            <DoubleCard>
-              <DoubleCardHeader className="py-1">
-                <span className="font-semibold text-sm">Author</span>
-              </DoubleCardHeader>
-              <DoubleCardInner className="p-4">
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src={post.author?.image ?? undefined} />
-                    <AvatarFallback>
-                      {post.author?.name?.[0]?.toUpperCase() ?? "A"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="font-medium text-sm">
-                      {post.author?.name ?? "Anonymous"}
-                    </span>
-                    <span className="text-muted-foreground text-xs">
-                      {post.post.createdAt.toLocaleDateString(undefined, {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
-                </div>
-              </DoubleCardInner>
-            </DoubleCard>
-
-            <DoubleCard>
-              <DoubleCardHeader className="flex items-center justify-between">
-                <span className="font-semibold text-sm">Details</span>
-                {canModify && <PostActions org={org} postId={postId} />}
-              </DoubleCardHeader>
-
-              <DoubleCardInner className="space-y-4 p-4">
-                {/* Status */}
-                <div className="space-y-2">
-                  <span className="mb-2 block font-medium text-muted-foreground text-xs uppercase tracking-wider">
-                    Status
-                  </span>
-                  <div className="mt-2">
-                    {isAdmin ? (
-                      <StatusEditor
-                        currentStatus={post.post.status}
-                        postId={postId}
-                      />
-                    ) : (
-                      <div className="flex items-center gap-2 font-medium text-sm">
-                        <Icon
-                          className={config.color}
-                          icon={config.icon}
-                          size={16}
-                        />
-                        <span className="capitalize">
-                          {post.post.status.replace("_", " ")}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Category */}
-                <div className="space-y-2">
-                  <span className="mb-2 block font-medium text-muted-foreground text-xs uppercase tracking-wider">
-                    Category
-                  </span>
-                  <div className="mt-2">
-                    {isAdmin ? (
-                      <CategoryEditor
-                        currentCategory={post.post.category}
-                        postId={postId}
-                      />
-                    ) : (
-                      <div className="font-medium text-sm">
-                        {categoryLabels[post.post.category]}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </DoubleCardInner>
-            </DoubleCard>
-          </div>
+        <div className="lg:col-span-4">
+          <PostSidebar
+            author={post.author}
+            canModify={canModify}
+            category={post.post.category}
+            createdAt={post.post.createdAt}
+            isAdmin={isAdmin}
+            org={org}
+            postId={postId}
+            status={post.post.status}
+          />
         </div>
       </div>
+
+      {/* Floating bottom action bar (admin only) */}
+      {isAdmin && (
+        <PostActionBar currentStatus={post.post.status} postId={postId} />
+      )}
     </div>
   );
 }
