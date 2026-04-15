@@ -18,6 +18,7 @@ export default [
       "expo-secure-store",
       "@react-native-async-storage/async-storage",
       "expo-constants",
+      "@userbubble/core",
     ],
     plugins: [
       nodeResolve({
@@ -49,6 +50,7 @@ export default [
       "expo-secure-store",
       "@react-native-async-storage/async-storage",
       "expo-constants",
+      "@userbubble/core",
     ],
     plugins: [
       nodeResolve({

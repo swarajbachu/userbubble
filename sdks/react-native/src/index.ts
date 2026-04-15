@@ -4,17 +4,17 @@
  * Seamless user identification for React Native and Expo apps
  */
 
+// Re-export core utilities for advanced usage
 export {
-  identify as identifyUser,
-  logout as logoutUser,
-} from "./auth/authenticate";
+  generateOrganizationUrl,
+  generatePortalUrl,
+  identify,
+} from "@userbubble/core";
 export { UserbubbleProvider } from "./context/userbubble-provider";
 export { useUserbubble } from "./hooks/use-userbubble";
 export type {
   StorageAdapter,
-  UserbubbleConfig,
   UserbubbleContextValue,
+  UserbubbleRNConfig,
   UserbubbleUser,
 } from "./types";
-// Re-export utilities for advanced usage
-export { generateUserbubbleUrl } from "./utils/url";

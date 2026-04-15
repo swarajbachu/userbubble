@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { StorageAdapter } from "../types";
+import type { StorageAdapter } from "@userbubble/core";
 
 export class AsyncStorageAdapter implements StorageAdapter {
   async getItem(key: string): Promise<string | null> {
-    return await AsyncStorage.getItem(key);
+    return AsyncStorage.getItem(key);
   }
 
   async setItem(key: string, value: string): Promise<void> {

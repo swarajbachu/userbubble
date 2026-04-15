@@ -40,10 +40,13 @@ function MyComponent() {
     user,
     isInitialized,
     isIdentified,
+    authToken,
+    organizationSlug,
     identify,
     logout,
     getUser,
     openUserbubble,
+    getEmbedUrl,
   } = useUserbubble();
 }
 ```
@@ -65,6 +68,7 @@ Configuration object for the SDK.
 ```typescript
 type UserbubbleConfig = {
   apiKey: string;
+  baseUrl?: string;
   debug?: boolean;
   storageType?: "expo" | "async-storage" | "auto";
   customStorage?: StorageAdapter;
@@ -76,6 +80,7 @@ type UserbubbleConfig = {
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `apiKey` | `string` | *Required* | Your organization's API key from Userbubble |
+| `baseUrl` | `string` | `"https://app.userbubble.com"` | Base URL for the Userbubble service. Override for custom domains or self-hosted instances. |
 | `debug` | `boolean` | `false` | Enable debug logging to console |
 | `storageType` | `"expo" \| "async-storage" \| "auto"` | `"auto"` | Storage type to use (auto-detection recommended) |
 | `customStorage` | `StorageAdapter` | `undefined` | Custom storage implementation |
@@ -85,8 +90,9 @@ type UserbubbleConfig = {
 ```typescript
 const config: UserbubbleConfig = {
   apiKey: "ub_live_xxxxxxxxxxxxx",
+  baseUrl: "https://app.userbubble.com", // Default, can be omitted
   debug: __DEV__,
-  storageType: "auto", // Recommended: auto-detect platform
+  storageType: "auto",
 };
 ```
 
@@ -136,10 +142,13 @@ type UserbubbleContextValue = {
   user: UserbubbleUser | null;
   isInitialized: boolean;
   isIdentified: boolean;
+  authToken: string | null;
+  organizationSlug: string | null;
   identify: (user: UserbubbleUser) => Promise<void>;
   logout: () => Promise<void>;
   getUser: () => UserbubbleUser | null;
   openUserbubble: (path?: string) => Promise<void>;
+  getEmbedUrl: (path?: string) => string | null;
 };
 ```
 
@@ -150,10 +159,13 @@ type UserbubbleContextValue = {
 | `user` | `UserbubbleUser \| null` | Current identified user, or `null` if not identified |
 | `isInitialized` | `boolean` | Whether SDK has finished initialization |
 | `isIdentified` | `boolean` | Whether a user is currently identified |
+| `authToken` | `string \| null` | Authentication token for the current user, or `null` |
+| `organizationSlug` | `string \| null` | Organization slug for the current user, or `null` |
 | `identify` | `Function` | Identify a user |
 | `logout` | `Function` | Log out current user |
 | `getUser` | `Function` | Get current user synchronously |
-| `openUserbubble` | `Function` | Open Userbubble in browser |
+| `openUserbubble` | `Function` | Open full portal in device browser |
+| `getEmbedUrl` | `Function` | Generate an authenticated embed URL (minimal UI) for WebView |
 
 ---
 
@@ -175,19 +187,15 @@ interface StorageAdapter {
 ```typescript
 const customStorage: StorageAdapter = {
   async getItem(key: string): Promise<string | null> {
-    // Your custom get logic
     return yourStorage.get(key);
   },
   async setItem(key: string, value: string): Promise<void> {
-    // Your custom set logic
     await yourStorage.set(key, value);
   },
   async removeItem(key: string): Promise<void> {
-    // Your custom remove logic
     await yourStorage.remove(key);
   },
   async clear(): Promise<void> {
-    // Your custom clear logic
     await yourStorage.clearAll();
   },
 };
@@ -266,15 +274,56 @@ const { getUser } = useUserbubble();
 
 const currentUser = getUser();
 if (currentUser) {
-  console.log("User ID:", currentUser.id);
+  // User is identified
 }
 ```
 
 ---
 
+### getEmbedUrl()
+
+Generate an authenticated URL for embedding in a WebView. Returns a URL to the **embed view** — a minimal UI with user info, content area, and a bottom tab bar (Feedback, Roadmap, Updates). No full header or navigation is shown.
+
+```typescript
+getEmbedUrl(path?: string): string | null
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `path` | `string` | `"/feedback"` | Path to load (e.g., `/feedback`, `/roadmap`, `/changelog`) |
+
+**Returns:** `string | null` - Authenticated URL, or `null` if user is not identified
+
+**Example:**
+
+```typescript
+import { Modal, View } from "react-native";
+import { WebView } from "react-native-webview";
+
+const { getEmbedUrl } = useUserbubble();
+const url = getEmbedUrl("/feedback");
+
+// Show in a form sheet modal
+if (url) {
+  return (
+    <Modal presentationStyle="formSheet" animationType="slide">
+      <WebView source={{ uri: url }} style={{ flex: 1 }} />
+    </Modal>
+  );
+}
+```
+
+<Callout type="info">
+  The embed URL renders a minimal view with a bottom tab bar for navigation — no full header. Use `openUserbubble()` instead if you want the full portal experience in the device browser.
+</Callout>
+
+---
+
 ### openUserbubble()
 
-Open Userbubble in the device's browser.
+Open Userbubble in the device's default browser.
 
 ```typescript
 await openUserbubble(path?: string): Promise<void>
@@ -310,12 +359,6 @@ await openUserbubble();
 ## Platform Detection
 
 The SDK automatically detects whether you're using Expo or bare React Native:
-
-**Expo Detection:**
-```typescript
-// Checks for expo-constants package
-import Constants from "expo-constants";
-```
 
 **Storage Selection:**
 - **Expo**: Uses `expo-secure-store` for encrypted storage
@@ -353,7 +396,6 @@ function MyComponent() {
 try {
   await identify(user);
 } catch (error) {
-  console.error("Identification failed:", error);
   // Handle error (show message to user, retry, etc.)
 }
 ```
@@ -363,7 +405,6 @@ try {
 try {
   await openUserbubble("/feedback");
 } catch (error) {
-  console.error("Could not open Userbubble:", error);
   // User not identified or URL invalid
 }
 ```

@@ -24,7 +24,7 @@ export default async function MembersPage({ params }: MembersPageProps) {
   const canManage = permissions.canManageMembers(member.role);
 
   return (
-    <div className="mx-auto w-full max-w-4xl py-8">
+    <div className="mx-auto w-full max-w-4xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="font-bold text-3xl">Members</h1>

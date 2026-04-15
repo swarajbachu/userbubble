@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@userbubble/ui";
-import { categoryLabels, statusConfig } from "~/components/feedback/config";
+import { getCategory, getStatus } from "~/components/feedback/config";
 import { getEmbedToken } from "~/lib/embed-auth-store";
 import { useTRPC } from "~/trpc/react";
 
@@ -118,14 +118,15 @@ export function EmbedRoadmapList({
                           <span
                             className={cn(
                               "h-1.5 w-1.5 rounded-full",
-                              statusConfig[item.post.status].color.replace(
-                                "text-",
-                                "bg-"
-                              )
+                              (
+                                getStatus(item.post.status)?.color ??
+                                "text-zinc-400"
+                              ).replace("text-", "bg-")
                             )}
                           />
                           <span className="text-[11px] text-muted-foreground">
-                            {categoryLabels[item.post.category]}
+                            {getCategory(item.post.category)?.label ??
+                              item.post.category}
                           </span>
                           <span className="text-[11px] text-muted-foreground/50">
                             &middot;

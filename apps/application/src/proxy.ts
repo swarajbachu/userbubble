@@ -35,6 +35,9 @@ function isAuthPath(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hostname = request.headers.get("host") || "";
+  console.log(
+    `[proxy] ${request.method} ${pathname} | host: ${hostname} | origin: ${request.headers.get("origin") ?? "(none)"}`
+  );
 
   // Skip subdomain rewriting for internal paths (API routes, external/embed routes, static assets)
   if (

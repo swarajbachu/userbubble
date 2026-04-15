@@ -1,11 +1,12 @@
-import type { UserbubbleConfig } from "../types";
-
-export function logger(config: UserbubbleConfig) {
+export function createLogger(debug: boolean) {
   return {
     debug: (...args: unknown[]) => {
-      if (config.debug) {
+      if (debug) {
         console.log("[userbubble]", ...args);
       }
+    },
+    warn: (...args: unknown[]) => {
+      console.warn("[userbubble]", ...args);
     },
     error: (...args: unknown[]) => {
       console.error("[userbubble]", ...args);

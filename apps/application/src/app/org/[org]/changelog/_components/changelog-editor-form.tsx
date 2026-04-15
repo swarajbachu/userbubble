@@ -18,7 +18,7 @@ export function ChangelogEditorForm({
   organizationId,
 }: ChangelogEditorFormProps) {
   return (
-    <Fieldset className="grid gap-6">
+    <Fieldset className="grid max-w-none gap-6">
       <div className="grid gap-4 sm:grid-cols-4">
         {/* Title */}
         <form.Field name="title">
@@ -61,7 +61,7 @@ export function ChangelogEditorForm({
       <form.Field name="tags">
         {(field) => (
           <Field>
-            <FieldLabel>Tags</FieldLabel>
+            <FieldLabel>Categories</FieldLabel>
             <ChangelogTagSelector
               onChange={field.handleChange}
               value={field.state.value}

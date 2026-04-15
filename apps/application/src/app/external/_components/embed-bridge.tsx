@@ -2,68 +2,77 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { setEmbedToken } from "~/lib/embed-auth-store";
 
 /**
- * Client component that bridges the iframe embed mode and handles auth token exchange.
+ * Client component that handles auth token in external portal pages.
  *
- * When embed=true is in the URL:
- * - Hides the external header and applies minimal chrome
- * - Sends postMessage events to parent window
- * - Listens for theme messages from parent
+ * When auth_token is in the URL (from SDK identify flow):
+ * - Stores it as Bearer token for tRPC calls (works in WebView where cookies can't)
+ * - Also tries cookie exchange for server-side auth on reload
+ * - Strips the token from the URL
  *
- * When auth_token is in the URL (from embed roadmap redirect):
- * - Exchanges the encrypted token for a session cookie
- * - Strips the token from the URL to avoid leaking it in browser history
+ * When embed=true (web widget iframe):
+ * - Hides external header and applies minimal chrome
  */
 export function EmbedBridge() {
   const searchParams = useSearchParams();
   const isEmbed = searchParams.get("embed") === "true";
   const authToken = searchParams.get("auth_token");
 
+  // Store token synchronously so it's available for tRPC calls immediately
+  if (authToken) {
+    setEmbedToken(authToken);
+  }
+
   useEffect(() => {
-    // Exchange auth token for session cookie (works for both embed and direct visits)
-    if (authToken) {
-      fetch("/api/auth/embed-auth/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: authToken }),
-        credentials: "include",
-      })
-        .then(() => {
-          // Strip auth_token from URL to avoid leaking in browser history
-          const url = new URL(window.location.href);
-          url.searchParams.delete("auth_token");
-          window.history.replaceState({}, "", url.toString());
-          // Reload to pick up the new session in server components
-          window.location.reload();
-        })
-        .catch(() => {
-          // Fail silently — continue as anonymous
-        });
+    if (!authToken) {
+      return;
     }
-  }, [authToken]);
+
+    // Exchange token for session cookie
+    fetch("/api/embed-exchange", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: authToken }),
+      credentials: "include",
+    })
+      .then(async (res) => {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("auth_token");
+        if (res.ok && !isEmbed) {
+          // Full reload only for non-embed (regular browser) to pick up SSR session
+          window.location.replace(url.toString());
+        } else {
+          // Embed: just strip token, tRPC Bearer auth handles the rest
+          window.history.replaceState({}, "", url.toString());
+        }
+      })
+      .catch(() => {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("auth_token");
+        window.history.replaceState({}, "", url.toString());
+      });
+  }, [authToken, isEmbed]);
 
   useEffect(() => {
     if (!isEmbed) {
       return;
     }
 
-    // Hide header and strip padding for embed mode
     const style = document.createElement("style");
     style.id = "userbubble-embed-styles";
     style.textContent = `
       header.sticky { display: none !important; }
-      main.container { padding: 0 !important; max-width: 100% !important; }
+      main.container { padding-top: 0 !important; max-width: 100% !important; }
       .flex.min-h-screen { min-height: auto; }
     `;
     document.head.appendChild(style);
 
-    // Notify parent that iframe is ready
     if (window.self !== window.top) {
       window.parent.postMessage({ type: "userbubble:ready" }, "*");
     }
 
-    // Listen for theme messages from parent
     const handleMessage = (event: MessageEvent) => {
       const data = event.data;
       if (!data || typeof data !== "object") {

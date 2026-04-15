@@ -1,14 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Cancel01Icon,
-  CheckmarkBadge01Icon,
-  CircleIcon,
-  Clock01Icon,
-  EyeIcon,
-  HourglassIcon,
-} from "@hugeicons-pro/core-bulk-rounded";
+import { CheckmarkBadge01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import {
   ArrowDown01Icon,
   FilterHorizontalIcon,
@@ -18,20 +11,9 @@ import { useQuery } from "@tanstack/react-query";
 import type { FeedbackCategory, FeedbackStatus } from "@userbubble/db/schema";
 import { cn } from "@userbubble/ui";
 import { Button } from "@userbubble/ui/button";
-import { Checkbox } from "@userbubble/ui/checkbox";
-import {
-  Dialog,
-  DialogClose,
-  DialogPopup,
-  DialogTitle,
-} from "@userbubble/ui/dialog";
+import { Dialog, DialogPopup, DialogTitle } from "@userbubble/ui/dialog";
 import { Icon } from "@userbubble/ui/icon";
 import { Input } from "@userbubble/ui/input";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@userbubble/ui/input-group";
 import {
   Popover,
   PopoverContent,
@@ -40,42 +22,8 @@ import {
 import Link from "next/link";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { type ReactNode, useState } from "react";
-import { statusConfig } from "~/components/feedback/config";
+import { getStatus, statuses } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
-
-const STATUS_FILTERS = [
-  { label: "Open", value: "open", color: "text-blue-500", icon: CircleIcon },
-  {
-    label: "Under Review",
-    value: "under_review",
-    color: "text-yellow-500",
-    icon: EyeIcon,
-  },
-  {
-    label: "Planned",
-    value: "planned",
-    color: "text-purple-500",
-    icon: Clock01Icon,
-  },
-  {
-    label: "In Progress",
-    value: "in_progress",
-    color: "text-orange-500",
-    icon: HourglassIcon,
-  },
-  {
-    label: "Completed",
-    value: "completed",
-    color: "text-green-500",
-    icon: CheckmarkBadge01Icon,
-  },
-  {
-    label: "Closed",
-    value: "closed",
-    color: "text-slate-500",
-    icon: Cancel01Icon,
-  },
-] as const;
 
 type FeedbackFiltersProps = {
   organizationId: string;
@@ -136,7 +84,7 @@ export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
       mobileSearchContent = (
         <div className="space-y-1">
           {searchResults.map((item) => {
-            const config = statusConfig[item.post.status];
+            const config = getStatus(item.post.status);
             return (
               <Link
                 className="block rounded-lg p-2 transition-colors hover:bg-accent/50"
@@ -145,10 +93,12 @@ export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
                 onClick={() => setMobileSearchOpen(false)}
               >
                 <div className="flex items-start gap-2">
-                  <Icon
-                    className={cn("mt-1 size-4 shrink-0", config.color)}
-                    icon={config.icon}
-                  />
+                  {config && (
+                    <Icon
+                      className={cn("mt-1 size-4 shrink-0", config.color)}
+                      icon={config.icon}
+                    />
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="line-clamp-1 font-medium text-base">
                       {item.post.title}
@@ -183,72 +133,86 @@ export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
 
   return (
     <div className="flex items-center gap-2">
+      <div className="relative hidden md:block">
+        <HugeiconsIcon
+          className="-translate-y-1/2 absolute top-1/2 left-2.5 text-muted-foreground/50"
+          icon={Search01Icon}
+          size={16}
+        />
+        <Input
+          className="h-9 w-[240px] border-none bg-secondary/50 pl-9 transition-all focus:bg-background focus:ring-1"
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search feedback..."
+          value={search}
+        />
+      </div>
+
+      <div className="hidden h-4 w-px bg-border/50 md:block" />
+
       <Popover>
         <PopoverTrigger
           render={(props) => (
             <Button
               {...props}
-              className="h-10 w-10 rounded-full p-0 md:h-9 md:w-auto md:gap-2 md:rounded-md md:px-3"
+              className={cn(
+                "relative h-9 w-9 gap-2 p-0 font-normal text-muted-foreground hover:text-foreground md:w-auto md:px-3",
+                statusFilter.length > 0 && "bg-secondary/50 text-foreground"
+              )}
               size="sm"
-              variant="outline"
+              variant="ghost"
             >
               <HugeiconsIcon icon={FilterHorizontalIcon} size={16} />
               <span className="hidden md:inline">Filter</span>
               {statusFilter.length > 0 && (
-                <span className="rounded-full bg-primary px-1.5 py-0.5 font-medium text-primary-foreground text-xs">
+                <span className="-right-1 -top-1 absolute flex h-4 w-4 items-center justify-center rounded-full bg-primary font-medium text-[10px] text-primary-foreground md:static md:h-5 md:min-w-5 md:px-1">
                   {statusFilter.length}
                 </span>
               )}
-              <HugeiconsIcon
-                className="ml-auto hidden opacity-50 md:inline"
-                icon={ArrowDown01Icon}
-                size={16}
-              />
             </Button>
           )}
         />
-        <PopoverContent align="start" className="w-56 p-2">
-          <div className="space-y-1">
-            <div className="px-2 py-1.5 font-medium text-muted-foreground text-sm">
-              Status
-            </div>
-            {STATUS_FILTERS.map((filter) => (
-              <button
-                className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
-                key={filter.value}
-                onClick={() => toggleStatus(filter.value)}
-                type="button"
-              >
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    checked={isStatusActive(filter.value)}
-                    className="data-[state=checked]:bg-transparent data-[state=checked]:text-primary"
-                  />
-                  <span>{filter.label}</span>
-                </div>
+        <PopoverContent align="end" className="w-56 p-1">
+          <div className="px-2 py-1.5 font-medium text-muted-foreground text-xs">
+            Filter by status
+          </div>
+          {statuses.map((filter) => (
+            <button
+              className={cn(
+                "flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-accent",
+                isStatusActive(filter.value) && "bg-accent/50"
+              )}
+              key={filter.value}
+              onClick={() => toggleStatus(filter.value)}
+              type="button"
+            >
+              <div className="flex items-center gap-2">
                 <Icon
-                  className={cn(
-                    "size-4 transition-opacity",
-                    isStatusActive(filter.value) ? "opacity-100" : "opacity-50",
-                    filter.color
-                  )}
+                  className={cn("size-3.5", filter.color)}
                   icon={filter.icon}
                 />
+                <span className="text-sm">{filter.label}</span>
+              </div>
+              {isStatusActive(filter.value) && (
+                <HugeiconsIcon
+                  className="text-primary"
+                  icon={CheckmarkBadge01Icon}
+                  size={14}
+                />
+              )}
+            </button>
+          ))}
+          {statusFilter.length > 0 && (
+            <>
+              <div className="my-1 h-px bg-border/50" />
+              <button
+                className="w-full rounded-sm px-2 py-1.5 text-left text-muted-foreground text-xs hover:bg-accent hover:text-foreground"
+                onClick={() => setStatusFilter(null)}
+                type="button"
+              >
+                Clear filters
               </button>
-            ))}
-            {statusFilter.length > 0 && (
-              <>
-                <div className="my-1 border-t" />
-                <button
-                  className="w-full rounded-md px-2 py-1.5 text-left text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-foreground"
-                  onClick={() => setStatusFilter(null)}
-                  type="button"
-                >
-                  Clear filters
-                </button>
-              </>
-            )}
-          </div>
+            </>
+          )}
         </PopoverContent>
       </Popover>
 
@@ -257,26 +221,20 @@ export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
           render={(props) => (
             <Button
               {...props}
-              className="h-10 rounded-full px-3 md:h-9 md:rounded-md"
+              className="h-9 gap-2 px-3 font-normal text-muted-foreground hover:text-foreground"
               size="sm"
-              variant="outline"
+              variant="ghost"
             >
-              <span className="font-medium text-xs md:text-sm">
-                {sortLabel}
-              </span>
-              <HugeiconsIcon
-                className="ml-1 text-muted-foreground md:ml-auto md:opacity-50"
-                icon={ArrowDown01Icon}
-                size={14}
-              />
+              <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
+              <span>{sortLabel}</span>
             </Button>
           )}
         />
         <PopoverContent align="end" className="w-40 p-1">
           <Button
             className={cn(
-              "w-full justify-start",
-              sort === "recent" && "bg-accent"
+              "h-8 w-full justify-start px-2 font-normal",
+              sort === "recent" && "bg-accent text-accent-foreground"
             )}
             onClick={() => setSort("recent")}
             size="sm"
@@ -286,8 +244,8 @@ export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
           </Button>
           <Button
             className={cn(
-              "w-full justify-start",
-              sort === "votes" && "bg-accent"
+              "h-8 w-full justify-start px-2 font-normal",
+              sort === "votes" && "bg-accent text-accent-foreground"
             )}
             onClick={() => setSort("votes")}
             size="sm"
@@ -298,58 +256,41 @@ export function FeedbackFilters({ organizationId }: FeedbackFiltersProps) {
         </PopoverContent>
       </Popover>
 
-      <div className="relative hidden md:block">
-        <HugeiconsIcon
-          className="-translate-y-1/2 absolute top-1/2 left-2.5 text-muted-foreground"
-          icon={Search01Icon}
-          size={16}
-        />
-        <Input
-          className="h-9 w-[200px] pl-9"
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search..."
-          value={search}
-        />
-      </div>
-
       <Button
-        className="h-10 w-10 rounded-full p-0 md:hidden"
+        className="h-9 w-9 md:hidden"
         onClick={() => setMobileSearchOpen(true)}
-        size="sm"
-        variant="outline"
+        size="icon"
+        variant="ghost"
       >
-        <HugeiconsIcon icon={Search01Icon} size={16} />
+        <HugeiconsIcon icon={Search01Icon} size={18} />
       </Button>
 
       <Dialog onOpenChange={setMobileSearchOpen} open={mobileSearchOpen}>
-        <DialogPopup className="h-dvh max-w-none md:hidden">
+        <DialogPopup className="h-dvh max-w-none rounded-none border-none p-0 md:hidden">
+          <DialogTitle className="sr-only">Search Feedback</DialogTitle>
           <div className="flex h-full flex-col bg-background">
-            <div className="flex items-center justify-between border-b p-4">
-              <DialogTitle className="sr-only">Search Feedback</DialogTitle>
-              <DialogClose render={<Button size="sm" variant="ghost" />}>
-                Close
-              </DialogClose>
-            </div>
-
-            <div className="border-b p-4 pt-2">
-              <InputGroup>
-                <InputGroupInput
-                  aria-label="Search"
+            <div className="flex items-center gap-2 border-b p-2">
+              <div className="relative flex-1">
+                <HugeiconsIcon
+                  className="-translate-y-1/2 absolute top-1/2 left-3 text-muted-foreground"
+                  icon={Search01Icon}
+                  size={18}
+                />
+                <input
                   autoFocus
-                  className="h-12 rounded-xl text-base"
+                  className="h-10 w-full rounded-md bg-secondary/50 pr-4 pl-9 text-sm outline-none placeholder:text-muted-foreground"
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search feedback..."
-                  type="search"
                   value={search}
                 />
-                <InputGroupAddon>
-                  <HugeiconsIcon
-                    aria-hidden="true"
-                    icon={Search01Icon}
-                    size={18}
-                  />
-                </InputGroupAddon>
-              </InputGroup>
+              </div>
+              <Button
+                onClick={() => setMobileSearchOpen(false)}
+                size="sm"
+                variant="ghost"
+              >
+                Cancel
+              </Button>
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto p-4">

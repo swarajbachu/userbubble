@@ -1,14 +1,10 @@
+import type { StorageAdapter } from "@userbubble/core";
+import { STORAGE_KEYS } from "@userbubble/core";
 import * as SecureStore from "expo-secure-store";
-import type { StorageAdapter } from "../types";
-
-const STORAGE_KEYS = {
-  USER: "userbubble_user",
-  ORG_SLUG: "userbubble_organizationSlug",
-} as const;
 
 export class ExpoStorage implements StorageAdapter {
   async getItem(key: string): Promise<string | null> {
-    return await SecureStore.getItemAsync(key);
+    return SecureStore.getItemAsync(key);
   }
 
   async setItem(key: string, value: string): Promise<void> {
@@ -21,7 +17,8 @@ export class ExpoStorage implements StorageAdapter {
 
   async clear(): Promise<void> {
     // Expo SecureStore doesn't have clear, so we manually remove known keys
-    await this.removeItem(STORAGE_KEYS.USER);
-    await this.removeItem(STORAGE_KEYS.ORG_SLUG);
+    for (const key of Object.values(STORAGE_KEYS)) {
+      await this.removeItem(key);
+    }
   }
 }

@@ -1,22 +1,23 @@
 import type { UserbubbleWebConfig } from "../core/types";
 import { createLogger } from "../utils/logger";
+import { WidgetApiClient } from "./api-client";
 import { bubbleIcon } from "./icons";
 import { getWidgetStyles } from "./styles";
+import { WidgetUI } from "./ui";
 
 export class WidgetManager {
   private host: HTMLDivElement | null = null;
   private shadow: ShadowRoot | null = null;
   private panel: HTMLDivElement | null = null;
-  private iframe: HTMLIFrameElement | null = null;
+  private panelContent: HTMLDivElement | null = null;
   private bubble: HTMLButtonElement | null = null;
-  private activePath = "/feedback";
+  private widgetUI: WidgetUI | null = null;
+  private apiClient: WidgetApiClient | null = null;
+  private currentAuthToken: string | null = null;
   private readonly config: UserbubbleWebConfig;
   private readonly log: ReturnType<typeof createLogger>;
   private readonly onOpen: () => void;
   private readonly onClose: () => void;
-  private baseUrl = "";
-  private orgSlug = "";
-  private authParams = "";
   private themeQuery: MediaQueryList | null = null;
   private themeHandler: ((e: MediaQueryListEvent) => void) | null = null;
 
@@ -60,15 +61,15 @@ export class WidgetManager {
     this.bubble.addEventListener("click", () => this.onOpen());
     root.appendChild(this.bubble);
 
-    // Panel — iframe fills the full panel
+    // Panel — content rendered by WidgetUI
     this.panel = document.createElement("div");
     this.panel.className = "ub-panel";
 
-    this.iframe = document.createElement("iframe");
-    this.iframe.className = "ub-iframe";
-    this.iframe.setAttribute("title", "Userbubble");
-    this.iframe.setAttribute("loading", "lazy");
-    this.panel.appendChild(this.iframe);
+    this.panelContent = document.createElement("div");
+    this.panelContent.style.display = "flex";
+    this.panelContent.style.flexDirection = "column";
+    this.panelContent.style.height = "100%";
+    this.panel.appendChild(this.panelContent);
 
     root.appendChild(this.panel);
     document.body.appendChild(this.host);
@@ -76,34 +77,64 @@ export class WidgetManager {
     // Listen for theme changes
     this.setupThemeListener();
 
-    // Listen for postMessage from iframe
-    window.addEventListener("message", this.handleMessage);
-
     this.log.debug("Widget mounted");
   }
 
-  show(
-    baseUrl: string,
-    orgSlug: string,
-    authParams: string,
-    path?: string
-  ): void {
-    if (!(this.panel && this.iframe)) {
+  show(opts: {
+    baseUrl: string;
+    apiKey: string;
+    authToken: string | null;
+    path?: string;
+    organizationSlug?: string;
+  }): void {
+    const { baseUrl, apiKey, authToken, path, organizationSlug } = opts;
+    if (!(this.panel && this.panelContent)) {
       return;
     }
 
-    this.baseUrl = baseUrl;
-    this.orgSlug = orgSlug;
-    this.authParams = authParams;
-    if (path) {
-      this.activePath = path;
+    // Store token mutably so the API client always reads the latest
+    this.currentAuthToken = authToken;
+
+    // Create API client if not yet created
+    if (!this.apiClient) {
+      this.apiClient = new WidgetApiClient(
+        baseUrl,
+        apiKey,
+        () => this.currentAuthToken
+      );
     }
 
-    const src = this.buildIframeSrc(this.activePath);
-    this.iframe.src = src;
+    // Create WidgetUI if not yet created
+    if (!this.widgetUI) {
+      const roadmapUrl = organizationSlug
+        ? `https://${organizationSlug}.userbubble.com`
+        : null;
+      this.widgetUI = new WidgetUI(
+        this.apiClient,
+        () => this.onClose(),
+        roadmapUrl,
+        () => this.currentAuthToken
+      );
+      this.widgetUI.mount(this.panelContent);
+    }
+
+    // Map path to tab
+    if (path) {
+      const tabMap: Record<string, "feedback" | "roadmap" | "changelog"> = {
+        "/feedback": "feedback",
+        "/roadmap": "roadmap",
+        "/changelog": "changelog",
+      };
+      const tab = tabMap[path];
+      if (tab) {
+        this.widgetUI.setTab(tab);
+      }
+    }
+
+    this.widgetUI.activate();
     this.panel.classList.add("ub-open");
 
-    this.log.debug("Panel opened:", src);
+    this.log.debug("Panel opened");
   }
 
   hide(): void {
@@ -114,15 +145,7 @@ export class WidgetManager {
     this.log.debug("Panel closed");
   }
 
-  postMessage(data: unknown): void {
-    if (this.iframe?.contentWindow) {
-      this.iframe.contentWindow.postMessage(data, "*");
-    }
-  }
-
   destroy(): void {
-    window.removeEventListener("message", this.handleMessage);
-
     if (this.themeQuery && this.themeHandler) {
       this.themeQuery.removeEventListener("change", this.themeHandler);
     }
@@ -132,16 +155,14 @@ export class WidgetManager {
       this.host = null;
       this.shadow = null;
       this.panel = null;
-      this.iframe = null;
+      this.panelContent = null;
       this.bubble = null;
     }
 
-    this.log.debug("Widget destroyed");
-  }
+    this.widgetUI = null;
+    this.apiClient = null;
 
-  private buildIframeSrc(path: string): string {
-    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-    return `${this.baseUrl}/embed/${this.orgSlug}${normalizedPath}?${this.authParams}`;
+    this.log.debug("Widget destroyed");
   }
 
   private getThemeClass(): string {
@@ -159,39 +180,9 @@ export class WidgetManager {
 
     this.themeQuery = window.matchMedia("(prefers-color-scheme: dark)");
     this.themeHandler = () => {
-      if (this.iframe?.contentWindow) {
-        const isDark = this.themeQuery?.matches ?? false;
-        this.iframe.contentWindow.postMessage(
-          { type: "userbubble:theme", dark: isDark },
-          "*"
-        );
-      }
+      // Theme updates are handled by CSS media queries on the shadow DOM
+      // No need for postMessage — the ub-auto class handles it
     };
     this.themeQuery.addEventListener("change", this.themeHandler);
   }
-
-  private readonly handleMessage = (event: MessageEvent): void => {
-    const data = event.data;
-    if (!data || typeof data !== "object") {
-      return;
-    }
-
-    if (data.type === "userbubble:ready") {
-      this.log.debug("Iframe ready");
-      if (this.iframe?.contentWindow) {
-        const isDark =
-          this.config.theme === "dark" ||
-          (this.config.theme === "auto" && (this.themeQuery?.matches ?? false));
-        this.iframe.contentWindow.postMessage(
-          { type: "userbubble:theme", dark: isDark },
-          "*"
-        );
-      }
-    }
-
-    if (data.type === "userbubble:close") {
-      this.log.debug("Close requested by embed");
-      this.onClose();
-    }
-  };
 }
