@@ -11,6 +11,7 @@ import { getSession } from "~/auth/server";
 import { getOrganization } from "~/lib/get-organization";
 import { BackButton } from "./_components/back-button";
 import { CommentsSection } from "./_components/comments-section";
+import { GeneratePrSection } from "./_components/generate-pr-section";
 import { PostActionBar } from "./_components/post-action-bar";
 import { PostMainContent } from "./_components/post-main-content";
 import { PostSidebar } from "./_components/post-sidebar";
@@ -85,7 +86,7 @@ export default async function FeedbackPostPage({
         </div>
 
         {/* Sidebar - Right Column */}
-        <div className="lg:col-span-4">
+        <div className="space-y-6 lg:col-span-4">
           <PostSidebar
             author={post.author}
             canModify={canModify}
@@ -95,6 +96,15 @@ export default async function FeedbackPostPage({
             org={org}
             postId={postId}
             status={post.post.status}
+          />
+
+          <GeneratePrSection
+            isAdmin={isAdmin}
+            organizationId={organization.id}
+            orgSlug={org}
+            postDescription={post.post.description}
+            postId={postId}
+            postTitle={post.post.title}
           />
         </div>
       </div>
