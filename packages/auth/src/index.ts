@@ -27,7 +27,6 @@ export function initAuth<
         ...schema,
       },
     }),
-    baseURL: options.baseUrl,
     secret: options.secret,
     advanced: {
       crossSubDomainCookies: {
@@ -41,6 +40,7 @@ export function initAuth<
         ipAddressHeaders: ["cf-connecting-ip"],
       },
       useSecureCookies: true,
+      trustedProxyHeaders: true,
       defaultCookieAttributes: {
         sameSite: "None",
         secure: true,
@@ -101,9 +101,10 @@ export function initAuth<
     trustedOrigins: [
       "expo://",
       "http://localhost:3000",
-      options.baseUrl,
+      options.productionUrl,
       "https://*.userbubble.com",
       "https://*.gesturs.com",
+      "https://app.gesturs.com",
       "userbubble://",
     ],
     onAPIError: {

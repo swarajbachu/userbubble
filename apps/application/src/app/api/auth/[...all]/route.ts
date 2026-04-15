@@ -72,6 +72,12 @@ function isEmbedAuthIdentify(req: Request): boolean {
 
 function withCors(handler: (req: Request) => Promise<Response>) {
   return async (req: Request): Promise<Response> => {
+    const url = new URL(req.url);
+    console.log(
+      `[AUTH] ${req.method} ${url.pathname} | origin: ${req.headers.get("origin") ?? "(none)"}`
+    );
+    const start = Date.now();
+
     // Embed-auth identify endpoint allows any origin (SDK runs on customer domains)
     if (isEmbedAuthIdentify(req)) {
       if (req.method === "OPTIONS") {
@@ -82,6 +88,9 @@ function withCors(handler: (req: Request) => Promise<Response>) {
       }
 
       const res = await handler(req);
+      console.log(
+        `[AUTH] ${url.pathname} completed in ${Date.now() - start}ms | status: ${res.status}`
+      );
       const response = new Response(res.body, res);
       for (const [key, value] of Object.entries(embedAuthCorsHeaders)) {
         response.headers.set(key, value);
@@ -94,6 +103,7 @@ function withCors(handler: (req: Request) => Promise<Response>) {
     // Only validate origin for cross-origin requests
     // Same-origin requests don't have an Origin header
     if (origin && !isOriginAllowed(origin)) {
+      console.log(`[AUTH] CORS blocked for origin: ${origin}`);
       return new Response("CORS not allowed", { status: 403 });
     }
 
@@ -101,19 +111,30 @@ function withCors(handler: (req: Request) => Promise<Response>) {
       return buildCorsResponse(origin, 204);
     }
 
-    const res = await handler(req);
+    try {
+      const res = await handler(req);
+      console.log(
+        `[AUTH] ${url.pathname} completed in ${Date.now() - start}ms | status: ${res.status}`
+      );
 
-    const response = new Response(res.body, res);
+      const response = new Response(res.body, res);
 
-    // Only add CORS headers for cross-origin requests
-    if (origin) {
-      for (const [key, value] of Object.entries(corsHeaders)) {
-        response.headers.set(key, value);
+      // Only add CORS headers for cross-origin requests
+      if (origin) {
+        for (const [key, value] of Object.entries(corsHeaders)) {
+          response.headers.set(key, value);
+        }
+        response.headers.set("Access-Control-Allow-Origin", origin);
       }
-      response.headers.set("Access-Control-Allow-Origin", origin);
-    }
 
-    return response;
+      return response;
+    } catch (err) {
+      console.error(
+        `[AUTH] ${url.pathname} FAILED after ${Date.now() - start}ms:`,
+        err
+      );
+      throw err;
+    }
   };
 }
 
