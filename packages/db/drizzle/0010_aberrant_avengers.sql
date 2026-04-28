@@ -1,0 +1,1 @@
+ALTER TABLE "pr_generation_job" ADD COLUMN "session_url" text;

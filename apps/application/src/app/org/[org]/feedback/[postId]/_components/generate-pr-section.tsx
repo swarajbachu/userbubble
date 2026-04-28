@@ -173,7 +173,7 @@ export function GeneratePrSection({
           <div className="space-y-1 text-xs">
             {!hasRoutine && (
               <p className="text-muted-foreground">
-                - Claude Code Routine required (API URL and token)
+                - Claude Code Routine required (fire URL and bearer token)
               </p>
             )}
             {!githubConfig && (

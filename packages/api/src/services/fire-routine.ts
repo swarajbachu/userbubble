@@ -66,7 +66,6 @@ export async function fireRoutine(params: {
   additionalContext?: string | null;
   jobId: string;
 }): Promise<{ sessionId: string; sessionUrl: string }> {
-  // Decrypt routine credentials
   const [routineUrl, routineToken] = await Promise.all([
     automationApiKeyQueries.getDecrypted(params.organizationId, "routine_url"),
     automationApiKeyQueries.getDecrypted(

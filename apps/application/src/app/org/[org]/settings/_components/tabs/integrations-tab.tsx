@@ -146,8 +146,7 @@ function RoutineConfigSection({ organizationId }: { organizationId: string }) {
       <div>
         <h4 className="font-medium text-sm">Claude Code Routine</h4>
         <p className="text-muted-foreground text-xs">
-          Connect your Claude Code Routine to automate PR generation. Create a
-          Routine at{" "}
+          Create a Routine at{" "}
           <a
             className="text-primary hover:underline"
             href="https://claude.ai/code/routines"
@@ -156,7 +155,9 @@ function RoutineConfigSection({ organizationId }: { organizationId: string }) {
           >
             claude.ai/code/routines
           </a>
-          , add an API trigger, and paste the URL and token below.
+          . When you add an API trigger, the modal shows both a fire URL (with{" "}
+          <code className="rounded bg-muted px-1">trig_…</code> in the path) and
+          a bearer token — paste both below.
         </p>
       </div>
 
@@ -179,7 +180,7 @@ function RoutineConfigSection({ organizationId }: { organizationId: string }) {
 
           <CardPanel className="space-y-4">
             <Field>
-              <FieldLabel>API URL</FieldLabel>
+              <FieldLabel>Fire URL</FieldLabel>
               <Input
                 className="font-mono text-sm"
                 onChange={(e) => setUrlInput(e.target.value)}
@@ -191,12 +192,13 @@ function RoutineConfigSection({ organizationId }: { organizationId: string }) {
                 value={urlInput}
               />
               <FieldDescription>
-                The /fire endpoint URL from your Routine&apos;s API trigger.
+                The /fire endpoint URL from your Routine&apos;s API trigger
+                modal.
               </FieldDescription>
             </Field>
 
             <Field>
-              <FieldLabel>API Token</FieldLabel>
+              <FieldLabel>Bearer Token</FieldLabel>
               <Input
                 className="font-mono text-sm"
                 onChange={(e) => setTokenInput(e.target.value)}
@@ -209,7 +211,7 @@ function RoutineConfigSection({ organizationId }: { organizationId: string }) {
                 value={tokenInput}
               />
               <FieldDescription>
-                The bearer token generated for your API trigger.
+                The token generated alongside the URL in the same modal.
               </FieldDescription>
             </Field>
 
@@ -236,8 +238,8 @@ function RoutineConfigSection({ organizationId }: { organizationId: string }) {
         </Card>
         <CardFrameFooter>
           <p className="text-muted-foreground text-xs">
-            Create a Routine with an API trigger, add your GitHub repo, and
-            write a prompt that implements features and creates PRs.
+            Each Routine has its own unique fire URL and token. Set up the
+            Routine&apos;s prompt to clone your repo and create PRs.
           </p>
         </CardFrameFooter>
       </CardFrame>
