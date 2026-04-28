@@ -1,6 +1,6 @@
 "use client";
 
-import type { Organization } from "@userbubble/db/schema";
+import type { Organization, OrganizationSettings } from "@userbubble/db/schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@userbubble/ui/tabs";
 import { useState } from "react";
 import { ApiKeysTab } from "./tabs/api-keys-tab";
@@ -9,13 +9,19 @@ import { ChangelogTab } from "./tabs/changelog-tab";
 import { DataTab } from "./tabs/data-tab";
 // import { DomainTab } from "./tabs/domain-tab";
 import { FeedbackTab } from "./tabs/feedback-tab";
+import { IntegrationsTab } from "./tabs/integrations-tab";
 
 type SettingsTabsProps = {
   organization: Organization;
+  settings: OrganizationSettings;
   userRole: "owner" | "admin" | "member";
 };
 
-export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
+export function SettingsTabs({
+  organization,
+  settings,
+  userRole,
+}: SettingsTabsProps) {
   const [activeTab, setActiveTab] = useState("branding");
 
   return (
@@ -27,7 +33,7 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
         <TabsTrigger value="api-keys">API Keys</TabsTrigger>
         {/* <TabsTrigger value="billing">Billing</TabsTrigger> */}
         {/* <TabsTrigger value="domain">Domain</TabsTrigger> */}
-        {/* <TabsTrigger value="integrations">Integrations</TabsTrigger> */}
+        <TabsTrigger value="integrations">AI</TabsTrigger>
         {/* <TabsTrigger value="sso">SSO</TabsTrigger> */}
         <TabsTrigger value="data">Data</TabsTrigger>
       </TabsList>
@@ -59,12 +65,9 @@ export function SettingsTabs({ organization, userRole }: SettingsTabsProps) {
         <DomainTab organization={organization} />
       </TabsContent> */}
 
-      {/* <TabsContent value="integrations">
-        <PlaceholderTab
-          description="Connect third-party services and tools."
-          title="Integrations"
-        />
-      </TabsContent> */}
+      <TabsContent value="integrations">
+        <IntegrationsTab organization={organization} settings={settings} />
+      </TabsContent>
 
       {/* <TabsContent value="sso">
         <PlaceholderTab

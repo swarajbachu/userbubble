@@ -57,3 +57,4 @@ dist/
 # internal docs
 internal-docs/
 temp_settings.json
+.gstack/

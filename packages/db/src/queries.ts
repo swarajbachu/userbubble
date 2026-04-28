@@ -2,6 +2,8 @@
 // These are exported separately from schema.ts to avoid circular dependencies
 // (queries import db client, which imports schema)
 
+export * from "./automation/automation.permissions";
+export * from "./automation/automation.queries";
 export * from "./changelog/changelog.permissions";
 export * from "./changelog/changelog.queries";
 export * from "./feedback/feedback.permissions";

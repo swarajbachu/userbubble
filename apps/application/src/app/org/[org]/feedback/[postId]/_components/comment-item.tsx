@@ -23,6 +23,7 @@ type CommentItemProps = {
   author: User | null;
   canDelete: boolean;
   isTeamMember: boolean;
+  isAiGenerated?: boolean;
   onDeleted: () => void;
 };
 
@@ -31,6 +32,7 @@ export function CommentItem({
   author,
   canDelete,
   isTeamMember,
+  isAiGenerated = false,
   onDeleted,
 }: CommentItemProps) {
   const trpc = useTRPC();
@@ -59,13 +61,26 @@ export function CommentItem({
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="size-8 rounded-full bg-linear-to-br from-primary/20 to-primary/10" />
+            <div
+              className={`size-8 rounded-full ${
+                isAiGenerated
+                  ? "bg-linear-to-br from-purple-500/30 to-violet-500/20"
+                  : "bg-linear-to-br from-primary/20 to-primary/10"
+              }`}
+            />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-medium text-sm">
-                  {author?.name ?? "Anonymous"}
+                  {isAiGenerated
+                    ? "AI Assistant"
+                    : (author?.name ?? comment.authorName ?? "Anonymous")}
                 </span>
-                {isTeamMember && (
+                {isAiGenerated && (
+                  <span className="rounded-full bg-purple-500/10 px-2 py-0.5 font-medium text-purple-600 text-xs">
+                    AI
+                  </span>
+                )}
+                {isTeamMember && !isAiGenerated && (
                   <span className="rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary text-xs">
                     Team
                   </span>

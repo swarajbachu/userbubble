@@ -77,6 +77,7 @@ export function CommentsSection({
                     comment={item.comment}
                     isTeamMember={item.isTeamMember}
                     onDeleted={() => {
+                      // Remove from list
                       setComments(
                         comments.filter((c) => c.comment.id !== item.comment.id)
                       );
@@ -85,21 +86,6 @@ export function CommentsSection({
                 </div>
               ))
             )}
-          </div>
-        </div>
-      </TabsPanel>
-
-      <TabsPanel value="reactions">
-        <div className="py-6">
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
-            <Icon
-              className="text-muted-foreground"
-              icon={FavouriteIcon}
-              size={32}
-            />
-            <p className="mt-2 text-muted-foreground text-sm">
-              Reactions coming soon.
-            </p>
           </div>
         </div>
       </TabsPanel>

@@ -26,7 +26,7 @@ export const apiKey = pgTable(
   {
     id: varchar("id", { length: 256 })
       .primaryKey()
-      .$defaultFn(() => createUniqueIds("apikey")),
+      .$defaultFn(() => createUniqueIds("api_key")),
 
     // Organization relationship
     organizationId: text("organization_id")

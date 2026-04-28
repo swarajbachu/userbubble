@@ -3,6 +3,7 @@ import { db } from "../client";
 import { member } from "../org/organization.sql";
 import { user } from "../user/user.sql";
 import {
+  type AiTriageStatus,
   type FeedbackCategory,
   type FeedbackPost,
   type FeedbackStatus,
@@ -289,4 +290,31 @@ export async function createComment(comment: NewFeedbackComment) {
  */
 export async function deleteComment(commentId: string) {
   await db.delete(feedbackComment).where(eq(feedbackComment.id, commentId));
+}
+
+/**
+ * Update AI triage status on a feedback post
+ */
+export async function updateAiTriageStatus(
+  postId: string,
+  status: AiTriageStatus
+) {
+  const [updated] = await db
+    .update(feedbackPost)
+    .set({ aiTriageStatus: status })
+    .where(eq(feedbackPost.id, postId))
+    .returning();
+  return updated;
+}
+
+/**
+ * Increment AI triage count on a feedback post
+ */
+export async function incrementTriageCount(postId: string) {
+  await db
+    .update(feedbackPost)
+    .set({
+      aiTriageCount: sql`${feedbackPost.aiTriageCount} + 1`,
+    })
+    .where(eq(feedbackPost.id, postId));
 }

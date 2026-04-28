@@ -57,6 +57,27 @@
       "when": 1771673231167,
       "tag": "0007_majestic_klaw",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1771673231168,
+      "tag": "0008_fine_hitman",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1771862543829,
+      "tag": "0009_flashy_hawkeye",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1777359710289,
+      "tag": "0010_aberrant_avengers",
+      "breakpoints": true
     }
   ]
 }

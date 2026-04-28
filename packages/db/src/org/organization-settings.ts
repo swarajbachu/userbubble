@@ -57,6 +57,13 @@ const domainSettingsSchema = z.object({
   domainVerified: z.boolean().default(false),
 });
 
+const automationSettingsSchema = z.object({
+  // AI auto-triages new feedback posts and comments
+  enableAutoTriage: z.boolean().default(false),
+  // AI auto-triggers PR generation when it decides "implement"
+  enableAutoImplement: z.boolean().default(false),
+});
+
 export const organizationSettingsSchema = z.object({
   publicAccess: publicAccessSchema.optional().default({
     allowAnonymousSubmissions: false,
@@ -77,6 +84,10 @@ export const organizationSettingsSchema = z.object({
   }),
   domain: domainSettingsSchema.optional().default({
     domainVerified: false,
+  }),
+  automation: automationSettingsSchema.optional().default({
+    enableAutoTriage: false,
+    enableAutoImplement: false,
   }),
 });
 

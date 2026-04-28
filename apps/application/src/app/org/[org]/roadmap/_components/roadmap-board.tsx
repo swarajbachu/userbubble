@@ -156,7 +156,8 @@ export function RoadmapBoard({
         {activeId && activePost ? (
           <div className="rotate-2 cursor-grabbing opacity-90 shadow-2xl">
             <RoadmapCard
-              author={activePost.author ?? null}
+              // biome-ignore lint/style/noNonNullAssertion: <explanation>
+              author={activePost.author!}
               hasUserVoted={activePost.hasUserVoted}
               isAuthenticated={isAuthenticated}
               isDragging

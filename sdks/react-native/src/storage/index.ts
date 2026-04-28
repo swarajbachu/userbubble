@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/style/noParameterProperties: expected */
+/** biome-ignore-all lint/style/useReadonlyClassProperties: expected */
 import type { StorageAdapter } from "@userbubble/core";
 
 export { StorageManager } from "@userbubble/core";

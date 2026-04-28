@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/style/noNestedTernary: <explanation> */
+/** biome-ignore-all lint/style/noNestedTernary: expected */
 "use client";
 
 import { Toast } from "@base-ui/react/toast";

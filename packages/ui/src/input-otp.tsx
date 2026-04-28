@@ -1,6 +1,6 @@
-/** biome-ignore-all lint/a11y/useFocusableInteractive: <explanation> */
-/** biome-ignore-all lint/a11y/useAriaPropsForRole: <explanation> */
-/** biome-ignore-all lint/a11y/useSemanticElements: <explanation> */
+/** biome-ignore-all lint/a11y/useFocusableInteractive: expected */
+/** biome-ignore-all lint/a11y/useAriaPropsForRole: expected */
+/** biome-ignore-all lint/a11y/useSemanticElements: expected */
 "use client";
 
 import { MinusSignIcon } from "@hugeicons/core-free-icons";

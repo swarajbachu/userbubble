@@ -1,3 +1,6 @@
+/** biome-ignore-all lint/style/useImportType: expected */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: expected */
+
 import type { UserbubbleUser } from "@userbubble/core";
 import {
   createLogger,

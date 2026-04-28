@@ -18,6 +18,10 @@
     "./queries": {
       "types": "./dist/queries.d.ts",
       "default": "./src/queries.ts"
+    },
+    "./lib/encryption": {
+      "types": "./dist/lib/encryption.d.ts",
+      "default": "./src/lib/encryption.ts"
     }
   },
   "license": "MIT",
