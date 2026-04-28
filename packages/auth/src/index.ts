@@ -40,7 +40,6 @@ export function initAuth<
         ipAddressHeaders: ["cf-connecting-ip"],
       },
       useSecureCookies: true,
-      trustedProxyHeaders: true,
       defaultCookieAttributes: {
         sameSite: "None",
         secure: true,
