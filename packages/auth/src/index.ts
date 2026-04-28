@@ -34,10 +34,7 @@ export function initAuth<
         domain:
           process.env.NODE_ENV === "production"
             ? ".userbubble.com"
-            : `.${process.env.NEXT_PUBLIC_BASE_DOMAIN ?? "gesturs.com"}`,
-      },
-      ipAddress: {
-        ipAddressHeaders: ["cf-connecting-ip"],
+            : `.${process.env.NEXT_PUBLIC_BASE_DOMAIN ?? "host.local"}`,
       },
       useSecureCookies: true,
       defaultCookieAttributes: {
