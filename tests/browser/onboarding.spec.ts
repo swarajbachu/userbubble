@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { expect, test } from "@playwright/test";
+import { signUpThroughForm } from "./fixtures";
 
 const COMPLETE_URL = /\/complete$/;
 const LOCAL_APP = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/;
@@ -21,7 +22,21 @@ test("signup, profile completion and domain-only onboarding create a usable work
   await page
     .getByLabel("Password", { exact: true })
     .fill(`Local-test-${id}-password`);
-  await page.getByRole("button", { name: "Sign up", exact: true }).click();
+  // Reproduce the shared-IP cooldown hit by fast consecutive CI fixtures.
+  // Invalid requests consume the real limiter without creating extra accounts.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const response = await context.request.post("/api/auth/sign-up/email", {
+      headers: { Origin: baseURL ?? "" },
+      data: {},
+    });
+    expect([400, 429]).toContain(response.status());
+  }
+  const firstAttempt = page.waitForResponse(
+    (result) => new URL(result.url()).pathname === "/api/auth/sign-up/email"
+  );
+  const signup = await signUpThroughForm(page);
+  expect((await firstAttempt).status()).toBe(429);
+  expect(signup.ok(), await signup.text()).toBe(true);
   await expect(page).toHaveURL(COMPLETE_URL);
   await page.getByLabel("First name").fill("Onboarding");
   await page.getByLabel("Last name").fill("Tester");

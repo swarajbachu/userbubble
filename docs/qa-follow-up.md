@@ -22,3 +22,9 @@ The three Vercel preview checks were failing before this follow-up. Their authen
 The supplied deployment log confirmed `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH`: token-enabled Pro overrides differ from the committed community lockfile. All three Vercel projects now run the shared install script, which keeps community installs frozen and explicitly resolves the Pro edition in token-enabled deployment checkouts. An actual frozen community install passed; subprocess tests cover every project's install command, both edition selections, whitespace-only tokens, and failure propagation. Licensed package downloads still require deployment verification with a valid registry token.
 
 The follow-up GitHub run also identified generated capability-inventory drift from the new onboarding tRPC call. The inventory was regenerated; capability and typed-client consistency checks pass.
+
+## Signup cooldown regression
+
+Run 37137999241 passed the service/build gates but failed the browser signup journey. The real production signup limiter was reproduced locally: three preceding attempts from the same IP cause the form submission to receive 429 with `Retry-After: 10`. Both API fixtures and the UI signup helper now honor that bounded cooldown, retry only explicit 429 responses, and preserve failures for other responses. The onboarding regression intentionally fills the rate-limit bucket, asserts the first browser submission is throttled, then completes signup through the real form. Production rate limits remain unchanged.
+
+The workflow now specifies the PostgreSQL health-check user/database and includes the explicitly listed hidden `.context` evidence files in artifact upload. Previous artifact uploads silently omitted the browser traces and server logs. All three Vercel previews passed after the install fix.
