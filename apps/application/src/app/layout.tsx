@@ -67,7 +67,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           geistMono.variable
         )}
       >
-        <Analytics />
+        {process.env.VERCEL === "1" && <Analytics />}
         <ThemeProvider>
           {props.children}
           {/* <div className="absolute right-4 bottom-4">

@@ -32,7 +32,7 @@ function Approval() {
           </p>
         ) : (
           <>
-            {request.isPending && (
+            {request.isFetching && (
               <p className="mt-4 text-sm" role="status">
                 Loading request…
               </p>

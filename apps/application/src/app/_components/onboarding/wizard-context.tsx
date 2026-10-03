@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import { initializeOnboarding } from "~/lib/onboarding-actions";
+import { normalizeWebsiteUrl } from "~/lib/website-url";
 import { useTRPC } from "~/trpc/react";
 
 type WizardState = {
@@ -43,6 +43,9 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   const trpc = useTRPC();
   const { mutateAsync: create } = useMutation(
     trpc.organization.create.mutationOptions()
+  );
+  const { mutateAsync: initializeOnboarding } = useMutation(
+    trpc.organization.initializeOnboarding.mutationOptions()
   );
   const [currentStep, setCurrentStep] = useState(1);
   const [website, setWebsite] = useState("");
@@ -89,11 +92,11 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       const data = await create({
         name: organizationName,
         slug,
-        website: website || undefined,
+        website: normalizeWebsiteUrl(website),
       });
 
       if (data) {
-        await initializeOnboarding(data.id);
+        await initializeOnboarding({ organizationId: data.id });
         toast.success("Organization created successfully!");
         router.push(`/org/${data.slug}/getting-started`);
       }
@@ -102,7 +105,15 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsCreating(false);
     }
-  }, [create, organizationName, slug, website, router, validationError]);
+  }, [
+    create,
+    initializeOnboarding,
+    organizationName,
+    slug,
+    website,
+    router,
+    validationError,
+  ]);
 
   const value: WizardContextType = {
     currentStep,

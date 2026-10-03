@@ -77,19 +77,19 @@ function Consent() {
         <code className="mt-4 block break-all rounded-md bg-muted p-3 text-xs">
           {clientId}
         </code>
-        {client.isPending && (
+        {client.isFetching && (
           <p className="mt-3 text-sm" role="status">
             Checking request…
           </p>
         )}
-        {(error || client.isError) && (
+        {(error || !clientId || client.isError) && (
           <p className="mt-3 text-destructive text-sm" role="alert">
             {error || "Invalid connection request"}
           </p>
         )}
         <div className="mt-5 flex justify-end gap-2">
           <Button
-            disabled={pending}
+            disabled={pending || !client.data}
             onClick={() => respond(false)}
             variant="outline"
           >
