@@ -91,9 +91,9 @@ jobs:
           done
           cat .context/ci-docs.log
           exit 1
-      - run: pnpm test
       - name: Main app, portal and widget browser acceptance
         run: pnpm test:browser
+      - run: pnpm test
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@v4

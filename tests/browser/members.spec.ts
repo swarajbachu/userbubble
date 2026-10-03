@@ -66,6 +66,18 @@ test("member invitations stay consistent between dashboard and management API", 
     );
     for (const width of [375, 768, 1440, 1920]) {
       await page.setViewportSize({ width, height: 900 });
+      // Theme and responsive changes animate inherited table colors. Wait for
+      // their actual completion rather than scanning an intermediate frame.
+      await page.evaluate(async () => {
+        await Promise.allSettled(
+          document
+            .getAnimations()
+            .filter((animation) =>
+              Number.isFinite(animation.effect?.getComputedTiming().endTime)
+            )
+            .map((animation) => animation.finished)
+        );
+      });
       const result = await new AxeBuilder({ page })
         .exclude("nextjs-portal")
         .analyze();
