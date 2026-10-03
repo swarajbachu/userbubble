@@ -6,12 +6,11 @@ import {
   CheckmarkCircle01Icon,
   Clock01Icon,
   Clock02Icon,
-  ClockAlertIcon,
   HelpCircleIcon,
   Menu01Icon,
   Progress02Icon,
   Rocket01Icon,
-} from "@hugeicons-pro/core-bulk-rounded";
+} from "@hugeicons-pro/core-solid-rounded";
 
 export const statuses = [
   {
@@ -24,7 +23,7 @@ export const statuses = [
   {
     value: "under_review",
     label: "Under Review",
-    icon: ClockAlertIcon,
+    icon: Clock01Icon,
     color: "text-amber-500",
   },
   {

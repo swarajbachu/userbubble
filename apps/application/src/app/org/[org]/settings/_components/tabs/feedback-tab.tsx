@@ -3,18 +3,23 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Organization } from "@userbubble/db/schema";
-import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
 import { Switch } from "@userbubble/ui/switch";
+import type { OrganizationSettings } from "@userbubble/validators/organization";
 import { toast } from "sonner";
 
 import { useTRPC } from "~/trpc/react";
 
-export function FeedbackTab({ organization }: { organization: Organization }) {
+export function FeedbackTab({
+  organization,
+  settings,
+}: {
+  organization: Omit<Organization, "secretKey">;
+  settings: OrganizationSettings;
+}) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const settings = parseOrganizationSettings(organization.metadata);
 
   const updateSettings = useMutation(
     trpc.settings.updateSettings.mutationOptions({
@@ -49,6 +54,7 @@ export function FeedbackTab({ organization }: { organization: Organization }) {
             requireApproval: settings.publicAccess?.requireApproval ?? false,
           },
           feedback: {
+            enableDigestEmails: settings.feedback.enableDigestEmails,
             enableRoadmap: value.enableRoadmap,
             // enableDigestEmails: value.enableDigestEmails,
             boards: settings.feedback?.boards ?? [],

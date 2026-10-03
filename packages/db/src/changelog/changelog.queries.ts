@@ -1,5 +1,5 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
-import { db } from "../client";
+import { and, arrayOverlaps, desc, eq, inArray, sql } from "drizzle-orm";
+import { db, inTransaction } from "../client";
 import { changelogEntry, changelogFeedbackLink } from "./changelog.sql";
 
 /**
@@ -9,6 +9,9 @@ export async function getChangelogEntries(
   organizationId: string,
   options?: {
     published?: boolean;
+    tags?: string[];
+    dateFrom?: Date;
+    dateTo?: Date;
     limit?: number;
     offset?: number;
   }
@@ -21,9 +24,24 @@ export async function getChangelogEntries(
     conditions.push(eq(changelogEntry.isPublished, published));
   }
 
+  if (options?.tags?.length) {
+    conditions.push(arrayOverlaps(changelogEntry.tags, options.tags));
+  }
+  const releaseDate = sql`coalesce(${changelogEntry.publishedAt}, ${changelogEntry.createdAt})`;
+  if (options?.dateFrom) {
+    conditions.push(sql`${releaseDate} >= ${options.dateFrom}`);
+  }
+  if (options?.dateTo) {
+    conditions.push(sql`${releaseDate} <= ${options.dateTo}`);
+  }
+
   const entries = await db.query.changelogEntry.findMany({
     where: and(...conditions),
-    orderBy: [desc(changelogEntry.publishedAt), desc(changelogEntry.createdAt)],
+    orderBy: [
+      desc(changelogEntry.publishedAt),
+      desc(changelogEntry.createdAt),
+      desc(changelogEntry.id),
+    ],
     limit,
     offset,
     with: {
@@ -31,7 +49,6 @@ export async function getChangelogEntries(
         columns: {
           id: true,
           name: true,
-          email: true,
           image: true,
         },
       },
@@ -52,7 +69,6 @@ export async function getChangelogEntry(entryId: string) {
         columns: {
           id: true,
           name: true,
-          email: true,
           image: true,
         },
       },
@@ -75,6 +91,8 @@ export async function getChangelogEntry(entryId: string) {
           status: true,
           category: true,
           voteCount: true,
+          organizationId: true,
+          isPublic: true,
         },
       },
     },
@@ -176,15 +194,24 @@ export async function updateChangelogEntry(
     isPublished?: boolean;
     publishedAt?: Date;
     scheduledFor?: Date;
-  }
+  },
+  expectedRevision?: number
 ) {
   const [entry] = await db
     .update(changelogEntry)
     .set({
       ...updates,
       updatedAt: new Date(),
+      revision: sql`${changelogEntry.revision} + 1`,
     })
-    .where(eq(changelogEntry.id, entryId))
+    .where(
+      and(
+        eq(changelogEntry.id, entryId),
+        expectedRevision === undefined
+          ? undefined
+          : eq(changelogEntry.revision, expectedRevision)
+      )
+    )
     .returning();
 
   return entry;
@@ -193,15 +220,26 @@ export async function updateChangelogEntry(
 /**
  * Publish a changelog entry
  */
-export async function publishChangelogEntry(entryId: string) {
+export async function publishChangelogEntry(
+  entryId: string,
+  expectedRevision?: number
+) {
   const [entry] = await db
     .update(changelogEntry)
     .set({
       isPublished: true,
       publishedAt: new Date(),
       updatedAt: new Date(),
+      revision: sql`${changelogEntry.revision} + 1`,
     })
-    .where(eq(changelogEntry.id, entryId))
+    .where(
+      and(
+        eq(changelogEntry.id, entryId),
+        expectedRevision === undefined
+          ? undefined
+          : eq(changelogEntry.revision, expectedRevision)
+      )
+    )
     .returning();
 
   return entry;
@@ -210,8 +248,53 @@ export async function publishChangelogEntry(entryId: string) {
 /**
  * Delete a changelog entry
  */
-export async function deleteChangelogEntry(entryId: string) {
-  await db.delete(changelogEntry).where(eq(changelogEntry.id, entryId));
+export async function deleteChangelogEntry(
+  entryId: string,
+  expectedRevision?: number
+) {
+  const removed = await db
+    .delete(changelogEntry)
+    .where(
+      and(
+        eq(changelogEntry.id, entryId),
+        expectedRevision === undefined
+          ? undefined
+          : eq(changelogEntry.revision, expectedRevision)
+      )
+    )
+    .returning({ id: changelogEntry.id });
+  return removed.length > 0;
+}
+
+export class ChangelogRevisionConflict extends Error {}
+async function withRevision<T>(
+  entryId: string,
+  expectedRevision: number | undefined,
+  work: () => Promise<T>
+): Promise<T> {
+  return inTransaction(async () => {
+    const [entry] = await db
+      .update(changelogEntry)
+      .set({
+        revision: sql`${changelogEntry.revision} + 1`,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(changelogEntry.id, entryId),
+          expectedRevision === undefined
+            ? undefined
+            : eq(changelogEntry.revision, expectedRevision)
+        )
+      )
+      .returning({ id: changelogEntry.id });
+    if (!entry) {
+      throw new ChangelogRevisionConflict(
+        "Release changed. Retrieve the latest revision and retry."
+      );
+    }
+    return work();
+  });
 }
 
 /**
@@ -219,39 +302,42 @@ export async function deleteChangelogEntry(entryId: string) {
  */
 export async function linkFeedbackToChangelog(
   changelogEntryId: string,
-  feedbackPostIds: string[]
+  feedbackPostIds: string[],
+  expectedRevision?: number
 ) {
-  if (feedbackPostIds.length === 0) {
-    return [];
-  }
+  return withRevision(changelogEntryId, expectedRevision, async () => {
+    if (feedbackPostIds.length === 0) {
+      return [];
+    }
 
-  // Get existing links
-  const existingLinks = await db.query.changelogFeedbackLink.findMany({
-    where: eq(changelogFeedbackLink.changelogEntryId, changelogEntryId),
+    // Get existing links
+    const existingLinks = await db.query.changelogFeedbackLink.findMany({
+      where: eq(changelogFeedbackLink.changelogEntryId, changelogEntryId),
+    });
+
+    const existingPostIds = existingLinks.map((link) => link.feedbackPostId);
+
+    // Only insert new links
+    const newPostIds = [...new Set(feedbackPostIds)].filter(
+      (id) => !existingPostIds.includes(id)
+    );
+
+    if (newPostIds.length === 0) {
+      return existingLinks;
+    }
+
+    const newLinks = await db
+      .insert(changelogFeedbackLink)
+      .values(
+        newPostIds.map((postId) => ({
+          changelogEntryId,
+          feedbackPostId: postId,
+        }))
+      )
+      .returning();
+
+    return [...existingLinks, ...newLinks];
   });
-
-  const existingPostIds = existingLinks.map((link) => link.feedbackPostId);
-
-  // Only insert new links
-  const newPostIds = feedbackPostIds.filter(
-    (id) => !existingPostIds.includes(id)
-  );
-
-  if (newPostIds.length === 0) {
-    return existingLinks;
-  }
-
-  const newLinks = await db
-    .insert(changelogFeedbackLink)
-    .values(
-      newPostIds.map((postId) => ({
-        changelogEntryId,
-        feedbackPostId: postId,
-      }))
-    )
-    .returning();
-
-  return [...existingLinks, ...newLinks];
 }
 
 /**
@@ -259,20 +345,23 @@ export async function linkFeedbackToChangelog(
  */
 export async function unlinkFeedbackFromChangelog(
   changelogEntryId: string,
-  feedbackPostIds: string[]
+  feedbackPostIds: string[],
+  expectedRevision?: number
 ) {
-  if (feedbackPostIds.length === 0) {
-    return;
-  }
+  return withRevision(changelogEntryId, expectedRevision, async () => {
+    if (feedbackPostIds.length === 0) {
+      return;
+    }
 
-  await db
-    .delete(changelogFeedbackLink)
-    .where(
-      and(
-        eq(changelogFeedbackLink.changelogEntryId, changelogEntryId),
-        inArray(changelogFeedbackLink.feedbackPostId, feedbackPostIds)
-      )
-    );
+    await db
+      .delete(changelogFeedbackLink)
+      .where(
+        and(
+          eq(changelogFeedbackLink.changelogEntryId, changelogEntryId),
+          inArray(changelogFeedbackLink.feedbackPostId, feedbackPostIds)
+        )
+      );
+  });
 }
 
 /**
@@ -287,4 +376,81 @@ export async function getLinkedFeedback(changelogEntryId: string) {
   });
 
   return links.map((link) => link.feedbackPost);
+}
+
+/** Commit content, publication, and the selected feedback together. */
+export async function saveChangelogEntry(
+  entryId: string,
+  organizationId: string,
+  changes: {
+    title?: string;
+    description?: string;
+    version?: string | null;
+    coverImageUrl?: string | null;
+    tags?: string[];
+    feedbackPostIds?: string[];
+    publish?: boolean;
+    expectedRevision?: number;
+  }
+) {
+  return db.transaction(async (tx) => {
+    const [current] = await tx
+      .select()
+      .from(changelogEntry)
+      .where(
+        and(
+          eq(changelogEntry.id, entryId),
+          eq(changelogEntry.organizationId, organizationId)
+        )
+      )
+      .for("update");
+    if (
+      !current ||
+      (changes.expectedRevision !== undefined &&
+        current.revision !== changes.expectedRevision)
+    ) {
+      return;
+    }
+    const {
+      feedbackPostIds,
+      publish,
+      expectedRevision: _expectedRevision,
+      ...content
+    } = changes;
+    const [saved] = await tx
+      .update(changelogEntry)
+      .set({
+        ...content,
+        ...(publish
+          ? {
+              isPublished: true,
+              publishedAt: current.publishedAt ?? new Date(),
+            }
+          : {}),
+        updatedAt: new Date(),
+        revision: sql`${changelogEntry.revision} + 1`,
+      })
+      .where(
+        and(
+          eq(changelogEntry.id, entryId),
+          eq(changelogEntry.organizationId, organizationId)
+        )
+      )
+      .returning();
+    if (feedbackPostIds !== undefined) {
+      await tx
+        .delete(changelogFeedbackLink)
+        .where(eq(changelogFeedbackLink.changelogEntryId, entryId));
+      const ids = [...new Set(feedbackPostIds)];
+      if (ids.length) {
+        await tx.insert(changelogFeedbackLink).values(
+          ids.map((feedbackPostId) => ({
+            changelogEntryId: entryId,
+            feedbackPostId,
+          }))
+        );
+      }
+    }
+    return saved;
+  });
 }

@@ -1,26 +1,24 @@
 import Constants from "expo-constants";
 
-/**
- * Extend this function when going to production by
- * setting the baseUrl to your production API URL.
- */
+/** Native builds use the configured application origin; Metro host inference is development-only. */
 export const getBaseUrl = () => {
-  /**
-   * Gets the IP address of your host-machine. If it cannot automatically find it,
-   * you'll have to manually set it. NOTE: Port 3000 should work for most but confirm
-   * you don't have anything else running on it, or you'd have to change it.
-   *
-   * **NOTE**: This is only for development. In production, you'll want to set the
-   * baseUrl to your production API URL.
-   */
-  const debuggerHost = Constants.expoConfig?.hostUri;
-  const localhost = debuggerHost?.split(":")[0];
-
-  if (!localhost) {
-    // return "https://turbo.t3.gg";
-    throw new Error(
-      "Failed to get localhost. Please point to your production server."
-    );
+  const isDevelopment = process.env.NODE_ENV !== "production";
+  const configured = process.env.EXPO_PUBLIC_APP_URL;
+  if (configured) {
+    const url = new URL(configured);
+    if (
+      url.protocol !== "https:" &&
+      !(url.protocol === "http:" && isDevelopment)
+    ) {
+      throw new Error("EXPO_PUBLIC_APP_URL must use HTTPS in production");
+    }
+    return url.origin;
   }
-  return `http://${localhost}:3000`;
+  if (isDevelopment) {
+    const host = Constants.expoConfig?.hostUri?.split(":")[0];
+    if (host) {
+      return `http://${host}:3000`;
+    }
+  }
+  return "https://app.userbubble.com";
 };

@@ -12,7 +12,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea
       className={cn(
-        "flex min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
+        "flex min-h-[120px] w-full rounded-xl border-0 bg-muted/50 px-3 py-2 text-base outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
         className
       )}
       {...props}
@@ -24,7 +24,7 @@ type CommentFormProps = {
   postId: string;
   onCommentAdded: (newComment: {
     comment: FeedbackComment;
-    author: User | null;
+    author: Pick<User, "id" | "name" | "image"> | null;
     isTeamMember: boolean;
   }) => void;
 };

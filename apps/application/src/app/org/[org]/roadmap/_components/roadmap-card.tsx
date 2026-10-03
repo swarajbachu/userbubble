@@ -4,7 +4,10 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { FavouriteIcon } from "@hugeicons-pro/core-bulk-rounded";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { FeedbackPost } from "@userbubble/db/schema";
+import type { RouterOutputs } from "@userbubble/api";
+
+type FeedbackPost = RouterOutputs["feedback"]["create"];
+
 import { cn } from "@userbubble/ui";
 import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
 import { Icon } from "@userbubble/ui/icon";
@@ -94,7 +97,7 @@ export function RoadmapCard({
       className={cn(
         "group flex flex-col gap-2.5 rounded-lg border bg-card p-3 transition-all",
         "cursor-grab active:cursor-grabbing",
-        "hover:border-border/80 hover:shadow-sm",
+        "hover:border-border/80",
         (isDragging || isDraggingProp) && "cursor-grabbing opacity-50"
       )}
       ref={setNodeRef}

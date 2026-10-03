@@ -25,7 +25,7 @@ export default [
   {
     input: "src/index.ts",
     output: {
-      file: "dist/index.js",
+      file: "dist/index.cjs",
       format: "cjs",
       sourcemap: true,
       exports: "named",
@@ -74,7 +74,7 @@ export default [
   {
     input: "src/react.ts",
     output: {
-      file: "dist/react.js",
+      file: "dist/react.cjs",
       format: "cjs",
       sourcemap: true,
       exports: "named",

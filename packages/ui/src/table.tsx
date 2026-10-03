@@ -1,20 +1,41 @@
 import { cn } from "@userbubble/ui";
 import type * as React from "react";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({
+  className,
+  scrollAreaLabel,
+  ...props
+}: React.ComponentProps<"table"> & { scrollAreaLabel?: string }) {
+  const table = (
+    <table
+      className={cn(
+        "w-full caption-bottom in-data-[slot=frame]:border-separate in-data-[slot=frame]:border-spacing-0 text-sm",
+        className
+      )}
+      data-slot="table"
+      {...props}
+    />
+  );
+  if (!scrollAreaLabel) {
+    return (
+      <div
+        className="relative w-full overflow-x-auto"
+        data-slot="table-container"
+      >
+        {table}
+      </div>
+    );
+  }
   return (
     <div
-      className="relative w-full overflow-x-auto"
+      aria-label={scrollAreaLabel}
+      className="focus-visible:-outline-offset-2 relative w-full overflow-x-auto focus-visible:outline-2 focus-visible:outline-ring"
       data-slot="table-container"
+      role="region"
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: Keyboard users must be able to scroll overflowing tables.
+      tabIndex={0}
     >
-      <table
-        className={cn(
-          "w-full caption-bottom in-data-[slot=frame]:border-separate in-data-[slot=frame]:border-spacing-0 text-sm",
-          className
-        )}
-        data-slot="table"
-        {...props}
-      />
+      {table}
     </div>
   );
 }
@@ -36,7 +57,7 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   return (
     <tbody
       className={cn(
-        "relative in-data-[slot=frame]:rounded-xl in-data-[slot=frame]:shadow-xs before:pointer-events-none before:absolute before:inset-px not-in-data-[slot=frame]:before:hidden before:rounded-[calc(var(--radius-xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:bg-clip-border dark:before:shadow-[0_-1px_--theme(--color-white/8%)] [&_tr:last-child]:border-0 in-data-[slot=frame]:*:[tr]:border-0 in-data-[slot=frame]:*:[tr]:*:[td]:border-b in-data-[slot=frame]:*:[tr]:*:[td]:bg-background in-data-[slot=frame]:*:[tr]:*:[td]:bg-clip-padding in-data-[slot=frame]:*:[tr]:first:*:[td]:first:rounded-ss-xl in-data-[slot=frame]:*:[tr]:*:[td]:first:border-s in-data-[slot=frame]:*:[tr]:first:*:[td]:border-t in-data-[slot=frame]:*:[tr]:last:*:[td]:last:rounded-ee-xl in-data-[slot=frame]:*:[tr]:*:[td]:last:border-e in-data-[slot=frame]:*:[tr]:first:*:[td]:last:rounded-se-xl in-data-[slot=frame]:*:[tr]:last:*:[td]:first:rounded-es-xl in-data-[slot=frame]:*:[tr]:hover:*:[td]:bg-transparent in-data-[slot=frame]:*:[tr]:data-[state=selected]:*:[td]:bg-muted/50",
+        "relative in-data-[slot=frame]:rounded-xl before:pointer-events-none before:absolute before:inset-px not-in-data-[slot=frame]:before:hidden before:rounded-[calc(var(--radius-xl)-1px)] dark:bg-clip-border [&_tr:last-child]:border-0 in-data-[slot=frame]:*:[tr]:border-0 in-data-[slot=frame]:*:[tr]:*:[td]:border-b in-data-[slot=frame]:*:[tr]:*:[td]:bg-background in-data-[slot=frame]:*:[tr]:*:[td]:bg-clip-padding in-data-[slot=frame]:*:[tr]:first:*:[td]:first:rounded-ss-xl in-data-[slot=frame]:*:[tr]:*:[td]:first:border-s in-data-[slot=frame]:*:[tr]:first:*:[td]:border-t in-data-[slot=frame]:*:[tr]:last:*:[td]:last:rounded-ee-xl in-data-[slot=frame]:*:[tr]:*:[td]:last:border-e in-data-[slot=frame]:*:[tr]:first:*:[td]:last:rounded-se-xl in-data-[slot=frame]:*:[tr]:last:*:[td]:first:rounded-es-xl in-data-[slot=frame]:*:[tr]:hover:*:[td]:bg-transparent in-data-[slot=frame]:*:[tr]:data-[state=selected]:*:[td]:bg-muted/50",
         className
       )}
       data-slot="table-body"

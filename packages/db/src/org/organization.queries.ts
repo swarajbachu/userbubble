@@ -1,4 +1,5 @@
-import { and, desc, eq } from "drizzle-orm";
+import { defaultOnboardingState } from "@userbubble/validators";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "../client";
 import {
   type InvitationStatus,
@@ -16,6 +17,20 @@ import {
  */
 
 export const organizationQueries = {
+  createWithOwner: async (
+    data: { name: string; slug: string; website?: string },
+    userId: string
+  ) =>
+    db.transaction(async (tx) => {
+      const [org] = await tx.insert(organization).values(data).returning();
+      if (!org) {
+        throw new Error("Organization insert failed");
+      }
+      await tx
+        .insert(member)
+        .values({ organizationId: org.id, userId, role: "owner" });
+      return org;
+    }),
   /**
    * Find organization by ID
    */
@@ -53,11 +68,40 @@ export const organizationQueries = {
   /**
    * Update organization
    */
-  update: async (id: string, data: Partial<NewOrganization>) => {
+  patchOnboarding: async (
+    id: string,
+    steps: Partial<typeof defaultOnboardingState>
+  ) => {
     const [updated] = await db
       .update(organization)
-      .set(data)
+      .set({
+        onboarding: sql`${JSON.stringify(defaultOnboardingState)}::jsonb || coalesce(${organization.onboarding}, '{}'::jsonb) || ${JSON.stringify(steps)}::jsonb`,
+      })
       .where(eq(organization.id, id))
+      .returning();
+    return updated;
+  },
+  update: async (
+    id: string,
+    data: Partial<NewOrganization>,
+    expectedSettingsRevision?: number
+  ) => {
+    const [updated] = await db
+      .update(organization)
+      .set({
+        ...data,
+        ...(data.metadata !== undefined
+          ? { settingsRevision: sql`${organization.settingsRevision} + 1` }
+          : {}),
+      })
+      .where(
+        and(
+          eq(organization.id, id),
+          expectedSettingsRevision === undefined
+            ? undefined
+            : eq(organization.settingsRevision, expectedSettingsRevision)
+        )
+      )
       .returning();
     return updated;
   },
@@ -92,6 +136,58 @@ export const organizationQueries = {
  */
 
 export const memberQueries = {
+  /** Serialize membership edits on the organization row to preserve its final owner. */
+  changeMembership: async (input: {
+    organizationId: string;
+    actorId: string;
+    memberId: string;
+    role?: Role;
+    remove?: boolean;
+  }) =>
+    db.transaction(async (tx) => {
+      await tx
+        .select({ id: organization.id })
+        .from(organization)
+        .where(eq(organization.id, input.organizationId))
+        .for("update");
+      const members = await tx
+        .select()
+        .from(member)
+        .where(eq(member.organizationId, input.organizationId));
+      const actor = members.find((item) => item.userId === input.actorId);
+      const target = members.find((item) => item.id === input.memberId);
+      if (!actor || actor.role === "member") {
+        return { error: "FORBIDDEN" as const };
+      }
+      if (!target) {
+        return { error: "NOT_FOUND" as const };
+      }
+      if (
+        actor.role !== "owner" &&
+        (target.role !== "member" || input.role === "owner")
+      ) {
+        return { error: "FORBIDDEN" as const };
+      }
+      if (input.remove && target.userId === input.actorId) {
+        return { error: "BAD_REQUEST" as const };
+      }
+      if (
+        target.role === "owner" &&
+        (input.remove || input.role !== "owner") &&
+        members.filter((item) => item.role === "owner").length === 1
+      ) {
+        return { error: "CONFLICT" as const };
+      }
+      if (input.remove) {
+        await tx.delete(member).where(eq(member.id, target.id));
+      } else if (input.role) {
+        await tx
+          .update(member)
+          .set({ role: input.role })
+          .where(eq(member.id, target.id));
+      }
+      return { success: true as const };
+    }),
   /**
    * Find member by ID
    */
@@ -245,7 +341,20 @@ export const invitationQueries = {
   /**
    * Cancel invitation
    */
-  cancel: async (id: string) => invitationQueries.updateStatus(id, "cancelled"),
+  cancel: async (id: string, organizationId: string) => {
+    const [cancelled] = await db
+      .update(invitation)
+      .set({ status: "cancelled" })
+      .where(
+        and(
+          eq(invitation.id, id),
+          eq(invitation.organizationId, organizationId),
+          inArray(invitation.status, ["pending", "cancelled"])
+        )
+      )
+      .returning();
+    return cancelled;
+  },
 
   /**
    * List organization invitations

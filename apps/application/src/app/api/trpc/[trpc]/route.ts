@@ -2,8 +2,9 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter, createTRPCContext } from "@userbubble/api";
 import type { NextRequest } from "next/server";
 
-import { auth } from "~/auth/server";
+import { applicationOrigin, auth } from "~/auth/server";
 import { env } from "~/env";
+import { transportIdentityHeaders } from "~/lib/request-identity";
 
 /**
  * Configure CORS headers for cross-domain requests
@@ -20,7 +21,7 @@ const setCorsHeaders = (res: Response, origin?: string | null) => {
   res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.headers.set(
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, x-trpc-source, x-trpc-accept, trpc-accept, Cookie"
+    "Content-Type, Authorization, x-trpc-source, x-trpc-accept, trpc-accept, Cookie, Idempotency-Key"
   );
   res.headers.set("Vary", "Origin");
 };
@@ -37,22 +38,26 @@ export const OPTIONS = (req: NextRequest) => {
 const handler = async (req: NextRequest) => {
   const origin = req.headers.get("origin");
 
+  const requestId = crypto.randomUUID();
   const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
     router: appRouter,
     req,
-    createContext: () =>
-      createTRPCContext({
+    createContext: async () => ({
+      ...(await createTRPCContext({
         auth,
-        headers: req.headers,
+        headers: transportIdentityHeaders(req, applicationOrigin),
         authSecret: env.AUTH_SECRET,
-      }),
-    onError({ error, path }) {
-      console.error(`>>> tRPC Error on '${path}'`, error);
+      })),
+      requestId,
+    }),
+    onError({ error }) {
+      console.error("TRPC_REQUEST_FAILED", { code: error.code });
     },
   });
 
   setCorsHeaders(response, origin);
+  response.headers.set("x-request-id", requestId);
   return response;
 };
 

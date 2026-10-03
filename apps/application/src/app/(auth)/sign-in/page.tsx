@@ -12,7 +12,17 @@ import { SignInForm } from "~/components/auth/sign-in-form";
 export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  const requestedCallback = searchParams.get("callbackUrl") ?? "/";
+  const callbackUrl =
+    requestedCallback.startsWith("/") &&
+    !requestedCallback.startsWith("//") &&
+    !requestedCallback.includes("\\")
+      ? requestedCallback
+      : "/";
+  const oauthQuery =
+    searchParams.has("client_id") && searchParams.has("sig")
+      ? searchParams.toString()
+      : undefined;
 
   return (
     <div className="flex items-center justify-center">
@@ -20,6 +30,7 @@ export default function SignInPage() {
         <DoubleCardInner>
           <SignInForm
             callbackUrl={callbackUrl}
+            oauthQuery={oauthQuery}
             onSuccess={() => router.push(callbackUrl)}
           />
         </DoubleCardInner>

@@ -11,9 +11,9 @@ export const invitationStatusValidator = z.enum(invitationStatuses);
 export const createOrganizationValidator = z.object({
   name: z
     .string()
+    .trim()
     .min(3, "Organization name must be at least 3 characters")
-    .max(100, "Organization name must be less than 100 characters")
-    .trim(),
+    .max(100, "Organization name must be less than 100 characters"),
   slug: z
     .string()
     .min(3, "Slug must be at least 3 characters")

@@ -20,9 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@userbubble/ui/select";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
-import { authClient } from "~/auth/client";
+import { useTRPC } from "~/trpc/react";
 
 const inviteSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -41,23 +42,22 @@ export function InviteMemberDialog({
   organizationId,
 }: InviteMemberDialogProps) {
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const trpc = useTRPC();
 
-  const inviteMutation = useMutation({
-    mutationFn: async (data: { email: string; role: "member" | "admin" }) =>
-      authClient.organization.inviteMember({
-        organizationId,
-        email: data.email,
-        role: data.role,
-      }),
-    onSuccess: () => {
-      toast.success("Invitation sent successfully");
-      queryClient.invalidateQueries();
-      onOpenChange(false);
-    },
-    onError: () => {
-      toast.error("Failed to send invitation");
-    },
-  });
+  const inviteMutation = useMutation(
+    trpc.organization.invite.mutationOptions({
+      onSuccess: () => {
+        toast.success("Invitation created");
+        queryClient.invalidateQueries();
+        router.refresh();
+        onOpenChange(false);
+      },
+      onError: () => {
+        toast.error("Failed to create invitation");
+      },
+    })
+  );
 
   const form = useForm({
     defaultValues: {
@@ -68,7 +68,7 @@ export function InviteMemberDialog({
       onSubmit: inviteSchema,
     },
     onSubmit: async ({ value }) => {
-      await inviteMutation.mutateAsync(value);
+      await inviteMutation.mutateAsync({ ...value, organizationId });
       form.reset();
     },
   });
@@ -143,7 +143,7 @@ export function InviteMemberDialog({
               Cancel
             </Button>
             <Button disabled={inviteMutation.isPending} type="submit">
-              {inviteMutation.isPending ? "Sending..." : "Send Invitation"}
+              {inviteMutation.isPending ? "Creating..." : "Create invitation"}
             </Button>
           </DialogFooter>
         </form>

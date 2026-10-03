@@ -78,6 +78,41 @@
       "when": 1777359710289,
       "tag": "0010_aberrant_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790924765379,
+      "tag": "0011_agent-platform",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1790925974470,
+      "tag": "0012_oauth-mcp",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1790927128997,
+      "tag": "0013_feedback-revisions",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1791014413853,
+      "tag": "0014_settings-revisions",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1791030005876,
+      "tag": "0015_changelog-revisions",
+      "breakpoints": true
     }
   ]
 }

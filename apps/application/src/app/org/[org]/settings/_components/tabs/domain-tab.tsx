@@ -3,19 +3,24 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Organization } from "@userbubble/db/schema";
-import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
 import { Fieldset } from "@userbubble/ui/fieldset";
 import { Input } from "@userbubble/ui/input";
+import type { OrganizationSettings } from "@userbubble/validators/organization";
 import { toast } from "sonner";
 
 import { useTRPC } from "~/trpc/react";
 
-export function DomainTab({ organization }: { organization: Organization }) {
+export function DomainTab({
+  organization,
+  settings,
+}: {
+  organization: Omit<Organization, "secretKey">;
+  settings: OrganizationSettings;
+}) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const settings = parseOrganizationSettings(organization.metadata);
 
   const updateSettings = useMutation(
     trpc.settings.updateSettings.mutationOptions({

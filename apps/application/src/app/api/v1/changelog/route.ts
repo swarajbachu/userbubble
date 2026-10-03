@@ -1,7 +1,12 @@
-import { getChangelogEntries } from "@userbubble/db/queries";
+import {
+  changelogOperations,
+  executeOperation,
+} from "@userbubble/api/management";
 import type { NextRequest } from "next/server";
-import { ApiAuthError, resolveOrg } from "../_lib/auth";
+import { auth } from "~/auth/server";
+import { resolveOrg } from "../_lib/auth";
 import { corsOptions, jsonWithCors } from "../_lib/cors";
+import { sdkError } from "../_lib/operations";
 
 export function OPTIONS() {
   return corsOptions();
@@ -15,11 +20,21 @@ export async function GET(request: NextRequest) {
     const limit = Number(params.get("limit")) || 20;
     const offset = Number(params.get("offset")) || 0;
 
-    const entries = await getChangelogEntries(organization.id, {
-      published: true,
-      limit,
-      offset,
-    });
+    const entries = await executeOperation(
+      changelogOperations.getAll,
+      {
+        authApi: auth.api,
+        session: null,
+        identifiedOrgId: null,
+        isIdentified: false,
+      },
+      {
+        organizationId: organization.id,
+        published: true,
+        limit,
+        offset,
+      }
+    );
 
     return jsonWithCors({
       data: entries.map((entry) => ({
@@ -34,15 +49,6 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    if (error instanceof ApiAuthError) {
-      return jsonWithCors(
-        { error: { code: "UNAUTHORIZED", message: error.message } },
-        error.status
-      );
-    }
-    return jsonWithCors(
-      { error: { code: "INTERNAL_ERROR", message: "Internal server error" } },
-      500
-    );
+    return sdkError(error);
   }
 }

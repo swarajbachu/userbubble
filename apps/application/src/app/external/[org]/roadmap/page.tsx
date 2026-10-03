@@ -1,9 +1,11 @@
-import { parseOrganizationSettings } from "@userbubble/db/schema";
+import { parseOrganizationSettings } from "@userbubble/validators/organization";
 import type { Metadata } from "next";
-import { Suspense } from "react";
+import { getSession } from "~/auth/server";
 import { RoadmapBoard } from "~/components/roadmap/roadmap-board";
 import { RoadmapComingSoon } from "~/components/roadmap/roadmap-coming-soon";
 import { getPublicOrganization } from "~/lib/get-organization";
+import { publicUrl } from "~/lib/public-content";
+import { getQueryClient, HydrateClient, trpc } from "~/trpc/server";
 
 type ExternalRoadmapPageProps = {
   params: Promise<{ org: string }>;
@@ -18,12 +20,13 @@ export async function generateMetadata({
   const description = `Explore the ${organization.name} product roadmap. See what we're working on, what's coming next, and what's been completed.`;
 
   return {
+    alternates: { canonical: publicUrl(org, "/roadmap") },
     title: `Roadmap - ${organization.name}`,
     description,
     openGraph: {
       title: `${organization.name} Roadmap`,
       description,
-      url: "/roadmap",
+      url: publicUrl(org, "/roadmap"),
       type: "website",
       images: organization.logo ? [{ url: organization.logo }] : [],
     },
@@ -49,6 +52,15 @@ export default async function ExternalRoadmapPage({
   if (!settings.feedback?.enableRoadmap) {
     return <RoadmapComingSoon />;
   }
+  const [session, initialPosts] = await Promise.all([
+    getSession(),
+    getQueryClient().fetchQuery(
+      trpc.feedback.getAll.queryOptions({
+        organizationId: organization.id,
+        sortBy: "votes",
+      })
+    ),
+  ]);
 
   return (
     <div className="w-full">
@@ -59,24 +71,15 @@ export default async function ExternalRoadmapPage({
         </p>
       </div>
 
-      <Suspense
-        fallback={
-          <div className="grid gap-8 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <div className="space-y-4" key={i}>
-                <div className="h-20 animate-pulse rounded-lg bg-muted" />
-                <div className="h-64 animate-pulse rounded-xl bg-muted" />
-              </div>
-            ))}
-          </div>
-        }
-      >
+      <HydrateClient>
         <RoadmapBoard
+          initialPosts={initialPosts}
+          isAuthenticated={Boolean(session?.user)}
           isExternal={true}
           org={org}
           organizationId={organization.id}
         />
-      </Suspense>
+      </HydrateClient>
     </div>
   );
 }

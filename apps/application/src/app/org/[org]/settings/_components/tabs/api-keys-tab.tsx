@@ -9,6 +9,7 @@ import {
   PlusSignIcon,
 } from "@hugeicons-pro/core-duotone-rounded";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import type { RouterOutputs } from "@userbubble/api";
 import type { Organization } from "@userbubble/db/schema";
 import { Badge } from "@userbubble/ui/badge";
 import { Button } from "@userbubble/ui/button";
@@ -33,28 +34,15 @@ export function ApiKeysTab({
   organization,
   userRole,
 }: {
-  organization: Organization;
+  organization: Omit<Organization, "secretKey">;
   userRole: "owner" | "admin" | "member";
 }) {
   const trpc = useTRPC();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [createdKey, setCreatedKey] = useState<{
-    apiKey: {
-      id: string;
-      name: string;
-      keyPreview: string;
-      createdAt: Date;
-      updatedAt: Date;
-      organizationId: string;
-      description: string | null;
-      keyHash: string;
-      isActive: boolean;
-      expiresAt: Date | null;
-      lastUsedAt: Date | null;
-    };
-    rawKey: string;
-  } | null>(null);
+  const [createdKey, setCreatedKey] = useState<
+    RouterOutputs["apiKey"]["create"] | null
+  >(null);
 
   // Fetch API keys
   const { data: apiKeys, refetch } = useQuery(
@@ -68,7 +56,7 @@ export function ApiKeysTab({
     trpc.apiKey.create.mutationOptions({
       onSuccess: (data) => {
         if (data.apiKey) {
-          setCreatedKey(data as typeof createdKey);
+          setCreatedKey(data);
           setCreateDialogOpen(false);
           setSuccessDialogOpen(true);
           void refetch();
@@ -221,6 +209,7 @@ export function ApiKeysTab({
                     {key.isActive ? "Revoke" : "Restore"}
                   </Button>
                   <Button
+                    aria-label={`Delete ${key.name}`}
                     onClick={() => {
                       if (
                         // biome-ignore lint/suspicious/noAlert: User confirmation required for destructive action

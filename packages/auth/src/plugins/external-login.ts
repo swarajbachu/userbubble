@@ -186,9 +186,7 @@ export type ExternalLoginOptions = {
  * @param options.maxTimestampAge - Maximum allowed timestamp age in seconds (default: 5 minutes)
  * @returns Better Auth plugin configuration
  */
-export const externalLogin = (
-  options: ExternalLoginOptions = {}
-): BetterAuthPlugin => {
+export const externalLogin = (options: ExternalLoginOptions = {}) => {
   const {
     sessionDuration = 7 * 24 * 60 * 60, // 7 days
     requireTimestamp = true,
@@ -446,9 +444,12 @@ export const externalLogin = (
     schema: {
       identifiedUser: {
         fields: {
+          email: { type: "string", required: true },
+          name: { type: "string", required: false },
+          avatar: { type: "string", required: false },
           userId: {
             type: "string",
-            required: true,
+            required: false,
             references: {
               model: "user",
               field: "id",
@@ -481,5 +482,5 @@ export const externalLogin = (
         },
       },
     },
-  };
+  } satisfies BetterAuthPlugin;
 };

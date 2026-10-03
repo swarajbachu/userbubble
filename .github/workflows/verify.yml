@@ -1,0 +1,110 @@
+name: Verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: userbubble_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d userbubble_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      CI: "1"
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/userbubble_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/userbubble_test
+      TEST_MIGRATION_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/userbubble_rehearsal
+      TEST_APP_URL: http://127.0.0.1:3000
+      TEST_DOCS_URL: http://127.0.0.1:3005
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
+      AUTH_SECRET: local-ci-only-userbubble-auth-secret-32-characters
+      AUTH_GOOGLE_ID: test
+      AUTH_GOOGLE_SECRET: test
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm capabilities:check
+      - run: pnpm client:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm db:migrate
+      - run: pnpm build
+      - run: pnpm test:mobile
+      - name: Rehearse legacy content migration
+        run: |
+          createdb -h 127.0.0.1 -U postgres userbubble_rehearsal
+          mkdir -p .context
+          MIGRATION_BACKUP_PATH=.context/legacy-rehearsal.dump TEST_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/userbubble_rehearsal bash scripts/verify-migration.sh
+          createdb -h 127.0.0.1 -U postgres userbubble_restore
+          TEST_RESTORE_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/userbubble_restore MIGRATION_BACKUP_PATH=.context/legacy-rehearsal.dump bash scripts/verify-restore.sh
+      - name: Install browser
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          node -e 'console.log("CHROME_PATH=" + require("@playwright/test").chromium.executablePath())' >> "$GITHUB_ENV"
+      - name: Start production test application
+        run: |
+          mkdir -p .context
+          pnpm --filter @userbubble/application exec next start -p 3000 > .context/ci-application.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:3000/api/auth/get-session > /dev/null; then
+              curl --fail --silent http://127.0.0.1:3000/api/v2/capabilities > /dev/null
+              exit 0
+            fi
+            sleep 2
+          done
+          cat .context/ci-application.log
+          exit 1
+      - name: Start production documentation
+        run: |
+          pnpm --filter @userbubble/docs exec next start -p 3005 > .context/ci-docs.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:3005/sitemap.xml > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat .context/ci-docs.log
+          exit 1
+      - name: Main app, portal and widget browser acceptance
+        run: pnpm test:browser
+      - run: pnpm test
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-evidence
+          include-hidden-files: true
+          path: |
+            .context/playwright-report
+            .context/playwright
+            .context/*.png
+            .context/ci-application.log
+            .context/ci-docs.log
+            docs/capability-inventory.json
+            .context/capability-parity/*.json

@@ -5,7 +5,11 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type { FeedbackPost, FeedbackStatus } from "@userbubble/db/schema";
+import type { RouterOutputs } from "@userbubble/api";
+import type { FeedbackStatus } from "@userbubble/db/schema";
+
+type FeedbackPost = RouterOutputs["feedback"]["create"];
+
 import { cn } from "@userbubble/ui";
 import { getStatus } from "~/components/feedback/config";
 import { RoadmapCard } from "./roadmap-card";

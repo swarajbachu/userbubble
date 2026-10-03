@@ -2,6 +2,7 @@
 
 import { Message01Icon } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import type { RouterOutputs } from "@userbubble/api";
 import type { FeedbackCategory, FeedbackStatus } from "@userbubble/db/schema";
 import { cn } from "@userbubble/ui";
 import { DoubleCard, DoubleCardInner } from "@userbubble/ui/double-card";
@@ -15,6 +16,7 @@ type FeedbackBoardProps = {
   organizationId: string;
   isExternal?: boolean;
   className?: string;
+  initialPosts?: RouterOutputs["feedback"]["getAll"];
 };
 
 export function FeedbackBoard({
@@ -22,6 +24,7 @@ export function FeedbackBoard({
   organizationId,
   isExternal = false,
   className,
+  initialPosts,
 }: FeedbackBoardProps) {
   const trpc = useTRPC();
 
@@ -35,12 +38,15 @@ export function FeedbackBoard({
   const [sort] = useQueryState("sort", parseAsString.withDefault("recent"));
 
   const { data: posts } = useSuspenseQuery(
-    trpc.feedback.getAll.queryOptions({
-      organizationId,
-      status: status.length > 0 ? (status as FeedbackStatus[]) : undefined,
-      category: (category as FeedbackCategory | null) ?? undefined,
-      sortBy: (sort as "votes" | "recent") ?? "recent",
-    })
+    trpc.feedback.getAll.queryOptions(
+      {
+        organizationId,
+        status: status.length > 0 ? (status as FeedbackStatus[]) : undefined,
+        category: (category as FeedbackCategory | null) ?? undefined,
+        sortBy: (sort as "votes" | "recent") ?? "recent",
+      },
+      { initialData: initialPosts }
+    )
   );
 
   if (posts.length === 0) {

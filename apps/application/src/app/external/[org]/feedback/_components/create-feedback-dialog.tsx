@@ -4,7 +4,6 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { TRPCClientErrorLike } from "@trpc/client";
 import type { AppRouter } from "@userbubble/api";
-import { createFeedbackValidator } from "@userbubble/db/schema";
 import { cn } from "@userbubble/ui";
 import { Button } from "@userbubble/ui/button";
 import {
@@ -25,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@userbubble/ui/select";
+import { createFeedbackValidator } from "@userbubble/validators/feedback-form";
 import { toast } from "sonner";
 import { categories, getCategory } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
@@ -33,7 +33,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea
       className={cn(
-        "flex min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
+        "flex min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
         "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
         className
       )}
@@ -124,7 +124,7 @@ export function CreateFeedbackDialog({
                   <div className="flex flex-col gap-2">
                     <Input
                       className={cn(
-                        "h-auto border-none bg-transparent p-0 font-semibold text-lg shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0",
+                        "h-auto border-none bg-transparent p-0 font-semibold text-lg placeholder:text-muted-foreground/50 focus-visible:ring-0",
                         isInvalid &&
                           "text-destructive placeholder:text-destructive"
                       )}
@@ -159,7 +159,7 @@ export function CreateFeedbackDialog({
                   <div className="flex flex-col gap-2">
                     <Textarea
                       className={cn(
-                        "min-h-[100px] resize-none border-none bg-transparent p-0 px-[calc(--spacing(3)-1px)] shadow-none placeholder:text-muted-foreground/50 focus-visible:ring-0 dark:bg-transparent",
+                        "min-h-[100px] resize-none border-none bg-transparent p-0 px-[calc(--spacing(3)-1px)] placeholder:text-muted-foreground/50 focus-visible:ring-0 dark:bg-transparent",
                         isInvalid &&
                           "text-destructive placeholder:text-destructive"
                       )}
@@ -197,7 +197,7 @@ export function CreateFeedbackDialog({
                       }
                       value={field.state.value}
                     >
-                      <SelectTrigger className="h-8 w-auto gap-2 border-none bg-secondary/50 px-3 font-medium text-xs shadow-none hover:bg-secondary focus:ring-0">
+                      <SelectTrigger className="h-8 w-auto gap-2 border-none bg-secondary/50 px-3 font-medium text-xs hover:bg-secondary focus:ring-0">
                         <SelectValue>
                           <div className="flex items-center gap-2">
                             <Icon

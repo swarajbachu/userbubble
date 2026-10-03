@@ -154,10 +154,9 @@ export function RoadmapBoard({
 
       <DragOverlay>
         {activeId && activePost ? (
-          <div className="rotate-2 cursor-grabbing opacity-90 shadow-2xl">
+          <div className="rotate-2 cursor-grabbing opacity-90">
             <RoadmapCard
-              // biome-ignore lint/style/noNonNullAssertion: <explanation>
-              author={activePost.author!}
+              author={activePost.author ?? { name: "Anonymous", image: null }}
               hasUserVoted={activePost.hasUserVoted}
               isAuthenticated={isAuthenticated}
               isDragging

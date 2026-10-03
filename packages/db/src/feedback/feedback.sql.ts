@@ -10,40 +10,23 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-// AI triage statuses
-export const aiTriageStatuses = [
-  "pending",
-  "asked_more",
-  "implementing",
-  "skipped",
-] as const;
-export type AiTriageStatus = (typeof aiTriageStatuses)[number];
-
 import { createUniqueIds } from "../lib/ids";
 import { organization } from "../org/organization.sql";
 import { user } from "../user/user.sql";
 
 // Enums for feedback post status and categories
 // Const arrays + type extraction for single source of truth
-export const feedbackStatuses = [
-  "open",
-  "under_review",
-  "planned",
-  "in_progress",
-  "completed",
-  "closed",
-] as const;
-export type FeedbackStatus = (typeof feedbackStatuses)[number];
+export {
+  type FeedbackCategory,
+  type FeedbackStatus,
+  feedbackCategories,
+  feedbackStatuses,
+} from "@userbubble/validators/feedback-model";
 
-export const feedbackCategories = [
-  "feature_request",
-  "bug",
-  "improvement",
-  "question",
-  "other",
-] as const;
-export type FeedbackCategory = (typeof feedbackCategories)[number];
-
+import {
+  feedbackCategories,
+  feedbackStatuses,
+} from "@userbubble/validators/feedback-model";
 export const feedbackStatusEnum = pgEnum("feedback_status", feedbackStatuses);
 export const feedbackCategoryEnum = pgEnum(
   "feedback_category",
@@ -82,15 +65,13 @@ export const feedbackPost = pgTable("feedback_post", {
     .notNull()
     .default("feature_request"),
 
+  revision: integer("revision").notNull().default(1),
+
   // Vote count (denormalized for performance)
   voteCount: integer("vote_count").notNull().default(0),
 
   // Visibility
   isPublic: boolean("is_public").notNull().default(true),
-
-  // AI triage
-  aiTriageStatus: text("ai_triage_status").$type<AiTriageStatus>(),
-  aiTriageCount: integer("ai_triage_count").notNull().default(0),
 
   // Timestamps
   createdAt: timestamp("created_at").notNull().defaultNow(),

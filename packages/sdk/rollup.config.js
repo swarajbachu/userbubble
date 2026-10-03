@@ -25,7 +25,7 @@ export default [
   {
     input: "src/index.ts",
     output: {
-      file: "dist/sdk.js",
+      file: "dist/sdk.cjs",
       format: "cjs",
       sourcemap: true,
       exports: "auto",

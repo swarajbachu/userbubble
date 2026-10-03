@@ -1,4 +1,4 @@
-import { parseOrganizationSettings } from "@userbubble/db/org/organization-settings";
+import { parseOrganizationSettings } from "@userbubble/validators/organization";
 import { Suspense } from "react";
 import { RoadmapComingSoon } from "~/components/roadmap/roadmap-coming-soon";
 import { getPublicOrganization } from "~/lib/get-organization";

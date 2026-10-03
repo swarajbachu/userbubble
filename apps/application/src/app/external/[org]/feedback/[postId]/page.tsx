@@ -1,9 +1,3 @@
-import {
-  canViewPost,
-  getFeedbackPost,
-  getPostComments,
-  getUserVote,
-} from "@userbubble/db/queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@userbubble/ui/card";
 import { Icon } from "@userbubble/ui/icon";
@@ -13,7 +7,9 @@ import { CommentsSection } from "~/app/org/[org]/feedback/[postId]/_components/c
 import { PostMainContent } from "~/app/org/[org]/feedback/[postId]/_components/post-main-content";
 import { getSession } from "~/auth/server";
 import { getCategory, getStatus } from "~/components/feedback/config";
+import { getFeedbackThread } from "~/lib/get-feedback-thread";
 import { getPublicOrganization } from "~/lib/get-organization";
+import { publicUrl, jsonLd as serializeJsonLd } from "~/lib/public-content";
 
 type ExternalFeedbackPostPageProps = {
   params: Promise<{ org: string; postId: string }>;
@@ -24,32 +20,23 @@ export async function generateMetadata({
 }: ExternalFeedbackPostPageProps): Promise<Metadata> {
   const { org, postId } = await params;
   const organization = await getPublicOrganization(org);
-  const post = await getFeedbackPost(postId);
-
-  if (!post || post.post.organizationId !== organization.id) {
-    return {
-      title: "Post Not Found",
-    };
+  const thread = await getFeedbackThread(organization.id, postId);
+  if (!thread) {
+    return { title: "Post Not Found", robots: { index: false } };
   }
-
-  // Privacy check for metadata
-  const session = await getSession();
-  const canView = await canViewPost(postId, session?.user?.id);
-  if (!canView) {
-    return {
-      title: "Post Not Found",
-    };
-  }
+  const { post } = thread;
 
   const description = stripHtml(post.post.description).substring(0, 160);
 
   return {
+    alternates: { canonical: publicUrl(org, `/feedback/${postId}`) },
+    robots: { index: post.post.isPublic, follow: true },
     title: `${post.post.title} - ${organization.name}`,
     description,
     openGraph: {
       title: post.post.title,
       description,
-      url: `/feedback/${postId}`,
+      url: publicUrl(org, `/feedback/${postId}`),
       type: "article",
       images: organization.logo ? [{ url: organization.logo }] : [],
     },
@@ -74,32 +61,13 @@ export default async function ExternalFeedbackPostPage({
   // Fetch organization (cached from layout)
   const organization = await getPublicOrganization(org);
 
-  // Fetch post data
-  const post = await getFeedbackPost(postId);
-  if (!post) {
+  const thread = await getFeedbackThread(organization.id, postId);
+  if (!thread) {
     notFound();
   }
-
-  // Verify post belongs to this organization
-  if (post.post.organizationId !== organization.id) {
-    notFound();
-  }
-
-  // Get session - external users might be anonymous
+  const { post, comments, hasUserVoted } = thread;
   const session = await getSession();
   const userId = session?.user?.id;
-
-  // Privacy check: return 404 if can't view
-  const canView = await canViewPost(postId, userId);
-  if (!canView) {
-    notFound();
-  }
-
-  // Fetch comments
-  const comments = await getPostComments(postId, organization.id);
-
-  // Check if user voted
-  const hasUserVoted = userId ? !!(await getUserVote(postId, userId)) : false;
 
   const statusConfig = getStatus(post.post.status);
   const categoryConfig = getCategory(post.post.category);
@@ -131,7 +99,7 @@ export default async function ExternalFeedbackPostPage({
     <>
       <script
         // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data is safe with JSON.stringify
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         type="application/ld+json"
       />
       <div className="mx-auto max-w-6xl">
@@ -149,7 +117,7 @@ export default async function ExternalFeedbackPostPage({
             />
 
             <CommentsSection
-              initialComments={comments}
+              initialComments={[...comments]}
               isAuthenticated={!!userId}
               organizationId={organization.id}
               postId={postId}

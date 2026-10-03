@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "../client";
 import { identifiedUser, type NewIdentifiedUser } from "./identified-user.sql";
 
@@ -48,27 +48,20 @@ export const identifiedUserQueries = {
    * Create or update identified user
    */
   upsert: async (data: NewIdentifiedUser) => {
-    // Check if already exists
-    const existing = await identifiedUserQueries.findByOrgAndExternalId(
-      data.organizationId,
-      data.externalId
-    );
-
-    if (existing) {
-      // Update last seen
-      const [updated] = await db
-        .update(identifiedUser)
-        .set({
+    const [created] = await db
+      .insert(identifiedUser)
+      .values(data)
+      .onConflictDoUpdate({
+        target: [identifiedUser.organizationId, identifiedUser.externalId],
+        set: {
+          email: data.email,
+          name: data.name,
+          avatar: data.avatar,
+          userId: sql`coalesce(excluded.user_id, ${identifiedUser.userId})`,
           lastSeenAt: new Date(),
-          userId: data.userId, // Update user ID in case email changed
-        })
-        .where(eq(identifiedUser.id, existing.id))
-        .returning();
-      return updated;
-    }
-
-    // Create new
-    const [created] = await db.insert(identifiedUser).values(data).returning();
+        },
+      })
+      .returning();
     return created;
   },
 

@@ -35,6 +35,7 @@ export function TiptapEditor({
   placeholder,
 }: TiptapEditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: { levels: [2, 3] },
@@ -49,6 +50,9 @@ export function TiptapEditor({
     onBlur,
     editorProps: {
       attributes: {
+        role: "textbox",
+        "aria-label": "Rich text content",
+        "aria-multiline": "true",
         class: cn(
           "prose prose-sm dark:prose-invert max-w-none",
           variant === "inline"
@@ -67,7 +71,7 @@ export function TiptapEditor({
       <div className="relative">
         {editor && (
           <BubbleMenu
-            className="flex items-center gap-0.5 rounded-lg border bg-background/95 px-1 py-1 shadow-lg backdrop-blur-sm"
+            className="flex items-center gap-0.5 rounded-lg border bg-background/95 px-1 py-1 backdrop-blur-sm"
             editor={editor}
             tippyOptions={{ duration: 150 }}
           >

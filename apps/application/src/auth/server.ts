@@ -1,6 +1,11 @@
+import {
+  ApplicationError,
+  agentCapabilities,
+  executeAgentOperation,
+} from "@userbubble/api/management";
 import "server-only";
 
-import { initAuth } from "@userbubble/auth";
+import { AuthAPIError as APIError, initAuth } from "@userbubble/auth";
 import { nextCookies } from "better-auth/next-js";
 import { headers } from "next/headers";
 import { cache } from "react";
@@ -17,6 +22,7 @@ function getBaseUrl(): string {
 }
 
 const baseUrl = getBaseUrl();
+export const applicationOrigin = new URL(baseUrl).origin;
 
 export const auth = initAuth({
   baseUrl,
@@ -25,6 +31,41 @@ export const auth = initAuth({
   googleClientId: env.AUTH_GOOGLE_ID,
   googleClientSecret: env.AUTH_GOOGLE_SECRET,
   extraPlugins: [nextCookies()],
+  agent: {
+    capabilities: agentCapabilities(),
+    onExecute: async ({
+      capability,
+      arguments: input,
+      agentSession,
+      ctx,
+    }): Promise<unknown> => {
+      try {
+        return await executeAgentOperation(
+          auth,
+          agentSession,
+          {
+            id: capability,
+            requestId: ctx.request?.headers.get("x-request-id") ?? undefined,
+          },
+          input
+        );
+      } catch (error) {
+        if (error instanceof ApplicationError) {
+          throw new APIError(
+            error.code === "TIMEOUT" ? "GATEWAY_TIMEOUT" : error.code,
+            {
+              error: error.code.toLowerCase(),
+              message: error.message,
+            }
+          );
+        }
+        throw new APIError("INTERNAL_SERVER_ERROR", {
+          error: "internal_error",
+          message: "Operation failed",
+        });
+      }
+    },
+  },
 });
 
 export const getSession = cache(async () =>

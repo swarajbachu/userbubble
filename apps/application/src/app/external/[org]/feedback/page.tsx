@@ -1,15 +1,20 @@
-import { parseOrganizationSettings } from "@userbubble/db/schema";
+import {
+  feedbackCategoryValidator,
+  feedbackStatusListValidator,
+} from "@userbubble/validators/feedback-form";
+import { parseOrganizationSettings } from "@userbubble/validators/organization";
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { FeedbackBoard } from "~/components/feedback/feedback-board";
 import { getPublicOrganization } from "~/lib/get-organization";
+import { publicUrl } from "~/lib/public-content";
+import { getQueryClient, HydrateClient, trpc } from "~/trpc/server";
 import { CreateFeedbackButton } from "./_components/create-feedback-button";
 import { FeedbackFilters } from "./_components/feedback-filters";
 import { FeedbackSidebar } from "./_components/feedback-sidebar";
 
 type ExternalFeedbackPageProps = {
   params: Promise<{ org: string }>;
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; status?: string; sort?: string }>;
 };
 
 export async function generateMetadata({
@@ -37,12 +42,13 @@ export async function generateMetadata({
     : `Share feedback, request features, and report bugs for ${organization.name}. Help us build a better product together.`;
 
   return {
+    alternates: { canonical: publicUrl(org, "/feedback") },
     title: `${title} - ${organization.name}`,
     description,
     openGraph: {
       title: `${organization.name} ${title}`,
       description,
-      url: "/feedback",
+      url: publicUrl(org, "/feedback"),
       type: "website",
       images: organization.logo ? [{ url: organization.logo }] : [],
     },
@@ -92,6 +98,19 @@ export default async function ExternalFeedbackPage({
 
   const title = getBoardTitle(category);
   const color = getBoardColor(category);
+  const filters = await searchParams;
+  const parsedCategory = feedbackCategoryValidator.safeParse(category);
+  const parsedStatuses = feedbackStatusListValidator.safeParse(
+    filters.status?.split(",")
+  );
+  const initialPosts = await getQueryClient().fetchQuery(
+    trpc.feedback.getAll.queryOptions({
+      organizationId: organization.id,
+      category: parsedCategory.success ? parsedCategory.data : undefined,
+      status: parsedStatuses.success ? parsedStatuses.data : undefined,
+      sortBy: filters.sort === "votes" ? "votes" : "recent",
+    })
+  );
 
   return (
     <div className="flex flex-col gap-5 md:flex-row md:gap-8">
@@ -132,25 +151,15 @@ export default async function ExternalFeedbackPage({
           </CreateFeedbackButton>
         </div>
 
-        <Suspense
-          fallback={
-            <div className="space-y-1">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div
-                  className="h-12 animate-pulse rounded-lg bg-muted"
-                  key={i}
-                />
-              ))}
-            </div>
-          }
-        >
+        <HydrateClient>
           <FeedbackBoard
             className="p-0 md:p-2"
+            initialPosts={initialPosts}
             isExternal={true}
             org={org}
             organizationId={organization.id}
           />
-        </Suspense>
+        </HydrateClient>
       </div>
     </div>
   );

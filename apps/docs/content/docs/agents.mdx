@@ -1,0 +1,58 @@
+---
+title: Connect your own agent
+description: Read feedback, reply to users, and manage your workspace over MCP or the UserBubble CLI.
+---
+
+UserBubble gives your agent access to product context and operations. Your agent runs in your environment and uses your own repository tools.
+
+## Connect with MCP
+
+Add `https://YOUR-INSTANCE/api/mcp` to your MCP client. Sign in when prompted, review the selected workspace, and approve access. The connection uses your current permissions in that workspace.
+
+Open **Settings → Connected agents** to inspect or revoke connections. Membership changes take effect on subsequent operations.
+
+## Connect with the CLI
+
+The CLI is currently available from the UserBubble repository. It requires Node 22.12 or later.
+
+```sh
+node packages/cli/bin/userbubble.mjs connect \
+  --url https://YOUR-INSTANCE \
+  --org ORGANIZATION_ID \
+  --capabilities feedback.search,feedback.getById,feedback.getComments,feedback.createComment,reference.add \
+  --json
+```
+
+Open the approval URL printed by the command and verify its code. After approval, the command returns the agent ID to use on subsequent calls.
+
+```sh
+node packages/cli/bin/userbubble.mjs call feedback.search \
+  --url https://YOUR-INSTANCE --org ORGANIZATION_ID --agent AGENT_ID \
+  --input '{"query":"keyboard","limit":50}' --json
+```
+
+Use the returned `nextCursor` to retrieve the next page. Pass `updatedSince` as an ISO timestamp to retrieve recently changed requests.
+
+## Answer a user
+
+Read the request with `feedback.getById` and its replies with `feedback.getComments`. Then post a reply:
+
+```sh
+node packages/cli/bin/userbubble.mjs call feedback.createComment \
+  --url https://YOUR-INSTANCE --org ORGANIZATION_ID --agent AGENT_ID \
+  --input '{"postId":"POST_ID","content":"The fix is ready for review.","idempotencyKey":"reply-fix-1"}' --json
+```
+
+Retrying the same key and body returns the same result. Changing the body while reusing a key returns a conflict. Feedback updates accept `expectedRevision` to detect conflicting edits.
+
+After implementing changes with your own tools, use `reference.add` to attach a pull request or other implementation URL. UserBubble does not clone your repository or execute your agent.
+
+## Discover operations
+
+- `/api/v2/capabilities` lists operation IDs, input schemas, permissions, and read/write metadata.
+- `/api/v2/openapi` describes the management HTTP interface.
+- `userbubble capabilities --json` provides discovery through the CLI.
+
+Use `--input @request.json` for file input or `--input -` for stdin. JSON output goes to stdout; errors and approval instructions go to stderr.
+
+Existing SDK installation keys identify customers inside your product. They cannot authorize workspace management or agent connections.

@@ -16,9 +16,9 @@ type ChangelogDisplayProps = {
   description: string;
   version?: string | null;
   coverImageUrl?: string | null;
-  tags?: string[];
-  linkedFeedback?: Array<{ id: string; title: string }>;
-  author?: { name: string } | "preview";
+  tags?: readonly string[];
+  linkedFeedback?: ReadonlyArray<{ id: string; title: string }>;
+  author?: { name: string } | "preview" | null;
   date: Date;
   status?: "draft" | "published";
   org: string;

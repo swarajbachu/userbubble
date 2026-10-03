@@ -6,7 +6,7 @@ import { appRouter, createTRPCContext } from "@userbubble/api";
 import { headers } from "next/headers";
 import { cache } from "react";
 
-import { auth } from "~/auth/server";
+import { auth, getSession } from "~/auth/server";
 import { createQueryClient } from "./query-client";
 
 /**
@@ -20,10 +20,11 @@ const createContext = cache(async () => {
   return createTRPCContext({
     headers: heads,
     auth,
+    getCookieSession: getSession,
   });
 });
 
-const getQueryClient = cache(createQueryClient);
+export const getQueryClient = cache(createQueryClient);
 
 export const trpc = createTRPCOptionsProxy<AppRouter>({
   router: appRouter,
@@ -46,8 +47,7 @@ export function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
   const queryClient = getQueryClient();
   if (queryOptions.queryKey[1]?.type === "infinite") {
     // biome-ignore lint/suspicious/noExplicitAny: <this is a generic type, so we need to use any>
-    void queryClient.prefetchInfiniteQuery(queryOptions as any);
-  } else {
-    void queryClient.prefetchQuery(queryOptions);
+    return queryClient.prefetchInfiniteQuery(queryOptions as any);
   }
+  return queryClient.prefetchQuery(queryOptions);
 }

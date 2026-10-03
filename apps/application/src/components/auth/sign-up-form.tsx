@@ -18,7 +18,6 @@ import { Label } from "@userbubble/ui/label";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { authClient } from "~/auth/client";
 
 type SignUpFormProps = {
   onSuccess?: () => void;
@@ -51,6 +50,7 @@ export function SignUpForm({
     setIsLoading(true);
 
     try {
+      const { authClient } = await import("~/auth/client");
       const result = await authClient.signUp.email({
         email,
         password,
@@ -74,6 +74,7 @@ export function SignUpForm({
     setIsLoading(true);
 
     try {
+      const { authClient } = await import("~/auth/client");
       await authClient.signIn.social({
         provider: "google",
         callbackURL: callbackUrl,

@@ -1,0 +1,11 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "./style-foundation.css";
+
+@layer utilities {
+  /* biome-ignore lint/suspicious/noUnknownAtRules: Tailwind's supported utility entrypoint controls route source scanning. */
+  @tailwind utilities source("../");
+}
+
+@source "../../../../packages/ui/src/*.{ts,tsx}";

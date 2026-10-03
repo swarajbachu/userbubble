@@ -1,7 +1,12 @@
-import { getChangelogEntry } from "@userbubble/db/queries";
+import {
+  changelogOperations,
+  executeOperation,
+} from "@userbubble/api/management";
 import type { NextRequest } from "next/server";
-import { ApiAuthError, resolveOrg } from "../../_lib/auth";
+import { auth } from "~/auth/server";
+import { resolveOrg } from "../../_lib/auth";
 import { corsOptions, jsonWithCors } from "../../_lib/cors";
+import { sdkError } from "../../_lib/operations";
 
 export function OPTIONS() {
   return corsOptions();
@@ -12,10 +17,19 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await resolveOrg(request);
+    const { organization } = await resolveOrg(request);
     const { id } = await params;
 
-    const entry = await getChangelogEntry(id);
+    const entry = await executeOperation(
+      changelogOperations.getById,
+      {
+        authApi: auth.api,
+        session: null,
+        identifiedOrgId: null,
+        isIdentified: false,
+      },
+      { id, organizationId: organization.id }
+    );
     if (!entry) {
       return jsonWithCors(
         { error: { code: "NOT_FOUND", message: "Changelog entry not found" } },
@@ -37,15 +51,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    if (error instanceof ApiAuthError) {
-      return jsonWithCors(
-        { error: { code: "UNAUTHORIZED", message: error.message } },
-        error.status
-      );
-    }
-    return jsonWithCors(
-      { error: { code: "INTERNAL_ERROR", message: "Internal server error" } },
-      500
-    );
+    return sdkError(error);
   }
 }

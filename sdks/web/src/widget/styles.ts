@@ -38,15 +38,15 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       --ub-border-light: rgba(0,0,0,0.06);
       --ub-input-border: rgba(0,0,0,0.10);
       --ub-ring: #a3a3a3;
-      --ub-shadow: 0 16px 70px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.08);
-      --ub-btn-shadow: 0 4px 16px rgba(0,0,0,0.16);
+
+
       --ub-success: #10b981;
       --ub-success-fg: #047857;
       --ub-destructive: #ef4444;
       --ub-destructive-fg: #b91c1c;
       --ub-info: #3b82f6;
       --ub-warning: #f59e0b;
-      --ub-radius: 0.625rem;
+      --ub-radius: 0.5rem;
     }
 
     /* Dark theme — COSS UI */
@@ -56,13 +56,13 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       --ub-bg-tertiary: rgba(255,255,255,0.06);
       --ub-text: #f5f5f5;
       --ub-text-secondary: #d4d4d4;
-      --ub-text-muted: color-mix(in srgb, #737373 90%, #fff);
+      --ub-text-muted: color-mix(in srgb, #737373 75%, #fff);
       --ub-border: rgba(255,255,255,0.06);
       --ub-border-light: rgba(255,255,255,0.05);
       --ub-input-border: rgba(255,255,255,0.08);
       --ub-ring: #737373;
-      --ub-shadow: 0 16px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
-      --ub-btn-shadow: 0 4px 16px rgba(0,0,0,0.4);
+
+
       --ub-success: #10b981;
       --ub-success-fg: #34d399;
       --ub-destructive: color-mix(in srgb, #ef4444 90%, #fff);
@@ -79,13 +79,13 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
         --ub-bg-tertiary: rgba(255,255,255,0.06);
         --ub-text: #f5f5f5;
         --ub-text-secondary: #d4d4d4;
-        --ub-text-muted: color-mix(in srgb, #737373 90%, #fff);
+        --ub-text-muted: color-mix(in srgb, #737373 75%, #fff);
         --ub-border: rgba(255,255,255,0.06);
         --ub-border-light: rgba(255,255,255,0.05);
         --ub-input-border: rgba(255,255,255,0.08);
         --ub-ring: #737373;
-        --ub-shadow: 0 16px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
-        --ub-btn-shadow: 0 4px 16px rgba(0,0,0,0.4);
+
+
         --ub-success: #10b981;
         --ub-success-fg: #34d399;
         --ub-destructive: color-mix(in srgb, #ef4444 90%, #fff);
@@ -111,12 +111,12 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: var(--ub-btn-shadow);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      transition: transform 0.15s ease;
     }
     .ub-bubble:hover {
       transform: scale(1.06);
-      box-shadow: 0 6px 24px rgba(0,0,0,0.24);
+
     }
     .ub-bubble:active {
       transform: scale(0.95);
@@ -131,12 +131,15 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       ${panelVertical};
       ${panelHorizontal};
       z-index: 2147483647;
-      width: 400px;
+      width: 420px;
       max-width: calc(100vw - 48px);
       height: min(640px, calc(100vh - 120px));
       background: var(--ub-bg);
-      border-radius: 16px;
-      box-shadow: var(--ub-shadow);
+      border-radius: 24px;
+      corner-shape: squircle;
+      border: 0;
+      box-shadow: 0 8px 32px rgb(0 0 0 / 0.14), 0 2px 8px rgb(0 0 0 / 0.06);
+
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -156,7 +159,7 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 20px 14px;
+      padding: 16px 20px;
       flex-shrink: 0;
     }
     .ub-header-title {
@@ -434,7 +437,7 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       border-radius: var(--ub-radius);
       background: var(--ub-bg-secondary);
       border: 1px solid var(--ub-border);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+
       cursor: pointer;
       transition: background 0.15s;
     }
@@ -478,7 +481,7 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
       font-weight: 600;
       font-family: inherit;
       flex-shrink: 0;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+
       transition: all 0.15s;
     }
     .ub-vote-btn:hover {
@@ -510,16 +513,36 @@ export function getWidgetStyles(config: UserbubbleWebConfig): string {
 
     /* ── Changelog entry cards ── */
     .ub-entry-card {
-      padding: 14px 0;
-      border-bottom: 1px solid var(--ub-border-light);
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin: 0 0 8px;
+      text-align: left;
+      font-family: inherit;
+      background: var(--ub-bg-secondary);
+      color: var(--ub-text);
+      border: 0;
+      border-radius: 18px;
+      corner-shape: squircle;
       cursor: pointer;
-      transition: opacity 0.15s;
+      transition: background 0.15s;
     }
     .ub-entry-card:last-child {
-      border-bottom: none;
+      margin-bottom: 0;
     }
     .ub-entry-card:hover {
-      opacity: 0.75;
+      background: var(--ub-bg-tertiary);
+    }
+    .ub-entry-card:focus-visible, .ub-back-btn:focus-visible,
+    .ub-tab:focus-visible, .ub-close-btn:focus-visible,
+    .ub-bubble:focus-visible, .ub-btn-submit:focus-visible {
+      outline: 2px solid var(--ub-ring);
+      outline-offset: 3px;
+    }
+    .ub-select, .ub-btn-submit { height: 32px; padding-top: 0; padding-bottom: 0; }
+    .ub-entry-card .ub-entry-cover { margin-bottom: 12px; width: 100%; }
+    @media (pointer: coarse) {
+      .ub-select, .ub-btn-submit, .ub-back-btn, .ub-close-btn { min-height: 44px; }
     }
     .ub-entry-date {
       font-size: 12px;

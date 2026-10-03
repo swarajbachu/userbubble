@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
+  integer,
   jsonb,
   pgEnum,
   pgTable,
@@ -35,21 +36,12 @@ export const invitationStatusEnum = pgEnum(
  * Onboarding state tracks which getting-started steps have been completed.
  * Null means org predates the feature (don't show banner).
  */
-export type OnboardingState = {
-  createApiKey: boolean;
-  installWidget: boolean;
-  anonymousSubmissions: boolean;
-  customizeBranding: boolean;
-  shareBoard: boolean;
-};
+export {
+  defaultOnboardingState,
+  type OnboardingState,
+} from "@userbubble/validators";
 
-export const defaultOnboardingState: OnboardingState = {
-  createApiKey: false,
-  installWidget: false,
-  anonymousSubmissions: false,
-  customizeBranding: false,
-  shareBoard: false,
-};
+import type { OnboardingState } from "@userbubble/validators";
 
 /**
  * Organization table
@@ -70,6 +62,7 @@ export const organization = pgTable("organization", {
 
   // Metadata for organization-specific settings
   metadata: text("metadata"),
+  settingsRevision: integer("settings_revision").notNull().default(1),
 
   // Onboarding checklist state (null = predates feature)
   onboarding: jsonb("onboarding").$type<OnboardingState>(),

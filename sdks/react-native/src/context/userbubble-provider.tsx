@@ -9,7 +9,6 @@ import {
   identify,
 } from "@userbubble/core";
 import * as WebBrowser from "expo-web-browser";
-// biome-ignore lint/style/useImportType: React must be in scope for JSX with "jsx": "react"
 import React, {
   createContext,
   useCallback,
@@ -177,7 +176,7 @@ export function UserbubbleProvider({
         authToken,
       });
 
-      log.debug("Opening Userbubble:", url);
+      log.debug("Opening Userbubble portal");
 
       await WebBrowser.openBrowserAsync(url, {
         presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,

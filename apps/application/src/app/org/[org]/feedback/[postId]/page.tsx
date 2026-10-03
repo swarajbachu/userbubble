@@ -1,17 +1,9 @@
-import {
-  canModifyPostSync,
-  getFeedbackPost,
-  getPostComments,
-  getUserVote,
-  memberQueries,
-  permissions,
-} from "@userbubble/db/queries";
 import { notFound } from "next/navigation";
 import { getSession } from "~/auth/server";
+import { getFeedbackThread } from "~/lib/get-feedback-thread";
 import { getOrganization } from "~/lib/get-organization";
 import { BackButton } from "./_components/back-button";
 import { CommentsSection } from "./_components/comments-section";
-import { GeneratePrSection } from "./_components/generate-pr-section";
 import { PostActionBar } from "./_components/post-action-bar";
 import { PostMainContent } from "./_components/post-main-content";
 import { PostSidebar } from "./_components/post-sidebar";
@@ -27,45 +19,23 @@ export default async function FeedbackPostPage({
 
   const organization = await getOrganization(org);
 
-  const post = await getFeedbackPost(postId);
-  if (!post) {
+  const thread = await getFeedbackThread(organization.id, postId);
+  if (!thread) {
     notFound();
   }
-
-  if (post.post.organizationId !== organization.id) {
-    notFound();
-  }
-
-  const [comments, session] = await Promise.all([
-    getPostComments(postId, organization.id),
-    getSession(),
-  ]);
-
+  const { post, comments, isAdmin, canModify, hasUserVoted } = thread;
+  const session = await getSession();
   const userId = session?.user?.id;
 
-  // Resolve member once for permission checks
-  const member = userId
-    ? await memberQueries.findByUserAndOrg(userId, organization.id)
-    : null;
-
-  const role = member?.role ?? null;
-  const isAdmin = role ? permissions.isAdmin(role) : false;
-  const canModify =
-    userId && role
-      ? canModifyPostSync({ userId, role }, { authorId: post.post.authorId })
-      : false;
-
-  const hasUserVoted = userId ? !!(await getUserVote(postId, userId)) : false;
-
   return (
-    <div className="mx-auto max-w-6xl">
-      <div className="mb-8">
+    <div className="mx-auto max-w-screen-2xl">
+      <div className="mb-4">
         <BackButton org={org} />
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-12 lg:grid-cols-12">
+      <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Main Content - Left Column */}
-        <div className="space-y-8 lg:col-span-8">
+        <div className="space-y-5 lg:col-span-8">
           <PostMainContent
             canModify={canModify}
             hasUserVoted={hasUserVoted}
@@ -77,7 +47,7 @@ export default async function FeedbackPostPage({
           />
 
           <CommentsSection
-            initialComments={comments}
+            initialComments={[...comments]}
             isAuthenticated={!!userId}
             organizationId={organization.id}
             postId={postId}
@@ -94,17 +64,9 @@ export default async function FeedbackPostPage({
             createdAt={post.post.createdAt}
             isAdmin={isAdmin}
             org={org}
+            organizationId={organization.id}
             postId={postId}
             status={post.post.status}
-          />
-
-          <GeneratePrSection
-            isAdmin={isAdmin}
-            organizationId={organization.id}
-            orgSlug={org}
-            postDescription={post.post.description}
-            postId={postId}
-            postTitle={post.post.title}
           />
         </div>
       </div>

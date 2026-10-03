@@ -1,13 +1,13 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Alert02Icon,
   CheckmarkCircle02Icon,
   InformationCircleIcon,
   Loading03Icon,
   MultiplicationSignCircleIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+} from "@hugeicons-pro/core-duotone-rounded";
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 

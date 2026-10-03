@@ -1,4 +1,4 @@
-import { parseOrganizationSettings } from "@userbubble/db/schema";
+import { parseOrganizationSettings } from "@userbubble/validators/organization";
 import { Suspense } from "react";
 import { getSession } from "~/auth/server";
 import { RoadmapComingSoon } from "~/components/roadmap/roadmap-coming-soon";

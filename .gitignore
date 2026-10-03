@@ -58,3 +58,4 @@ dist/
 internal-docs/
 temp_settings.json
 .gstack/
+.pstack/

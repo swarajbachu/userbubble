@@ -2,7 +2,10 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import { InboxIcon } from "@hugeicons-pro/core-bulk-rounded";
-import type { FeedbackPost } from "@userbubble/db/schema";
+import type { RouterOutputs } from "@userbubble/api";
+
+type FeedbackPost = RouterOutputs["feedback"]["create"];
+
 import { cn } from "@userbubble/ui";
 import type { ComponentProps } from "react";
 import { RoadmapCard } from "./roadmap-card";

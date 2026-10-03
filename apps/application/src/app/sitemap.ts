@@ -1,14 +1,11 @@
 import type { MetadataRoute } from "next";
+import { indexOrganizations, publicUrl } from "~/lib/public-sitemap";
+export const dynamic = "force-dynamic";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-
-  return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
-    },
-  ];
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  return (await indexOrganizations()).flatMap(({ slug }) =>
+    ["", "/feedback", "/roadmap", "/changelog"].map((path) => ({
+      url: publicUrl(slug, path),
+    }))
+  );
 }

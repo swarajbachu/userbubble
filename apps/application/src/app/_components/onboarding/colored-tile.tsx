@@ -24,7 +24,7 @@ export function ColoredTile({
   return (
     <div
       className={cn(
-        "flex w-full flex-col items-center justify-center rounded-xl p-8 shadow-sm transition-transform hover:scale-[1.02]",
+        "flex w-full flex-col items-center justify-center rounded-xl p-8 transition-transform hover:scale-[1.02]",
         colorClasses[color],
         className
       )}

@@ -12,7 +12,7 @@ type CommentsSectionProps = {
   postId: string;
   initialComments: Array<{
     comment: FeedbackComment;
-    author: User | null;
+    author: Pick<User, "id" | "name" | "image"> | null;
     isTeamMember: boolean;
   }>;
   isAuthenticated: boolean;
@@ -56,9 +56,9 @@ export function CommentsSection({
           )}
 
           {/* Comments list */}
-          <div className="space-y-2 divide-y rounded-2xl border">
+          <div className="space-y-3">
             {comments.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
+              <div className="flex flex-col items-center justify-center rounded-lg bg-muted/40 p-12 text-center">
                 <Icon
                   className="text-muted-foreground"
                   icon={Message01Icon}

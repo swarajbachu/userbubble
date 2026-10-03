@@ -1,5 +1,5 @@
-import { parseOrganizationSettings } from "@userbubble/db/org/organization-settings";
-import { memberQueries } from "@userbubble/db/queries";
+import { serverReads } from "@userbubble/api/management";
+import { parseOrganizationSettings } from "@userbubble/validators/organization";
 import { Suspense } from "react";
 import { getSession } from "~/auth/server";
 import { getPublicOrganization } from "~/lib/get-organization";
@@ -18,22 +18,21 @@ export default async function ExternalLayout({
 }: ExternalLayoutProps) {
   const { org } = await params;
 
-  // Use public helper - no auth required for external routes
-  const organization = await getPublicOrganization(org);
+  // Independent request-scoped reads can start together.
+  const [organization, session] = await Promise.all([
+    getPublicOrganization(org),
+    getSession(),
+  ]);
 
   // Parse organization settings from metadata
   const settings = parseOrganizationSettings(organization.metadata);
 
   // Get session and member role
-  const session = await getSession();
   const userId = session?.user?.id;
 
   let memberRole: "admin" | "owner" | "member" | null = null;
   if (userId) {
-    const member = await memberQueries.findByUserAndOrg(
-      userId,
-      organization.id
-    );
+    const member = await serverReads.membership(userId, organization.id);
     memberRole = member?.role ?? null;
   }
 

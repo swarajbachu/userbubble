@@ -1,6 +1,27 @@
 import { and, desc, eq } from "drizzle-orm";
-import { db } from "../client";
+import { db, inTransaction } from "../client";
 import { type ApiKey, apiKey, type NewApiKey } from "./api-key.sql";
+
+import { organization } from "./organization.sql";
+
+export class CredentialLimitError extends Error {
+  readonly code = "BAD_REQUEST";
+  constructor() {
+    super("Maximum of 10 active API keys allowed");
+  }
+}
+async function lockQuota(organizationId: string) {
+  await db
+    .select({ id: organization.id })
+    .from(organization)
+    .where(eq(organization.id, organizationId))
+    .for("update");
+}
+async function requireCapacity(organizationId: string) {
+  if ((await apiKeyQueries.countActiveKeys(organizationId)) >= 10) {
+    throw new CredentialLimitError();
+  }
+}
 
 export const apiKeyQueries = {
   /**
@@ -38,17 +59,22 @@ export const apiKeyQueries = {
   /**
    * Create new API key
    */
-  create: async (data: NewApiKey) => {
-    const [key] = await db.insert(apiKey).values(data).returning();
-    return key;
-  },
+  create: (data: NewApiKey) =>
+    inTransaction(async () => {
+      await lockQuota(data.organizationId);
+      if (data.isActive !== false) {
+        await requireCapacity(data.organizationId);
+      }
+      const [key] = await db.insert(apiKey).values(data).returning();
+      return key;
+    }),
 
   /**
    * Update API key (name, description, isActive)
    */
   update: async (
     id: string,
-    data: Partial<Pick<ApiKey, "name" | "description" | "isActive">>
+    data: Partial<Pick<ApiKey, "name" | "description">>
   ) => {
     const [updated] = await db
       .update(apiKey)
@@ -72,14 +98,27 @@ export const apiKeyQueries = {
   /**
    * Toggle key active status (soft delete/restore)
    */
-  toggleActive: async (id: string, isActive: boolean) => {
-    const [updated] = await db
-      .update(apiKey)
-      .set({ isActive, updatedAt: new Date() })
-      .where(eq(apiKey.id, id))
-      .returning();
-    return updated;
-  },
+  toggleActive: (id: string, isActive: boolean) =>
+    inTransaction(async () => {
+      const key = await apiKeyQueries.findById(id);
+      if (!key) {
+        return;
+      }
+      await lockQuota(key.organizationId);
+      const current = await apiKeyQueries.findById(id);
+      if (!current) {
+        return;
+      }
+      if (isActive && !current.isActive) {
+        await requireCapacity(current.organizationId);
+      }
+      const [updated] = await db
+        .update(apiKey)
+        .set({ isActive, updatedAt: new Date() })
+        .where(eq(apiKey.id, id))
+        .returning();
+      return updated;
+    }),
 
   /**
    * Delete API key (hard delete)

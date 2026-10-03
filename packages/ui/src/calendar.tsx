@@ -1,12 +1,12 @@
 /** biome-ignore-all lint/nursery/noShadow: expected */
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowDownIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+} from "@hugeicons-pro/core-duotone-rounded";
 import { cn } from "@userbubble/ui";
 import * as React from "react";
 import {

@@ -12,6 +12,7 @@ import { SignInForm } from "./sign-in-form";
 import { SignUpForm } from "./sign-up-form";
 
 type AuthDialogProps = {
+  callbackUrl?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultMode?: "signin" | "signup";
@@ -19,6 +20,7 @@ type AuthDialogProps = {
 };
 
 export function AuthDialog({
+  callbackUrl,
   open,
   onOpenChange,
   defaultMode = "signin",
@@ -47,14 +49,14 @@ export function AuthDialog({
         <div className="p-6">
           {mode === "signin" ? (
             <SignInForm
-              callbackUrl={undefined}
+              callbackUrl={callbackUrl}
               onSuccess={handleSuccess}
               onSwitchToSignUp={() => setMode("signup")}
               showSwitchToSignUp
             />
           ) : (
             <SignUpForm
-              callbackUrl={undefined}
+              callbackUrl={callbackUrl}
               onSuccess={handleSuccess}
               onSwitchToSignIn={() => setMode("signin")}
               showSwitchToSignIn

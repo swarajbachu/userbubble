@@ -32,7 +32,7 @@ function TabsList({
         "relative z-0 flex w-fit items-center justify-center gap-x-0.5 text-muted-foreground",
         "data-[orientation=vertical]:flex-col",
         variant === "default"
-          ? "rounded-lg bg-muted p-0.5 text-muted-foreground/72"
+          ? "rounded-lg bg-muted p-0.5 text-muted-foreground"
           : "data-[orientation=vertical]:px-1 data-[orientation=horizontal]:py-1 *:data-[slot=tabs-trigger]:hover:bg-accent",
         className
       )}
@@ -45,7 +45,7 @@ function TabsList({
           "-translate-y-(--active-tab-bottom) absolute bottom-0 left-0 h-(--active-tab-height) w-(--active-tab-width) translate-x-(--active-tab-left) transition-[width,translate] duration-200 ease-in-out",
           variant === "underline"
             ? "data-[orientation=vertical]:-translate-x-px z-10 bg-primary data-[orientation=horizontal]:h-0.5 data-[orientation=vertical]:w-0.5 data-[orientation=horizontal]:translate-y-px"
-            : "-z-1 rounded-md bg-background shadow-sm dark:bg-accent"
+            : "-z-1 rounded-md bg-background dark:bg-accent"
         )}
         data-slot="tab-indicator"
       />

@@ -1,4 +1,7 @@
-import type { IconSvgObject } from "@hugeicons/react";
+import type { ComponentProps } from "react";
+
+type IconSvgObject = ComponentProps<typeof HugeiconsIcon>["icon"];
+
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Alert02Icon,

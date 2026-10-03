@@ -1,18 +1,28 @@
 import type { StorageAdapter } from "@userbubble/core";
 import { STORAGE_KEYS } from "@userbubble/core";
-import * as SecureStore from "expo-secure-store";
 
 export class ExpoStorage implements StorageAdapter {
+  private readonly storage: typeof import("expo-secure-store");
+  constructor() {
+    try {
+      this.storage = require("expo-secure-store");
+    } catch {
+      throw new Error(
+        "[userbubble] Install expo-secure-store to use Expo storage"
+      );
+    }
+  }
+
   async getItem(key: string): Promise<string | null> {
-    return SecureStore.getItemAsync(key);
+    return this.storage.getItemAsync(key);
   }
 
   async setItem(key: string, value: string): Promise<void> {
-    await SecureStore.setItemAsync(key, value);
+    await this.storage.setItemAsync(key, value);
   }
 
   async removeItem(key: string): Promise<void> {
-    await SecureStore.deleteItemAsync(key);
+    await this.storage.deleteItemAsync(key);
   }
 
   async clear(): Promise<void> {

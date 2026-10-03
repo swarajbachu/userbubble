@@ -8,33 +8,32 @@ import {
   InputGroupInput,
 } from "@userbubble/ui/input-group";
 import { useState } from "react";
-import { z } from "zod";
+import { normalizeWebsiteUrl } from "~/lib/website-url";
 import { useWizard } from "./wizard-context";
 
-const urlSchema = z.string().url().or(z.string().min(1));
-
 export function StepWebsite() {
-  const { website, setWebsite } = useWizard();
+  const { website, setWebsite, setValidationError } = useWizard();
   const [error, setError] = useState("");
 
   const validateUrl = (url: string) => {
-    if (!url) {
-      return { success: true };
+    try {
+      normalizeWebsiteUrl(url);
+      return true;
+    } catch {
+      return false;
     }
-    const urlToValidate = url.startsWith("http") ? url : `https://${url}`;
-    const result = urlSchema.safeParse(urlToValidate);
-    return result;
   };
 
   const handleChange = (value: string) => {
     setWebsite(value);
     setError("");
+    setValidationError(validateUrl(value) ? null : "Please enter a valid URL");
   };
 
   const handleBlur = () => {
     if (website) {
       const validation = validateUrl(website);
-      if (!validation.success) {
+      if (!validation) {
         setError("Please enter a valid URL");
       }
     }
@@ -45,7 +44,11 @@ export function StepWebsite() {
       if (!url) {
         return "";
       }
-      const urlObj = new URL(url.startsWith("http") ? url : `https://${url}`);
+      const normalized = normalizeWebsiteUrl(url);
+      if (!normalized) {
+        return "";
+      }
+      const urlObj = new URL(normalized);
       return urlObj.hostname;
     } catch {
       return "";

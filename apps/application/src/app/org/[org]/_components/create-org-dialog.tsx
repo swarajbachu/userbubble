@@ -1,8 +1,7 @@
 "use client";
 
 import { Add01Icon, Loading03Icon } from "@hugeicons-pro/core-bulk-rounded";
-import { useQuery } from "@tanstack/react-query";
-import { isReservedSlug, isValidSlug } from "@userbubble/db/schema";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@userbubble/ui/button";
 import {
   Dialog,
@@ -17,10 +16,11 @@ import {
 import { Icon } from "@userbubble/ui/icon";
 import { Input } from "@userbubble/ui/input";
 import { Label } from "@userbubble/ui/label";
+import { isReservedSlug, isValidSlug } from "@userbubble/validators/slug";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { authClient } from "~/auth/client";
+import { useTRPC } from "~/trpc/react";
 
 type CreateOrgDialogProps = {
   canCreateOrg: boolean;
@@ -37,6 +37,10 @@ export function CreateOrgDialog({
   const [website, setWebsite] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
+  const trpc = useTRPC();
+  const createOrganization = useMutation(
+    trpc.organization.create.mutationOptions()
+  );
 
   // Auto-generate slug from name
   useEffect(() => {
@@ -52,11 +56,7 @@ export function CreateOrgDialog({
 
   // Check slug availability
   const { data: slugCheck, isLoading: isCheckingSlug } = useQuery({
-    queryKey: ["checkSlug", slug],
-    queryFn: async () => {
-      const result = await authClient.organization.checkSlug({ slug });
-      return result.data;
-    },
+    ...trpc.organization.checkSlug.queryOptions({ slug }),
     enabled: Boolean(
       slug && slug.length >= 3 && isValidSlug(slug) && !isReservedSlug(slug)
     ),
@@ -85,23 +85,18 @@ export function CreateOrgDialog({
       return;
     }
 
-    if (!slugCheck?.status) {
+    if (!slugCheck) {
       toast.error("Slug is not available");
       return;
     }
 
     setIsCreating(true);
     try {
-      const { data, error } = await authClient.organization.create({
+      const data = await createOrganization.mutateAsync({
         name,
         slug,
         website: website || undefined,
       });
-
-      if (error) {
-        toast.error(error.message || "Failed to create organization");
-        return;
-      }
 
       if (data) {
         toast.success("Organization created successfully!");
@@ -120,7 +115,7 @@ export function CreateOrgDialog({
     slug.length >= 3 &&
     isValidSlug(slug) &&
     !isReservedSlug(slug) &&
-    slugCheck?.status === true;
+    slugCheck === true;
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>

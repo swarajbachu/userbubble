@@ -6,6 +6,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
+    },
+    "./management": {
+      "types": "./dist/management.d.ts",
+      "default": "./src/management.ts"
     }
   },
   "license": "MIT",
@@ -16,19 +20,20 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@userbubble/ai": "workspace:*",
     "@userbubble/auth": "workspace:*",
     "@userbubble/db": "workspace:*",
     "@userbubble/validators": "workspace:*",
     "@trpc/server": "catalog:",
-    "ai": "^4.0.0",
     "superjson": "2.2.3",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "effect": "4.0.0",
+    "sanitize-html": "2.18.0"
   },
   "devDependencies": {
     "@userbubble/tsconfig": "workspace:*",
     "better-auth": "catalog:",
     "@types/pg": "^8.11.10",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@types/sanitize-html": "^2.16.0"
   }
 }

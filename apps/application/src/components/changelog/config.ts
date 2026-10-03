@@ -3,7 +3,7 @@ import {
   ArrowUp01Icon,
   Rocket01Icon,
   SparklesIcon,
-} from "@hugeicons-pro/core-bulk-rounded";
+} from "@hugeicons-pro/core-solid-rounded";
 
 export const tagConfig = {
   feature: {

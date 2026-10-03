@@ -8,7 +8,7 @@ import {
   TextIcon,
 } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import type { getChangelogEntry } from "@userbubble/db/queries";
+import type { RouterOutputs } from "@userbubble/api";
 import { Button } from "@userbubble/ui/button";
 import { Icon } from "@userbubble/ui/icon";
 import { Input } from "@userbubble/ui/input";
@@ -25,7 +25,7 @@ import {
 } from "./use-changelog-form";
 import { useChangelogMutations } from "./use-changelog-mutations";
 
-type ChangelogEntry = Awaited<ReturnType<typeof getChangelogEntry>>;
+type ChangelogEntry = RouterOutputs["changelog"]["getById"];
 
 type ChangelogEditorProps = {
   mode: "create" | "edit";
@@ -79,16 +79,11 @@ export function ChangelogEditor({
     })
   );
 
-  const {
-    createMutation,
-    updateMutation,
-    publishMutation,
-    deleteMutation,
-    isPending,
-  } = useChangelogMutations({
-    organizationId,
-    orgSlug: org,
-  });
+  const { createMutation, updateMutation, deleteMutation, isPending } =
+    useChangelogMutations({
+      organizationId,
+      orgSlug: org,
+    });
 
   const form = useChangelogForm({
     entry,
@@ -99,9 +94,10 @@ export function ChangelogEditor({
           id: entry.id,
           title: values.title,
           description: values.description,
-          version: values.version || undefined,
-          coverImageUrl: values.coverImageUrl || undefined,
-          tags: values.tags.length > 0 ? values.tags : undefined,
+          version: values.version || null,
+          coverImageUrl: values.coverImageUrl || null,
+          tags: values.tags,
+          feedbackPostIds: values.feedbackPostIds,
         });
       } else {
         await createMutation.mutateAsync({
@@ -124,9 +120,20 @@ export function ChangelogEditor({
 
   const handlePublish = async () => {
     if (mode === "edit" && entry) {
-      publishMutation.mutate({ organizationId, id: entry.id });
+      const values = form.state.values;
+      await updateMutation.mutateAsync({
+        organizationId,
+        id: entry.id,
+        title: values.title,
+        description: values.description,
+        version: values.version || null,
+        coverImageUrl: values.coverImageUrl || null,
+        tags: values.tags,
+        feedbackPostIds: values.feedbackPostIds,
+        publish: true,
+      });
     } else {
-      const values = previewValues;
+      const values = form.state.values;
       await createMutation.mutateAsync({
         organizationId,
         title: values.title,
@@ -158,10 +165,11 @@ export function ChangelogEditor({
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col">
       {/* Top bar */}
-      <header className="-mx-6 -mt-6 border-b bg-background/80 backdrop-blur-sm">
-        <div className="flex items-center justify-between px-6 py-3">
+      <header className="-mx-4 -mt-4 md:-mx-5 border-b bg-background/80 backdrop-blur-sm">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 md:px-5">
           <div className="flex items-center gap-3">
             <Button
+              aria-label="Back to releases"
               className="size-8 text-muted-foreground"
               onClick={handleCancel}
               size="icon"
@@ -179,6 +187,7 @@ export function ChangelogEditor({
           <div className="flex items-center gap-2">
             {mode === "edit" && entry && (
               <Button
+                aria-label="Delete release"
                 className="size-8 text-muted-foreground hover:text-destructive"
                 disabled={isPending}
                 onClick={() => setShowDeleteDialog(true)}
@@ -196,7 +205,7 @@ export function ChangelogEditor({
               size="sm"
               variant="outline"
             >
-              {isPending ? "Saving..." : "Save Draft"}
+              {isPending ? "Saving..." : "Save changes"}
             </Button>
 
             <Button
@@ -230,8 +239,8 @@ export function ChangelogEditor({
         <form.Field name="title">
           {(field) => (
             <input
-              autoFocus
-              className="w-full bg-transparent font-bold text-3xl outline-none placeholder:text-muted-foreground/40"
+              aria-label="Release title"
+              className="w-full bg-transparent font-bold text-3xl outline-none placeholder:text-muted-foreground"
               maxLength={256}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -245,7 +254,8 @@ export function ChangelogEditor({
         <form.Field name="version">
           {(field) => (
             <input
-              className="mt-2 w-full bg-transparent text-muted-foreground text-sm outline-none placeholder:text-muted-foreground/30"
+              aria-label="Release version"
+              className="mt-2 h-8 w-full bg-transparent text-muted-foreground text-sm outline-none placeholder:text-muted-foreground"
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Version (e.g. 1.0.0)"

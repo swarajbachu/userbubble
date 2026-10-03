@@ -54,8 +54,9 @@ export function StatusEditor({ postId, currentStatus }: StatusEditorProps) {
       value={currentStatus}
     >
       <SelectTrigger
+        aria-label="Status"
         className={cn(
-          "h-7 w-auto gap-1.5 border-none px-2.5 font-medium text-xs shadow-none",
+          "h-7 w-auto gap-1.5 border-none px-2.5 font-medium text-xs",
           current?.color
             .replace("text-", "bg-")
             .replace("-500", "-500/15")
@@ -72,7 +73,7 @@ export function StatusEditor({ postId, currentStatus }: StatusEditorProps) {
                   current.color.replace("text-", "bg-")
                 )}
               />
-              <span>{current.label}</span>
+              <span className="text-foreground">{current.label}</span>
             </div>
           )}
         </SelectValue>

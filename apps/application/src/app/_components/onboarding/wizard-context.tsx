@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -9,8 +10,8 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import { authClient } from "~/auth/client";
-import { initializeOnboarding } from "~/lib/onboarding-actions";
+import { normalizeWebsiteUrl } from "~/lib/website-url";
+import { useTRPC } from "~/trpc/react";
 
 type WizardState = {
   currentStep: number;
@@ -39,6 +40,13 @@ const WizardContext = createContext<WizardContextType | undefined>(undefined);
 
 export function WizardProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const trpc = useTRPC();
+  const { mutateAsync: create } = useMutation(
+    trpc.organization.create.mutationOptions()
+  );
+  const { mutateAsync: initializeOnboarding } = useMutation(
+    trpc.organization.initializeOnboarding.mutationOptions()
+  );
   const [currentStep, setCurrentStep] = useState(1);
   const [website, setWebsite] = useState("");
   const [organizationName, setOrganizationName] = useState("");
@@ -81,19 +89,14 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     }
     setIsCreating(true);
     try {
-      const { data, error } = await authClient.organization.create({
+      const data = await create({
         name: organizationName,
         slug,
-        website,
+        website: normalizeWebsiteUrl(website),
       });
 
-      if (error) {
-        toast.error(error.message || "Failed to create organization");
-        return;
-      }
-
       if (data) {
-        await initializeOnboarding(data.id);
+        await initializeOnboarding({ organizationId: data.id });
         toast.success("Organization created successfully!");
         router.push(`/org/${data.slug}/getting-started`);
       }
@@ -102,7 +105,15 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsCreating(false);
     }
-  }, [organizationName, slug, website, router, validationError]);
+  }, [
+    create,
+    initializeOnboarding,
+    organizationName,
+    slug,
+    website,
+    router,
+    validationError,
+  ]);
 
   const value: WizardContextType = {
     currentStep,
