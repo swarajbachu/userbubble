@@ -16,3 +16,9 @@ Local verification after the fixes:
 These checks are evidence for the tested paths, not a claim that every possible interaction or real-device native journey has been exhaustively exercised. Marketing remains unchanged.
 
 The three Vercel preview checks were failing before this follow-up. Their authenticated build logs were unavailable in the cloud workspace; the deployment API returned 403 and no Vercel CLI was installed on the user's Mac. The deployment failure cause remains unconfirmed. GitGuardian's disposable CI credential finding is intentionally untouched at the user's direction; scanning remains enabled.
+
+## Vercel install follow-up
+
+The supplied deployment log confirmed `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH`: token-enabled Pro overrides differ from the committed community lockfile. All three Vercel projects now run the shared install script, which keeps community installs frozen and explicitly resolves the Pro edition in token-enabled deployment checkouts. An actual frozen community install passed; subprocess tests cover every project's install command, both edition selections, whitespace-only tokens, and failure propagation. Licensed package downloads still require deployment verification with a valid registry token.
+
+The follow-up GitHub run also identified generated capability-inventory drift from the new onboarding tRPC call. The inventory was regenerated; capability and typed-client consistency checks pass.

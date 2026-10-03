@@ -436,7 +436,10 @@
       "destructive": false,
       "outputValidated": true,
       "effectInput": true,
-      "dashboardSources": ["apps/application/src/lib/onboarding-actions.ts"],
+      "dashboardSources": [
+        "apps/application/src/app/_components/onboarding/wizard-context.tsx",
+        "apps/application/src/lib/onboarding-actions.ts"
+      ],
       "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
     },
     {
