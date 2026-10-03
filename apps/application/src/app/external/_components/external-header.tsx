@@ -18,15 +18,24 @@ import {
 } from "@userbubble/ui/dropdown-menu";
 import { Icon } from "@userbubble/ui/icon";
 import { ThemeToggle } from "@userbubble/ui/theme";
-import { motion } from "motion/react";
+import { domAnimation, LazyMotion } from "motion/react";
+import * as m from "motion/react-m";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { CreateFeedbackDialog } from "~/app/external/[org]/feedback/_components/create-feedback-dialog";
 import { authClient } from "~/auth/client";
-import { AuthDialog } from "~/components/auth/auth-dialog";
+
+const CreateFeedbackDialog = dynamic(() =>
+  import(
+    "~/app/external/[org]/feedback/_components/create-feedback-dialog"
+  ).then((module) => module.CreateFeedbackDialog)
+);
+const AuthDialog = dynamic(() =>
+  import("~/components/auth/auth-dialog").then((module) => module.AuthDialog)
+);
 
 type ExternalHeaderProps = {
   organizationName: string;
@@ -48,7 +57,10 @@ export function ExternalHeader({
   enableRoadmap,
 }: ExternalHeaderProps) {
   const pathname = usePathname();
-  const [activeTab, setActiveTab] = useState<string>("");
+  const router = useRouter();
+  const portalPrefix = pathname.startsWith("/external/")
+    ? `/external/${orgSlug}`
+    : "";
   const [activeDimensions, setActiveDimensions] = useState({
     width: 0,
     left: 0,
@@ -57,6 +69,17 @@ export function ExternalHeader({
   const navRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  // Retain mounted dialogs after first use so their close transitions and drafts survive.
+  const [createDialogLoaded, setCreateDialogLoaded] = useState(false);
+  const [authDialogLoaded, setAuthDialogLoaded] = useState(false);
+  useEffect(() => {
+    if (createDialogOpen) {
+      setCreateDialogLoaded(true);
+    }
+    if (authDialogOpen) {
+      setAuthDialogLoaded(true);
+    }
+  }, [createDialogOpen, authDialogOpen]);
   const { data: sessionData } = authClient.useSession();
   const user = sessionData?.user;
   const isIdentified =
@@ -73,19 +96,17 @@ export function ExternalHeader({
 
   const tabs = useMemo(() => {
     const allTabs = [
-      { name: "Feedback", href: "/feedback" },
-      { name: "Roadmap", href: "/roadmap" },
-      { name: "Updates", href: "/changelog" },
+      { name: "Feedback", href: `${portalPrefix}/feedback` },
+      { name: "Roadmap", href: `${portalPrefix}/roadmap` },
+      { name: "Updates", href: `${portalPrefix}/changelog` },
     ];
 
     // Filter out roadmap if disabled
     return allTabs.filter((tab) => tab.name !== "Roadmap" || enableRoadmap);
-  }, [enableRoadmap]);
+  }, [enableRoadmap, portalPrefix]);
 
-  useEffect(() => {
-    const active = tabs.find((tab) => pathname.startsWith(tab.href));
-    setActiveTab(active ? active.href : "");
-  }, [pathname, tabs]);
+  const activeTab =
+    tabs.find((tab) => pathname.startsWith(tab.href))?.href ?? "";
 
   useEffect(() => {
     if (activeTab && navRefs.current[activeTab]) {
@@ -123,9 +144,9 @@ export function ExternalHeader({
                 {organizationName.charAt(0)}
               </div>
             )}
-            <h1 className="truncate font-semibold text-base sm:text-lg">
+            <p className="truncate font-semibold text-base sm:text-lg">
               {organizationName}
-            </h1>
+            </p>
           </div>
 
           <nav className="relative hidden items-center md:flex">
@@ -146,16 +167,18 @@ export function ExternalHeader({
                 {tab.name}
               </Link>
             ))}
-            <motion.span
-              animate={{
-                width: activeDimensions.width,
-                x: activeDimensions.left,
-                opacity: activeDimensions.opacity,
-              }}
-              className="absolute inset-y-0 my-auto h-7 rounded-xl bg-secondary"
-              initial={false}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            />
+            <LazyMotion features={domAnimation} strict>
+              <m.span
+                animate={{
+                  width: activeDimensions.width,
+                  x: activeDimensions.left,
+                  opacity: activeDimensions.opacity,
+                }}
+                className="absolute inset-y-0 my-auto h-7 rounded-xl bg-secondary"
+                initial={false}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
+            </LazyMotion>
           </nav>
         </div>
 
@@ -211,7 +234,12 @@ export function ExternalHeader({
                 {!isIdentified && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => authClient.signOut()}>
+                    <DropdownMenuItem
+                      onClick={async () => {
+                        await authClient.signOut();
+                        router.refresh();
+                      }}
+                    >
                       <Icon icon={Logout01Icon} size={16} />
                       <span>Logout</span>
                     </DropdownMenuItem>
@@ -226,22 +254,28 @@ export function ExternalHeader({
                 <span>Login</span>
               </Button>
 
-              <AuthDialog
-                onOpenChange={setAuthDialogOpen}
-                onSuccess={() => {
-                  toast.success("Welcome back!");
-                }}
-                open={authDialogOpen}
-              />
+              {(authDialogOpen || authDialogLoaded) && (
+                <AuthDialog
+                  callbackUrl={pathname}
+                  onOpenChange={setAuthDialogOpen}
+                  onSuccess={() => {
+                    toast.success("Welcome back!");
+                    router.refresh();
+                  }}
+                  open={authDialogOpen}
+                />
+              )}
             </>
           )}
 
-          <CreateFeedbackDialog
-            allowAnonymous={allowAnonymous}
-            onOpenChange={setCreateDialogOpen}
-            open={createDialogOpen}
-            organizationId={organizationId}
-          />
+          {(createDialogOpen || createDialogLoaded) && (
+            <CreateFeedbackDialog
+              allowAnonymous={allowAnonymous}
+              onOpenChange={setCreateDialogOpen}
+              open={createDialogOpen}
+              organizationId={organizationId}
+            />
+          )}
         </div>
       </div>
     </header>

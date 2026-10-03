@@ -1,40 +1,19 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "@userbubble/tailwind-config/theme";
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "./style-foundation.css";
 
-@source "../../../../packages/ui/src/*.{ts,tsx}";
-
-@custom-variant dark (&:where(.dark, .dark *));
-@custom-variant light (&:where(.light, .light *));
-@custom-variant auto (&:where(.auto, .auto *));
-
-@utility container {
-  margin-inline: auto;
-  padding-inline: 2rem;
-  @media (width >= --theme(--breakpoint-sm)) {
-    max-width: none;
-  }
-  @media (width >= 1400px) {
-    max-width: 1400px;
-  }
+@layer utilities {
+  /* biome-ignore lint/suspicious/noUnknownAtRules: Tailwind's supported utility entrypoint controls route source scanning. */
+  @tailwind utilities source(none);
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    letter-spacing: var(--tracking-normal);
-  }
-}
-
-/* Sidebar tokens now defined in @userbubble/tailwind-config/theme */
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
+/* Root/auth/error routes need only their own utilities. Product routes load product.css. */
+@source "./(auth)";
+@source "./layout.tsx";
+@source "./error.tsx";
+@source "./global-error.tsx";
+@source "./not-found.tsx";
+@source "../components/auth";
+@source "../components/errors";
+@source "../../../../packages/ui/src/{button,input,label,icon,card,double-card,dialog}.tsx";

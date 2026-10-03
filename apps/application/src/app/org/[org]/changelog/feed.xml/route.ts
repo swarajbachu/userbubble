@@ -1,4 +1,5 @@
-import { getChangelogEntries } from "@userbubble/db/queries";
+import { serverReads } from "@userbubble/api/management";
+import { getApplicationContext } from "~/lib/application-context";
 import { getOrganization } from "~/lib/get-organization";
 
 export async function GET(
@@ -9,10 +10,11 @@ export async function GET(
   const organization = await getOrganization(org);
 
   // Fetch published entries only
-  const entries = await getChangelogEntries(organization.id, {
-    published: true,
-    limit: 50, // RSS best practice: 50-100 items
-  });
+  const entries = await serverReads.publishedReleases(
+    await getApplicationContext(),
+    organization.id,
+    50
+  );
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const feedUrl = `${baseUrl}/org/${org}/changelog`;

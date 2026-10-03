@@ -65,7 +65,7 @@ export function PostActionBar({ postId, currentStatus }: PostActionBarProps) {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center">
-      <div className="pointer-events-auto flex items-center gap-2 rounded-full border bg-background/80 px-3 py-2 shadow-lg backdrop-blur-md">
+      <div className="pointer-events-auto flex items-center gap-2 rounded-xl bg-background/95 px-3 py-2 shadow-[0_2px_12px_rgb(0_0_0/0.1)] backdrop-blur-md">
         {showClose && (
           <Button
             disabled={updateStatus.isPending}

@@ -1,5 +1,4 @@
-import { permissions } from "@userbubble/db/queries";
-import { parseOrganizationSettings } from "@userbubble/db/schema";
+import { parseOrganizationSettings } from "@userbubble/validators/organization";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { getOrgContextWithMetadata } from "~/lib/get-org-context";
@@ -13,7 +12,7 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
   const { org } = await params;
   const { organization, member } = await getOrgContextWithMetadata(org);
 
-  if (!permissions.canManageSettings(member.role)) {
+  if (!["owner", "admin"].includes(member.role)) {
     notFound();
   }
 

@@ -1,5 +1,8 @@
 import { ArrowRight, BookOpen, Code, Smartphone } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function HomePage() {
   return (

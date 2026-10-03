@@ -44,7 +44,7 @@ export function EmbedChangelogDetail({
     <div className="p-5">
       {/* Back link */}
       <button
-        className="mb-3 flex items-center gap-1 text-muted-foreground text-xs transition-colors hover:text-foreground"
+        className="mb-3 flex h-8 items-center gap-1 rounded-md px-2 text-muted-foreground text-xs transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
         onClick={onBack}
         type="button"
       >
@@ -61,11 +61,11 @@ export function EmbedChangelogDetail({
         >
           <path d="m15 18-6-6 6-6" />
         </svg>
-        Back
+        All releases
       </button>
 
       {entry.coverImageUrl && (
-        <div className="relative mb-4 aspect-video overflow-hidden rounded-lg">
+        <div className="squircle relative mb-4 aspect-video overflow-hidden rounded-2xl">
           <Image
             alt={entry.title}
             className="object-cover"
@@ -106,7 +106,7 @@ export function EmbedChangelogDetail({
 
       <div
         className="prose prose-sm prose-zinc dark:prose-invert mt-4 max-w-none"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: Changelog descriptions are admin-authored HTML content
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Changelog HTML is sanitized by the shared release service
         dangerouslySetInnerHTML={{ __html: entry.description }}
       />
     </div>

@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { getOrganization } from "~/lib/get-organization";
-import { CreateRequestButton } from "./_components/create-request-button";
 import { FeedbackBoard } from "./_components/feedback-board";
 
 type FeedbackPageProps = {
@@ -15,12 +14,7 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
   const organization = await getOrganization(org);
 
   return (
-    <div className="w-full">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-bold text-2xl">Requests</h1>
-        <CreateRequestButton />
-      </div>
-
+    <section className="w-full">
       <Suspense
         fallback={
           <div className="space-y-1 p-2">
@@ -32,6 +26,6 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
       >
         <FeedbackBoard org={org} organizationId={organization.id} />
       </Suspense>
-    </div>
+    </section>
   );
 }

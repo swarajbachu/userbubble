@@ -4,14 +4,14 @@
   "description": "Userbubble JavaScript SDK for seamless user identification and authentication",
   "private": true,
   "type": "module",
-  "main": "./dist/sdk.js",
+  "main": "./dist/sdk.cjs",
   "module": "./dist/sdk.esm.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/sdk.esm.js",
-      "require": "./dist/sdk.js"
+      "require": "./dist/sdk.cjs"
     }
   },
   "files": [

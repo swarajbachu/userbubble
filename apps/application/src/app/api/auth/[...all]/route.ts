@@ -1,10 +1,11 @@
 import { toNextJsHandler } from "better-auth/next-js";
-import { auth } from "~/auth/server";
+import { applicationOrigin, auth } from "~/auth/server";
 
 const { GET: baseGet, POST: basePost } = toNextJsHandler(auth);
 
 // Exact origin matches
 const allowedOrigins = new Set([
+  applicationOrigin,
   "https://app.userbubble.com",
   "https://app.host.local",
 ]);
@@ -20,6 +21,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Credentials": "true",
+  Vary: "Origin",
 };
 
 function isOriginAllowed(origin: string): boolean {
@@ -70,15 +72,32 @@ function isEmbedAuthIdentify(req: Request): boolean {
   return url.pathname === EMBED_AUTH_IDENTIFY_PATH;
 }
 
+async function runAuthHandler(
+  handler: (req: Request) => Promise<Response>,
+  request: Request
+): Promise<Response> {
+  try {
+    const requestId = crypto.randomUUID();
+    request.headers.set("x-request-id", requestId);
+    const result = await handler(request);
+    const response = new Response(result.body, result);
+    response.headers.set("x-request-id", requestId);
+    return response;
+  } catch {
+    console.error("AUTH_TRANSPORT_FAILED");
+    return Response.json(
+      {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Authentication request failed",
+      },
+      { status: 500 }
+    );
+  }
+}
+
 function withCors(handler: (req: Request) => Promise<Response>) {
   return async (req: Request): Promise<Response> => {
-    const url = new URL(req.url);
-    console.log(
-      `[AUTH] ${req.method} ${url.pathname} | origin: ${req.headers.get("origin") ?? "(none)"}`
-    );
-    const start = Date.now();
-
-    // Embed-auth identify endpoint allows any origin (SDK runs on customer domains)
+    // Installation tokens authenticate SDK requests without ambient account cookies.
     if (isEmbedAuthIdentify(req)) {
       if (req.method === "OPTIONS") {
         return new Response(null, {
@@ -86,11 +105,7 @@ function withCors(handler: (req: Request) => Promise<Response>) {
           headers: embedAuthCorsHeaders,
         });
       }
-
-      const res = await handler(req);
-      console.log(
-        `[AUTH] ${url.pathname} completed in ${Date.now() - start}ms | status: ${res.status}`
-      );
+      const res = await runAuthHandler(handler, req);
       const response = new Response(res.body, res);
       for (const [key, value] of Object.entries(embedAuthCorsHeaders)) {
         response.headers.set(key, value);
@@ -99,42 +114,22 @@ function withCors(handler: (req: Request) => Promise<Response>) {
     }
 
     const origin = req.headers.get("origin") ?? "";
-
-    // Only validate origin for cross-origin requests
-    // Same-origin requests don't have an Origin header
     if (origin && !isOriginAllowed(origin)) {
-      console.log(`[AUTH] CORS blocked for origin: ${origin}`);
       return new Response("CORS not allowed", { status: 403 });
     }
-
     if (req.method === "OPTIONS") {
       return buildCorsResponse(origin, 204);
     }
 
-    try {
-      const res = await handler(req);
-      console.log(
-        `[AUTH] ${url.pathname} completed in ${Date.now() - start}ms | status: ${res.status}`
-      );
-
-      const response = new Response(res.body, res);
-
-      // Only add CORS headers for cross-origin requests
-      if (origin) {
-        for (const [key, value] of Object.entries(corsHeaders)) {
-          response.headers.set(key, value);
-        }
-        response.headers.set("Access-Control-Allow-Origin", origin);
+    const res = await runAuthHandler(handler, req);
+    const response = new Response(res.body, res);
+    if (origin) {
+      for (const [key, value] of Object.entries(corsHeaders)) {
+        response.headers.set(key, value);
       }
-
-      return response;
-    } catch (err) {
-      console.error(
-        `[AUTH] ${url.pathname} FAILED after ${Date.now() - start}ms:`,
-        err
-      );
-      throw err;
+      response.headers.set("Access-Control-Allow-Origin", origin);
     }
+    return response;
   };
 }
 

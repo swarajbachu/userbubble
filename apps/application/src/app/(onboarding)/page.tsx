@@ -11,8 +11,6 @@ export default async function HomePage() {
     return null; // Should never reach here if middleware is configured correctly
   }
 
-  console.log(session.user);
-
   // Check if user has organizations using Better Auth API
   const userOrgs = await auth.api.listOrganizations({
     headers: await headers(),

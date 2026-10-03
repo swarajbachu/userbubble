@@ -3,38 +3,38 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Organization } from "@userbubble/db/schema";
-import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
 import { Input } from "@userbubble/ui/input";
+import type { OrganizationSettings } from "@userbubble/validators/organization";
 import Image from "next/image";
 import { toast } from "sonner";
-import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
 
 type StepBrandingProps = {
-  organization: Organization;
+  organization: Omit<Organization, "secretKey">;
+  settings: OrganizationSettings;
   onDone: () => void;
 };
 
-export function StepBranding({ organization, onDone }: StepBrandingProps) {
+export function StepBranding({
+  organization,
+  settings,
+  onDone,
+}: StepBrandingProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const settings = parseOrganizationSettings(organization.metadata);
 
-  const updateOrgMutation = useMutation({
-    mutationFn: async (data: { name?: string; logo?: string }) =>
-      authClient.organization.update({
-        organizationId: organization.id,
-        data,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries();
-    },
-    onError: () => {
-      toast.error("Failed to update organization");
-    },
-  });
+  const updateOrgMutation = useMutation(
+    trpc.organization.update.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
+      onError: () => {
+        toast.error("Failed to update organization");
+      },
+    })
+  );
 
   const updateSettingsMutation = useMutation(
     trpc.settings.updateSettings.mutationOptions({
@@ -59,8 +59,9 @@ export function StepBranding({ organization, onDone }: StepBrandingProps) {
         value.logo !== (organization.logo ?? "")
       ) {
         await updateOrgMutation.mutateAsync({
+          organizationId: organization.id,
           name: value.name,
-          logo: value.logo || undefined,
+          logo: value.logo || null,
         });
       }
 
@@ -161,7 +162,7 @@ export function StepBranding({ organization, onDone }: StepBrandingProps) {
               </FieldDescription>
               <div className="flex items-center gap-2">
                 <Input
-                  className="h-10 w-20 cursor-pointer"
+                  className="w-20 cursor-pointer"
                   onChange={(e) => field.handleChange(e.target.value)}
                   type="color"
                   value={field.state.value}

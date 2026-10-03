@@ -2,7 +2,7 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   AiBeautifyIcon,
-  CodeCircleDuotoneRounded,
+  CodeCircleIcon,
   Cursor01Icon,
   FingerPrintCheckIcon,
   Loading03Icon,
@@ -36,7 +36,7 @@ export const AgenticIntelligence = () => (
           <div className="flex items-center gap-2">
             <HugeiconsIcon
               color="currentColor"
-              icon={CodeCircleDuotoneRounded}
+              icon={CodeCircleIcon}
               size={24}
               strokeWidth={1.5}
             />

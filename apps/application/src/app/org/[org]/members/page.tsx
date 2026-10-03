@@ -1,10 +1,5 @@
-import {
-  invitationQueries,
-  memberQueries,
-  permissions,
-} from "@userbubble/db/queries";
-import { Suspense } from "react";
 import { getOrgContext } from "~/lib/get-org-context";
+import { getQueryClient, trpc } from "~/trpc/server";
 import { InviteMemberButton } from "./_components/invite-member-button";
 import { MembersTable } from "./_components/members-table";
 
@@ -16,18 +11,31 @@ export default async function MembersPage({ params }: MembersPageProps) {
   const { org } = await params;
   const { organization, session, member } = await getOrgContext(org);
 
+  const queryClient = getQueryClient();
+  const role = await queryClient.fetchQuery(
+    trpc.settings.getMyRole.queryOptions({ organizationId: organization.id })
+  );
+  const canManage = role === "owner" || role === "admin";
   const [members, invitations] = await Promise.all([
-    memberQueries.listByOrganization(organization.id),
-    invitationQueries.listByOrganization(organization.id),
+    queryClient.fetchQuery(
+      trpc.settings.listMembers.queryOptions({
+        organizationId: organization.id,
+      })
+    ),
+    canManage
+      ? queryClient.fetchQuery(
+          trpc.organization.listInvitations.queryOptions({
+            organizationId: organization.id,
+          })
+        )
+      : Promise.resolve([]),
   ]);
-
-  const canManage = permissions.canManageMembers(member.role);
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-5 flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-3xl">Members</h1>
+          <h1 className="font-semibold text-lg">Members</h1>
           <p className="text-muted-foreground text-sm">
             View and manage your team members.
           </p>
@@ -35,16 +43,14 @@ export default async function MembersPage({ params }: MembersPageProps) {
         {canManage && <InviteMemberButton organizationId={organization.id} />}
       </div>
 
-      <Suspense fallback={<div>Loading...</div>}>
-        <MembersTable
-          canManage={canManage}
-          currentUserId={session.user.id}
-          currentUserRole={member.role}
-          invitations={invitations}
-          members={members}
-          organizationId={organization.id}
-        />
-      </Suspense>
+      <MembersTable
+        canManage={canManage}
+        currentUserId={session.user.id}
+        currentUserRole={member.role}
+        invitations={invitations}
+        members={members}
+        organizationId={organization.id}
+      />
     </div>
   );
 }

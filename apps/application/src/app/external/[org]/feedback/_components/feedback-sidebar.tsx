@@ -117,7 +117,7 @@ export function FeedbackSidebar({
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-6 md:w-64">
-      <div className="rounded-xl border bg-card p-6 shadow-sm">
+      <div className="rounded-xl border bg-card p-6">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2 text-foreground">
             <HugeiconsIcon
@@ -138,7 +138,7 @@ export function FeedbackSidebar({
         </div>
       </div>
 
-      <div className="rounded-xl border bg-card p-6 shadow-sm">
+      <div className="rounded-xl border bg-card p-6">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2 text-foreground">
             <HugeiconsIcon

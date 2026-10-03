@@ -1,4 +1,5 @@
 import type { OnboardingState } from "@userbubble/db/schema";
+import { parseOrganizationSettings } from "@userbubble/validators/organization";
 import { getOrgContextWithMetadata } from "~/lib/get-org-context";
 import { GettingStartedView } from "./_components/getting-started-view";
 
@@ -20,6 +21,7 @@ export default async function GettingStartedPage({
       onboarding={onboarding}
       organization={organization}
       orgSlug={org}
+      settings={parseOrganizationSettings(organization.metadata)}
     />
   );
 }

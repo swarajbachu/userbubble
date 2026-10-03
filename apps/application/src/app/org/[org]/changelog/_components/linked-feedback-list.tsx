@@ -6,7 +6,7 @@ import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
 
 type LinkedFeedbackListProps = {
-  feedback: Array<{ id: string; title: string }>;
+  feedback: ReadonlyArray<{ id: string; title: string }>;
   org: string;
 };
 

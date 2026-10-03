@@ -30,11 +30,11 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
       httpBatchLink({
         transformer: superjson,
         url: `${getBaseUrl()}/api/trpc`,
-        headers() {
+        async headers() {
           const headers = new Map<string, string>();
           headers.set("x-trpc-source", "expo-react");
 
-          const cookies = authClient.getCookie();
+          const cookies = await authClient.getCookie();
           if (cookies) {
             headers.set("Cookie", cookies);
           }

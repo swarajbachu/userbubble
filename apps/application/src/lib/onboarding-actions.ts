@@ -1,33 +1,29 @@
 "use server";
-
-import { organizationQueries } from "@userbubble/db/queries";
-import {
-  defaultOnboardingState,
-  type OnboardingState,
-} from "@userbubble/db/schema";
+import { appRouter, createTRPCContext } from "@userbubble/api";
+import type { OnboardingState } from "@userbubble/db/schema";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { auth } from "~/auth/server";
 
+async function caller() {
+  return appRouter.createCaller(
+    await createTRPCContext({ headers: await headers(), auth })
+  );
+}
 export async function initializeOnboarding(orgId: string) {
-  await organizationQueries.update(orgId, {
-    onboarding: defaultOnboardingState,
+  return (await caller()).organization.initializeOnboarding({
+    organizationId: orgId,
   });
 }
-
 export async function toggleOnboardingStep(
   orgId: string,
   orgSlug: string,
   key: keyof OnboardingState,
   value: boolean
 ) {
-  const org = await organizationQueries.findById(orgId);
-  if (!org) {
-    return;
-  }
-
-  const current = (org.onboarding as OnboardingState) ?? defaultOnboardingState;
-  await organizationQueries.update(orgId, {
-    onboarding: { ...current, [key]: value },
+  await (await caller()).organization.updateOnboarding({
+    organizationId: orgId,
+    steps: { [key]: value },
   });
-
   revalidatePath(`/org/${orgSlug}/getting-started`);
 }

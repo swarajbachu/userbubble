@@ -1,4 +1,3 @@
-import { permissions } from "@userbubble/db/queries";
 import { redirect } from "next/navigation";
 import { getOrgContext } from "~/lib/get-org-context";
 import { ChangelogEditor } from "../_components/changelog-editor";
@@ -13,7 +12,7 @@ export default async function CreateChangelogPage({
   const { org } = await params;
   const { organization, member } = await getOrgContext(org);
 
-  if (!permissions.isAdmin(member.role)) {
+  if (!["owner", "admin"].includes(member.role)) {
     redirect(`/org/${org}/changelog`);
   }
 

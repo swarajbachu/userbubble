@@ -4,20 +4,33 @@ import {
   RoadIcon,
   TaskDaily01Icon,
 } from "@hugeicons-pro/core-duotone-rounded";
-import { parseOrganizationSettings } from "@userbubble/db/schema";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@userbubble/ui/card";
+import { parseOrganizationSettings } from "@userbubble/validators/organization";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getPublicOrganization } from "~/lib/get-organization";
+import { publicUrl } from "~/lib/public-content";
 
 type ExternalHomePageProps = {
   params: Promise<{ org: string }>;
 };
 
+export async function generateMetadata({
+  params,
+}: ExternalHomePageProps): Promise<Metadata> {
+  const { org } = await params;
+  const organization = await getPublicOrganization(org);
+  return {
+    title: `${organization.name} · Feedback and updates`,
+    description: `Share ideas, explore the roadmap, and read the latest releases from ${organization.name}.`,
+    alternates: { canonical: publicUrl(org) },
+  };
+}
 export default async function ExternalHomePage({
   params,
 }: ExternalHomePageProps) {
@@ -33,19 +46,19 @@ export default async function ExternalHomePage({
     {
       title: "Feedback",
       description: "Share your ideas and vote on features you'd like to see",
-      href: `/${org}/feedback`,
+      href: publicUrl(org, "/feedback"),
       icon: Message01Icon,
     },
     {
       title: "Roadmap",
       description: "See what we're working on and what's coming next",
-      href: `/${org}/roadmap`,
+      href: publicUrl(org, "/roadmap"),
       icon: RoadIcon,
     },
     {
       title: "Changelog",
       description: "Stay updated with our latest releases and improvements",
-      href: `/${org}/changelog`,
+      href: publicUrl(org, "/changelog"),
       icon: TaskDaily01Icon,
     },
   ];
@@ -70,7 +83,7 @@ export default async function ExternalHomePage({
       <div className="grid gap-6 md:grid-cols-3">
         {features.map((feature) => (
           <Link href={feature.href} key={feature.href}>
-            <Card className="h-full transition-colors hover:bg-accent">
+            <Card className="squircle h-full rounded-2xl transition-colors hover:bg-accent">
               <CardHeader>
                 <HugeiconsIcon
                   color="var(--brand-primary)"

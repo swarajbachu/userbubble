@@ -1,22 +1,4 @@
 import type { ReactNode } from "react";
-
-type ChangelogLayoutProps = {
-  children: ReactNode;
-  params: Promise<{ org: string }>;
-};
-
-export default async function ChangelogLayout({
-  children,
-}: ChangelogLayoutProps) {
-  return (
-    <>
-      <link
-        href="/changelog/feed.xml"
-        rel="alternate"
-        title="Changelog RSS Feed"
-        type="application/rss+xml"
-      />
-      {children}
-    </>
-  );
+export default function ChangelogLayout({ children }: { children: ReactNode }) {
+  return children;
 }

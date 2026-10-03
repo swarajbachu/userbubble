@@ -9,6 +9,11 @@ export async function identify(
   user: UserbubbleUser,
   config: UserbubbleCoreConfig
 ): Promise<IdentifyResponse> {
+  if (!config.apiKey?.trim()) {
+    throw new Error(
+      "[userbubble] Configure an SDK installation API key before identifying a user"
+    );
+  }
   const baseUrl = config.baseUrl ?? DEFAULT_BASE_URL;
   const url = `${baseUrl}/api/auth/embed-auth/identify`;
 

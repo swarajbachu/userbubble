@@ -1,0 +1,1 @@
+ALTER TABLE "feedback_post" ADD COLUMN "revision" integer DEFAULT 1 NOT NULL;

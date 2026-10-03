@@ -18,26 +18,16 @@ export async function createStorageAdapter(
     return config.customStorage;
   }
 
-  if (storageType === "expo" || (storageType === "auto" && isExpoAvailable())) {
-    const { ExpoStorage } = await import("./expo-storage");
-    return new ExpoStorage();
+  if (storageType === "expo" || storageType === "auto") {
+    try {
+      const { ExpoStorage } = await import("./expo-storage");
+      return new ExpoStorage();
+    } catch (error) {
+      if (storageType === "expo") {
+        throw error;
+      }
+    }
   }
-
-  if (storageType === "async-storage" || storageType === "auto") {
-    const { AsyncStorageAdapter } = await import("./async-storage");
-    return new AsyncStorageAdapter();
-  }
-
-  throw new Error(
-    "[userbubble] No storage available. Install expo-secure-store or @react-native-async-storage/async-storage"
-  );
-}
-
-function isExpoAvailable(): boolean {
-  try {
-    require("expo-constants");
-    return true;
-  } catch {
-    return false;
-  }
+  const { AsyncStorageAdapter } = await import("./async-storage");
+  return new AsyncStorageAdapter();
 }

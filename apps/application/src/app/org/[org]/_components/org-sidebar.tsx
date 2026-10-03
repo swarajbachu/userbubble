@@ -96,13 +96,8 @@ const ONBOARDING_KEYS: (keyof OnboardingState)[] = [
   "shareBoard",
 ];
 
-const ACTIVE_STYLES = [
-  "relative bg-[#F9F9FA]",
-  "shadow-[0px_11px_4px_rgba(7,7,8,0.01),0px_6px_4px_rgba(7,7,8,0.02),0px_3px_3px_rgba(7,7,8,0.04),0px_1px_1px_rgba(7,7,8,0.05)]",
-  "before:absolute before:inset-0 before:rounded-md before:border before:border-white/5 before:content-['']",
-  "after:absolute after:inset-0 after:rounded-md after:bg-[radial-gradient(at_top,rgba(255,255,255,0.05)_5%,rgba(255,255,255,0)_100%)] after:shadow-[inset_0px_-2px_0px_0px_rgba(7,7,8,0.06)] after:content-['']",
-  "dark:bg-[#2A2A2A] dark:shadow-md dark:after:shadow-[inset_0px_-2px_0px_0px_rgba(7,7,8,0.3)]",
-];
+const ACTIVE_STYLES =
+  "bg-sidebar-accent text-sidebar-accent-foreground font-medium";
 
 export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
   const pathname = usePathname();
@@ -157,7 +152,7 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
         <SidebarHeader>
           <div className="h-10 animate-pulse rounded bg-muted" />
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent aria-label="Workspace" role="navigation">
           <SidebarGroup>
             <div className="space-y-2">
               {[1, 2, 3].map((i) => (
@@ -176,12 +171,12 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
         <OrgSwitcher currentOrg={org} organizations={organizations || []} />
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent aria-label="Workspace" role="navigation">
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-2">
+            <SidebarMenu className="gap-1">
               {MAIN_NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
@@ -190,21 +185,17 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
                       isActive(item.href) && ACTIVE_STYLES
                     )}
                     isActive={isActive(item.href)}
+                    render={<Link href={`/org/${org}${item.href}`} />}
                   >
-                    <Link
-                      className="relative z-10 flex w-full flex-row items-center justify-between gap-4"
-                      href={`/org/${org}${item.href}`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Icon icon={item.icon} size={20} strokeWidth={0} />
-                        <span>{item.title}</span>
-                      </div>
-                      {item.badge && (
-                        <span className="ml-auto text-muted-foreground text-xs">
-                          {item.badge}
-                        </span>
-                      )}
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Icon icon={item.icon} size={16} />
+                      <span>{item.title}</span>
+                    </div>
+                    {item.badge && (
+                      <span className="ml-auto text-muted-foreground text-xs">
+                        {item.badge}
+                      </span>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -256,14 +247,10 @@ export function OrgSidebar({ org, onboarding }: OrgSidebarProps) {
                       isActive(item.href) && ACTIVE_STYLES
                     )}
                     isActive={isActive(item.href)}
+                    render={<Link href={`/org/${org}${item.href}`} />}
                   >
-                    <Link
-                      className="relative z-10 flex w-full flex-row items-center gap-2"
-                      href={`/org/${org}${item.href}`}
-                    >
-                      <Icon icon={item.icon} size={20} strokeWidth={0} />
-                      <span>{item.title}</span>
-                    </Link>
+                    <Icon icon={item.icon} size={16} />
+                    <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

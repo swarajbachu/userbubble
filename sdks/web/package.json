@@ -1,7 +1,7 @@
 {
   "name": "@userbubble/web",
   "version": "0.1.0",
-  "description": "Userbubble Web SDK — feedback widget for any website or React app",
+  "description": "Userbubble Web SDK \u2014 feedback widget for any website or React app",
   "type": "module",
   "sideEffects": false,
   "repository": {
@@ -16,19 +16,19 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.esm.js",
-      "require": "./dist/index.js"
+      "require": "./dist/index.cjs"
     },
     "./react": {
       "types": "./dist/react.d.ts",
       "import": "./dist/react.esm.js",
-      "require": "./dist/react.js"
+      "require": "./dist/react.cjs"
     }
   },
   "files": [

@@ -1,9 +1,8 @@
-import { and, desc, eq, exists, inArray, or, type SQL, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, or, type SQL, sql } from "drizzle-orm";
 import { db } from "../client";
 import { member } from "../org/organization.sql";
 import { user } from "../user/user.sql";
 import {
-  type AiTriageStatus,
   type FeedbackCategory,
   type FeedbackPost,
   type FeedbackStatus,
@@ -24,7 +23,8 @@ export async function getFeedbackPosts(
     status?: FeedbackStatus[];
     category?: FeedbackCategory;
     sortBy?: "votes" | "recent";
-    userId?: string; // For vote lookup AND privacy check
+    userId?: string; // For vote lookup and ownership
+    includeOrganizationPrivate?: boolean; // Decided by the application authorization policy
   }
 ) {
   // Build all conditions upfront
@@ -39,20 +39,9 @@ export async function getFeedbackPosts(
       or(
         eq(feedbackPost.isPublic, true),
         eq(feedbackPost.authorId, filters.userId),
-        and(
-          eq(feedbackPost.isPublic, false),
-          exists(
-            db
-              .select()
-              .from(member)
-              .where(
-                and(
-                  eq(member.userId, filters.userId),
-                  eq(member.organizationId, organizationId)
-                )
-              )
-          )
-        )
+        filters.includeOrganizationPrivate
+          ? eq(feedbackPost.isPublic, false)
+          : undefined
       )
     );
   } else {
@@ -98,7 +87,10 @@ export async function getFeedbackPosts(
       : query.orderBy(desc(feedbackPost.createdAt));
 
   // CRITICAL: Execute query with await
-  return await sortedQuery;
+  return (await sortedQuery).map((row) => ({
+    ...row,
+    post: { ...row.post, authorEmail: null },
+  }));
 }
 
 /**
@@ -109,14 +101,17 @@ export async function getFeedbackPost(postId: string) {
   const result = await db
     .select({
       post: feedbackPost,
-      author: user,
+      author: { id: user.id, name: user.name, image: user.image },
     })
     .from(feedbackPost)
     .leftJoin(user, eq(feedbackPost.authorId, user.id))
     .where(eq(feedbackPost.id, postId))
     .limit(1);
 
-  return result[0];
+  const item = result[0];
+  return item
+    ? { ...item, post: { ...item.post, authorEmail: null } }
+    : undefined;
 }
 
 /**
@@ -132,12 +127,20 @@ export async function createFeedbackPost(post: NewFeedbackPost) {
  */
 export async function updateFeedbackPost(
   postId: string,
-  updates: Partial<FeedbackPost>
+  updates: Partial<FeedbackPost>,
+  expectedRevision?: number
 ) {
   const [updated] = await db
     .update(feedbackPost)
-    .set(updates)
-    .where(eq(feedbackPost.id, postId))
+    .set({ ...updates, revision: sql`${feedbackPost.revision} + 1` })
+    .where(
+      and(
+        eq(feedbackPost.id, postId),
+        expectedRevision === undefined
+          ? undefined
+          : eq(feedbackPost.revision, expectedRevision)
+      )
+    )
     .returning();
   return updated;
 }
@@ -257,7 +260,7 @@ export async function getPostComments(postId: string, organizationId: string) {
   return db
     .select({
       comment: feedbackComment,
-      author: user,
+      author: { id: user.id, name: user.name, image: user.image },
       // Check if comment author is a member of the organization
       isTeamMember: sql<boolean>`${member.id} IS NOT NULL`,
     })
@@ -292,29 +295,63 @@ export async function deleteComment(commentId: string) {
   await db.delete(feedbackComment).where(eq(feedbackComment.id, commentId));
 }
 
-/**
- * Update AI triage status on a feedback post
- */
-export async function updateAiTriageStatus(
-  postId: string,
-  status: AiTriageStatus
-) {
-  const [updated] = await db
-    .update(feedbackPost)
-    .set({ aiTriageStatus: status })
-    .where(eq(feedbackPost.id, postId))
-    .returning();
-  return updated;
-}
+export const getComment = (id: string) =>
+  db.query.feedbackComment.findFirst({ where: eq(feedbackComment.id, id) });
 
-/**
- * Increment AI triage count on a feedback post
- */
-export async function incrementTriageCount(postId: string) {
-  await db
-    .update(feedbackPost)
-    .set({
-      aiTriageCount: sql`${feedbackPost.aiTriageCount} + 1`,
+/** Stable keyset pagination for authenticated workspace operations. */
+export async function searchFeedback(
+  organizationId: string,
+  filters: {
+    query?: string;
+    status?: FeedbackStatus[];
+    category?: FeedbackCategory;
+    updatedSince?: Date;
+    cursor?: { updatedAt: string; id: string };
+    limit: number;
+  }
+) {
+  const conditions: (SQL | undefined)[] = [
+    eq(feedbackPost.organizationId, organizationId),
+  ];
+  if (filters.query) {
+    const pattern = `%${filters.query.replaceAll(/[%_\\]/g, "\\$&")}%`;
+    conditions.push(
+      sql`(${feedbackPost.title} ILIKE ${pattern} OR ${feedbackPost.description} ILIKE ${pattern})`
+    );
+  }
+  if (filters.status?.length) {
+    conditions.push(inArray(feedbackPost.status, filters.status));
+  }
+  if (filters.category) {
+    conditions.push(eq(feedbackPost.category, filters.category));
+  }
+  if (filters.updatedSince) {
+    conditions.push(sql`${feedbackPost.updatedAt} >= ${filters.updatedSince}`);
+  }
+  if (filters.cursor) {
+    conditions.push(
+      sql`(${feedbackPost.updatedAt}, ${feedbackPost.id}) < (${filters.cursor.updatedAt}::timestamp, ${filters.cursor.id})`
+    );
+  }
+  const rows = await db
+    .select({
+      cursorTimestamp: sql<string>`to_char(${feedbackPost.updatedAt}, 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`,
+      post: feedbackPost,
+      author: { id: user.id, name: user.name, image: user.image },
     })
-    .where(eq(feedbackPost.id, postId));
+    .from(feedbackPost)
+    .leftJoin(user, eq(user.id, feedbackPost.authorId))
+    .where(and(...conditions))
+    .orderBy(desc(feedbackPost.updatedAt), desc(feedbackPost.id))
+    .limit(filters.limit + 1);
+  const page = rows.slice(0, filters.limit);
+  const last = page.at(-1);
+  const items = page.map(({ cursorTimestamp: _cursor, ...item }) => item);
+  return {
+    items,
+    nextCursor:
+      rows.length > filters.limit && last
+        ? { updatedAt: last.cursorTimestamp, id: last.post.id }
+        : null,
+  };
 }

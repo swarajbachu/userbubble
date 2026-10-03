@@ -1,12 +1,10 @@
 import { cn } from "@userbubble/ui";
-import { ThemeProvider } from "@userbubble/ui/theme";
+import { ThemeProvider } from "@userbubble/ui/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { env } from "~/env";
-import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/styles.css";
 
@@ -40,11 +38,8 @@ export const viewport: Viewport = {
   ],
 };
 
-const geistSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
 const geistMono = Geist_Mono({
+  preload: false,
   subsets: ["latin"],
   variable: "--font-geist-mono",
 });
@@ -69,15 +64,12 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       <body
         className={cn(
           "min-h-screen bg-background font-sans text-foreground antialiased",
-          geistSans.variable,
           geistMono.variable
         )}
       >
         <Analytics />
         <ThemeProvider>
-          <TRPCReactProvider>
-            <NuqsAdapter>{props.children}</NuqsAdapter>
-          </TRPCReactProvider>
+          {props.children}
           {/* <div className="absolute right-4 bottom-4">
             <ThemeToggle />
           </div> */}

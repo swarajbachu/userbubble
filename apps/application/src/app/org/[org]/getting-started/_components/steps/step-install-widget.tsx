@@ -76,7 +76,7 @@ export function StepInstallWidget({ onDone, apiKey }: StepInstallWidgetProps) {
           className={cn(
             "flex-1 rounded-md px-3 py-1.5 font-medium text-sm transition-colors",
             activeTab === "script"
-              ? "bg-background text-foreground shadow-sm"
+              ? "bg-background text-foreground"
               : "text-muted-foreground hover:text-foreground"
           )}
           onClick={() => setActiveTab("script")}
@@ -88,7 +88,7 @@ export function StepInstallWidget({ onDone, apiKey }: StepInstallWidgetProps) {
           className={cn(
             "flex-1 rounded-md px-3 py-1.5 font-medium text-sm transition-colors",
             activeTab === "react"
-              ? "bg-background text-foreground shadow-sm"
+              ? "bg-background text-foreground"
               : "text-muted-foreground hover:text-foreground"
           )}
           onClick={() => setActiveTab("react")}

@@ -1,0 +1,726 @@
+{
+  "scope": "Application source call-site inventory. This detects declared tRPC, Better Auth and server-action paths; it does not prove behavior, authorization, dynamic-call coverage or visual completion.",
+  "operations": [
+    {
+      "id": "account.getProfile",
+      "access": "authenticated",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": ["apps/application/src/app/profile/page.tsx"],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "account.updateProfile",
+      "access": "authenticated",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/(onboarding)/complete/page.tsx",
+        "apps/application/src/app/profile/profile-form.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "activity.list",
+      "access": "member",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "apiKey.create",
+      "access": "authenticated",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/getting-started/_components/steps/step-api-key.tsx",
+        "apps/application/src/app/org/[org]/settings/_components/tabs/api-keys-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "apiKey.delete",
+      "access": "authenticated",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/settings/_components/tabs/api-keys-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "apiKey.list",
+      "access": "authenticated",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/getting-started/_components/steps/step-api-key.tsx",
+        "apps/application/src/app/org/[org]/settings/_components/tabs/api-keys-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "apiKey.toggleActive",
+      "access": "authenticated",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/settings/_components/tabs/api-keys-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "apiKey.update",
+      "access": "authenticated",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "changelog.create",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/changelog/_components/use-changelog-mutations.ts"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "changelog.delete",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/changelog/_components/use-changelog-mutations.ts"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "changelog.getAll",
+      "access": "public",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/embed/[org]/changelog/_components/embed-changelog-list.tsx",
+        "apps/application/src/app/org/[org]/changelog/_components/changelog-board.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "changelog.getById",
+      "access": "public",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/embed/[org]/changelog/_components/embed-changelog-detail.tsx",
+        "apps/application/src/app/org/[org]/changelog/[id]/edit/page.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "changelog.linkFeedback",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "changelog.publish",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/changelog/_components/use-changelog-mutations.ts"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "changelog.unlinkFeedback",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "changelog.update",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/changelog/_components/use-changelog-mutations.ts"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "connection.list",
+      "access": "authenticated",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/settings/_components/tabs/integrations-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "connection.listOAuth",
+      "access": "authenticated",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/settings/_components/tabs/integrations-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "connection.revoke",
+      "access": "authenticated",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/settings/_components/tabs/integrations-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "connection.revokeOAuth",
+      "access": "authenticated",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/settings/_components/tabs/integrations-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.create",
+      "access": "public",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/embed/[org]/feedback/_components/embed-feedback-form.tsx",
+        "apps/application/src/app/external/[org]/feedback/_components/create-feedback-dialog.tsx",
+        "apps/application/src/app/org/[org]/feedback/_components/create-request-dialog.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.createComment",
+      "access": "public",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/comment-form.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.delete",
+      "access": "identified",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/post-actions.tsx",
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/post-sidebar.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.deleteComment",
+      "access": "identified",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/comment-item.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.getAll",
+      "access": "public",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/embed/[org]/roadmap/_components/embed-roadmap-list.tsx",
+        "apps/application/src/app/external/[org]/feedback/_components/feedback-filters.tsx",
+        "apps/application/src/app/external/[org]/feedback/page.tsx",
+        "apps/application/src/app/external/[org]/roadmap/page.tsx",
+        "apps/application/src/app/org/[org]/changelog/_components/changelog-editor.tsx",
+        "apps/application/src/app/org/[org]/changelog/_components/feedback-selector.tsx",
+        "apps/application/src/app/org/[org]/feedback/_components/feedback-board.tsx",
+        "apps/application/src/app/org/[org]/roadmap/_components/roadmap-board.tsx",
+        "apps/application/src/components/feedback/feedback-board.tsx",
+        "apps/application/src/components/roadmap/roadmap-board.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.getById",
+      "access": "public",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.getComments",
+      "access": "public",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.search",
+      "access": "member",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.update",
+      "access": "identified",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/category-editor.tsx",
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/post-action-bar.tsx",
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/post-main-content.tsx",
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/status-editor.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.updateStatus",
+      "access": "member",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/roadmap/_components/roadmap-board.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "feedback.vote",
+      "access": "public",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/vote-section.tsx",
+        "apps/application/src/app/org/[org]/feedback/_components/post-card.tsx",
+        "apps/application/src/app/org/[org]/roadmap/_components/roadmap-card.tsx",
+        "apps/application/src/components/feedback/post-card.tsx",
+        "apps/application/src/components/roadmap/roadmap-card.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.cancelInvitation",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/members/_components/members-table.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.checkSlug",
+      "access": "authenticated",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/_components/onboarding/step-subdomain.tsx",
+        "apps/application/src/app/org/[org]/_components/create-org-dialog.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.create",
+      "access": "authenticated",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/_components/onboarding/wizard-context.tsx",
+        "apps/application/src/app/org/[org]/_components/create-org-dialog.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.get",
+      "access": "member",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.initializeOnboarding",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": ["apps/application/src/lib/onboarding-actions.ts"],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.invite",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/members/_components/invite-member-dialog.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.list",
+      "access": "authenticated",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/connect/workspace/page.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.listInvitations",
+      "access": "admin",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/members/page.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.update",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/getting-started/_components/steps/step-branding.tsx",
+        "apps/application/src/app/org/[org]/settings/_components/tabs/branding-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "organization.updateOnboarding",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": ["apps/application/src/lib/onboarding-actions.ts"],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "reference.add",
+      "access": "member",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/implementation-links.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "reference.delete",
+      "access": "member",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/implementation-links.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "reference.list",
+      "access": "member",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/feedback/[postId]/_components/implementation-links.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "settings.deleteOrganization",
+      "access": "member",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/settings/_components/tabs/data-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "settings.getMyRole",
+      "access": "member",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/members/page.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "settings.listMembers",
+      "access": "member",
+      "readOnly": true,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/members/page.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "settings.removeMember",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": true,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/members/_components/member-actions.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "settings.updateMemberRole",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/members/_components/member-actions.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    },
+    {
+      "id": "settings.updateSettings",
+      "access": "admin",
+      "readOnly": false,
+      "destructive": false,
+      "outputValidated": true,
+      "effectInput": true,
+      "dashboardSources": [
+        "apps/application/src/app/org/[org]/getting-started/_components/steps/step-anonymous-submissions.tsx",
+        "apps/application/src/app/org/[org]/getting-started/_components/steps/step-branding.tsx",
+        "apps/application/src/app/org/[org]/settings/_components/tabs/branding-tab.tsx",
+        "apps/application/src/app/org/[org]/settings/_components/tabs/changelog-tab.tsx",
+        "apps/application/src/app/org/[org]/settings/_components/tabs/domain-tab.tsx",
+        "apps/application/src/app/org/[org]/settings/_components/tabs/feedback-tab.tsx"
+      ],
+      "verification": "Behavior and cross-interface evidence must be reviewed separately; catalog presence is not acceptance coverage."
+    }
+  ],
+  "interactiveAndSessionReads": [
+    {
+      "id": "approval.get",
+      "reason": "Interactive agent-connection approval; deliberately cannot be approved by an agent itself.",
+      "sources": ["apps/application/src/app/connect/approve/page.tsx"]
+    },
+    {
+      "id": "approval.respond",
+      "reason": "Interactive user authorization ceremony; not a delegable product action.",
+      "sources": ["apps/application/src/app/connect/approve/page.tsx"]
+    },
+    {
+      "id": "auth.getSession",
+      "reason": "Current transport session projection, not a product mutation.",
+      "sources": [
+        "apps/application/src/app/embed/_components/embed-user-header.tsx"
+      ]
+    }
+  ],
+  "directAuthCalls": [
+    {
+      "id": "embedAuthSession",
+      "classification": "Existing SDK authentication ceremony",
+      "sources": ["apps/application/src/app/api/embed-exchange/route.ts"]
+    },
+    {
+      "id": "getAgentConfiguration",
+      "classification": "Agent protocol capability discovery",
+      "sources": [
+        "apps/application/src/app/.well-known/agent-configuration/route.ts"
+      ]
+    },
+    {
+      "id": "getSession",
+      "classification": "Current transport session projection",
+      "sources": [
+        "apps/application/src/app/api/v2/operations/[operation]/route.ts",
+        "apps/application/src/app/org/[org]/_components/org-sidebar.tsx",
+        "apps/application/src/auth/server.ts",
+        "apps/application/src/proxy.ts"
+      ]
+    },
+    {
+      "id": "listOrganizations",
+      "classification": "organization.list",
+      "sources": ["apps/application/src/app/(onboarding)/page.tsx"]
+    },
+    {
+      "id": "organization.list",
+      "classification": "organization.list",
+      "sources": [
+        "apps/application/src/app/org/[org]/_components/org-sidebar.tsx"
+      ]
+    },
+    {
+      "id": "organization.setActive",
+      "classification": "Current dashboard workspace selection",
+      "sources": ["apps/application/src/app/connect/workspace/page.tsx"]
+    },
+    {
+      "id": "setActiveOrganization",
+      "classification": "Current dashboard workspace selection",
+      "sources": ["apps/application/src/app/org/[org]/layout.tsx"]
+    },
+    {
+      "id": "signIn.email",
+      "classification": "Interactive sign-in",
+      "sources": ["apps/application/src/components/auth/sign-in-form.tsx"]
+    },
+    {
+      "id": "signIn.social",
+      "classification": "Interactive OAuth sign-in",
+      "sources": [
+        "apps/application/src/components/auth/sign-in-form.tsx",
+        "apps/application/src/components/auth/sign-up-form.tsx"
+      ]
+    },
+    {
+      "id": "signOut",
+      "classification": "Interactive session termination",
+      "sources": [
+        "apps/application/src/app/external/_components/external-header.tsx",
+        "apps/application/src/app/org/[org]/_components/user-profile-menu.tsx"
+      ]
+    },
+    {
+      "id": "signUp.email",
+      "classification": "Interactive account registration",
+      "sources": ["apps/application/src/components/auth/sign-up-form.tsx"]
+    },
+    {
+      "id": "useActiveOrganization",
+      "classification": "Current dashboard workspace selection",
+      "sources": [
+        "apps/application/src/app/connect/consent/page.tsx",
+        "apps/application/src/app/org/[org]/changelog/_components/changelog-board.tsx",
+        "apps/application/src/app/org/[org]/feedback/_components/create-request-button.tsx"
+      ]
+    },
+    {
+      "id": "useSession",
+      "classification": "Current transport session projection",
+      "sources": [
+        "apps/application/src/app/external/[org]/feedback/_components/create-feedback-button.tsx",
+        "apps/application/src/app/external/_components/external-header.tsx",
+        "apps/application/src/app/org/[org]/changelog/_components/changelog-board.tsx"
+      ]
+    }
+  ],
+  "serverActionFiles": ["apps/application/src/lib/onboarding-actions.ts"],
+  "directDatabaseImportsRequiringReview": []
+}

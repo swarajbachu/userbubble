@@ -48,7 +48,7 @@ export class ChangelogView {
     }
 
     if (this.error) {
-      return `<div class="ub-error">${this.error}</div>`;
+      return `<div class="ub-error">${escapeHtml(this.error)}</div>`;
     }
 
     if (this.entries.length === 0) {
@@ -56,7 +56,7 @@ export class ChangelogView {
     }
 
     return `
-      <div class="ub-timeline">
+      <div class="ub-release-list">
         ${this.entries.map((entry) => this.renderEntryCard(entry)).join("")}
       </div>
     `;
@@ -67,11 +67,16 @@ export class ChangelogView {
       const backBtn = container.querySelector('[data-action="back"]');
       backBtn?.addEventListener("click", (e) => {
         e.preventDefault();
+        const previousId = this.detailEntry?.id;
         this.detailEntry = null;
         const content =
           (container.closest(".ub-content") as HTMLElement | null) ?? container;
         content.innerHTML = this.render();
         this.bind(content);
+        const previous = Array.from(
+          content.querySelectorAll<HTMLButtonElement>("[data-entry]")
+        ).find((card) => card.dataset.entry === previousId);
+        previous?.focus();
       });
       return;
     }
@@ -83,34 +88,23 @@ export class ChangelogView {
         if (!entryId) {
           return;
         }
-        void this.showDetail(entryId, container);
+        this.showDetail(entryId, container);
       });
     }
   }
 
-  private async showDetail(
-    entryId: string,
-    container: HTMLElement
-  ): Promise<void> {
-    // Use cached entry from list for instant display
-    const cached = this.entries.find((e) => e.id === entryId);
-    if (cached) {
-      this.detailEntry = cached;
-      const content =
-        (container.closest(".ub-content") as HTMLElement | null) ?? container;
-      content.innerHTML = this.render();
-      this.bind(content);
+  private showDetail(entryId: string, container: HTMLElement): void {
+    // The list contract includes the complete sanitized release body.
+    const entry = this.entries.find((item) => item.id === entryId);
+    if (!entry) {
+      return;
     }
-
-    // Fetch full detail (may have linkedFeedback etc.)
-    const result = await this.api.getChangelogEntry(entryId);
-    if ("data" in result) {
-      this.detailEntry = result.data;
-      const content =
-        (container.closest(".ub-content") as HTMLElement | null) ?? container;
-      content.innerHTML = this.render();
-      this.bind(content);
-    }
+    this.detailEntry = entry;
+    const content =
+      (container.closest(".ub-content") as HTMLElement | null) ?? container;
+    content.innerHTML = this.render();
+    this.bind(content);
+    content.querySelector<HTMLButtonElement>('[data-action="back"]')?.focus();
   }
 
   private renderEntryCard(entry: ChangelogEntry): string {
@@ -128,12 +122,13 @@ export class ChangelogView {
         : stripHtml(entry.description);
 
     return `
-      <div class="ub-entry-card" data-entry="${entry.id}">
+      <button type="button" class="ub-entry-card" data-entry="${escapeAttr(entry.id)}">
+        ${entry.coverImageUrl ? `<img class="ub-entry-cover" src="${escapeAttr(entry.coverImageUrl)}" alt="" loading="lazy" />` : ""}
         <div class="ub-entry-date">${date}</div>
         <div class="ub-entry-title">${escapeHtml(entry.title)}</div>
         ${tags ? `<div class="ub-entry-tags">${tags}</div>` : ""}
         <div class="ub-entry-desc">${escapeHtml(truncated)}</div>
-      </div>
+      </button>
     `;
   }
 
@@ -152,7 +147,7 @@ export class ChangelogView {
 
     return `
       <div class="ub-entry-detail">
-        <a href="#" class="ub-back-btn" data-action="back">${chevronLeftIcon} Back</a>
+        <button type="button" class="ub-back-btn" data-action="back">${chevronLeftIcon} All releases</button>
         ${coverImage}
         <div class="ub-entry-date">${date}</div>
         <div class="ub-entry-detail-title">${escapeHtml(entry.title)}</div>
@@ -198,5 +193,8 @@ function escapeAttr(str: string): string {
 }
 
 function stripHtml(str: string): string {
-  return str.replace(/<[^>]*>/g, "");
+  return str
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }

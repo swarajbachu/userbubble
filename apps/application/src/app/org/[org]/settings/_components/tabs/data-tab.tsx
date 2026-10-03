@@ -24,7 +24,7 @@ export function DataTab({
   organization,
   userRole,
 }: {
-  organization: Organization;
+  organization: Omit<Organization, "secretKey">;
   userRole: "owner" | "admin" | "member";
 }) {
   const trpc = useTRPC();
@@ -74,10 +74,10 @@ export function DataTab({
         </div>
 
         <div className="rounded-lg border p-4">
-          <div className="mb-2 font-medium">Import from Canny</div>
+          <div className="mb-2 font-medium">Import from another platform</div>
           <p className="mb-4 text-muted-foreground text-sm">
             Import your feedback, feature requests, and comments directly from
-            Canny.
+            another platform.
           </p>
           <Button disabled size="sm" variant="outline">
             Import

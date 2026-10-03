@@ -5,10 +5,7 @@ import {
   PencilEdit01Icon,
   Rocket01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
-import type {
-  getChangelogEntries,
-  getLinkedFeedback,
-} from "@userbubble/db/queries";
+import type { RouterOutputs } from "@userbubble/api";
 import { Button } from "@userbubble/ui/button";
 import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
@@ -17,11 +14,7 @@ import { ChangelogDisplay } from "./changelog-display";
 import { DeleteChangelogDialog } from "./delete-changelog-dialog";
 import { useChangelogMutations } from "./use-changelog-mutations";
 
-type ChangelogEntry = Awaited<
-  ReturnType<typeof getChangelogEntries>
->[number] & {
-  linkedFeedback: Awaited<ReturnType<typeof getLinkedFeedback>>;
-};
+type ChangelogEntry = RouterOutputs["changelog"]["getAll"][number];
 
 type ChangelogCardProps = {
   entry: ChangelogEntry;
@@ -98,7 +91,7 @@ export function ChangelogCard({
         linkedFeedback={entry.linkedFeedback}
         org={org}
         status={entry.isPublished ? "published" : "draft"}
-        tags={entry.tags as string[]}
+        tags={entry.tags ?? []}
         title={entry.title}
         version={entry.version}
       />

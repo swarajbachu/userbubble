@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@userbubble/ui/badge";
+import { Button } from "@userbubble/ui/button";
 import Image from "next/image";
 import { useState } from "react";
 import { useTRPC } from "~/trpc/react";
@@ -17,7 +18,12 @@ export function EmbedChangelogList({
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const trpc = useTRPC();
 
-  const { data: entries, isLoading } = useQuery(
+  const {
+    data: entries,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery(
     trpc.changelog.getAll.queryOptions({
       organizationId,
       published: true,
@@ -49,11 +55,23 @@ export function EmbedChangelogList({
     );
   }
 
+  if (isError) {
+    return (
+      <div className="p-5 text-center">
+        <p className="mb-3 text-muted-foreground text-sm">
+          We couldn't load releases.
+        </p>
+        <Button onClick={() => refetch()} variant="outline">
+          Try again
+        </Button>
+      </div>
+    );
+  }
   if (!entries || entries.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
         <p className="text-muted-foreground text-sm">No updates yet</p>
-        <p className="mt-1 text-muted-foreground/60 text-xs">
+        <p className="mt-1 text-muted-foreground text-xs">
           Check back later for product updates
         </p>
       </div>
@@ -62,25 +80,19 @@ export function EmbedChangelogList({
 
   return (
     <div className="p-5">
-      <div className="relative">
-        {/* Vertical timeline line */}
-        <div className="absolute top-0 bottom-0 left-[5px] w-px bg-border" />
-
-        <div className="space-y-5">
+      <div>
+        <div className="space-y-2">
           {entries.map((entry) => {
             const date = entry.publishedAt ?? entry.createdAt;
             const description = stripHtml(entry.description);
 
             return (
               <button
-                className="relative flex w-full gap-4 text-left"
+                className="squircle relative flex w-full gap-3 rounded-2xl bg-muted/60 p-4 text-left outline-none transition-colors hover:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring"
                 key={entry.id}
                 onClick={() => setSelectedEntryId(entry.id)}
                 type="button"
               >
-                {/* Timeline dot */}
-                <div className="relative z-10 mt-1 h-[11px] w-[11px] shrink-0 rounded-full bg-foreground/20 ring-2 ring-background" />
-
                 {/* Content */}
                 <div className="min-w-0 flex-1 pb-1">
                   <div className="flex items-center gap-2">
@@ -94,15 +106,15 @@ export function EmbedChangelogList({
                       })}
                     </time>
                     {entry.version && (
-                      <span className="font-mono text-[11px] text-muted-foreground/50">
+                      <span className="font-mono text-[11px] text-muted-foreground">
                         v{entry.version}
                       </span>
                     )}
                   </div>
 
-                  <div className="mt-1 rounded-lg border p-3 transition-colors hover:bg-secondary/30">
+                  <div className="mt-3">
                     {entry.coverImageUrl && (
-                      <div className="relative mb-2 aspect-[2.5/1] overflow-hidden rounded-md">
+                      <div className="squircle relative mb-3 aspect-[2.5/1] overflow-hidden rounded-xl">
                         <Image
                           alt={entry.title}
                           className="object-cover"
@@ -112,7 +124,7 @@ export function EmbedChangelogList({
                         />
                       </div>
                     )}
-                    <h3 className="font-medium text-sm leading-snug">
+                    <h3 className="font-medium text-base leading-snug">
                       {entry.title}
                     </h3>
                     <p className="mt-1 line-clamp-2 text-muted-foreground text-xs leading-relaxed">
@@ -143,5 +155,8 @@ export function EmbedChangelogList({
 }
 
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, "");
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }

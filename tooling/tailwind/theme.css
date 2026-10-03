@@ -1,4 +1,13 @@
 /** biome-ignore-all lint/suspicious/noDuplicateCustomProperties: theme overrides */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 :root {
   --background: var(--color-white);
   --foreground: var(--color-neutral-800);
@@ -13,7 +22,7 @@
   --muted: --alpha(var(--color-black) / 4%);
   --muted-foreground: color-mix(
     in srgb,
-    var(--color-neutral-500) 90%,
+    var(--color-neutral-500) 80%,
     var(--color-black)
   );
   --accent: --alpha(var(--color-black) / 4%);
@@ -34,7 +43,7 @@
   --chart-3: oklch(0.59 0.2 277);
   --chart-4: oklch(0.51 0.23 277);
   --chart-5: oklch(0.46 0.21 277);
-  --radius: 0.625rem;
+  --radius: 0.5rem;
   --sidebar: var(--color-neutral-50);
   --sidebar-foreground: color-mix(
     in srgb,
@@ -80,7 +89,7 @@
     --muted: --alpha(var(--color-white) / 4%);
     --muted-foreground: color-mix(
       in srgb,
-      var(--color-neutral-500) 90%,
+      var(--color-neutral-500) 80%,
       var(--color-white)
     );
     --accent: --alpha(var(--color-white) / 4%);
@@ -178,8 +187,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-sans: var(--font-geist-sans);
-  --font-heading: var(--font-geist-sans);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono);
 
   --animate-skeleton: skeleton 2s -1s infinite linear;
@@ -315,4 +324,21 @@
 
 .ProseMirror {
   outline: none;
+}
+
+@media (pointer: coarse) {
+  [data-slot="button"],
+  [data-slot="select-trigger"] {
+    min-height: 44px;
+  }
+  [data-slot="input"] {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+
+/* Smooth corners progressively enhance the rounded fallback. */
+@utility squircle {
+  /* biome-ignore lint/correctness/noUnknownProperty: CSS Borders Level 4 progressive enhancement. */
+  corner-shape: squircle;
 }

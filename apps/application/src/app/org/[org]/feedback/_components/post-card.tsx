@@ -2,7 +2,10 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { FeedbackPost } from "@userbubble/db/schema";
+import type { RouterOutputs } from "@userbubble/api";
+
+type FeedbackPost = RouterOutputs["feedback"]["create"];
+
 import { cn } from "@userbubble/ui";
 import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";

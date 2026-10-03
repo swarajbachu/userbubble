@@ -1,6 +1,6 @@
-import { getChangelogEntry, permissions } from "@userbubble/db/queries";
 import { notFound, redirect } from "next/navigation";
 import { getOrgContext } from "~/lib/get-org-context";
+import { getQueryClient, trpc } from "~/trpc/server";
 import { ChangelogEditor } from "../../_components/changelog-editor";
 
 type EditChangelogPageProps = {
@@ -13,11 +13,28 @@ export default async function EditChangelogPage({
   const { org, id } = await params;
   const { organization, member } = await getOrgContext(org);
 
-  if (!permissions.isAdmin(member.role)) {
+  if (!["owner", "admin"].includes(member.role)) {
     redirect(`/org/${org}/changelog`);
   }
 
-  const entry = await getChangelogEntry(id);
+  const entry = await getQueryClient()
+    .fetchQuery(
+      trpc.changelog.getById.queryOptions({
+        id,
+        organizationId: organization.id,
+      })
+    )
+    .catch((error: unknown) => {
+      if (
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        error.code === "NOT_FOUND"
+      ) {
+        return null;
+      }
+      throw error;
+    });
 
   if (!entry) {
     notFound();

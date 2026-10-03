@@ -1,5 +1,7 @@
-import { getChangelogEntries } from "@userbubble/db/queries";
 import { getPublicOrganization } from "~/lib/get-organization";
+import { publicReleases, publicUrl, releaseHtml } from "~/lib/public-content";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
   _request: Request,
@@ -8,13 +10,8 @@ export async function GET(
   const { org } = await params;
   const organization = await getPublicOrganization(org);
 
-  const entries = await getChangelogEntries(organization.id, {
-    published: true,
-    limit: 50,
-  });
-
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const feedUrl = `${baseUrl}/external/${org}/changelog`;
+  const entries = await publicReleases(organization.id);
+  const feedUrl = publicUrl(org, "/changelog");
 
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -38,11 +35,11 @@ export async function GET(
         (entry) => `
     <item>
       <title>${escapeXml(entry.version ? `v${entry.version}: ${entry.title}` : entry.title)}</title>
-      <link>${feedUrl}#${entry.id}</link>
+      <link>${feedUrl}/${entry.id}</link>
       <guid isPermaLink="false">${entry.id}</guid>
       <pubDate>${new Date(entry.publishedAt ?? entry.createdAt).toUTCString()}</pubDate>
       ${entry.author ? `<author>${escapeXml(entry.author.name)}</author>` : ""}
-      <description><![CDATA[${entry.description}]]></description>
+      <description>${escapeXml(releaseHtml(entry.description))}</description>
       ${entry.tags?.map((tag) => `<category>${escapeXml(tag)}</category>`).join("\n      ") || ""}
       ${entry.coverImageUrl ? `<enclosure url="${escapeXml(entry.coverImageUrl)}" type="image/jpeg"/>` : ""}
     </item>`

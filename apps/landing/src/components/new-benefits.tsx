@@ -61,7 +61,7 @@ const Card = ({
 }: {
   title: string;
   description: string;
-  icon: React.ComponentType;
+  icon: React.ComponentProps<typeof HugeiconsIcon>["icon"];
 }) => (
   <div className="relative z-10 rounded-lg bg-gray-50 p-4 transition duration-200 hover:bg-gray-100 md:p-5 dark:bg-neutral-800 dark:hover:bg-neutral-700">
     <div className="flex items-center gap-2">

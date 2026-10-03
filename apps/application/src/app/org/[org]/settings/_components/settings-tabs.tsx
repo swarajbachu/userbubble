@@ -12,7 +12,7 @@ import { FeedbackTab } from "./tabs/feedback-tab";
 import { IntegrationsTab } from "./tabs/integrations-tab";
 
 type SettingsTabsProps = {
-  organization: Organization;
+  organization: Omit<Organization, "secretKey">;
   settings: OrganizationSettings;
   userRole: "owner" | "admin" | "member";
 };
@@ -26,28 +26,28 @@ export function SettingsTabs({
 
   return (
     <Tabs onValueChange={setActiveTab} value={activeTab}>
-      <TabsList className="mb-6" variant="underline">
+      <TabsList className="mb-4 max-w-full overflow-x-auto" variant="underline">
         <TabsTrigger value="branding">Branding</TabsTrigger>
         <TabsTrigger value="feedback">Feedback</TabsTrigger>
         <TabsTrigger value="changelog">Changelog</TabsTrigger>
         <TabsTrigger value="api-keys">API Keys</TabsTrigger>
         {/* <TabsTrigger value="billing">Billing</TabsTrigger> */}
         {/* <TabsTrigger value="domain">Domain</TabsTrigger> */}
-        <TabsTrigger value="integrations">AI</TabsTrigger>
+        <TabsTrigger value="integrations">Connected agents</TabsTrigger>
         {/* <TabsTrigger value="sso">SSO</TabsTrigger> */}
         <TabsTrigger value="data">Data</TabsTrigger>
       </TabsList>
 
       <TabsContent value="branding">
-        <BrandingTab organization={organization} />
+        <BrandingTab organization={organization} settings={settings} />
       </TabsContent>
 
       <TabsContent value="feedback">
-        <FeedbackTab organization={organization} />
+        <FeedbackTab organization={organization} settings={settings} />
       </TabsContent>
 
       <TabsContent value="changelog">
-        <ChangelogTab organization={organization} />
+        <ChangelogTab organization={organization} settings={settings} />
       </TabsContent>
 
       <TabsContent value="api-keys">
@@ -62,7 +62,7 @@ export function SettingsTabs({
       </TabsContent> */}
 
       {/* <TabsContent value="domain">
-        <DomainTab organization={organization} />
+        <DomainTab organization={organization} settings={settings} />
       </TabsContent> */}
 
       <TabsContent value="integrations">

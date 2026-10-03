@@ -4,7 +4,6 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { TRPCClientErrorLike } from "@trpc/client";
 import type { AppRouter } from "@userbubble/api";
-import { createFeedbackValidator } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import {
   Select,
@@ -13,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@userbubble/ui/select";
+import { createFeedbackValidator } from "@userbubble/validators/feedback-form";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";
 
@@ -122,7 +122,7 @@ export function EmbedFeedbackForm({ organizationId }: EmbedFeedbackFormProps) {
                 }
                 value={field.state.value}
               >
-                <SelectTrigger className="h-8 w-auto gap-1.5 border-none bg-secondary/60 px-2.5 text-xs shadow-none hover:bg-secondary">
+                <SelectTrigger className="h-8 w-auto gap-1.5 border-none bg-secondary/60 px-2.5 text-xs hover:bg-secondary">
                   <SelectValue>
                     <span className="capitalize">
                       {field.state.value.replace("_", " ")}

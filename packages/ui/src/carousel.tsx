@@ -2,8 +2,11 @@
 /** biome-ignore-all lint/a11y/useSemanticElements: expected */
 "use client";
 
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+} from "@hugeicons-pro/core-duotone-rounded";
 import { cn } from "@userbubble/ui";
 import useEmblaCarousel, {
   type UseEmblaCarouselType,

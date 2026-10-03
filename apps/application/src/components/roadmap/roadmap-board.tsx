@@ -6,6 +6,7 @@ import {
   HourglassIcon,
 } from "@hugeicons-pro/core-bulk-rounded";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import type { RouterOutputs } from "@userbubble/api";
 import { useTRPC } from "~/trpc/react";
 import { RoadmapColumn } from "./roadmap-column";
 
@@ -14,6 +15,7 @@ type RoadmapBoardProps = {
   organizationId: string;
   isAuthenticated?: boolean;
   isExternal?: boolean;
+  initialPosts?: RouterOutputs["feedback"]["getAll"];
 };
 
 export function RoadmapBoard({
@@ -21,15 +23,19 @@ export function RoadmapBoard({
   organizationId,
   isAuthenticated,
   isExternal = false,
+  initialPosts,
 }: RoadmapBoardProps) {
   const trpc = useTRPC();
 
   // Fetch all posts
   const { data: allPosts } = useSuspenseQuery(
-    trpc.feedback.getAll.queryOptions({
-      organizationId,
-      sortBy: "votes",
-    })
+    trpc.feedback.getAll.queryOptions(
+      {
+        organizationId,
+        sortBy: "votes",
+      },
+      { initialData: initialPosts }
+    )
   );
 
   // Filter by status

@@ -1,0 +1,31 @@
+{
+  "name": "@userbubble/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "userbubble": "./bin/userbubble.mjs"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@userbubble/client": "workspace:*",
+    "@auth/agent": "0.6.2",
+    "@modelcontextprotocol/sdk": "1.32.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@userbubble/tsconfig": "workspace:*",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "tsx": "^4.21.0"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md"
+  ]
+}

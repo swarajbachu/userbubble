@@ -1,17 +1,10 @@
-import type {
-  getChangelogEntries,
-  getLinkedFeedback,
-} from "@userbubble/db/queries";
+import type { RouterOutputs } from "@userbubble/api";
 import { ChangelogCard } from "./changelog-card";
 
-type ChangelogEntry = Awaited<
-  ReturnType<typeof getChangelogEntries>
->[number] & {
-  linkedFeedback: Awaited<ReturnType<typeof getLinkedFeedback>>;
-};
+type ChangelogEntry = RouterOutputs["changelog"]["getAll"][number];
 
 type ChangelogTimelineProps = {
-  entries: ChangelogEntry[];
+  entries: readonly ChangelogEntry[];
   isAdmin: boolean;
   org: string;
   organizationId: string;

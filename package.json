@@ -2,7 +2,7 @@
   "name": "create-t3-turbo",
   "private": true,
   "engines": {
-    "node": "^23.10.0",
+    "node": ">=22.12.0",
     "pnpm": "^10.19.0"
   },
   "packageManager": "pnpm@10.19.0",
@@ -22,21 +22,43 @@
     "format": "ultracite fix .",
     "lint": "ultracite lint .",
     "ui-add": "pnpm -F @userbubble/ui ui-add",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "android": "pnpm --filter @userbubble/expo android",
+    "ios": "pnpm --filter @userbubble/expo ios",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter='./sdks/*' && changeset publish"
+    "release": "turbo build --filter='./sdks/*' && changeset publish",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "capabilities:generate": "tsx scripts/capability-inventory.mts --write",
+    "capabilities:check": "tsx scripts/capability-inventory.mts",
+    "client:generate": "tsx scripts/generate-client.mts --write",
+    "client:check": "tsx scripts/generate-client.mts && tsc -p tests/types/tsconfig.json",
+    "test:browser": "playwright test --grep-invert 'marketing is accessible'",
+    "test:mobile": "pnpm --filter @userbubble/expo exec expo export --platform ios --platform android --output-dir ../../.context/mobile-export",
+    "test:migration": "bash scripts/verify-migration.sh",
+    "test:restore": "bash scripts/verify-restore.sh",
+    "test:performance": "tsx scripts/benchmark.mts"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@biomejs/biome": "2.3.4",
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
+    "@playwright/test": "^1.56.0",
     "@turbo/gen": "^2.5.8",
+    "@types/node": "catalog:",
+    "ajv": "8.17.1",
     "dotenv-cli": "^10.0.0",
+    "drizzle-orm": "0.45.3",
+    "effect": "4.0.0",
+    "json-schema-to-typescript": "16.0.0",
     "lefthook": "^2.0.2",
+    "pg": "^8.13.1",
+    "tsx": "^4.19.0",
     "turbo": "^2.5.8",
     "typescript": "catalog:",
-    "ultracite": "6.3.2"
+    "ultracite": "6.3.2",
+    "vitest": "^3.2.4",
+    "zod": "catalog:"
   }
 }

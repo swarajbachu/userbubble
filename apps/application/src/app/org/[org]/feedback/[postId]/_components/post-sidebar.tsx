@@ -31,10 +31,12 @@ import { toast } from "sonner";
 import { getCategory, getStatus } from "~/components/feedback/config";
 import { useTRPC } from "~/trpc/react";
 import { CategoryEditor } from "./category-editor";
+import { ImplementationLinks } from "./implementation-links";
 import { StatusEditor } from "./status-editor";
 
 type PostSidebarProps = {
   postId: string;
+  organizationId: string;
   org: string;
   status: FeedbackStatus;
   category: FeedbackCategory;
@@ -69,6 +71,7 @@ function timeAgo(date: Date): string {
 }
 
 export function PostSidebar({
+  organizationId,
   postId,
   org,
   status,
@@ -244,6 +247,10 @@ export function PostSidebar({
               </span>
             </div>
           </div>
+          <ImplementationLinks
+            organizationId={organizationId}
+            postId={postId}
+          />
         </DoubleCardInner>
       </DoubleCard>
 

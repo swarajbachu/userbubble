@@ -1,9 +1,13 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { FeedbackPost } from "@userbubble/db/schema";
+import type { RouterOutputs } from "@userbubble/api";
+
+type FeedbackPost = RouterOutputs["feedback"]["create"];
+
 import { cn } from "@userbubble/ui";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";
@@ -28,6 +32,7 @@ export function RoadmapCard({
   isAuthenticated,
   isExternal = false,
 }: RoadmapCardProps) {
+  const pathname = usePathname();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const [, startTransition] = useTransition();
@@ -74,14 +79,14 @@ export function RoadmapCard({
   };
 
   const href = isExternal
-    ? `/${org}/feedback/${post.id}`
+    ? `${pathname.startsWith("/external/") ? `/external/${org}` : ""}/feedback/${post.id}`
     : `/org/${org}/feedback/${post.id}`;
 
   return (
     <div
       className={cn(
-        "group flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm transition-all",
-        "hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
+        "group flex flex-col gap-3 rounded-xl border bg-card p-4 transition-all",
+        "hover:-translate-y-0.5 hover:border-primary/30"
       )}
     >
       <Link

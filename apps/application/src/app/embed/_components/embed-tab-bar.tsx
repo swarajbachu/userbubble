@@ -36,7 +36,7 @@ export function EmbedTabBar({ orgSlug, enableRoadmap }: EmbedTabBarProps) {
         ]
       : []),
     {
-      label: "Updates",
+      label: "Releases",
       href: `/embed/${orgSlug}/changelog`,
       icon: TaskDaily01Icon,
       match: "/changelog",
@@ -45,11 +45,15 @@ export function EmbedTabBar({ orgSlug, enableRoadmap }: EmbedTabBarProps) {
 
   return (
     <div className="shrink-0 border-t bg-background">
-      <nav className="flex items-center justify-around px-2 py-1.5">
+      <nav
+        aria-label="Widget navigation"
+        className="flex items-center justify-around px-2 py-1.5"
+      >
         {tabs.map((tab) => {
           const isActive = pathname.includes(tab.match);
           return (
             <Link
+              aria-current={isActive ? "page" : undefined}
               className={cn(
                 "flex flex-1 flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 font-medium text-[11px] transition-colors",
                 isActive
@@ -72,7 +76,7 @@ export function EmbedTabBar({ orgSlug, enableRoadmap }: EmbedTabBarProps) {
         })}
       </nav>
       <div className="pb-1 text-center">
-        <span className="text-[10px] text-muted-foreground/50">
+        <span className="text-[10px] text-muted-foreground">
           Powered by Userbubble
         </span>
       </div>

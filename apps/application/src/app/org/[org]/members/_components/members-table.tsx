@@ -2,8 +2,10 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Search01Icon } from "@hugeicons-pro/core-bulk-rounded";
+import { useMutation } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@userbubble/ui/avatar";
 import { Badge } from "@userbubble/ui/badge";
+import { Button } from "@userbubble/ui/button";
 import { Input } from "@userbubble/ui/input";
 import {
   Table,
@@ -13,7 +15,9 @@ import {
   TableHeader,
   TableRow,
 } from "@userbubble/ui/table";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTRPC } from "~/trpc/react";
 import { MemberActions } from "./member-actions";
 
 type Member = {
@@ -38,8 +42,8 @@ type Invitation = {
 };
 
 type MembersTableProps = {
-  members: Member[];
-  invitations: Invitation[];
+  members: readonly Member[];
+  invitations: readonly Invitation[];
   organizationId: string;
   currentUserId: string;
   currentUserRole: "owner" | "admin" | "member";
@@ -55,6 +59,13 @@ export function MembersTable({
   canManage,
 }: MembersTableProps) {
   const [search, setSearch] = useState("");
+  const trpc = useTRPC();
+  const router = useRouter();
+  const cancel = useMutation(
+    trpc.organization.cancelInvitation.mutationOptions({
+      onSuccess: () => router.refresh(),
+    })
+  );
 
   const filteredMembers = members.filter(
     (m) =>
@@ -74,6 +85,7 @@ export function MembersTable({
           size={16}
         />
         <Input
+          aria-label="Search members"
           className="pl-9"
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search members..."
@@ -88,8 +100,8 @@ export function MembersTable({
           Members have access to your workspace.
         </p>
 
-        <div className="overflow-hidden rounded-lg border">
-          <Table>
+        <div className="squircle overflow-hidden rounded-xl bg-card shadow-[0_2px_8px_-3px_rgb(0_0_0/0.12)]">
+          <Table scrollAreaLabel="Workspace members">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
@@ -155,21 +167,29 @@ export function MembersTable({
       </div>
 
       {/* Pending Invitations */}
-      {pendingInvitations.length > 0 && (
+      {canManage && pendingInvitations.length > 0 && (
         <div>
-          <h3 className="mb-4 font-semibold text-lg">Invite Members</h3>
+          <h3 className="mb-4 font-semibold text-sm">Pending invitations</h3>
           <p className="mb-4 text-muted-foreground text-sm">
-            Invite a new member to your workspace.
+            Review invitations that have not been accepted.
           </p>
 
-          <div className="overflow-hidden rounded-lg border">
-            <Table>
+          {cancel.isError && (
+            <p className="mb-3 text-destructive text-sm" role="alert">
+              {cancel.error.message}
+            </p>
+          )}
+          <div className="squircle overflow-hidden rounded-xl bg-card shadow-[0_2px_8px_-3px_rgb(0_0_0/0.12)]">
+            <Table scrollAreaLabel="Pending invitations">
               <TableHeader>
                 <TableRow>
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Invited</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>
+                    <span className="sr-only">Actions</span>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -184,6 +204,25 @@ export function MembersTable({
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{invitation.status}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        aria-label={`Cancel invitation for ${invitation.email}`}
+                        disabled={cancel.isPending}
+                        onClick={() =>
+                          cancel.mutate({
+                            organizationId,
+                            invitationId: invitation.id,
+                          })
+                        }
+                        size="sm"
+                        variant="ghost"
+                      >
+                        {cancel.isPending &&
+                        cancel.variables?.invitationId === invitation.id
+                          ? "Cancelling…"
+                          : "Cancel"}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

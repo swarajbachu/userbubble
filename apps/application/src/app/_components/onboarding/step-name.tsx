@@ -4,9 +4,9 @@ import {
   AlertCircleIcon,
   CheckmarkCircle01Icon,
 } from "@hugeicons-pro/core-bulk-rounded";
-import { createSlug } from "@userbubble/db/schema";
 import { Icon } from "@userbubble/ui/icon";
 import { Input } from "@userbubble/ui/input";
+import { createSlug } from "@userbubble/validators/slug";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useWizard } from "./wizard-context";

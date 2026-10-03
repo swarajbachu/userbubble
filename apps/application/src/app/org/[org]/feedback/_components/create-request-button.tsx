@@ -17,8 +17,8 @@ export function CreateRequestButton() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} size="lg">
-        <Icon icon={Add01Icon} size={20} />
+      <Button onClick={() => setOpen(true)}>
+        <Icon icon={Add01Icon} size={16} />
         Create Request
       </Button>
 

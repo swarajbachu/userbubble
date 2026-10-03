@@ -20,7 +20,7 @@ import { useTRPC } from "~/trpc/react";
 
 type CommentItemProps = {
   comment: FeedbackComment;
-  author: User | null;
+  author: Pick<User, "id" | "name" | "image"> | null;
   canDelete: boolean;
   isTeamMember: boolean;
   isAiGenerated?: boolean;
@@ -102,7 +102,8 @@ export function CommentItem({
 
           {canDelete && (
             <Button
-              className="opacity-0 transition-opacity group-hover:opacity-100"
+              aria-label="Delete comment"
+              className="opacity-0 pointer-coarse:opacity-100 transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
               onClick={() => setDeleteDialogOpen(true)}
               size="sm"
               variant="ghost"

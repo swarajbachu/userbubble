@@ -18,11 +18,11 @@ import { Label } from "@userbubble/ui/label";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { authClient } from "~/auth/client";
 
 type SignInFormProps = {
   onSuccess?: () => void;
   callbackUrl?: string;
+  oauthQuery?: string;
   showSwitchToSignUp?: boolean;
   onSwitchToSignUp?: () => void;
 };
@@ -30,6 +30,7 @@ type SignInFormProps = {
 export function SignInForm({
   onSuccess,
   callbackUrl = "/",
+  oauthQuery,
   showSwitchToSignUp,
   onSwitchToSignUp,
 }: SignInFormProps) {
@@ -45,17 +46,29 @@ export function SignInForm({
     setIsLoading(true);
 
     try {
-      const result = await authClient.signIn.email({
-        email,
-        password,
-        callbackURL: callbackUrl,
-      });
+      const { authClient } = await import("~/auth/client");
+      const result = await authClient.signIn.email(
+        {
+          email,
+          password,
+          callbackURL: callbackUrl,
+        },
+        oauthQuery ? { body: { oauth_query: oauthQuery } } : undefined
+      );
 
       if (result.error) {
         toast.error(result.error.message ?? "Failed to sign in");
         return;
       }
 
+      if (
+        result.data &&
+        "url" in result.data &&
+        typeof result.data.url === "string"
+      ) {
+        window.location.assign(result.data.url);
+        return;
+      }
       onSuccess?.();
     } catch {
       toast.error("An unexpected error occurred");
@@ -68,10 +81,14 @@ export function SignInForm({
     setIsLoading(true);
 
     try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: callbackUrl,
-      });
+      const { authClient } = await import("~/auth/client");
+      await authClient.signIn.social(
+        {
+          provider: "google",
+          callbackURL: callbackUrl,
+        },
+        oauthQuery ? { body: { oauth_query: oauthQuery } } : undefined
+      );
     } catch {
       toast.error("Failed to sign in with Google");
       setIsLoading(false);

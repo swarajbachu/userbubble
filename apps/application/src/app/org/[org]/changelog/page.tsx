@@ -1,6 +1,7 @@
-import { getChangelogEntries } from "@userbubble/db/queries";
+import { serverReads } from "@userbubble/api/management";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { getApplicationContext } from "~/lib/application-context";
 import { getOrganization } from "~/lib/get-organization";
 import { ChangelogBoard } from "./_components/changelog-board";
 import { ChangelogSkeleton } from "./_components/changelog-skeleton";
@@ -16,10 +17,11 @@ export async function generateMetadata({
   const organization = await getOrganization(org);
 
   // Get latest published entries for description
-  const entries = await getChangelogEntries(organization.id, {
-    published: true,
-    limit: 3,
-  });
+  const entries = await serverReads.publishedReleases(
+    await getApplicationContext(),
+    organization.id,
+    3
+  );
 
   const latestVersions = entries
     .filter((e) => e.version)
@@ -62,10 +64,11 @@ export default async function ChangelogPage({ params }: ChangelogPageProps) {
   const organization = await getOrganization(org);
 
   // Fetch latest entries for structured data
-  const entries = await getChangelogEntries(organization.id, {
-    published: true,
-    limit: 10,
-  });
+  const entries = await serverReads.publishedReleases(
+    await getApplicationContext(),
+    organization.id,
+    10
+  );
 
   const jsonLd = {
     "@context": "https://schema.org",

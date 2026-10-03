@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "react-native";
 
 import { queryClient } from "~/utils/api";
+import { getBaseUrl } from "~/utils/base-url";
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need
@@ -13,10 +14,9 @@ export default function RootLayout() {
   return (
     <UserbubbleProvider
       config={{
-        apiKey:
-          "ub_1a713a7ae1e5acc234840545ec2ebf7885a0da9488276b784e51cb9340f3db2a",
-        baseUrl: "https://app.gesturs.com",
-        debug: true,
+        apiKey: process.env.EXPO_PUBLIC_USERBUBBLE_API_KEY ?? "",
+        baseUrl: getBaseUrl(),
+        debug: process.env.NODE_ENV !== "production",
       }}
     >
       <QueryClientProvider client={queryClient}>

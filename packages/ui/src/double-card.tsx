@@ -9,7 +9,7 @@ const DoubleCard = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     className={cn(
-      "rounded-2xl bg-secondary p-1 shadow-sm dark:bg-muted/10",
+      "squircle overflow-hidden rounded-2xl bg-muted/40 shadow-[0_2px_8px_-3px_rgb(0_0_0/0.12)]",
       className
     )}
     ref={ref}
@@ -23,7 +23,10 @@ const DoubleCardInner = React.forwardRef<
   React.ComponentProps<typeof Card>
 >(({ className, ...props }, ref) => (
   <Card
-    className={cn("border-none shadow-md", className)}
+    className={cn(
+      "squircle rounded-xl border-0 bg-card shadow-none",
+      className
+    )}
     ref={ref}
     {...props}
   />

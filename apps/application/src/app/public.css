@@ -1,0 +1,16 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "./style-foundation.css";
+
+@layer utilities {
+  /* biome-ignore lint/suspicious/noUnknownAtRules: Tailwind's supported utility entrypoint controls route source scanning. */
+  @tailwind utilities source(none);
+}
+
+/* Public portals and embeds share feedback components, including the thread editor. */
+@source "./external";
+@source "./embed";
+@source "./org/[org]/feedback";
+@source "../components";
+@source "../../../../packages/ui/src/{avatar,badge,button,card,dialog,double-card,dropdown-menu,icon,input,label,popover,scroll-area,select,tabs,theme,theme-provider,tiptap-editor}.tsx";

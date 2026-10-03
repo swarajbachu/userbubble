@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   boolean,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -19,6 +20,7 @@ export const changelogEntry = pgTable("changelog_entry", {
     .notNull()
     .references(() => organization.id, { onDelete: "cascade" }),
 
+  revision: integer("revision").notNull().default(1),
   title: text("title").notNull(),
   description: text("description").notNull(),
   version: text("version"),

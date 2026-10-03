@@ -2,10 +2,14 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { FeedbackPost } from "@userbubble/db/schema";
+import type { RouterOutputs } from "@userbubble/api";
+
+type FeedbackPost = RouterOutputs["feedback"]["create"];
+
 import { cn } from "@userbubble/ui";
 import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { memo, useState, useTransition } from "react";
 import { useTRPC } from "~/trpc/react";
 import { getStatus } from "./config";
@@ -26,6 +30,8 @@ export const PostCard = memo(function PostCard({
   isExternal = false,
 }: PostCardProps) {
   const trpc = useTRPC();
+  const pathname = usePathname();
+  const prefix = pathname.startsWith("/external/") ? `/external/${org}` : "";
   const queryClient = useQueryClient();
   const [, startTransition] = useTransition();
 
@@ -75,7 +81,7 @@ export const PostCard = memo(function PostCard({
   const config = getStatus(post.status);
 
   return (
-    <div className="group flex items-center gap-4 border-x border-b p-3 first:rounded-t-2xl first:border-t last:rounded-b-2xl">
+    <div className="group flex items-center gap-4 rounded-lg px-3 py-3 transition-colors hover:bg-muted/50">
       <div className="flex-none">
         <VoteButton
           className="h-6 w-auto gap-1 px-2 py-0 text-[10px]"
@@ -90,7 +96,7 @@ export const PostCard = memo(function PostCard({
           className="flex items-center gap-2"
           href={
             isExternal
-              ? `/feedback/${post.id}`
+              ? `${prefix}/feedback/${post.id}`
               : `/org/${org}/feedback/${post.id}`
           }
         >

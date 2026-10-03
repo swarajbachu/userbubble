@@ -3,18 +3,23 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Organization } from "@userbubble/db/schema";
-import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { Button } from "@userbubble/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
 import { Switch } from "@userbubble/ui/switch";
+import type { OrganizationSettings } from "@userbubble/validators/organization";
 import { toast } from "sonner";
 
 import { useTRPC } from "~/trpc/react";
 
-export function ChangelogTab({ organization }: { organization: Organization }) {
+export function ChangelogTab({
+  organization,
+  settings,
+}: {
+  organization: Omit<Organization, "secretKey">;
+  settings: OrganizationSettings;
+}) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const settings = parseOrganizationSettings(organization.metadata);
 
   const updateSettings = useMutation(
     trpc.settings.updateSettings.mutationOptions({

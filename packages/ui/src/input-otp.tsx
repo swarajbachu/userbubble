@@ -3,8 +3,8 @@
 /** biome-ignore-all lint/a11y/useSemanticElements: expected */
 "use client";
 
-import { MinusSignIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { MinusSignIcon } from "@hugeicons-pro/core-duotone-rounded";
 import { cn } from "@userbubble/ui";
 import { OTPInput, OTPInputContext } from "input-otp";
 import * as React from "react";

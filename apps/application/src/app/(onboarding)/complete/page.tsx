@@ -5,6 +5,7 @@ import {
   UserAccountIcon,
   UserSquareIcon,
 } from "@hugeicons-pro/core-bulk-rounded";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@userbubble/ui/button";
 import {
   CardContent,
@@ -23,11 +24,14 @@ import { Label } from "@userbubble/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-
-import { authClient } from "~/auth/client";
+import { useTRPC } from "~/trpc/react";
 
 export default function CompleteProfilePage() {
   const router = useRouter();
+  const trpc = useTRPC();
+  const updateProfile = useMutation(
+    trpc.account.updateProfile.mutationOptions()
+  );
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -39,18 +43,9 @@ export default function CompleteProfilePage() {
     const fullName = `${firstName.trim()} ${lastName.trim()}`;
 
     try {
-      const { data, error } = await authClient.updateUser({
-        name: fullName,
-      });
-
-      if (error) {
-        toast.error(error.message ?? "Failed to update profile");
-        return;
-      }
-
-      if (data) {
-        toast.success("Profile updated successfully");
-      }
+      await updateProfile.mutateAsync({ name: fullName });
+      toast.success("Profile updated successfully");
+      router.refresh();
 
       router.push("/");
     } catch {

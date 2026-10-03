@@ -1,10 +1,10 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import type { getChangelogEntry } from "@userbubble/db/queries";
+import type { RouterOutputs } from "@userbubble/api";
 import { useEffect } from "react";
 
-type ChangelogEntry = Awaited<ReturnType<typeof getChangelogEntry>>;
+type ChangelogEntry = RouterOutputs["changelog"]["getById"];
 
 export type ChangelogFormValues = {
   title: string;

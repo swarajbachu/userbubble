@@ -17,7 +17,7 @@ import { useTRPC } from "~/trpc/react";
 import { CodeBlock, CopyButton, Section, StepSeparator } from "../step-section";
 
 type StepApiKeyProps = {
-  organization: Organization;
+  organization: Omit<Organization, "secretKey">;
   orgSlug: string;
   onDone: () => void;
   onApiKeyCreated: (key: string) => void;

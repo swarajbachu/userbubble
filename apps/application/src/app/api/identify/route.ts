@@ -1,6 +1,8 @@
-import { isValidApiKeyFormat, validateApiKeyWithOrg } from "@userbubble/auth";
-import { apiKeyQueries, identifiedUserQueries } from "@userbubble/db/queries";
-import { generateId } from "better-auth";
+import {
+  ApplicationError,
+  executeIdentification,
+} from "@userbubble/api/management";
+import { isValidApiKeyFormat } from "@userbubble/auth";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -60,49 +62,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { id: externalId, email, name, avatar } = validation.data;
-
-    // 4. Validate API key efficiently using HMAC hash (O(1) lookup!)
-    const validated = await validateApiKeyWithOrg(apiKeyHeader);
-
-    if (!validated) {
-      return jsonResponse({ error: "Invalid or expired API key" }, 401);
-    }
-
-    // 5. Update lastUsedAt timestamp (async, don't block)
-    void apiKeyQueries.updateLastUsed(validated.apiKey.id);
-
-    // 6. Create or update identified user
-    const identifiedUserRecord = await identifiedUserQueries.upsert({
-      id: generateId(),
-      organizationId: validated.organization.id,
-      externalId,
-      email,
-      name: name ?? email.split("@")[0] ?? "User",
-      avatar: avatar ?? null,
-      userId: null, // Not linked to real user
-    });
-
-    if (!identifiedUserRecord) {
-      return jsonResponse(
-        { error: "Failed to create identified user record" },
-        500
-      );
-    }
-
-    // 7. Return success (no sessions, no cookies!)
-    return jsonResponse({
-      success: true,
-      user: {
-        id: identifiedUserRecord.externalId,
-        email: identifiedUserRecord.email,
-        name: identifiedUserRecord.name,
-        avatar: identifiedUserRecord.avatar,
-      },
-      organizationSlug: validated.organization.slug,
-    });
+    return jsonResponse(
+      await executeIdentification(apiKeyHeader, validation.data)
+    );
   } catch (error) {
-    console.error("[identify] Error:", error);
+    if (error instanceof ApplicationError && error.code === "UNAUTHORIZED") {
+      return jsonResponse({ error: error.message }, 401);
+    }
     return jsonResponse({ error: "Internal server error" }, 500);
   }
 }

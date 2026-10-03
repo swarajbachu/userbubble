@@ -1,0 +1,28 @@
+{
+  "name": "@userbubble/client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@auth/agent": "0.6.2"
+  },
+  "devDependencies": {
+    "@userbubble/tsconfig": "workspace:*",
+    "typescript": "catalog:",
+    "@types/node": "catalog:"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}

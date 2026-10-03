@@ -13,6 +13,7 @@ import {
   DialogPopup,
   DialogTitle,
 } from "@userbubble/ui/dialog";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";
@@ -42,6 +43,7 @@ export function MemberActions({
 }: MemberActionsProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [changeRoleDialogOpen, setChangeRoleDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"admin" | "member">(
@@ -56,6 +58,7 @@ export function MemberActions({
       onSuccess: () => {
         toast.success("Member role updated successfully");
         queryClient.invalidateQueries();
+        router.refresh();
         setChangeRoleDialogOpen(false);
       },
       onError: () => {
@@ -69,6 +72,7 @@ export function MemberActions({
       onSuccess: () => {
         toast.success("Member removed successfully");
         queryClient.invalidateQueries();
+        router.refresh();
         setRemoveDialogOpen(false);
       },
       onError: () => {

@@ -6,6 +6,22 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
+    },
+    "./slug": {
+      "types": "./dist/slug.d.ts",
+      "default": "./src/slug.ts"
+    },
+    "./feedback-model": {
+      "types": "./dist/feedback-model.d.ts",
+      "default": "./src/feedback-model.ts"
+    },
+    "./feedback-form": {
+      "types": "./dist/feedback-form.d.ts",
+      "default": "./src/feedback-form.ts"
+    },
+    "./organization": {
+      "types": "./dist/organization.d.ts",
+      "default": "./src/organization.ts"
     }
   },
   "license": "MIT",
@@ -16,10 +32,12 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+    "effect": "4.0.0",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@userbubble/tsconfig": "workspace:*",
     "typescript": "catalog:"
-  }
+  },
+  "sideEffects": false
 }

@@ -13,3 +13,9 @@
   --color-fd-primary-foreground: oklch(0.96 0.02 272);
   --color-fd-ring: oklch(0.59 0.2 277);
 }
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+}

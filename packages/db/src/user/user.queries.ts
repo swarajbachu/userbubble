@@ -7,6 +7,17 @@ import { type NewSession, type NewUser, session, user } from "./user.sql";
  */
 
 export const userQueries = {
+  updateProfile: async (
+    id: string,
+    fields: { name?: string; image?: string | null }
+  ) => {
+    const [updated] = await db
+      .update(user)
+      .set({ name: fields.name, image: fields.image, updatedAt: new Date() })
+      .where(eq(user.id, id))
+      .returning({ id: user.id, name: user.name, image: user.image });
+    return updated;
+  },
   /**
    * Find user by ID
    */

@@ -30,8 +30,8 @@ export default async function OrgLayout({ children, params }: OrgLayoutProps) {
     <SidebarProvider>
       <OrgSidebar onboarding={onboarding} org={org} />
       {/* Main Content */}
-      <SidebarInset>
-        <div className="p-6">{children}</div>
+      <SidebarInset className="min-w-0">
+        <div className="min-w-0 flex-1 px-4 py-4 md:px-5">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

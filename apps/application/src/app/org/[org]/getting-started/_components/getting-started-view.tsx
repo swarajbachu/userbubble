@@ -16,6 +16,7 @@ import type { OnboardingState, Organization } from "@userbubble/db/schema";
 import { cn } from "@userbubble/ui";
 import { Button } from "@userbubble/ui/button";
 import { Icon } from "@userbubble/ui/icon";
+import type { OrganizationSettings } from "@userbubble/validators/organization";
 import Link from "next/link";
 import { useOptimistic, useRef, useState, useTransition } from "react";
 import { toggleOnboardingStep } from "~/lib/onboarding-actions";
@@ -27,7 +28,8 @@ import { StepShareBoard } from "./steps/step-share-board";
 
 type GettingStartedViewProps = {
   onboarding: OnboardingState | null;
-  organization: Organization;
+  settings: OrganizationSettings;
+  organization: Omit<Organization, "secretKey">;
   orgSlug: string;
 };
 
@@ -63,6 +65,7 @@ const DEFAULT_STATE: OnboardingState = {
 
 export function GettingStartedView({
   onboarding,
+  settings,
   organization,
   orgSlug,
 }: GettingStartedViewProps) {
@@ -207,12 +210,14 @@ export function GettingStartedView({
             <StepAnonymousSubmissions
               onDone={() => markDone("anonymousSubmissions")}
               organization={organization}
+              settings={settings}
             />
           )}
           {activeStep === 3 && (
             <StepBranding
               onDone={() => markDone("customizeBranding")}
               organization={organization}
+              settings={settings}
             />
           )}
           {activeStep === 4 && (

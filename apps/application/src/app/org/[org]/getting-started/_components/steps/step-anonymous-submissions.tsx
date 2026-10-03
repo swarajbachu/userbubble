@@ -2,25 +2,26 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Organization } from "@userbubble/db/schema";
-import { parseOrganizationSettings } from "@userbubble/db/schema";
 import { Field, FieldDescription, FieldLabel } from "@userbubble/ui/field";
 import { Switch } from "@userbubble/ui/switch";
+import type { OrganizationSettings } from "@userbubble/validators/organization";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useTRPC } from "~/trpc/react";
 
 type StepAnonymousSubmissionsProps = {
-  organization: Organization;
+  organization: Omit<Organization, "secretKey">;
+  settings: OrganizationSettings;
   onDone: () => void;
 };
 
 export function StepAnonymousSubmissions({
   organization,
+  settings,
   onDone,
 }: StepAnonymousSubmissionsProps) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const settings = parseOrganizationSettings(organization.metadata);
 
   const [values, setValues] = useState({
     allowAnonymousSubmissions:
