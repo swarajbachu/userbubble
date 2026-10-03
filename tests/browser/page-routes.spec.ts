@@ -58,7 +58,9 @@ test("dashboard, public and embedded page routes render with live content", asyn
     isPublished: true,
   });
   const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("pageerror", (error) =>
+    errors.push(`${page.url()}: ${error.message}`)
+  );
   const dashboard = `/org/${org.slug}`;
   const portal = `/external/${org.slug}`;
   const embed = `/embed/${org.slug}`;
@@ -92,6 +94,8 @@ test("dashboard, public and embedded page routes render with live content", asyn
       await expect(page.locator("body")).not.toContainText(ERROR_BOUNDARY);
     });
   }
+  await page.goto(`${dashboard}/changelog`);
+  await expect(page.getByRole("link", { name: "Create Entry" })).toBeVisible();
   await page.goto(`${embed}/feedback`);
   await page
     .getByPlaceholder("Title", { exact: true })

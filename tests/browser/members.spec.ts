@@ -53,6 +53,11 @@ test("member invitations stay consistent between dashboard and management API", 
   );
   expect(invitation.status).toBe("pending");
 
+  // Scan stable page states, not the toast's partially transparent exit frame.
+  await expect(page.locator("[data-sonner-toast]")).toHaveCount(0, {
+    timeout: 10_000,
+  });
+
   for (const theme of ["light", "dark"]) {
     await page.evaluate(
       (value) =>

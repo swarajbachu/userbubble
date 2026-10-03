@@ -2,6 +2,7 @@ import { serverReads } from "@userbubble/api/management";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getApplicationContext } from "~/lib/application-context";
+import { getOrgContext } from "~/lib/get-org-context";
 import { getOrganization } from "~/lib/get-organization";
 import { ChangelogBoard } from "./_components/changelog-board";
 import { ChangelogSkeleton } from "./_components/changelog-skeleton";
@@ -60,8 +61,8 @@ export async function generateMetadata({
 export default async function ChangelogPage({ params }: ChangelogPageProps) {
   const { org } = await params;
 
-  // Use cached helper - returns cached result from layout
-  const organization = await getOrganization(org);
+  const { organization, member } = await getOrgContext(org);
+  const isAdmin = ["owner", "admin"].includes(member.role);
 
   // Fetch latest entries for structured data
   const entries = await serverReads.publishedReleases(
@@ -112,7 +113,11 @@ export default async function ChangelogPage({ params }: ChangelogPageProps) {
         </div>
 
         <Suspense fallback={<ChangelogSkeleton />}>
-          <ChangelogBoard org={org} organizationId={organization.id} />
+          <ChangelogBoard
+            isAdmin={isAdmin}
+            org={org}
+            organizationId={organization.id}
+          />
         </Suspense>
       </div>
     </>

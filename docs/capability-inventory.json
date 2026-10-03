@@ -710,7 +710,6 @@
       "classification": "Current dashboard workspace selection",
       "sources": [
         "apps/application/src/app/connect/consent/page.tsx",
-        "apps/application/src/app/org/[org]/changelog/_components/changelog-board.tsx",
         "apps/application/src/app/org/[org]/feedback/_components/create-request-button.tsx"
       ]
     },
@@ -719,8 +718,7 @@
       "classification": "Current transport session projection",
       "sources": [
         "apps/application/src/app/external/[org]/feedback/_components/create-feedback-button.tsx",
-        "apps/application/src/app/external/_components/external-header.tsx",
-        "apps/application/src/app/org/[org]/changelog/_components/changelog-board.tsx"
+        "apps/application/src/app/external/_components/external-header.tsx"
       ]
     }
   ],

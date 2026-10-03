@@ -6,33 +6,23 @@ import { Button } from "@userbubble/ui/button";
 import { Icon } from "@userbubble/ui/icon";
 import Link from "next/link";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
-import { authClient } from "~/auth/client";
 import { useTRPC } from "~/trpc/react";
 import { ChangelogEmptyState } from "./changelog-empty-state";
 import { ChangelogFilters } from "./changelog-filters";
 import { ChangelogTimeline } from "./changelog-timeline";
 
 type ChangelogBoardProps = {
+  isAdmin: boolean;
   org: string;
   organizationId: string;
 };
 
-export function ChangelogBoard({ org, organizationId }: ChangelogBoardProps) {
+export function ChangelogBoard({
+  org,
+  organizationId,
+  isAdmin,
+}: ChangelogBoardProps) {
   const trpc = useTRPC();
-
-  // Get session to identify current user
-  const { data: session } = authClient.useSession();
-
-  // Get active organization to check admin status
-  const { data: activeOrg } = authClient.useActiveOrganization();
-
-  // Check if user is admin/owner
-  const currentMember = activeOrg?.members.find(
-    (m) => m.userId === session?.user?.id
-  );
-  const isAdmin = currentMember
-    ? ["admin", "owner"].includes(currentMember.role)
-    : false;
 
   // URL state for filters
   const [tags] = useQueryState(
