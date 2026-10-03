@@ -110,22 +110,20 @@ export function ChangelogFilters() {
 
       {/* Date range filter */}
       <Popover>
-        <PopoverTrigger>
-          <Button size="sm" variant="outline">
-            <Icon icon={Calendar03Icon} size={16} />
-            {dateRange?.from ? (
-              dateRange.to ? (
-                <>
-                  {format(dateRange.from, "MMM d")} -{" "}
-                  {format(dateRange.to, "MMM d, yyyy")}
-                </>
-              ) : (
-                format(dateRange.from, "MMM d, yyyy")
-              )
+        <PopoverTrigger render={<Button size="sm" variant="outline" />}>
+          <Icon icon={Calendar03Icon} size={16} />
+          {dateRange?.from ? (
+            dateRange.to ? (
+              <>
+                {format(dateRange.from, "MMM d")} -{" "}
+                {format(dateRange.to, "MMM d, yyyy")}
+              </>
             ) : (
-              "Date Range"
-            )}
-          </Button>
+              format(dateRange.from, "MMM d, yyyy")
+            )
+          ) : (
+            "Date Range"
+          )}
         </PopoverTrigger>
         <PopoverContent align="start" className="w-auto p-0">
           <Calendar

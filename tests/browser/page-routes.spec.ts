@@ -94,7 +94,19 @@ test("dashboard, public and embedded page routes render with live content", asyn
       await expect(page.locator("body")).not.toContainText(ERROR_BOUNDARY);
     });
   }
+  const cdp = await context.newCDPSession(page);
+  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 6 });
   await page.goto(`${dashboard}/changelog`);
+  const dateFilter = page.getByRole("button", {
+    name: "Date Range",
+    exact: true,
+  });
+  await expect(dateFilter).toHaveAttribute("aria-expanded", "false");
+  await dateFilter.click();
+  await expect(dateFilter).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("grid").first()).toBeVisible();
+  await page.keyboard.press("Escape");
+  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 1 });
   await expect(page.getByRole("link", { name: "Create Entry" })).toBeVisible();
   await page.goto(`${embed}/feedback`);
   await page
