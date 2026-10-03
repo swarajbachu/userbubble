@@ -7,13 +7,13 @@ Userbubble SDK for React Native and Expo applications. Embed your feedback porta
 ### Expo
 
 ```bash
-npx expo install @userbubble/react-native expo-secure-store react-native-webview
+npx expo install @userbubble/react-native expo-web-browser expo-secure-store react-native-webview
 ```
 
 ### Bare React Native
 
 ```bash
-npm install @userbubble/react-native @react-native-async-storage/async-storage react-native-webview
+npm install @userbubble/react-native expo-web-browser @react-native-async-storage/async-storage react-native-webview
 ```
 
 ## Quick Start
@@ -56,3 +56,8 @@ For full documentation, examples, and API reference, visit [docs.userbubble.com/
 ## License
 
 MIT
+
+
+Storage adapters load only when selected. With `storageType: "auto"`, the SDK uses SecureStore when available and falls back to AsyncStorage. With `customStorage`, neither optional storage package is required. Explicit `storageType: "expo"` reports a missing SecureStore installation instead of silently changing storage.
+
+The browser integration requires Expo modules, including `expo-web-browser`. For an existing bare React Native app, follow [Expo's module installation guide](https://docs.expo.dev/bare/installing-expo-modules/) before installing this SDK. Rebuild the native app after adding native dependencies. The workspace's Expo 57 / React Native 0.86.3 app exports both iOS and Android bundles with this SDK; device testing is still required for a release.
